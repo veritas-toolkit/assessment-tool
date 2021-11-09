@@ -2,9 +2,14 @@
 
 cd $(dirname $0)/../target || exit
 
+mkdir -p file/db
+mkdir -p log
+mkdir -p log/backup
+
 tar -czvf veritas-assessment-tool.tar.gz \
     jar/veritas-assessment-tool.jar \
     config/ \
-    file/db/directory_for_database_file \
+    log/ \
+    file/db/ \
     bin/ \
     py/*
