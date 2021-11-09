@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: 'jdbc:sqlite::memory:'
+  session:
+    jdbc:
+      initialize-schema: always
+  flyway:
+    enable: true
+    clean-disabled: true
+
+veritas:
+  auto-generate-answer-strict: true
+  file-path: 'target/file/project'
+
+logging:
+  config: classpath:log4j2-test.xml

@@ -1,0 +1,134 @@
+{
+  "fairness_init": {
+    "fair_metric_name": "fnr_parity",
+    "perf_metric_name": "balanced_accuracy",
+    "protected_features": ["gender", "race"],
+    "fair_neutral_tolerance": 0.001,
+    "special_params": {
+      "num_applicants": {
+        "gender": [ 80, 20 ],
+        "race": [ 60, 40 ]
+      },
+      "base_default_rate": {
+        "gender": [ 0.4, 0.5 ],
+        "race": [ 0.4, 0.5 ]
+      }
+    }
+  },
+  "class_distribution": {
+    "fav_labels": 0.54,
+    "unfav_labels": 0.46
+  },
+  "weighted_confusion_matrix": {
+    "tp": 1335.6,
+    "fp": 256.0,
+    "tn": 680.4,
+    "fn": 300.11
+  },
+  "perf_metric_values": {
+    "balanced_accuracy": [ 0.8, 0.06 ],
+    "f1_score": [ 0.77, 0.04 ]
+  },
+  "calibration_curve": {
+    "prob_true": [ 0, 0.2, 0.4, 0.6, 0.8, 1 ],
+    "prob_pred": [ 0.08, 0.22, 0.38, 0.57, 0.72, 0.89 ],
+    "score": 0.63
+  },
+  "perf_dynamic": {
+    "perf_metric_name": "balanced_accuracy",
+    "threshold": [ 0, 0.2, 0.4, 0.6, 0.8, 1 ],
+    "perf": [ 0.5, 0.794, 0.798, 0.768, 0.685, 0.53 ],
+    "selection_rate": [ 1, 0.89, 0.68, 0.55, 0.38, 0.08 ]
+  },
+  "correlation_matrix": {
+    "feature_names": [ "Product_Info", "gender", "Medical_History", "race", "marital" ],
+    "corr_values": [[ 1, 0.18, 0.33, -0.25, 0.54 ],
+                    [ 0.18, 1, 0.33, -0.25, 0.54 ],
+                    [ 0.18, 0.33, 1, -0.25, 0.54 ],
+                    [ 0.18, 0.33, -0.25, 1, 0.54 ],
+                    [ 0.18, 0.33, -0.25, 0.54, 1 ]
+    ]
+  },
+  "features": {
+    "gender": {
+      "fair_threshold": 0.13,
+      "privileged": [ "male" ],
+      "feature_distribution": {
+        "privileged_group": 0.54,
+        "unprivileged_group": 0.46
+      },
+      "fair_metric_values": {
+        "equal_odds": [ 0.18, 0.06, 0 ],
+        "fnr_parity": [ 0.11, 0.04, 0 ]
+      },
+      "fairness_conclusion": "unfair",
+      "tradeoff": {
+        "fair_metric_name": "equal_odds",
+        "perf_metric_name": "balanced_accuracy",
+        "fair": [
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ]
+        ],
+        "perf": [
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ]
+        ],
+        "th_x": [ 0.3, 0.4, 0.5, 0.6, 0.7 ],
+        "th_y": [ 0.3, 0.4, 0.5, 0.6, 0.7 ],
+        "max_perf_point": [ 0.640, 0.591, 0.80395 ],
+        "max_perf_single_th": [ 0.640, 0.640, 0.80285 ],
+        "max_perf_neutral_fair": [ 0.535, 0.694, 0.79377 ]
+      },
+      "feature_importance": {
+        "gender": [ -0.03, -0.04, "fair to fair", "include" ],
+        "race": [ -0.14, 0.02, "unfair to fair", "examine further" ]
+      }
+    },
+    "race": {
+      "fair_threshold": 0.13,
+      "privileged": [ "chinese" ],
+      "feature_distribution": {
+        "privileged_group": 0.54,
+        "unprivileged_group": 0.46
+      },
+      "fair_metric_values": {
+        "equal_odds": [ 0.18, 0.06, 0 ],
+        "fnr_parity": [ 0.11, 0.04, 0 ]
+      },
+      "fairness_conclusion": "unfair",
+      "tradeoff": {
+        "fair_metric_name": "equal_odds",
+        "perf_metric_name": "balanced_accuracy",
+        "fair": [
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ],
+          [ 0.04, 0.08, 0.16, 0.20, 0.24 ]
+        ],
+        "perf": [
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ],
+          [ 0.736, 0.744, 0.752, 0.760, 0.768 ]
+        ],
+        "th_x": [ 0.3, 0.4, 0.5, 0.6, 0.7 ],
+        "th_y": [ 0.3, 0.4, 0.5, 0.6, 0.7 ],
+        "max_perf_point": [ 0.640, 0.591, 0.80395 ],
+        "max_perf_single_th": [ 0.640, 0.640, 0.80285 ],
+        "max_perf_neutral_fair": [ 0.535, 0.694, 0.79377 ]
+      },
+      "feature_importance": {
+        "gender": [ -0.03, -0.04, "fair to fair", "include" ],
+        "race": [ -0.14, 0.02, "unfair to fair", "examine further" ]
+      }
+    }
+  }
+}

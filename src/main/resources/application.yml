@@ -1,0 +1,86 @@
+server:
+  port: 8001
+  compression:
+    enabled: true
+  shutdown: graceful
+
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: 'jdbc:sqlite:file/db/sqlite.db'
+    driver-class-name: 'org.sqlite.JDBC'
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 1
+      maximum-pool-size: 1
+      max-lifetime: 360000
+      default-auto-commit: false
+  cache:
+    type: jcache
+    jcache:
+      config: classpath:ehcache.xml
+    ehcache:
+      config: ehcache.xml
+  freemarker:
+    cache: true
+    charset: UTF-8
+    templateEncoding: UTF-8
+    check-template-location: true
+    content-type: text/html
+    suffix: .ftl
+    template-loader-path: classpath:/ftl/
+  session:
+    store-type: none
+#    store-type: jdbc
+    jdbc:
+      initialize-schema: always
+  flyway:
+    enable: true
+    clean-disabled: false
+  jackson:
+    time-zone: GMT+8
+  resources:
+    static-locations: classpath:/static
+    cache:
+      period: 3600
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+springdoc:
+  api-docs:
+#    enabled: false
+    path: '/api-docs'
+  swagger-ui:
+#    enabled: false
+#    path: '/swagger-ui-custom.html'
+
+mybatis:
+  configuration:
+    cache-enabled: false
+    local-cache-scope: STATEMENT
+
+mybatis-plus:
+  typeEnumsPackage: org.veritas.assessment.system.constant;org.veritas.assessment.biz.constant
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      table-prefix: vat_
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+logging:
+  config: classpath:log4j2.xml

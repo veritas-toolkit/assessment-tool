@@ -1,0 +1,45 @@
+name: Unit Test
+
+on:
+  push:
+    branches:
+      - feature/*
+      - release/*
+      - develop
+      - master
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .github/workflows/deploy.yml
+      - doc/**
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.PAT }}
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '8'
+          cache: 'maven'
+
+      - name: Setup python env
+        run: sh bin/install.sh && source py/venv/bin/activate
+
+      - name: Build with Maven
+        run: ./mvnw -B clean test site -ntp
+
+      - name: Upload to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
+
+      - name: Generate report and publish to sonar
+        run: ./mvnw sonar:sonar -ntp -Dsonar.projectKey=veritas-assessment-tool -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_LOGIN }}

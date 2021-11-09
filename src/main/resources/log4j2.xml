@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <property name="project.dir">./</property>
+        <property name="log.dir">${project.dir}/log</property>
+        <property name="log.backup">${log.dir}/backup</property>
+        <property name="log.prefix">veritas-assessment-tool</property>
+        <property name="log.info.suffix">info.log</property>
+        <property name="log.error.suffix">error.log</property>
+        <property name="pattern.fast">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} -%msg%n
+        </property>
+        <property name="pattern.slow">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %C{1.}.%M(%F:%L) -%msg%n
+        </property>
+        <property name="pattern.console">
+            %d [%t] %highlight{%-5level} %C{1.}.%M(%F:%L) %msg%n%throwable
+        </property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern.console}"/>
+        </Console>
+        <RollingRandomAccessFile
+                name="INFO_LOG"
+                fileName="${log.dir}/${log.prefix}.${log.info.suffix}"
+                filePattern="${log.backup}/${log.prefix}.%d{yyyyMMdd}.${log.info.suffix}.gz">
+            <PatternLayout charset="UTF-8" pattern="${pattern.fast}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile
+                name="ERROR_LOG"
+                fileName="${log.dir}/${log.prefix}.${log.error.suffix}"
+                filePattern="${log.backup}/${log.prefix}.%d{yyyyMMdd}.${log.error.suffix}.gz">
+            <PatternLayout charset="UTF-8" pattern="${pattern.fast}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="DENY" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="INFO_LOG"/>
+            <AppenderRef ref="ERROR_LOG"/>
+        </Root>
+
+        <Logger name="org.veritas.assessment" level="info" additivity="true"/>
+
+        <!-- 输出SQL查询结果 -->
+        <Logger name="org.veritas.assessment.biz.mapper" level="TRACE"/>
+        <LOGGER name="org.springframework" level="error"/>
+        <LOGGER name="org.mybatis" level="info"/>
+        <LOGGER name="org.apache.ibatis" level="info"/>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,4 @@
+[submodule "vue-ui"]
+	path = vue-ui
+	url = git@github.com:cp5918/veritas_web.git
+	branch = master

@@ -1,0 +1,83 @@
+name: Build and push docker image
+
+on:
+  push:
+    branches:
+#      - deploy
+#      - master
+#      - feature/init
+      - master
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .github/workflows/unit-test.yml
+      - doc/**
+jobs:
+  docker-image-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.PAT }}
+
+      - name: Set up JDK1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: 'adopt'
+          cache: 'maven'
+
+      - name: Setup python env
+        run: sh bin/install.sh && source py/venv/bin/activate
+
+      - name: Build with Maven
+        run: ./mvnw -B clean test package -ntp && sh bin/release.sh
+#        run: ./mvnw -B clean package -Dmaven.test.skip=true -ntp && sh bin/release.sh
+
+      - name: Upload to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1
+            ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1.0.0
+
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache

@@ -1,0 +1,71 @@
+name: Deploy site files
+
+on:
+  push:
+    branches:
+      - deploy
+#      - master
+#      - feature/init
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .github/workflows/unit-test.yml
+      - doc/**
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.PAT }}
+
+      - name: Set up JDK1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 8
+          distribution: 'adopt'
+          cache: 'maven'
+
+#      - name: Cache local Maven repository
+#        uses: actions/cache@v2
+#        with:
+#          path: ~/.m2/repository
+#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+#        run: ./mvnw -B clean test package && sh ./release.sh
+        run: ./mvnw -B clean package -Dmaven.test.skip=true && sh ./release.sh
+
+      - name: Publish
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: ./target/*.tar.gz
+          host: ${{ secrets.SSH_HOST }}
+          remote: veritas-assessment-tool/release
+          port: 22
+          user: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+
+      - name: Restart server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }}
+          script: |
+            . ~/.bash_profile
+            cd veritas-assessment-tool/release
+            tar -zxvf veritas-assessment-tool.tar.gz
+            cp jar/*jar ../jar/
+            cp *.sh ../
+            cd ../
+            echo "Stop..."
+            ./stop.sh | echo "stop.sh return $?"
+            echo "Start..."
+            ./start.sh
+            echo "Success!"
