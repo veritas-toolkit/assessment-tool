@@ -1,4 +1,4 @@
-name: Nightly Docker Image
+name: Build Nightly
 
 on:
   workflow_run:
