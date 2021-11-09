@@ -140,7 +140,7 @@ class ProjectReportControllerTest {
                         "/api/project/{projectId}/report/export", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
-                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         log.info("content size: {}", mvcResult.getResponse().getContentLength());
         for (String header : mvcResult.getResponse().getHeaderNames()) {
