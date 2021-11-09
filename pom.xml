@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.veritas</groupId>
-    <artifactId>assessment</artifactId>
+    <artifactId>assessment-tool</artifactId>
     <version>1.0.0</version>
     <name>assessment</name>
     <description>Assessment tool of veritas.</description>
