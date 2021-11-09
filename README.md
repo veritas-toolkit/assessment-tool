@@ -1,6 +1,7 @@
-[![Unit Test](https://github.com/veritas-tool/veritas-assessment-tool/actions/workflows/unit-test.yml/badge.svg)](https://github.com/veritas-tool/veritas-assessment-tool/actions/workflows/unit-test.yml)
-[![Docker Pull](https://img.shields.io/docker/pulls/veritastool/veritas-assessment-tool.svg)](https://hub.docker.com/r/veritastool/veritas-assessment-tool)
+[![Unit Test](https://github.com/veritas-toolkit/assessment-tool/actions/workflows/unit-test.yml/badge.svg)](https://github.com/veritas-toolkit/assessment-tool/actions/workflows/unit-test.yml)
 [![codecov](https://codecov.io/gh/veritas-tool/veritas-assessment-tool/branch/feature/init/graph/badge.svg?token=9YMPKZOHDR)](https://codecov.io/gh/veritas-tool/veritas-assessment-tool)
+[![Build](https://github.com/veritas-toolkit/assessment-tool/actions/workflows/build.yml/badge.svg)](https://github.com/veritas-toolkit/assessment-tool/actions/workflows/build.yml)
+[![Docker Pull](https://img.shields.io/docker/pulls/veritastool/veritas-assessment-tool.svg)](https://hub.docker.com/r/veritastool/veritas-assessment-tool)
 # Veritas Assessment Tool
 
 ![logo](./doc/.img/logo.png)
