@@ -3,7 +3,7 @@
 ## Development
 
 * Web Framework: Vue 2.6.14
-* Server: Python 3.9, Java 8, Spring Boot 2.4.10
+* Server: Python 3.6+, Java 8, Spring Boot 2.4.10
 * Database: sqlite 3.34.0
 
 ## Deployment
