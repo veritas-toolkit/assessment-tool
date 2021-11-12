@@ -13,3 +13,10 @@ tar -czvf veritas-assessment-tool.tar.gz \
     file/db/ \
     bin/ \
     py/*
+zip -r veritas-assessment-tool.zip \
+    jar/veritas-assessment-tool.jar \
+    config/ \
+    log/ \
+    file/db/ \
+    bin/ \
+    py/*
