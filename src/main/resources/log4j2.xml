@@ -54,7 +54,7 @@
         <Logger name="org.veritas.assessment" level="info" additivity="true"/>
 
         <!-- 输出SQL查询结果 -->
-        <Logger name="org.veritas.assessment.biz.mapper" level="TRACE"/>
+        <Logger name="org.veritas.assessment.biz.mapper" level="info"/>
         <LOGGER name="org.springframework" level="error"/>
         <LOGGER name="org.mybatis" level="info"/>
         <LOGGER name="org.apache.ibatis" level="info"/>
