@@ -104,3 +104,9 @@ Currently, the default user and password is `admin/123456`.
 You should change the default password after first login.
 
 You can create some normal users as needed.
+
+## FAQ
+
+### Why use python
+
+The application is a web server, witch implemented by Java & Spring Boot Framework. We use python to generate the plot
