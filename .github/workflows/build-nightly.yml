@@ -1,15 +1,19 @@
 name: Build Nightly
 
 on:
+#  push:
+#    branches:
+#      - feature/*
   workflow_run:
     workflows: ["Unit Test"]
     branches:
       - feature/*
-      - release/*
-      - develop
-      - master
+#      - release/*
+#      - develop
+#      - master
     types:
       - completed
+
 jobs:
   docker-image-build:
     runs-on: ubuntu-latest
@@ -17,6 +21,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          ref: feature/v1.0.1
+
+      - name: branch
+        run: git branch
 
       - name: Set up JDK1.8
         uses: actions/setup-java@v2
