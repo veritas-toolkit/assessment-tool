@@ -57,7 +57,7 @@ class ProjectMapperTest {
         }
         for (int i = 0; i < 20; i++) {
             Project project = new Project();
-            project.setGroupOwnerId(i + 1);
+            project.setGroupOwnerId(1);
             project.setName("name_" + i);
             project.setDescription("description_" + i);
             project.setCreatorUserId(2);
@@ -94,6 +94,17 @@ class ProjectMapperTest {
     }
 
     @Test
+    void testFindProjectPageable_byDescriptionSuccess() {
+        this.init();
+        String keyword = "tion_2";
+        List<Integer> list = Collections.singletonList(1);
+        Pageable<Project> pageable = projectMapper.findProjectPageable(null, list, null, keyword, 1, 20);
+        assertNotEquals(0, pageable.getTotal());
+        log.info("pageable: {}", pageable);
+        log.info("records: {}", pageable.getRecords());
+    }
+
+    @Test
     void testFindProjectListByKeyWord_success() {
         assertNotNull(projectMapper);
         this.init();
@@ -106,6 +117,22 @@ class ProjectMapperTest {
         log.info("list: {}", list);
         assertTrue(list.size() > 0);
         list.forEach(p -> assertTrue(StringUtils.contains(p.getName(), keyWord)));
+    }
+
+    @Test
+    void testFindProjectListByKeyWord_byDescriptionSuccess() {
+        assertNotNull(projectMapper);
+        this.init();
+//        List<Integer> projectIds = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> projectIds = null;
+        List<Integer> groupIds = Arrays.asList(1, 2, 3, 4, 5);
+//        String keyWord = "tion_10"; // description_1xxx
+        String keyWord = "tion"; // description_1xxx
+        List<Project> list = projectMapper.findProjectList(projectIds, groupIds, null, keyWord);
+        log.info("list size: {}", list.size());
+        log.info("list: {}", list);
+        assertTrue(list.size() > 0);
+        list.forEach(p -> assertTrue(StringUtils.contains(p.getDescription(), keyWord)));
     }
 
     @Test

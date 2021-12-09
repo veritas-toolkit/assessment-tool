@@ -200,15 +200,15 @@ sub_list1 = []
 sub_list2 = []
 weighted_confusion_matrix_list = []
 sub_list1.append(weighted_confusion_matrix['tn'])
-sub_list1.append(weighted_confusion_matrix['fn'])
+sub_list1.append(weighted_confusion_matrix['fp'])
+sub_list2.append(weighted_confusion_matrix['fn'])
 sub_list2.append(weighted_confusion_matrix['tp'])
-sub_list2.append(weighted_confusion_matrix['fp'])
 weighted_confusion_matrix_list.append(sub_list1)
 weighted_confusion_matrix_list.append(sub_list2)
 perf_dynamic = data['perf_dynamic']
 
 # plot weighted_confusion_matrix
-plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Denied', 'Approved'], ['Approved', 'Denied'], zf_name)
+plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Default', 'Repay'], ['Default', 'Repay'], zf_name)
 
 # plot class distribution
 plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
@@ -226,7 +226,7 @@ for key in features_dict:
     th_b = features_dict[key]['tradeoff']['th_y']
     perf = np.array(features_dict[key]['tradeoff']['perf'])
     fair = np.array(features_dict[key]['tradeoff']['fair'])
-    best_th = 0.43
+    best_th = features_dict[key]['tradeoff']['max_perf_single_th'][0]
     feature_distribution_list = []
     feature_distribution_label = []
     for k in features_dict[key]['feature_distribution']:
