@@ -219,7 +219,9 @@ public interface ProjectMapper extends BaseMapper<Project> {
             wrapper.apply("upper(name) like {0}", StringUtils.upperCase(prefix) + "%");
         }
         if (StringUtils.isNotEmpty(keyword)) {
-            wrapper.apply("upper(name) like {0}", "%" + StringUtils.upperCase(keyword) + "%");
+            wrapper.apply("(upper(name) like {0} or upper(description) like {1})",
+                    "%" + StringUtils.upperCase(keyword) + "%",
+                    "%" + StringUtils.upperCase(keyword) + "%");
         }
         wrapper.and(ownerQueryWrapper -> {
             if (projectEmpty && groupEmpty) {
