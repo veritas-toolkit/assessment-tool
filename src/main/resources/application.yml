@@ -84,3 +84,4 @@ management:
       show-details: always
 logging:
   config: classpath:log4j2.xml
+
