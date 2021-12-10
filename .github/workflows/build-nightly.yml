@@ -1,18 +1,15 @@
 name: Build Nightly
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Unit Test"]
     branches:
       - feature/*
-#  workflow_run:
-#    workflows: ["Unit Test"]
-#    branches:
-#      - feature/*
-#      - release/*
-#      - develop
-#      - master
-#    types:
-#      - completed
+      - release/*
+      - develop
+      - master
+    types:
+      - completed
 
 jobs:
   docker-image-build:
@@ -22,7 +19,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          ref: feature/v1.0.1
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: branch
         run: git branch
