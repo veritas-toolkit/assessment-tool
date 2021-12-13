@@ -208,7 +208,7 @@ weighted_confusion_matrix_list.append(sub_list2)
 perf_dynamic = data['perf_dynamic']
 
 # plot weighted_confusion_matrix
-plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Default', 'Repay'], ['Default', 'Repay'], zf_name)
+plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
 
 # plot class distribution
 plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
