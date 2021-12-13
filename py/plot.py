@@ -130,8 +130,8 @@ def plot_weighted_confusion_matrix(values, name1, name2, zf_name):
 def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     plt.figure(figsize=(9, 8))
 #     plt.title('Fairness vs. Performance Tradeoffs', fontsize=18)
-    plt.xlabel('Lending Threshold Privileged', fontsize=16)
-    plt.ylabel('Lending Threshold Unprivileged', fontsize=16)
+    plt.xlabel(key+' Threshold Privileged', fontsize=16)
+    plt.ylabel(key+' Threshold Unprivileged', fontsize=16)
     plt.xlim(np.min(th_a), np.max(th_a))
     plt.ylim(np.min(th_b), np.max(th_b))
 
