@@ -127,7 +127,7 @@ def plot_weighted_confusion_matrix(values, name1, name2, zf_name):
 
 
 # Plot contour
-def plot_contour(zf_name, key):
+def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     plt.figure(figsize=(9, 8))
 #     plt.title('Fairness vs. Performance Tradeoffs', fontsize=18)
     plt.xlabel('Lending Threshold Privileged', fontsize=16)
@@ -222,6 +222,10 @@ plot_heatmap(correlation_matrix['corr_values'], correlation_matrix['feature_name
 # plot perf dynamic
 plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
 for key in features_dict:
+    fair_metric_name = features_dict[key]['tradeoff']['fair_metric_name']
+    perf_metric_name = features_dict[key]['tradeoff']['perf_metric_name']
+    fair_metric_name = re.sub('_', ' ', fair_metric_name)
+    perf_metric_name = re.sub('_', ' ', perf_metric_name)
     th_a = features_dict[key]['tradeoff']['th_x']
     th_b = features_dict[key]['tradeoff']['th_y']
     perf = np.array(features_dict[key]['tradeoff']['perf'])
@@ -235,6 +239,6 @@ for key in features_dict:
     # plot feature_distribution
     plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
     # plot contour
-    plot_contour(zf_name, key)
+    plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
 print(json.dumps(image_file_list))
