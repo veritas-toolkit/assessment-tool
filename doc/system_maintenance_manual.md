@@ -105,6 +105,33 @@ You should change the default password after first login.
 
 You can create some normal users as needed.
 
+
+### Tool command
+
+We provide a tool script for resetting user passwords and unlocking users in the background.
+
+Unlock user
+```bash
+bin/tool.sh unlock -u USERNAME
+```
+
+Reset password for user
+```bash
+bin/tool.sh reset_password -u USERNAME
+```
+
+Help
+```bash
+bin/tool.sh help
+
+  help: print this help info.
+  list: list all user.
+  unlock: unlock user
+          flag: -u USERNAME
+  reset_password: reset user's password
+          flag: -u USERNAME
+```
+
 ## FAQ
 
 ### Why use python
