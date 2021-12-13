@@ -66,6 +66,7 @@
               <div class="nameDesc oneLine">
                 <div class="oneLine" style="display: flex;align-items: center">
                   <div>{{item.fullName}}</div>
+                  <div v-show="item.admin" class="admin-style">admin</div>
                   <div v-show="item.locked" class="locked-style">locked</div>
                 </div>
                 <span>{{item.email}}</span>
@@ -464,6 +465,15 @@ export default {
     border-radius: 4px;
     font-size: 24px;
     padding: 4px 7px;
+  }
+  .admin-style {
+      font-size: 14px;
+      margin-left: 12px;
+      padding: 0px 4px;
+      font-weight: 400;
+      color: #FFF;
+      background-color: #78BED3;
+      border-radius: 12px;
   }
   .locked-style {
     font-size: 14px;
