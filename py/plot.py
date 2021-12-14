@@ -64,7 +64,7 @@ def plot_calibration(bin_true_prob, bin_pred_prob, zf_name):
     ax1.plot(bin_pred_prob, bin_true_prob, "s-", color='#02124D',
              label="model")
 
-    ax1.set_ylabel("Fraction of loans that resolve", fontsize=14)
+    ax1.set_ylabel("Fraction of Positives", fontsize=14)
     ax1.set_ylim([-0.05, 1.05])
     ax1.legend(loc="lower right", fontsize=12)
     ax1.set_title('Model Calibration (reliability curve)', fontsize=16)
