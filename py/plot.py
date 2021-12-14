@@ -78,6 +78,7 @@ def plot_calibration(bin_true_prob, bin_pred_prob, zf_name):
 
 # plot heatmap
 def plot_heatmap(corr_values, feature_names, zf_name):
+    plt.figure(figsize=(9, 8))
     ax = sns.heatmap(
         corr_values,
         vmin=-1, vmax=1, center=0,
@@ -86,7 +87,7 @@ def plot_heatmap(corr_values, feature_names, zf_name):
     )
     ax.set_xticklabels(
         feature_names,
-        rotation=25,
+        rotation=45,
         horizontalalignment='right'
     )
     ax.set_yticklabels(
