@@ -5,7 +5,7 @@
       <el-header>
         <div class="title BarlowMedium">
           <router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>
-          <div>Questionnaire</div>
+          <div>Questionnaire Edit</div>
         </div>
         <!--MoreActions-->
         <div v-show="part == 'A' || part == 'E'" class="BarlowMedium" style="display: flex;margin-right: 24px">
