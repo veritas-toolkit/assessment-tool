@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.veritas</groupId>
     <artifactId>assessment-tool</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>assessment</name>
     <description>Assessment tool of veritas.</description>
     <properties>
@@ -19,6 +19,7 @@
         <openhtml.version>1.0.10</openhtml.version>
         <springdoc.version>1.5.11</springdoc.version>
         <spring-boot.version>2.4.10</spring-boot.version>
+        <log4j2.version>2.15.0</log4j2.version>
 
         <config.directory>config</config.directory>
     </properties>
