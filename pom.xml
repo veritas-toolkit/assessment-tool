@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.veritas</groupId>
     <artifactId>assessment-tool</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>assessment</name>
     <description>Assessment tool of veritas.</description>
     <properties>
