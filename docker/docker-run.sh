@@ -12,5 +12,5 @@ fi
 if [[ -f py/venv/bin/activate ]]; then
   source py/venv/bin/activate
 fi
-
-exec java -jar $(pwd)/jar/veritas-assessment-tool.jar
+JVM_OPT='-Dlog4j2.formatMsgNoLookups=true'
+exec java ${JVM_OPT} -jar $(pwd)/jar/veritas-assessment-tool.jar

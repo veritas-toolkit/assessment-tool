@@ -64,7 +64,7 @@ def plot_calibration(bin_true_prob, bin_pred_prob, zf_name):
     ax1.plot(bin_pred_prob, bin_true_prob, "s-", color='#02124D',
              label="model")
 
-    ax1.set_ylabel("Fraction of loans that resolve", fontsize=14)
+    ax1.set_ylabel("Fraction of Positives", fontsize=14)
     ax1.set_ylim([-0.05, 1.05])
     ax1.legend(loc="lower right", fontsize=12)
     ax1.set_title('Model Calibration (reliability curve)', fontsize=16)
@@ -78,6 +78,7 @@ def plot_calibration(bin_true_prob, bin_pred_prob, zf_name):
 
 # plot heatmap
 def plot_heatmap(corr_values, feature_names, zf_name):
+    plt.figure(figsize=(9, 8))
     ax = sns.heatmap(
         corr_values,
         vmin=-1, vmax=1, center=0,
@@ -86,7 +87,7 @@ def plot_heatmap(corr_values, feature_names, zf_name):
     )
     ax.set_xticklabels(
         feature_names,
-        rotation=25,
+        rotation=45,
         horizontalalignment='right'
     )
     ax.set_yticklabels(
@@ -127,11 +128,11 @@ def plot_weighted_confusion_matrix(values, name1, name2, zf_name):
 
 
 # Plot contour
-def plot_contour(zf_name, key):
+def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     plt.figure(figsize=(9, 8))
 #     plt.title('Fairness vs. Performance Tradeoffs', fontsize=18)
-    plt.xlabel('Lending Threshold Privileged', fontsize=16)
-    plt.ylabel('Lending Threshold Unprivileged', fontsize=16)
+    plt.xlabel(key+' Threshold Privileged', fontsize=16)
+    plt.ylabel(key+' Threshold Unprivileged', fontsize=16)
     plt.xlim(np.min(th_a), np.max(th_a))
     plt.ylim(np.min(th_b), np.max(th_b))
 
@@ -208,7 +209,7 @@ weighted_confusion_matrix_list.append(sub_list2)
 perf_dynamic = data['perf_dynamic']
 
 # plot weighted_confusion_matrix
-plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Default', 'Repay'], ['Default', 'Repay'], zf_name)
+plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
 
 # plot class distribution
 plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
@@ -222,6 +223,10 @@ plot_heatmap(correlation_matrix['corr_values'], correlation_matrix['feature_name
 # plot perf dynamic
 plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
 for key in features_dict:
+    fair_metric_name = features_dict[key]['tradeoff']['fair_metric_name']
+    perf_metric_name = features_dict[key]['tradeoff']['perf_metric_name']
+    fair_metric_name = re.sub('_', ' ', fair_metric_name)
+    perf_metric_name = re.sub('_', ' ', perf_metric_name)
     th_a = features_dict[key]['tradeoff']['th_x']
     th_b = features_dict[key]['tradeoff']['th_y']
     perf = np.array(features_dict[key]['tradeoff']['perf'])
@@ -235,6 +240,6 @@ for key in features_dict:
     # plot feature_distribution
     plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
     # plot contour
-    plot_contour(zf_name, key)
+    plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
 print(json.dumps(image_file_list))
