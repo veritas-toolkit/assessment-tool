@@ -60,13 +60,17 @@ function print_help() {
 }
 
 function clear_cache() {
-  touch 'file/db/.clear_cache'
+  touch $CLEAR_CACHE_FILE
 }
 
 cd "$(dirname $0)" || exit
 cd .. || exit
 
+# sqlite database file
 SQLITE_FILE='file/db/sqlite.db'
+
+# If this file exists then the Java application will clear the cache and delete this file.
+CLEAR_CACHE_FILE='file/db/.clear_cache'
 
 if [[ $# -eq 0 ]]; then
   print_help;
