@@ -18,15 +18,23 @@ package org.veritas.assessment.biz.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.service.SystemConfigService;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -67,4 +75,27 @@ public class AdminSystemController {
         }
     }
 
+    private static final String GIT_VERSION_FILE_PATH = "/git-version.json";
+    private static final String versionInfo;
+
+    static {
+        String json;
+        try (InputStream is = new ClassPathResource(GIT_VERSION_FILE_PATH).getInputStream()) {
+            json = IOUtils.toString(is, StandardCharsets.UTF_8);
+        } catch (IOException exception) {
+            log.warn("can not read git version info file[{}].", GIT_VERSION_FILE_PATH,
+                    exception);
+            json = "{}";
+        }
+        versionInfo = json;
+    }
+
+    @RequestMapping(path = "/version", method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getGitVersion() {
+        if (StringUtils.isEmpty(versionInfo)) {
+            throw new NotFoundException("Not found version information.");
+        }
+        return versionInfo;
+    }
 }

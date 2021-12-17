@@ -1,5 +1,5 @@
 #! /bin/bash
-set -x
+
 cd $(dirname $0)/.. || exit
 
 if [ "$(ls config/)" == "" ]; then
