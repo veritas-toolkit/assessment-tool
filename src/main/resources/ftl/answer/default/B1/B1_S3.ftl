@@ -2,7 +2,7 @@
 <div>
     In the case of credit scoring, ground truth labels of default/resolve are only available
     for customers that were approved for a loan. There are no ground truth labels for customers that were declined
-    In the absence of true labels, we can create hypothetical labels for those whose ground truth labels are missing.\
+    In the absence of true labels, we can create hypothetical labels for those whose ground truth labels are missing.
     The process is called <b>reject inference</b>. The model for creating labels may be biased, which may influence
     the fairness of credit scoring model.
 </div>
