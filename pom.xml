@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.4.10</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.veritas</groupId>
     <artifactId>assessment-tool</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>assessment</name>
     <description>Assessment tool of veritas.</description>
     <properties>
@@ -19,7 +18,7 @@
         <openhtml.version>1.0.10</openhtml.version>
         <springdoc.version>1.5.11</springdoc.version>
         <spring-boot.version>2.4.10</spring-boot.version>
-        <log4j2.version>2.15.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
 
         <config.directory>config</config.directory>
     </properties>
@@ -376,11 +375,6 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
