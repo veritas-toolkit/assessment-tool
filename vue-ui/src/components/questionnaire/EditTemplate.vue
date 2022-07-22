@@ -5,7 +5,11 @@
       <el-header>
         <div class="title BarlowMedium">
           <router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>
-          <div>Questionnaire Edit</div>
+          <div>Questionnaire Template</div>
+        </div>
+        <!--MoreActions-->
+        <div v-show="part == 'A' || part == 'E'" class="BarlowMedium" style="display: flex;margin-right: 24px">
+          <div class="export BlackBorder" @click="modifyQuesVisibleFuc"><span>Modify question</span></div>
         </div>
       </el-header>
       <el-container class="container">
@@ -46,40 +50,18 @@
         <el-main style="height: calc(100%)">
           <div style="padding: 16px 24px;height: calc(100% - 73px)">
             <div v-show="subQuestionList.length == 0">
-              <div class="questionStyle hover-visible BarlowBold" style="margin-bottom: 24px" v-if="!questionVisible[serial]">
-                <span>{{question}}</span>
-                <img class="secondTitlePic target" src="../../assets/projectPic/edit.png" alt="" @click="questionVisible[serial]=true">
-              </div>
-              <el-input v-model="content" placeholder="" v-if="questionVisible[serial]">
-                <i slot="suffix" class="el-input__icon el-icon-check" @click="modQues"></i>
-                <i slot="suffix" class="el-input__icon el-icon-close" @click="questionVisible[serial] = false"></i>
-              </el-input>
+              <div class="questionStyle BarlowBold" style="margin-bottom: 24px">{{question}}</div>
             </div>
             <div v-show="subQuestionList.length != 0">
-              <div class="questionStyle hover-visible BarlowBold"  v-if="!questionVisible[serial]">
-                <span>{{question}}</span>
-                <img class="secondTitlePic target" src="../../assets/projectPic/edit.png" alt="" @click="questionVisible[serial]=true">
-              </div>
-              <el-input v-model="content" placeholder="" v-if="questionVisible[serial]">
-                <i slot="suffix" class="el-input__icon el-icon-check" @click="modQues"></i>
-                <i slot="suffix" class="el-input__icon el-icon-close" @click="questionVisible[serial] = false"></i>
-              </el-input>
-              <!--<el-input type="textarea" :rows="3" v-model="question" v-if=""></el-input>-->
+              <div class="questionStyle BarlowBold">{{question}}</div>
               <div v-for="(item,index) in subQuestionList" :key="item.id">
                 <div class="hover-visible" style="display: flex;align-items: center">
-                  <div class="subQuestionStyle BarlowMedium" v-if="!questionVisible[item.id]">
-                    <span>{{item.content}}</span>
-                    <div class="target" v-show="item.editable">
-                      <img class="secondTitlePic" src="../../assets/projectPic/edit.png" alt="" @click="questionVisible[item.id]=true">
-                      <img class="secondTitlePic" src="../../assets/adminPic/upPage.png" alt="" @click="upPage(subQuestionList,index)">
-                      <img class="secondTitlePic" src="../../assets/adminPic/downPage.png" alt="" @click="downPage(subQuestionList,index)">
-                      <img class="secondTitlePic" src="../../assets/adminPic/deleteProblem.png" alt="" @click="deleteSubQuestion(subQuestionList,item.id,index)">
-                    </div>
+                  <div class="subQuestionStyle BarlowMedium">{{item.content}}</div>
+                  <div class="target" v-show="item.editable">
+                    <img class="secondTitlePic" src="../../assets/adminPic/upPage.png" alt="" @click="upPage(subQuestionList,index)">
+                    <img class="secondTitlePic" src="../../assets/adminPic/downPage.png" alt="" @click="downPage(subQuestionList,index)">
+                    <img class="secondTitlePic" src="../../assets/adminPic/deleteProblem.png" alt="" @click="deleteSubQuestion(subQuestionList,item.id,index)">
                   </div>
-                  <el-input style="line-height: 24px;margin: 24px 0px;" v-model="modifyQuestionForm[item.id]" placeholder="" v-if="questionVisible[item.id]">
-                    <i slot="suffix" class="el-input__icon el-icon-check" @click="modSubQues(item.id)"></i>
-                    <i slot="suffix" class="el-input__icon el-icon-close" @click="questionVisible[item.id] = false"></i>
-                  </el-input>
                 </div>
                 <div class="hint BarlowMedium" v-show="item.hint">
                   <div>
@@ -96,10 +78,6 @@
             </div>
             <div style="display: flex">
               <div v-show="part == 'A' || part == 'E'" class="addSubquestion BarlowBold" style="cursor: pointer" @click="addNewSub"><span>+ Add subquestion</span></div>
-              <!--&lt;!&ndash;MoreActions&ndash;&gt;
-              <div v-show="part == 'A' || part == 'E'" class="addSubquestion BarlowBold" style="cursor: pointer;margin-left: 16px" @click="modifyQuesVisibleFuc">
-                <span>Modify question</span>
-              </div>-->
             </div>
           </div>
         </el-main>
@@ -124,480 +102,413 @@
 </template>
 
 <script>
-export default {
-  name: "EditTemplate",
-  data() {
-    return {
-      activeName: 'A',
-      projectId: this.$route.query.id,
-      questionnaireList: [],
-      subQuestionList: [],
-      newSubQuestionList: [],
-      question: '',
-      content:'',
-      serial: 1,
-      answerForm: [],
-      contentEditable: {
-      },
-      secondQuestion: {},
-      clickItem: {
-        '0':false,
-        '1':false,
-        '2':false,
-        '3':false,
-        '4':false
-      },
-      newQues: {},
-      defaultActive: '',
-      modifyQuesVisible: false,
-      modifyQuestionForm: {
-      },
-      questionVisible: {},
-      partName: '',
-      part: '',
-    }
-  },
-  created() {
-    this.getQuestionnaireInit()
-  },
-  methods: {
-    modifyQuesVisibleFuc() {
-      this.choosenItem(this.serial)
-      this.modifyQuesVisible = true
-    },
-    modQues() {
-      let pushModifyForm = {}
-      let triQuestionnaireList = []
-      for (let i = 0; i<this.questionnaireList.length; i++) {
-        for (let j = 0; j < this.questionnaireList[i].questionList.length; j++) {
-          triQuestionnaireList.push(this.questionnaireList[i].questionList[j])
-        }
+  export default {
+    name: "EditTemplate",
+    data() {
+      return {
+        activeName: 'A',
+        projectId: this.$route.query.id,
+        questionnaireList: [],
+        subQuestionList: [],
+        newSubQuestionList: [],
+        question: '',
+        serial: 1,
+        answerForm: [],
+        contentEditable: {
+        },
+        secondQuestion: {},
+        clickItem: {
+          '0':false,
+          '1':false,
+          '2':false,
+          '3':false,
+          '4':false
+        },
+        newQues: {},
+        defaultActive: '',
+        modifyQuesVisible: false,
+        modifyQuestionForm: {
+        },
+        partName: '',
+        part: '',
       }
-      triQuestionnaireList.map(item => {
-        if (item.id == this.serial) {
-          pushModifyForm.subQuestions = item.subQuestions
-        }
-      })
-      pushModifyForm.id = this.serial
-      pushModifyForm.content = this.content
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,pushModifyForm).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Modify successfully')
-          this.reload(this.serial)
-          this.getQuestionnaire()
-          this.questionVisible[this.serial] = false
-        }
-      })
     },
-    modSubQues(index) {
-      let pushModifyForm = {}
-      let subList = []
-      for (let key in this.modifyQuestionForm) {
-        let subForm = {}
-        subForm.id = key
-        subForm.content = this.modifyQuestionForm[key]
-        subList.push(subForm)
-      }
-      pushModifyForm.id = this.serial
-      pushModifyForm.content = this.content
-      subList.shift()
-      pushModifyForm.subQuestions = subList
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,pushModifyForm).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Modify successfully')
-          this.reload(this.serial)
-          this.getQuestionnaire()
-          this.questionVisible[index] = false
-        }
-      })
+    created() {
+      this.getQuestionnaireInit()
     },
-    modifyQues() {
-      let pushModifyForm = {}
-      let subList = []
-      for (let key in this.modifyQuestionForm) {
-        let subForm = {}
-        subForm.id = key
-        subForm.content = this.modifyQuestionForm[key]
-        subList.push(subForm)
-      }
-      pushModifyForm.id = subList[0].id
-      pushModifyForm.content = subList[0].content
-      subList.shift()
-      pushModifyForm.subQuestions = subList
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,pushModifyForm).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Modify successfully')
-          this.reload(this.serial)
-          this.getQuestionnaire()
-          this.modifyQuesVisible = false
+    methods: {
+      modifyQuesVisibleFuc() {
+        this.choosenItem(this.serial)
+        this.modifyQuesVisible = true
+      },
+      modifyQues() {
+        let pushModifyForm = {}
+        let subList = []
+        for (let key in this.modifyQuestionForm) {
+          let subForm = {}
+          subForm.id = key
+          subForm.content = this.modifyQuestionForm[key]
+          subList.push(subForm)
         }
-      })
-    },
-    addQues(content,partName,index) {
-      console.log(content,partName)
-      this.$http.put(`/api/project/${this.projectId}/questionnaire/edit/question`,{part:partName, content:content}).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Add successfully')
-          this.getQuestionnaire()
-          this.clickItem[index] = false
-        }
-      })
-    },
-    deleteQuestion(id) {
-      this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
-        this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question`,{params:{'questionId' : id}}).then(res => {
+        pushModifyForm.id = subList[0].id
+        pushModifyForm.content = subList[0].content
+        subList.shift()
+        pushModifyForm.subQuestions = subList
+        this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,pushModifyForm).then(res => {
           if (res.status == 200) {
-            this.$message.success('Delete successfully')
+            this.$message.success('Modify successfully')
+            this.reload(this.serial)
             this.getQuestionnaire()
+            this.modifyQuesVisible = false
           }
         })
-      })
-    },
-    addNewQusetion(index) {
-      this.clickItem = {'0':false, '1':false, '2':false, '3':false, '4':false},
-          this.clickItem[index] = true
-    },
-    addNewSub() {
-      this.newSubQuestionList.push({content:''})
-    },
-    deleteNewSub(index) {
-      this.newSubQuestionList.splice(index,1)
-    },
-    addSubQuestion(content,index) {
-      this.reload(this.serial)
-      this.secondQuestion.subQuestions.push({content: content})
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Add successfully')
-          this.reload(this.serial)
-          this.newSubQuestionList.splice(index,1)
-        }
-      })
-    },
-    reload(index) {
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
-        if(res.status == 200) {
-          let partList = res.data.partList
-          let triQuestionnaireList = []
-          for (let i = 0; i<partList.length; i++) {
-            for (let j = 0; j < partList[i].questionList.length; j++) {
-              triQuestionnaireList.push(partList[i].questionList[j])
-            }
+      },
+      addQues(content,partName,index) {
+        console.log(content,partName)
+        this.$http.put(`/api/project/${this.projectId}/questionnaire/edit/question`,{part:partName, content:content}).then(res => {
+          if (res.status == 200) {
+            this.$message.success('Add successfully')
+            this.getQuestionnaire()
+            this.clickItem[index] = false
           }
-          triQuestionnaireList.map(item => {
-            if (item.id == index) {
-              this.secondQuestion = item
-              this.question = item.part + item.partSerial + '.' +item.content
-              this.content = item.content
-              this.subQuestionList = item.subQuestions
+        })
+      },
+      deleteQuestion(id) {
+        this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
+          this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question`,{params:{'questionId' : id}}).then(res => {
+            if (res.status == 200) {
+              this.$message.success('Delete successfully')
+              this.getQuestionnaire()
             }
           })
-        }
-      })
-    },
-    upPage(subQuestionList,index) {
-      if(index > 0) {
-        let temp = subQuestionList[index - 1]
-        subQuestionList[index - 1] = subQuestionList[index]
-        subQuestionList[index] = temp
-      } else if (index == 0) {
-        subQuestionList.push(subQuestionList.shift())
-      }
-      this.secondQuestion.subQuestions = subQuestionList
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Exchange successfully')
-          this.getQuestionnaire()
-        }
-      })
-    },
-    downPage(subQuestionList,index) {
-      if(index < subQuestionList.length-1) {
-        let temp = subQuestionList[index + 1]
-        subQuestionList[index + 1] = subQuestionList[index]
-        subQuestionList[index] = temp
-      } else if (index == subQuestionList.length-1) {
-        subQuestionList.unshift(subQuestionList.pop())
-      }
-      this.secondQuestion.subQuestions = subQuestionList
-      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
-        if (res.status == 200) {
-          this.$message.success('Exchange successfully')
-          this.getQuestionnaire()
-        }
-      })
-    },
-    deleteSubQuestion(subQuestionList,id,index) {
-      this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
-        subQuestionList.splice(index,1)
-        this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question`,{params:{'subQuestionId' : id}}).then(res => {
+        })
+      },
+      addNewQusetion(index) {
+        this.clickItem = {'0':false, '1':false, '2':false, '3':false, '4':false},
+        this.clickItem[index] = true
+      },
+      addNewSub() {
+        this.newSubQuestionList.push({content:''})
+      },
+      deleteNewSub(index) {
+        this.newSubQuestionList.splice(index,1)
+      },
+      addSubQuestion(content,index) {
+        this.reload(this.serial)
+        this.secondQuestion.subQuestions.push({content: content})
+        this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
           if (res.status == 200) {
-            this.$message.success('Delete successfully')
-            this.getQuestionnaire()
+            this.$message.success('Add successfully')
+            this.reload(this.serial)
+            this.newSubQuestionList.splice(index,1)
           }
         })
-      })
-    },
-    getQuestionnaireInit() {
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
-        if(res.status == 200) {
-          this.questionnaireList = res.data.partList
-          let partList = res.data.partList
-          for (let i = 0; i<partList.length; i++) {
-            for (let j = 0; j < partList[i].questionList.length; j++) {
-              // console.log(partList[i].questionList[j])
-              this.$set(this.questionVisible,partList[i].questionList[j].id,false)
-              for (let k = 0; k < partList[i].questionList[j].subQuestions.length; k++) {
-                // console.log(partList[i].questionList[j].subQuestions[k])
-                this.$set(this.questionVisible,partList[i].questionList[j].subQuestions[k].id,false)
+      },
+      reload(index) {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
+          if(res.status == 200) {
+            let partList = res.data.partList
+            let triQuestionnaireList = []
+            for (let i = 0; i<partList.length; i++) {
+              for (let j = 0; j < partList[i].questionList.length; j++) {
+                triQuestionnaireList.push(partList[i].questionList[j])
               }
             }
+            triQuestionnaireList.map(item => {
+              if (item.id == index) {
+                this.secondQuestion = item
+                this.question = item.part + item.partSerial + '.' +item.content
+                this.subQuestionList = item.subQuestions
+              }
+            })
           }
-          this.defaultActive = String(res.data.partList[0].questionList[0].id)
-          this.choosenItem(this.defaultActive)
+        })
+      },
+      upPage(subQuestionList,index) {
+        if(index > 0) {
+          let temp = subQuestionList[index - 1]
+          subQuestionList[index - 1] = subQuestionList[index]
+          subQuestionList[index] = temp
+        } else if (index == 0) {
+          subQuestionList.push(subQuestionList.shift())
         }
-      })
-    },
-    getQuestionnaire() {
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
-        if(res.status == 200) {
-          this.questionnaireList = res.data.partList
-        }
-      })
-    },
-    choosenItem(index) {
-      this.serial = index
-      this.newSubQuestionList = []
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
-        if(res.status == 200) {
-          let partList = res.data.partList
-          let triQuestionnaireList = []
-          for (let i = 0; i<partList.length; i++) {
-            for (let j = 0; j < partList[i].questionList.length; j++) {
-              triQuestionnaireList.push(partList[i].questionList[j])
-            }
+        this.secondQuestion.subQuestions = subQuestionList
+        this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
+          if (res.status == 200) {
+            this.$message.success('Exchange successfully')
+            this.getQuestionnaire()
           }
-          this.modifyQuestionForm = {}
-          triQuestionnaireList.map(item => {
-            if (item.id == index) {
-              this.secondQuestion = item
-              this.partName = item.part + item.partSerial
-              this.part = item.part
-              this.$set(this.modifyQuestionForm,item.id,'')
-              this.$set(this.questionVisible,item.id,false)
-              this.modifyQuestionForm[item.id] = item.content
-              this.question = item.part + item.partSerial + '.' +item.content
-              this.content = item.content
-              this.subQuestionList = item.subQuestions
-              this.subQuestionList.map(item => {
-                this.$set(this.modifyQuestionForm,item.id,'')
-                this.$set(this.questionVisible,item.id,false)
-                this.modifyQuestionForm[item.id] = item.content
-              })
+        })
+      },
+      downPage(subQuestionList,index) {
+        if(index < subQuestionList.length-1) {
+          let temp = subQuestionList[index + 1]
+          subQuestionList[index + 1] = subQuestionList[index]
+          subQuestionList[index] = temp
+        } else if (index == subQuestionList.length-1) {
+          subQuestionList.unshift(subQuestionList.pop())
+        }
+        this.secondQuestion.subQuestions = subQuestionList
+        this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question`,this.secondQuestion).then(res => {
+          if (res.status == 200) {
+            this.$message.success('Exchange successfully')
+            this.getQuestionnaire()
+          }
+        })
+      },
+      deleteSubQuestion(subQuestionList,id,index) {
+        this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
+          subQuestionList.splice(index,1)
+          this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question`,{params:{'subQuestionId' : id}}).then(res => {
+            if (res.status == 200) {
+              this.$message.success('Delete successfully')
+              this.getQuestionnaire()
             }
           })
-        }
-      })
+        })
+      },
+      getQuestionnaireInit() {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
+          if(res.status == 200) {
+            this.questionnaireList = res.data.partList
+            let partList = res.data.partList
+            this.defaultActive = String(res.data.partList[0].questionList[0].id)
+            this.choosenItem(this.defaultActive)
+          }
+        })
+      },
+      getQuestionnaire() {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
+          if(res.status == 200) {
+            this.questionnaireList = res.data.partList
+          }
+        })
+      },
+      choosenItem(index) {
+        this.serial = index
+        this.newSubQuestionList = []
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/edit`).then(res => {
+          if(res.status == 200) {
+            let partList = res.data.partList
+            let triQuestionnaireList = []
+            for (let i = 0; i<partList.length; i++) {
+              for (let j = 0; j < partList[i].questionList.length; j++) {
+                triQuestionnaireList.push(partList[i].questionList[j])
+              }
+            }
+            this.modifyQuestionForm = {}
+            triQuestionnaireList.map(item => {
+              if (item.id == index) {
+                this.secondQuestion = item
+                this.partName = item.part + item.partSerial
+                this.part = item.part
+                this.$set(this.modifyQuestionForm,item.id,'')
+                this.modifyQuestionForm[item.id] = item.content
+                this.question = item.part + item.partSerial + '.' +item.content
+                this.subQuestionList = item.subQuestions
+                this.subQuestionList.map(item => {
+                  this.$set(this.modifyQuestionForm,item.id,'')
+                  this.modifyQuestionForm[item.id] = item.content
+                })
+              }
+            })
+          }
+        })
+      }
     }
   }
-}
 </script>
 
 <style lang="less" scoped>
-.el-container {
-  height: 100%;
-}
-.container {
-  height: calc(100% - 600px);
-}
-.el-header {
-  height: 56px !important;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid #E6E6E6;
-}
-.backPic {
-  width: 32px;
-  height: 32px;
-  margin: 12px 16px;
-}
-.title {
-  display: flex;
-  align-items: center;
-  > div {
-    font-size: 18px;
-    font-weight: bold;
+  .el-container {
+    height: 100%;
+  }
+  .container {
+    height: calc(100% - 600px);
+  }
+  .el-header {
+    height: 56px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #E6E6E6;
+  }
+  .backPic {
+    width: 32px;
+    height: 32px;
+    margin: 12px 16px;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    > div {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+  .save_preview {
+    cursor: pointer;
+    height: 38px;
+    padding: 0 16px;
+    margin-right: 8px;
+    > span {
+      font-size: 16px;
+      line-height: 40px;
+      color: #666666;
+    }
+  }
+  .export {
+    cursor: pointer;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 4px;
+    > span {
+      font-size: 16px;
+      line-height: 40px;
+    }
+  }
+  .partTitle {
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 14px;
     color: #000;
   }
-}
-.save_preview {
-  cursor: pointer;
-  height: 38px;
-  padding: 0 16px;
-  margin-right: 8px;
-  > span {
+  .el-aside {
+    height: 100%;
+    padding: 10px;
+    background-color: #F2F2F2;
+  }
+  .el-menu {
+    box-shadow:0px 0px 8px #EDF2F6;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .el-menu-item {
+    height: auto;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 20px;
+    padding: 8px 16px;
+  }
+  .menuDiv {
+    width: 380px;
+    background-color: #F2F2F2;
+  }
+  .questionStyle {
     font-size: 16px;
-    line-height: 40px;
-    color: #666666;
+    font-weight: bold;
   }
-}
-.export {
-  cursor: pointer;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: 4px;
-  > span {
+  .subQuestionStyle {
+    height: 24px;
+    line-height: 24px;
+    margin: 24px 0px;
     font-size: 16px;
-    line-height: 40px;
+    font-weight: 400;
+    color: #333333;
   }
-}
-.partTitle {
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-size: 14px;
-  color: #000;
-}
-.el-aside {
-  height: 100%;
-  padding: 10px;
-  background-color: #F2F2F2;
-}
-.el-menu {
-  box-shadow:0px 0px 8px #EDF2F6;
-  border-radius: 8px;
-  padding: 12px;
-}
-.el-menu-item {
-  height: auto;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 20px;
-  padding: 8px 16px;
-}
-.menuDiv {
-  width: 380px;
-  background-color: #F2F2F2;
-}
-.questionStyle {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: bold;
-}
-.subQuestionStyle {
-  display: flex;
-  align-items: center;
-  height: 24px;
-  line-height: 24px;
-  margin: 24px 0px;
-  font-size: 16px;
-  font-weight: 400;
-  color: #333333;
-}
-.hint {
-  display: inline-block;
-  width: auto;
-  text-align: center;
-  line-height: 24px;
-  height: 24px;
-  > div {
-    display: flex;
-    > i {
-      color: #666666;
-    }
-    > span {
-      background-color: #F2F2F2;
-      padding: 0px 12px;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #666666;
-      margin-right: 8px;
-    }
-  }
-}
-.add-hint {
-  font-size: 18px;
-  width: 32px;
-  height: 22px;
-  line-height: 22px;
-  text-align: center;
-  border: 1px solid #D7D9DB;
-  border-radius: 4px;
-}
-.submit {
-  margin-top: 16px;
-  float: right;
-}
-.secondTitle {
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.secondTitlePic {
-  cursor: pointer;
-  margin-left: 12px;
-  width: 24px;
-  height: 24px;
-}
-.target {
-  display: none;
-}
-.hover-visible:hover .target{
-  display: block;
-}
-.el-menu-item:hover {
-  background-color: #F0F0F0;
-}
-.el-menu-item.is-active {
-  background-color: #EDF2F6;
-  color: #000000 !important;
-}
-.insert-problem {
-  cursor: pointer;
-  margin: 0px 16px 0px 16px;
-  border: 1px solid;
-  border-radius: 4px;
-  line-height: 30px;
-  text-align: center;
-  height: 30px;
-  font-size: 26px;
-}
-.modifyQuestion {
-  border: 1px solid;
-  border-radius: 4px;
-  padding: 8px;
-}
-.addSubquestion {
-  margin-top: 16px;
-  border: 1px solid;
-  border-radius: 4px;
-  padding: 8px;
-}
-.add-subquestion {
-  border-top: 1px solid #CED3D9;
-  height: 72px;
-  > div {
-    margin: 16px;
-    line-height: 38px;
+  .hint {
+    display: inline-block;
+    width: auto;
     text-align: center;
-    border: 1px solid #000000;
-    border-radius: 4px;
-    height: 38px;
+    line-height: 24px;
+    height: 24px;
+    > div {
+      display: flex;
+      > i {
+        color: #666666;
+      }
+      > span {
+        background-color: #F2F2F2;
+        padding: 0px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #666666;
+        margin-right: 8px;
+      }
+    }
   }
-}
-.el-input__icon {
-  font-weight: bold;
-  cursor: pointer;
-  color: #888888;
-  margin-left: 8px;
-  font-size: 18px;
-}
-.dialogTitle {
-  font-size: 20px;
-  font-weight: bold;
-}
+  .add-hint {
+    font-size: 18px;
+    width: 32px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border: 1px solid #D7D9DB;
+    border-radius: 4px;
+  }
+  .submit {
+    margin-top: 16px;
+    float: right;
+  }
+  .secondTitle {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .secondTitlePic {
+    cursor: pointer;
+    margin-left: 12px;
+    width: 24px;
+    height: 24px;
+  }
+  .target {
+    display: none;
+  }
+  .hover-visible:hover .target{
+    display: block;
+  }
+  .el-menu-item:hover {
+    background-color: #F0F0F0;
+  }
+  .el-menu-item.is-active {
+    background-color: #EDF2F6;
+    color: #000000 !important;
+  }
+  .insert-problem {
+    cursor: pointer;
+    margin: 0px 16px 0px 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    line-height: 30px;
+    text-align: center;
+    height: 30px;
+    font-size: 26px;
+  }
+  .modifyQuestion {
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  .addSubquestion {
+    margin-top: 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  .add-subquestion {
+    border-top: 1px solid #CED3D9;
+    height: 72px;
+    > div {
+      margin: 16px;
+      line-height: 38px;
+      text-align: center;
+      border: 1px solid #000000;
+      border-radius: 4px;
+      height: 38px;
+    }
+  }
+  .el-input__icon {
+    font-weight: bold;
+    cursor: pointer;
+    color: #888888;
+    margin-left: 8px;
+    font-size: 18px;
+  }
+  .dialogTitle {
+    font-size: 20px;
+    font-weight: bold;
+  }
 </style>
