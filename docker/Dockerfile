@@ -64,8 +64,8 @@ COPY --from=build /tmp/sqlite/sqlite3 /usr/local/bin/sqlite3
 WORKDIR /opt/veritas
 RUN cp -r /opt/veritas/config /opt/veritas/.default_config &&\
     bin/install.sh &&\
-    chmod +x /usr/local/bin/gosu &&\
     echo "Success"
+    #chmod +x /usr/local/bin/gosu &&\
 
 # for running
 WORKDIR /opt/veritas
