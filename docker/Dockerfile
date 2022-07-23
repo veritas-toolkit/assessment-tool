@@ -52,9 +52,8 @@ RUN cd /tmp &&\
     tar xzf Python-${PYTHON_VERSION}.tgz &&\
     cd Python-${PYTHON_VERSION} &&\
     ./configure --enable-optimizations &&\
-    make install
-
-RUN cd /tmp &&\
+    make install &&\
+    cd /tmp &&\
     rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} &&\
     yum clean all
 
