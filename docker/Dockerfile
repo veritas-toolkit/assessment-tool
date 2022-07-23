@@ -36,17 +36,14 @@ FROM centos:7
 #ENV JAVA_VERSION="jdk8u292-b10" \
 ENV LANG='en_US.UTF-8' \
     LANGUAGE='en_US:en' \
-    LC_ALL='en_US.UTF-8'
+    LC_ALL='en_US.UTF-8' \
+    PYTHON_VERSION=3.8.13
 
 RUN groupadd -g 1000 veritas &&\
     useradd -d /home/veritas -u 1000 -g veritas -G root veritas &&\
     #yum install -y python3 java-1.8.0-openjdk &&\
     yum install -y java-1.8.0-openjdk &&\
-    yum clean all
-
-ENV PYTHON_VERSION=3.8.13
-
-RUN cd /tmp &&\
+    cd /tmp &&\
     yum install -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
     wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz &&\
     tar xzf Python-${PYTHON_VERSION}.tgz &&\
@@ -55,6 +52,7 @@ RUN cd /tmp &&\
     make install &&\
     cd /tmp &&\
     rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} &&\
+    yum autoremove -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
     yum clean all
 
 # copy file
