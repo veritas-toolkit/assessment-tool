@@ -1,6 +1,9 @@
 name: Build Nightly
 
 on:
+#  push:
+#    branches:
+#      - feature/*
   workflow_run:
     workflows: ["Unit Test"]
     branches:
@@ -33,8 +36,9 @@ jobs:
 
 
       - name: Build with Maven
-        run: ./mvnw -B clean test package -ntp && sh bin/release.sh
+        run: ./mvnw -B clean package -ntp && sh bin/release.sh
 #        run: ./mvnw -B clean package -Dmaven.test.skip=true -ntp && sh bin/release.sh
+#        run: ./mvnw -v
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
