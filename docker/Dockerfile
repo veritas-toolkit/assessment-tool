@@ -19,9 +19,10 @@ RUN cd /tmp &&\
     ./configure &&\
     make -j 2 &&\
     chmod +x sqlite3 &&\
-    echo "Compile success."
+    echo "Compile sqlite success."
 
 COPY target/veritas-assessment-tool.tar.gz /tmp/
+
 RUN mkdir -p /opt/veritas/ &&\
     tar -zxvf /tmp/veritas-assessment-tool.tar.gz -C /opt/veritas/
 
@@ -35,11 +36,30 @@ FROM centos:7
 #ENV JAVA_VERSION="jdk8u292-b10" \
 ENV LANG='en_US.UTF-8' \
     LANGUAGE='en_US:en' \
-    LC_ALL='en_US.UTF-8'
+    LC_ALL='en_US.UTF-8' \
+    PYTHON_VERSION=3.8.13
 
 RUN groupadd -g 1000 veritas &&\
     useradd -d /home/veritas -u 1000 -g veritas -G root veritas &&\
-    yum install -y python3 java-1.8.0-openjdk &&\
+    #yum install -y python3 java-1.8.0-openjdk &&\
+    yum install -y java-1.8.0-openjdk &&\
+    cd /tmp &&\
+    yum install -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
+    wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz &&\
+    tar xzf Python-${PYTHON_VERSION}.tgz &&\
+    cd Python-${PYTHON_VERSION} &&\
+    ./configure --enable-optimizations &&\
+    make install &&\
+    cd /tmp &&\
+    rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} && \
+    find /usr/local -depth \
+            \( \
+                \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+                -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+                -o \( -type f -a -name 'wininst-*.exe' \) \
+            \) -exec rm -rf '{}' + \
+    ; \
+    yum autoremove -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
     yum clean all
 
 # copy file
@@ -51,8 +71,8 @@ COPY --from=build /tmp/sqlite/sqlite3 /usr/local/bin/sqlite3
 WORKDIR /opt/veritas
 RUN cp -r /opt/veritas/config /opt/veritas/.default_config &&\
     bin/install.sh &&\
-    chmod +x /usr/local/bin/gosu &&\
     echo "Success"
+    #chmod +x /usr/local/bin/gosu &&\
 
 # for running
 WORKDIR /opt/veritas

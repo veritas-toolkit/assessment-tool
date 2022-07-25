@@ -13,7 +13,7 @@
 * __OS:__ CentOS, Ubuntu, or other Linux
 * __CPU / RAM:__ 2 CPU & 2G RAM at least, 4 CPU & 4G RAM __recommended__
 * __JRE:__ JRE(Java Runtime Environment) 8 is required.
-* __Python:__ Python 3.6+
+* __Python:__ Python 3.8+
 
 ### Install on Docker (Recommended)
 
