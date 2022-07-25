@@ -51,7 +51,14 @@ RUN groupadd -g 1000 veritas &&\
     ./configure --enable-optimizations &&\
     make install &&\
     cd /tmp &&\
-    rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} &&\
+    rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} && \
+    find /usr/local -depth \
+            \( \
+                \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+                -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+                -o \( -type f -a -name 'wininst-*.exe' \) \
+            \) -exec rm -rf '{}' + \
+    ; \
     yum autoremove -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
     yum clean all
 
