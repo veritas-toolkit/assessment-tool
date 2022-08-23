@@ -137,7 +137,7 @@
                 <el-select v-model="userType" placeholder="Choose a role permission">
                   <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
                 </el-select>
-                <div class="addUsers" @click="addUsersToGroup">Invite</div>
+                <div class="addUsers" @click="inviteMembers">Invite</div>
               </div>
             </div>
             <div class="dividingLine"></div>
@@ -353,7 +353,7 @@
         this.tags.splice(this.tags.indexOf(tag), 1);
         this.addUserId.splice(this.addUserId.indexOf(tag.id), 1);
       },
-      addUsersToGroup() {
+      inviteMembers() {
         let addUserList = []
         this.addUserId.map(item => {
           let addUser = {}
