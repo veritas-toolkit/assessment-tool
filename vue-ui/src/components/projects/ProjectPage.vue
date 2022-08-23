@@ -15,13 +15,14 @@
           </div>
         </div>
         <!--more actions-->
-        <el-popover placement="left" width="154px" trigger="click" v-show="permissionList.indexOf('project:edit') != -1 || permissionList.indexOf('project:edit questionnaire') != -1 || permissionList.indexOf('project:delete') != -1">
+        <el-popover placement="left" width="154px" trigger="click"
+                    v-show="has_permission(PermissionType.PROJECT_EDIT) || has_permission(PermissionType.PROJECT_DELETE) || has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)">
           <div>
-            <div v-show="permissionList.indexOf('project:edit') != -1" class="editProject BarlowMedium" @click="editProjectVisible = true" style="cursor: pointer"><img src="../../assets/groupPic/edit.png" alt=""><span>Edit project</span></div>
-            <div v-show="permissionList.indexOf('project:edit') != -1 && permissionList.indexOf('project:edit questionnaire') != -1" class="divide_line"></div>
-            <div v-show="permissionList.indexOf('project:edit questionnaire') != -1" class="editProject BarlowMedium" @click="editTemplate" style="cursor: pointer"><img src="../../assets/projectPic/editQuestionnaire.png" alt=""><span>Edit questionnaire</span></div>
-            <div v-show="permissionList.indexOf('project:edit questionnaire') != -1 && permissionList.indexOf('project:delete') != -1" class="divide_line"></div>
-            <div v-show="permissionList.indexOf('project:delete') != -1" class="deleteProject BarlowMedium" @click="deleteProjectInfo" style="cursor: pointer"><img src="../../assets/groupPic/delete.png" alt=""><span>Delete project</span></div>
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT)" class="editProject BarlowMedium" @click="editProjectVisible = true" style="cursor: pointer"><img src="../../assets/groupPic/edit.png" alt=""><span>Edit project</span></div>
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT) && has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="divide_line"></div>
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="editProject BarlowMedium" @click="editTemplate" style="cursor: pointer"><img src="../../assets/projectPic/editQuestionnaire.png" alt=""><span>Edit questionnaire</span></div>
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE) && has_permission(PermissionType.PROJECT_DELETE)" class="divide_line"></div>
+            <div v-show="has_permission(PermissionType.PROJECT_DELETE)" class="deleteProject BarlowMedium" @click="deleteProjectInfo" style="cursor: pointer"><img src="../../assets/groupPic/delete.png" alt=""><span>Delete project</span></div>
           </div>
           <div slot="reference" class="moreAct" style="cursor: pointer">
             <img src="../../assets/groupPic/more.png" alt="">
@@ -39,7 +40,7 @@
       <el-tabs style="margin-top: 16px" v-model="activeName" class="BarlowMedium" >
         <el-tab-pane label="Assessment" name="first">
           <div style="display: flex;justify-content: space-between;align-items:center;margin-top: 16px">
-            <div style="width: 40%" v-show="permissionList.indexOf('project:upload json') != -1">
+            <div style="width: 40%" v-show="has_permission(PermissionType.PROJECT_UPLOAD_JSON)">
               <div class="artifacts">Model artifacts</div>
               <div class="file-accepted">only .JSON file accepted</div>
               <!--upload JSON File-->
@@ -71,7 +72,7 @@
               <div class="file-accepted">{{dateFormat(jsonInfo.uploadTime)}}</div>
             </div>
           </div>
-          <div v-if="permissionList.indexOf('project:upload json') != -1 || jsonInfoVisible" class="dividingLine"></div>
+          <div v-if="has_permission(PermissionType.PROJECT_UPLOAD_JSON) || jsonInfoVisible" class="dividingLine"></div>
           <div>
             <div class="artifacts">Fairness assessment</div>
             <div style="display: flex;align-items: center;margin-top: 16px;justify-content: space-between">
@@ -123,7 +124,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="Member" name="second">
-          <div v-show="permissionList.indexOf('project:manage members') != -1">
+          <div v-show="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)">
             <div style="margin: 16px 0px;">
               <div class="artifacts">Invite members</div>
             </div>
@@ -156,11 +157,11 @@
               <!--user role & delete-->
               <div style="display: flex;align-items: center">
                 <div>
-                  <el-select :disabled="permissionList.indexOf('project:manage members') == -1 || userOwnerId == item.userId" v-model="item.type" @change="changeMemberRole(item)" >
+                  <el-select :disabled="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS) || userOwnerId == item.userId" v-model="item.type" @change="changeMemberRole(item)" >
                     <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
                   </el-select>
                 </div>
-                <el-button :disabled="permissionList.indexOf('project:manage members') == -1 || userOwnerId == item.userId || groupOwnerMemberList.indexOf(item.userId) != -1" class="deleteMember" @click="deleteMember(item.userId)" icon="el-icon-delete-solid"></el-button>
+                <el-button :disabled="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS) || userOwnerId == item.userId || groupOwnerMemberList.indexOf(item.userId) != -1" class="deleteMember" @click="deleteMember(item.userId)" icon="el-icon-delete-solid"></el-button>
               </div>
             </div>
           </div>
@@ -217,6 +218,7 @@
 
 <script>
   import Vue from "vue";
+  import {permissionCheck, PermissionType} from "@/util/permission";
 
   export default {
     name: "ProjectPage",
@@ -281,7 +283,8 @@
         exportPdfFormRules:{
           version: [{ required: true, trigger: 'blur' },],
           message: [{ required: true, trigger: 'blur' },],
-        }
+        },
+        PermissionType: PermissionType,
       }
     },
     created() {
@@ -293,6 +296,10 @@
       this.suggestVersion()
     },
     methods: {
+      has_permission(target_permission) {
+        return permissionCheck(this.permissionList, target_permission);
+      },
+
       getProjectDetail() {
         this.progressCompleted = 0
         this.progressCount = 18
@@ -318,7 +325,6 @@
           if (res.data.projectRole) {
             this.permissionList = this.permissionList.concat(res.data.projectRole.permissionList)
           }
-          //console.log(this.permissionList)
           this.fairnessAssessmentVisible = true
           this.projectDetail = res.data
           this.progressCompleted = this.projectDetail.questionnaireProgress.completed
