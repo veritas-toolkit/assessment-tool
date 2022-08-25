@@ -1,8 +1,8 @@
-const memberTypeList =
+const MEMBER_TYPE_LIST =
     [
         {type: 'OWNER', label: 'Owner'},
         {type: 'DEVELOPER', label: 'Developer'},
         {type: 'ASSESSOR', label: 'Assessor'}
     ];
 
-export default {memberTypeList};
+export default {MEMBER_TYPE_LIST};

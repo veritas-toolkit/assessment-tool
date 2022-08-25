@@ -39,7 +39,7 @@ export default {
       userType: '',
       selectedUserList: [],
       selectedUser: {},
-      memberTypeList: constants.memberTypeList,
+      memberTypeList: constants.MEMBER_TYPE_LIST,
     }
   },
   created() {

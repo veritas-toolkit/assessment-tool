@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import constants from "@/util/constants";
 export default {
   name: "Member",
   props: {
@@ -33,11 +34,8 @@ export default {
   data() {
     return {
       currentRole: null,
-      roleList: [
-        {type: 'OWNER', label: 'Owner'},
-        {type: 'DEVELOPER', label: 'Developer'},
-        {type: 'ASSESSOR', label: 'Assessor'}],
-    }
+      roleList: constants.MEMBER_TYPE_LIST,
+    };
   },
   created() {
     this.currentRole = this.roleList.find(e => e.type === this.member.type)?.label
