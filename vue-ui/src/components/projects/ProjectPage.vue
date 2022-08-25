@@ -165,6 +165,7 @@
               </div>
             </div>
           </div>
+          <ProjectMember :project="projectInfo" :has_manage_members_permission="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)"></ProjectMember>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -219,9 +220,13 @@
 <script>
   import Vue from "vue";
   import {permissionCheck, PermissionType} from "@/util/permission";
+  import ProjectMember from "@/components/projects/ProjectMember";
 
   export default {
     name: "ProjectPage",
+    components: {
+      ProjectMember
+    },
     data() {
       return {
         projectId: this.$route.query.id,
