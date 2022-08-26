@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 32px 64px !important;">
+  <div v-if="projectInfo !== null" style="padding: 32px 64px !important;">
     <!--groupPage title-->
     <div class="title BarlowBold">
       <router-link :to="{ path: '/projects' }"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>
@@ -124,48 +124,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="Member" name="second">
-          <div v-show="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)">
-            <div style="margin: 16px 0px;">
-              <div class="artifacts">Invite members</div>
-            </div>
-            <el-tag size="mini" effect="plain" style="margin-bottom: 10px" v-for="tag in tags" @close="handleClose(tag)" :key="tag.id" closable type="info">{{ tag.fullName }}</el-tag>
-            <div style="display: flex;align-items: center;justify-content: space-between">
-              <el-select filterable @change="addUserToTags" value-key="id" v-model="selectUserObj" placeholder="Choose a user">
-                <el-option v-for="item in userList" :key="item.id" :label="item.fullName" :value="item"></el-option>
-              </el-select>
-              <div style="display: flex;justify-content: space-between;align-items: center;margin-left: 12px;width: 400px">
-                <el-select v-model="userType" placeholder="Choose a role permission">
-                  <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
-                </el-select>
-                <div class="addUsers" @click="inviteMembers">Invite</div>
-              </div>
-            </div>
-            <div class="dividingLine"></div>
-          </div>
-          <div class="version" style="margin-top: 24px">Members</div>
-          <div style="margin-top: 8px">
-            <div class="bodyRow" type="flex" v-for="(item,index) in projectMember" :key="item.userId">
-              <div style="display: flex;align-items: center">
-                <!--avatar-->
-                <img class="avatar" src="../../assets/groupPic/Avatar.png" alt="">
-                <!--fullName&joinTime-->
-                <div class="nameDesc">
-                  <div>{{item.fullName}}</div>
-                  <span>{{item.email}}</span>
-                </div>
-              </div>
-              <!--user role & delete-->
-              <div style="display: flex;align-items: center">
-                <div>
-                  <el-select :disabled="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS) || userOwnerId == item.userId" v-model="item.type" @change="changeMemberRole(item)" >
-                    <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
-                  </el-select>
-                </div>
-                <el-button :disabled="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS) || userOwnerId == item.userId || groupOwnerMemberList.indexOf(item.userId) != -1" class="deleteMember" @click="deleteMember(item.userId)" icon="el-icon-delete-solid"></el-button>
-              </div>
-            </div>
-          </div>
-          <ProjectMember :project="projectInfo" :has_manage_members_permission="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)"></ProjectMember>
+          <ProjectMember v-if="projectInfo !== null" :project="projectInfo" :has_manage_members_permission="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)"></ProjectMember>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -231,7 +190,7 @@
       return {
         projectId: this.$route.query.id,
         businessScenarioList: [],
-        projectInfo: {},
+        projectInfo: null,
         projectDetail: {},
         businessScenario: '',
         editProjectVisible: false,
