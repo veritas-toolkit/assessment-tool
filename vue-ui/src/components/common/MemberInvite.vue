@@ -1,18 +1,10 @@
 <template>
   <div>
-    <el-tag size="mini" effect="plain" style="margin-bottom: 10px"
-            v-for="selectedUser in selectedUserList"
-            @close="removeFromSelected(selectedUser)"
-            :key="selectedUser.id"
-            closable
-            type="info">
-      {{ selectedUser.fullName }}
-    </el-tag>
     <div style="display: flex;align-items: center;justify-content: space-between">
-      <el-select filterable
-                 @change="addToSelected"
-                 value-key="id"
-                 v-model="selectedUser"
+      <el-select value-key="id"
+                 multiple
+                 filterable
+                 v-model="selectedUserList"
                  placeholder="Choose a user">
         <el-option v-for="user in userList" :key="user.id" :label="user.fullName" :value="user"></el-option>
       </el-select>
@@ -30,9 +22,16 @@
 <script>
 import constants from "@/util/constants";
 import userApi from "@/api/userApi";
+// import account from "@/store/account";
 
 export default {
   name: "MemberInvite",
+  props: {
+    account: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       userList: [],
@@ -43,24 +42,15 @@ export default {
     }
   },
   created() {
-    userApi.getUserByPrefix('').then(res => {
-      this.userList = res.data
-    });
+    this.fetch_all_users();
   },
   methods: {
-    removeFromSelected(user) {
-      this.selectedUserList.splice(this.selectedUserList.indexOf(user), 1);
-    },
-
-    addToSelected(user) {
-      if (this.selectedUserList.indexOf(user) === -1 && user !== '') {
-        this.selectedUserList.push(user);
-      }
-    },
-
     invite() {
       if (this.selectedUserList.length <= 0) {
       //  todo throw exception or
+      }
+      if (this.userType === '') {
+        //  todo throw exception
       }
       let memberList = [];
       this.selectedUserList.forEach(user => {
@@ -70,7 +60,22 @@ export default {
         });
       });
       this.$emit('invite', memberList);
+      this.selectedUserList = [];
+      this.userType = '';
     },
+
+    fetch_all_users() {
+      userApi.getUserByPrefix('').then(res => {
+        // let list = res.data;
+        // list.splice(list.findIndex(user => user.id === account.id), 1);
+        // this.userList = list;
+        console.log("account: ", this.account);
+        this.userList = res.data.filter(user => {
+          console.log("user id: ", user.id, ", account.id:", this.account.id);
+          return user.id !== this.account.id
+        });
+      });
+    }
   }
 }
 </script>

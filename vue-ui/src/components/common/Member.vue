@@ -24,6 +24,7 @@
 
 <script>
 import constants from "@/util/constants";
+
 export default {
   name: "Member",
   props: {
@@ -33,23 +34,24 @@ export default {
   },
   data() {
     return {
-      currentRole: null,
+      currentRole: '',
       roleList: constants.MEMBER_TYPE_LIST,
     };
   },
+
   created() {
-    this.currentRole = this.roleList.find(e => e.type === this.member.type)?.label
+    this.currentRole = this.roleList.find(e => e.type === this.member.type)?.label;
   },
+
   methods: {
     changeRole() {
-      console.log('change role. new role: ', this.currentRole)
       this.$emit('changeRole', this.member.userId, this.currentRole)
     },
     deleteMember() {
-      console.log('delete member. member user id: ', this.member.userId);
       this.$emit('deleteMember', this.member.userId)
     }
-  }
+  },
+
 }
 </script>
 
