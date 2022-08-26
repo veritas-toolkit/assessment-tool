@@ -1,4 +1,5 @@
 import request from "@/api/request";
+import Router from '@/router'
 // import Vue from "vue";
 // import axios from "axios"
 
@@ -69,7 +70,7 @@ const projectApi = {
         })
     },
     async questionnaireHistory(projectId,versionId) {
-        await this.$router.push({path:'/assessmentToolHistory',query: {projectId:projectId,versionId:versionId}})
+        await Router.push({path:'/assessmentToolHistory',query: {projectId:projectId,versionId:versionId}})
     },
 };
 

@@ -56,7 +56,7 @@ export default {
       projectApi.downloadHistoryJsonFile(projectId, versionId)
     },
     questionnaireHistory(projectId,versionId) {
-      this.$router.push({path:'/assessmentToolHistory',query: {projectId:projectId,versionId:versionId}})
+      projectApi.questionnaireHistory(projectId,versionId)
     },
     previewHistoryPdf(projectId,versionId) {
       projectApi.previewHistoryPdf(projectId,versionId).then(res => {
