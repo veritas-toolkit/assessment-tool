@@ -99,7 +99,7 @@
             </div>
           </div>
           <div class="dividingLine"></div>
-          <div class="version" v-show="reportHistoryList.length != 0">Version history</div>
+          <div class="version" v-show="reportHistoryList.length != 0">Version history old</div>
           <div class="dividingLine1" v-show="reportHistoryList.length != 0"></div>
           <!--version history-->
           <div  v-for="(item,index) in reportHistoryList" v-show="reportHistoryList.length != 0">
@@ -122,6 +122,7 @@
             </div>
             <div class="dividingLine2"></div>
           </div>
+          <project-version-history :reportHistoryList="reportHistoryList"></project-version-history>
         </el-tab-pane>
         <el-tab-pane label="Member" name="second">
           <ProjectMember v-if="projectInfo !== null" :project="projectInfo" :has_manage_members_permission="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)"></ProjectMember>
@@ -180,11 +181,13 @@
   import Vue from "vue";
   import {permissionCheck, PermissionType} from "@/util/permission";
   import ProjectMember from "@/components/projects/ProjectMember";
+  import ProjectVersionHistory from "@/components/projects/ProjectVersionHistory";
 
   export default {
     name: "ProjectPage",
     components: {
-      ProjectMember
+      ProjectMember,
+      ProjectVersionHistory
     },
     data() {
       return {
