@@ -61,7 +61,36 @@ const projectApi = {
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
     },
-    previewHistoryPdf(projectId,versionId) {
+
+    fetchSuggestionVersion(projectId) {
+        return request({
+            url:`/api/project/${projectId}/report/suggestion-version`,
+            method: 'get',
+            responseType: "json",
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        })
+    },
+
+    exportReport(projectId, exportReport) {
+        return request({
+            url:`/api/project/${projectId}/report/export2`,
+            method: 'post',
+            responseType: "json",
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            data: exportReport
+        })
+    },
+
+    fetchReportHistoryList(projectId) {
+        return request({
+            url:`/api/project/${projectId}/report/list`,
+            method: 'get',
+            responseType: "json",
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        })
+    },
+
+    fetchReportPdf(projectId, versionId) {
         return request({
             url:`/api/project/${projectId}/history/${versionId}/report`,
             method: 'get',
@@ -72,6 +101,15 @@ const projectApi = {
     async questionnaireHistory(projectId,versionId) {
         await Router.push({path:'/assessmentToolHistory',query: {projectId:projectId,versionId:versionId}})
     },
+
+    getReportList(projectId) {
+        return request({
+            url: `/api/project/${projectId}/report/list`,
+            method: 'get',
+            responseType: "json",
+        })
+    }
+
 };
 
 export default projectApi;
