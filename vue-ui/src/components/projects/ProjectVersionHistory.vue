@@ -1,9 +1,8 @@
 <template>
-  <!--version history-->
   <div>
-<div>Version history new</div>
+    <div class="module_title">Version history</div>
 
-    <div v-for="(item,index) in reportHistoryList" v-show="reportHistoryList.length != 0">
+    <div v-for="(item,index) in reportHistoryList" v-show="reportHistoryList.length > 0">
       <div class="version-box">
         <div class="oneLine">
           <div style="display:flex;font-size: 14px;margin-right: 12px;padding: 4px 20px 2px 0px;font-weight: bold">
@@ -16,12 +15,15 @@
           </div>
         </div>
         <div style="display: flex;flex-shrink: 0;">
-          <div class="model-artifacts" @click="downloadHistoryJsonFile(item.projectId,item.versionIdOfProject)"><i
-              class="el-icon-help"></i><span>Model artifacts</span></div>
-          <div class="fairness-assessment" @click="questionnaireHistory(item.projectId,item.versionIdOfProject)"><i
-              class="el-icon-notebook-1"></i><span>Fairness assessment</span></div>
-          <div class="pdf-report" @click="previewHistoryPdf(item.projectId,item.versionIdOfProject)"><i
-              class="el-icon-document-remove"></i><span>Report</span></div>
+          <div class="model-artifacts" @click="downloadHistoryJsonFile(item)">
+            <i class="el-icon-help"></i><span>Model artifacts</span>
+          </div>
+          <div class="fairness-assessment" @click="questionnaireHistory(item)">
+            <i class="el-icon-notebook-1"></i><span>Fairness assessment</span>
+          </div>
+          <div class="pdf-report" @click="previewHistoryPdf(item)">
+            <i class="el-icon-document-remove"></i><span>Report</span>
+          </div>
         </div>
       </div>
       <div class="dividingLine2"></div>
@@ -32,6 +34,7 @@
 <script>
 import projectApi from "@/api/projectApi";
 import dateFormat from "@/util/dateFormat";
+import Router from "@/router";
 
 export default {
   name: "ProjectVersionHistory",
@@ -40,33 +43,63 @@ export default {
   },
   data() {
     return {
-
     };
-    //reportHistoryList: []
-  },
-  computed: {},
-  created() {
-    //console.log('watch reportHistoryList: ', this.reportHistoryList)
   },
   methods: {
+
     dateFormat(date) {
       return dateFormat.dateFormat(date);
     },
-    downloadHistoryJsonFile(projectId, versionId) {
-      projectApi.downloadHistoryJsonFile(projectId, versionId)
+    downloadHistoryJsonFile(reportHistory) {
+      projectApi.fetchHistoryJsonInfo(reportHistory.projectId, reportHistory.versionId)
+          .then(res => {
+            return res.data;
+          })
+          .then(modelArtifact => {
+            projectApi.downloadHistoryJsonFile(reportHistory.projectId, reportHistory.versionId)
+                .then(res => {
+                  let blob = new Blob([res.data], {type: "application/octet-stream;charset=utf-8"});
+                  if (window.navigator.msSaveBlob) {
+                    try {
+                      window.navigator.msSaveBlob(blob, modelArtifact.filename)
+                    } catch (e) {
+                    }
+                  } else {
+                    let Temp = document.createElement('a')
+                    Temp.href = window.URL.createObjectURL(blob)
+                    if (modelArtifact.filename) {
+                      Temp.download = modelArtifact.filename
+                    } else {
+                      Temp.download = 'data.json'
+                    }
+                    document.body.appendChild(Temp)
+                    Temp.click()
+                    document.body.removeChild(Temp)
+                    window.URL.revokeObjectURL(Temp.href)
+                  }
+                })
+          })
+
     },
-    questionnaireHistory(projectId,versionId) {
-      projectApi.questionnaireHistory(projectId,versionId)
+    questionnaireHistory: async function (reportHistory) {
+      let reportInfo = {
+        projectId: reportHistory.projectId,
+        versionId: reportHistory.versionIdOfProject
+      };
+      await Router.push({path: '/assessmentToolHistory', query: reportInfo})
     },
-    previewHistoryPdf(projectId,versionId) {
-      projectApi.previewHistoryPdf(projectId,versionId).then(res => {
+
+    previewHistoryPdf(reportHistory) {
+      let projectId = reportHistory.projectId;
+      let versionId = reportHistory.versionIdOfProject;
+      projectApi.fetchReportPdf(projectId,versionId).then(res => {
         const binaryData = []
         binaryData.push(res.data)
         let blob = new Blob(binaryData,{type: res.data.type})
         let pdfUrl = window.URL.createObjectURL(blob)
         window.open(pdfUrl)
       }).catch(err => {
-        if (err.response.config.responseType == "blob") {
+        if (err.response.config.responseType === "blob") {
           let data = err.response.data
           let fileReader = new FileReader()
           fileReader.onload = function() {
@@ -78,13 +111,6 @@ export default {
       })
     }
   },
-  /*
-  watch: {
-    'reportHistoryList': function (val, oldval) {
-      console.log('watch reportHistoryList: ', val.toString())
-    }
-  }
-  */
 
 }
 </script>
@@ -163,5 +189,10 @@ export default {
   width: 100%;
   height: 1px;
   background-color: #E6E6E6;
+}
+.module_title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 16px 0 16px 0;
 }
 </style>

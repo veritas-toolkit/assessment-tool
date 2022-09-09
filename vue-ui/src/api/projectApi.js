@@ -45,6 +45,15 @@ const projectApi = {
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
     },
+
+    fetchHistoryJsonInfo(projectId, versionId) {
+        return request({
+            url: `/api/project/${projectId}/history/${versionId}/modelArtifact`,
+            method: 'get',
+            responseType: "json",
+            headers: {'Content-Type': 'application/json; charset=UTF-8'}
+        })
+    },
     downloadHistoryJsonFile(projectId,versionId) {
         return request({
             url: `/api/project/${projectId}/history/${versionId}/modelArtifact/download`,
