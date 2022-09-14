@@ -53,7 +53,7 @@ public class VeritasProperties {
 
     private String filePath = "file/project";
 
-    private String pythonCommand = "python3";
+    private String pythonCommand = "python";
 
     @PostConstruct
     public void init() throws Exception {
