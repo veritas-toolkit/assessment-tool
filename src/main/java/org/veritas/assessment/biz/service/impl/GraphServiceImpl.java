@@ -95,7 +95,7 @@ public class GraphServiceImpl implements GraphService {
         log.warn("stderr:\n{}", stderr);
         stopWatch.stop();
         log.info("process time: {}", stopWatch);
-        if (result != null) {
+        if (!StringUtils.isEmpty(result)) {
             return objectMapper.readValue(result,
                     new TypeReference<List<String>>() {
                     });

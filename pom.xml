@@ -461,20 +461,8 @@
             <version>${openhtml.version}</version>
         </dependency>
         <dependency>
-            <!-- Optional, leave out if you do not need MathML support. -->
-            <!-- Introduced in RC-13. -->
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-mathml-support</artifactId>
-            <version>${openhtml.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-rtl-support</artifactId>
-            <version>${openhtml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-latex-support</artifactId>
             <version>${openhtml.version}</version>
         </dependency>
         <dependency>
