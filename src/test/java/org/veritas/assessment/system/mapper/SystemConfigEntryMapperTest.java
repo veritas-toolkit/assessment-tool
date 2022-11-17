@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.system.constant.ConfigPropertyKeyEnum;
 import org.veritas.assessment.system.entity.SystemConfigEntry;
 
 import java.util.List;
@@ -38,9 +39,18 @@ class SystemConfigEntryMapperTest {
     private SystemConfigEntryMapper mapper;
 
     @Test
-    void name() {
+    void testLoadAllList_success() {
         assertNotNull(mapper);
         List<SystemConfigEntry> list = mapper.loadAllList();
         log.info("list:\n{}", list);
+    }
+
+    @Test
+    void testUpdate_success() {
+        SystemConfigEntry entry = new SystemConfigEntry();
+        entry.setKey(ConfigPropertyKeyEnum.DEFAULT_EMAIL_SUFFIX);
+        entry.setValue("@test_example.com");
+        int count = mapper.update(entry);
+        log.info("update rows count: {}", count);
     }
 }

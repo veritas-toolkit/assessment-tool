@@ -38,8 +38,12 @@ public interface ProjectReportMapper extends BaseMapper<ProjectReport> {
         }
         LambdaQueryWrapper<ProjectReport> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProjectReport::getProjectId, projectReport.getProjectId());
-        int count = selectCount(wrapper);
-        projectReport.setVersionIdOfProject(count + 1);
+        long count = selectCount(wrapper);
+        long nextVersion = count + 1;
+        if (nextVersion > Integer.MAX_VALUE) {
+            throw new RuntimeException();
+        }
+        projectReport.setVersionIdOfProject((int) nextVersion);
         return insert(projectReport);
     }
 
