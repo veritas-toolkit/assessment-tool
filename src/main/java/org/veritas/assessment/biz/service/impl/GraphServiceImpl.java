@@ -57,7 +57,6 @@ public class GraphServiceImpl implements GraphService {
         try {
             veritasProperties.getImageDirFile(modelArtifact.getProjectId());
             File image = new File(veritasProperties.getJsonDirectory(modelArtifact.getProjectId()), modelArtifact.getJsonZipPath());
-//            filePathList = callPython("file/project/1/json/1e2fc6190d50a4e8a9ab56500ebbf77827985983dd3fb92cba39888fd7bf1340.json.zip");
             filePathList = callPython(image.getAbsolutePath());
             log.info("filename list: {}", filePathList);
         } catch (Exception exception) {
