@@ -7,6 +7,7 @@ server:
 spring:
   main:
     banner-mode: off
+    allow-circular-references: true
   datasource:
     url: 'jdbc:sqlite:file/db/sqlite.db'
     driver-class-name: 'org.sqlite.JDBC'
@@ -15,7 +16,7 @@ spring:
       minimum-idle: 1
       maximum-pool-size: 1
       max-lifetime: 360000
-      default-auto-commit: false
+      auto-commit: false
   cache:
     type: jcache
     jcache:
@@ -25,7 +26,6 @@ spring:
   freemarker:
     cache: true
     charset: UTF-8
-    templateEncoding: UTF-8
     check-template-location: true
     content-type: text/html
     suffix: .ftl
@@ -36,19 +36,20 @@ spring:
     jdbc:
       initialize-schema: always
   flyway:
-    enable: true
+    enabled: true
     clean-disabled: false
   jackson:
     time-zone: GMT+8
-  resources:
-    static-locations: classpath:/static
-    cache:
-      period: 3600
   servlet:
     multipart:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
+  web:
+    resources:
+      static-locations: classpath:/static
+      cache:
+        period: 3600
 
 
 springdoc:

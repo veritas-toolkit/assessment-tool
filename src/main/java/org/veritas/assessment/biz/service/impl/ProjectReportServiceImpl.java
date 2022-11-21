@@ -304,9 +304,6 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
         builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
         builder.defaultTextDirection(PdfRendererBuilder.TextDirection.LTR);
-//        builder.useSVGDrawer(new BatikSVGDrawer());
-//        builder.useMathMLDrawer(new MathMLDrawer());
-//        builder.addDOMMutator(LaTeXDOMMutator.INSTANCE);
         builder.usePDDocument(new PDDocument(MemoryUsageSetting.setupMixed(1000000)));
 
         builder.useFont(

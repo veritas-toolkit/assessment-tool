@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
 import org.veritas.assessment.biz.dto.ExportReportDto;
+import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.SuggestionVersionDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
@@ -46,6 +47,7 @@ import org.veritas.assessment.system.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -70,6 +72,13 @@ public class ProjectReportController {
     @Autowired
     private ProjectReportService reportService;
 
+    @Operation(summary = "List all report version.")
+    @GetMapping("/list")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public List<ReportHistoryDto> list(@PathVariable("projectId") Integer projectId) {
+        List<ProjectReport> reportList = reportService.findReportHistoryList(projectId);
+        return ReportHistoryDto.copyFrom(reportList);
+    }
 
     @Operation(summary = "Preview report through projectId.")
     @GetMapping(path = "/preview", produces = MediaType.TEXT_HTML_VALUE)
@@ -153,5 +162,20 @@ public class ProjectReportController {
         return new HttpEntity<>(content, headers);
     }
 
+
+    @Operation(summary = "Export report through projectId.")
+    @PostMapping("/export2")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public ReportHistoryDto exportPdf2(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") Integer projectId,
+            @RequestBody @Valid ExportReportDto exportReportDto)
+            throws IOException {
+
+        Project project = projectService.findProjectById(projectId);
+        ProjectReport report = reportService.createReport(operator, project, exportReportDto.getVersion(),
+                exportReportDto.getMessage());
+        return ReportHistoryDto.copyFrom(report);
+    }
 
 }

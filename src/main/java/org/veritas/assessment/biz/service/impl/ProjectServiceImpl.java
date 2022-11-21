@@ -81,7 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
         log.info("create project:\n{}", project);
         Objects.requireNonNull(questionnaireTemplateId);
         int operatorId = operator.getId();
-        int created = projectMapper.numberOfProjectCreatedByUser(operatorId);
+        long created = projectMapper.numberOfProjectCreatedByUser(operatorId);
         if (created >= operator.getProjectLimited()) {
             log.warn("User [{}] has created too much projects[{}].", operator.identification(), created);
             throw new QuotaException("Your quota of project creating is " +
@@ -325,7 +325,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public int countProjectOfGroup(Integer groupId) {
+    public long countProjectOfGroup(Integer groupId) {
         return projectMapper.countProjectOfGroup(groupId);
     }
 

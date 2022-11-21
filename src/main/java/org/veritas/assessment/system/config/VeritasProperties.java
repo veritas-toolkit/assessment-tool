@@ -53,7 +53,7 @@ public class VeritasProperties {
 
     private String filePath = "file/project";
 
-    private String pythonCommand = "python";
+    private String pythonCommand;
 
     @PostConstruct
     public void init() throws Exception {
@@ -75,19 +75,54 @@ public class VeritasProperties {
     }
 
     private void pythonCommandTest() throws Exception {
-        ProcessBuilder builder = new ProcessBuilder(
-                this.pythonCommand,
-                "-V");
-        builder.redirectErrorStream(false);
-        Process process = builder.start();
-        String result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
-        log.info("stdout: {}", result);
-        String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-        log.warn("stderr: {}", stderr);
+        if (StringUtils.isEmpty(this.pythonCommand)) {
+            String defaultPython3 = this.getDefaultPython3();
+            if (StringUtils.isEmpty(defaultPython3)) {
+                log.error("python3 command is not set.");
+                throw new RuntimeException("No python3 command.");
+            } else {
+                log.info("python3 command is not set, use the default:[{}]", defaultPython3);
+                this.pythonCommand = defaultPython3;
+            }
+        } else {
+            if (!isPython3Command(this.pythonCommand)) {
+                log.error("No qualified python3 command[{}] is configured.", this.pythonCommand);
+                throw new RuntimeException(String.format("No qualified python3 command[%s] is configured.",
+                        this.pythonCommand));
+            } else {
+                log.debug("python3 command is: [{}]", this.pythonCommand);
+            }
+        }
+    }
 
-        boolean isPython3 = StringUtils.startsWith(result, "Python 3");
-        if (!isPython3) {
-            throw new RuntimeException(String.format("command '%s' is not python version 3", this.pythonCommand));
+    private String getDefaultPython3() {
+        final String PYTHON3 = "python3";
+        final String PYTHON = "python";
+        if (isPython3Command(PYTHON3)) {
+            return PYTHON3;
+        } else if(isPython3Command(PYTHON)) {
+            return PYTHON;
+        } else {
+            return null;
+        }
+    }
+
+    boolean isPython3Command(String command) {
+        if (StringUtils.isEmpty(command)) {
+            return false;
+        }
+        try {
+            ProcessBuilder builder = new ProcessBuilder( command, "-V");
+            Process process = builder.start();
+            String stdout = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+            String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
+            log.debug("command:[{}], stdout:[{}], stderr:[{}]", command, stdout, stderr);
+            log.debug("stdout: {}", stdout);
+            log.debug("stderr: {}", stderr);
+            return StringUtils.startsWith(stdout, "Python 3");
+        } catch (Exception exception) {
+            log.debug("command:[{}] failed.", command, exception);
+            return false;
         }
     }
 

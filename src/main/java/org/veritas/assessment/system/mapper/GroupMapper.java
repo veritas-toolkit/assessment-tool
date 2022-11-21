@@ -134,7 +134,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param uid user id
      * @return number of groups created by user.
      */
-    default int numberOfGroupCreatedByUser(int uid) {
+    default long numberOfGroupCreatedByUser(int uid) {
         LambdaQueryWrapper<Group> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Group::getCreatorUserId, uid);
         return selectCount(wrapper);
