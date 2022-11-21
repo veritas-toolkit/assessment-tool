@@ -41,7 +41,7 @@ public interface ModelArtifactMapper extends BaseMapper<ModelArtifact> {
         }
         LambdaQueryWrapper<ModelArtifact> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ModelArtifact::getProjectId, projectId);
-        int count = selectCount(queryWrapper);
+        long count = selectCount(queryWrapper);
         if (count <= 0) {
             return insert(modelArtifact);
         } else {

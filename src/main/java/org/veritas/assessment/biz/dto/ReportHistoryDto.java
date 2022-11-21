@@ -53,6 +53,9 @@ public class ReportHistoryDto {
         this.setMessage(report.getMessage());
     }
 
+    public static ReportHistoryDto copyFrom(ProjectReport report) {
+        return new ReportHistoryDto(report);
+    }
     public static List<ReportHistoryDto> copyFrom(List<ProjectReport> reportList) {
         if (reportList == null || reportList.isEmpty()) {
             return Collections.emptyList();

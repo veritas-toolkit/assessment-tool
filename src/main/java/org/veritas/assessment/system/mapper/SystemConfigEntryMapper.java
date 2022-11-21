@@ -48,6 +48,7 @@ public interface SystemConfigEntryMapper extends BaseMapper<SystemConfigEntry> {
     default List<SystemConfigEntry> loadAllList() {
         LambdaQueryWrapper<SystemConfigEntry> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(SystemConfigEntry::getKey);
-        return selectList(null);
+        System.out.printf("count %d \n", selectCount(null));
+        return selectList(wrapper);
     }
 }

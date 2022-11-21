@@ -77,7 +77,7 @@ public interface ProjectService {
 
     Pageable<Project> findProjectPageableOfGroup(Integer groupId, String prefix, String keyword, int page, int pageSize);
 
-    int countProjectOfGroup(Integer groupId);
+    long countProjectOfGroup(Integer groupId);
 
     void updateModelArtifact(User operator, Integer projectId, ModelArtifact modelArtifact);
 

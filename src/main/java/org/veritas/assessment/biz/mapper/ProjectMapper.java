@@ -105,13 +105,13 @@ public interface ProjectMapper extends BaseMapper<Project> {
      * @param uid user id
      * @return number of projects created by user.
      */
-    default int numberOfProjectCreatedByUser(int uid) {
+    default long numberOfProjectCreatedByUser(int uid) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getCreatorUserId, uid);
         return selectCount(wrapper);
     }
 
-    default int countByGroupOwner(int groupId) {
+    default long countByGroupOwner(int groupId) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getGroupOwnerId, groupId);
         return selectCount(wrapper);
@@ -188,7 +188,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return Pageable.convert(page1);
     }
 
-    default int countProjectOfGroup(Integer groupId) {
+    default long countProjectOfGroup(Integer groupId) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getGroupOwnerId, groupId);
         return selectCount(wrapper);

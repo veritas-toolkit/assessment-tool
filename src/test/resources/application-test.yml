@@ -5,7 +5,7 @@ spring:
     jdbc:
       initialize-schema: always
   flyway:
-    enable: true
+    enabled: true
     clean-disabled: true
 
 veritas:

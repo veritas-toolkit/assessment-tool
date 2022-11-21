@@ -66,7 +66,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group createGroup(User operator, Group group) {
         int operatorId = operator.getId();
-        int created = groupMapper.numberOfGroupCreatedByUser(operatorId);
+        long created = groupMapper.numberOfGroupCreatedByUser(operatorId);
         if (created >= operator.getGroupLimited()) {
             throw new QuotaException("Your quota of creating group is " +
                     operator.getGroupLimited() +
@@ -94,7 +94,7 @@ public class GroupServiceImpl implements GroupService {
             return;
         }
         if (!force) {
-            int projectCount = projectService.countProjectOfGroup(groupId);
+            long projectCount = projectService.countProjectOfGroup(groupId);
             if (projectCount > 0) {
                 throw new ErrorParamException("The group has projects. You'd better not delete it." +
                         "Or use force delete, it will cause all projects of group to be deleted.");

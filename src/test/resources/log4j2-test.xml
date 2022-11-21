@@ -58,5 +58,6 @@
         <LOGGER name="org.springframework" level="error"/>
         <LOGGER name="org.mybatis" level="info"/>
         <LOGGER name="org.apache.ibatis" level="info"/>
+        <LOGGER name="org.flywaydb" level="trace"/>
     </Loggers>
 </Configuration>
