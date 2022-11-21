@@ -82,7 +82,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1
             ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1.0
-            ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1.0.5
+            ${{ secrets.DOCKERHUB_USERNAME }}/veritas-assessment-tool:v1.0.6
 
 
       - name: Move cache

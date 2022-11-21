@@ -19,12 +19,9 @@ package org.veritas.assessment.biz.service.impl;
 import com.openhtmltopdf.bidi.support.ICUBidiReorderer;
 import com.openhtmltopdf.bidi.support.ICUBidiSplitter;
 import com.openhtmltopdf.extend.FSSupplier;
-import com.openhtmltopdf.latexsupport.LaTeXDOMMutator;
-import com.openhtmltopdf.mathmlsupport.MathMLDrawer;
 import com.openhtmltopdf.pdfboxout.PdfBoxRenderer;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.slf4j.Slf4jLogger;
-import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import com.openhtmltopdf.swing.NaiveUserAgent;
 import com.openhtmltopdf.util.XRLog;
 import freemarker.template.Configuration;
@@ -307,9 +304,9 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
         builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
         builder.defaultTextDirection(PdfRendererBuilder.TextDirection.LTR);
-        builder.useSVGDrawer(new BatikSVGDrawer());
-        builder.useMathMLDrawer(new MathMLDrawer());
-        builder.addDOMMutator(LaTeXDOMMutator.INSTANCE);
+//        builder.useSVGDrawer(new BatikSVGDrawer());
+//        builder.useMathMLDrawer(new MathMLDrawer());
+//        builder.addDOMMutator(LaTeXDOMMutator.INSTANCE);
         builder.usePDDocument(new PDDocument(MemoryUsageSetting.setupMixed(1000000)));
 
         builder.useFont(
