@@ -15,10 +15,14 @@
         <!--login form-->
         <el-form :rules="loginFormRules" ref="loginFormRefs" label-position="top" label="450px" :model="loginForm">
           <el-form-item class="login BarlowMedium" label="Username or email" prop="username">
-            <el-input v-model="loginForm.username" prefix-icon="el-icon-s-custom"></el-input>
+            <el-input v-model="loginForm.username" prefix-icon="el-icon-s-custom"
+                      @keyup.enter.native="signIn">
+            </el-input>
           </el-form-item>
           <el-form-item class="login BarlowMedium" label="Password" prop="password">
-            <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-s-cooperation"></el-input>
+            <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-s-cooperation"
+                      @keyup.enter.native="signIn">
+            </el-input>
           </el-form-item>
         </el-form>
         <!--checkbox&forget password-->

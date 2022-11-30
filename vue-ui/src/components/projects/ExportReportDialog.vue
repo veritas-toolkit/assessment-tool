@@ -1,0 +1,95 @@
+<template>
+  <el-dialog :close-on-click-modal="false"
+             class="BarlowMedium"
+             :visible.sync="dialogVisible"
+             @close="close()"
+             width="548px"
+             append-to-body>
+    <div v-if="latestVersion" style="margin-top: 4px">Latest Version:
+      <span>{{ latestVersion }}</span>
+    </div>
+    <el-form :rules="exportPdfFormRules" ref="exportPdfFormRefs" label-position="top" label="450px"
+             :model="exportPdfForm">
+      <el-form-item class="login" label="Report version" prop="version">
+        <el-select v-model="exportPdfForm.version" filterable allow-create default-first-option
+                   placeholder="Please choose or input a report version">
+          <el-option
+              v-for="item in suggestVersionList"
+              :key="item"
+              :label="item"
+              :value="item">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item class="login" label="Report message" prop="message">
+        <el-input placeholder="Please input a report message" v-model="exportPdfForm.message"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button class="BlackBorder" @click="close()">Cancel</el-button>
+        <el-button class="GreenBC" @click="exportPdf">Export</el-button>
+      </span>
+  </el-dialog>
+</template>
+
+<script>
+import projectApi from "@/api/projectApi";
+
+export default {
+  name: "ExportReportDialog",
+  props: {
+    projectId: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      dialogVisible: false,
+      latestVersion: '',
+      suggestVersionList: [],
+      exportPdfFormRules: {
+        version: [{required: true, trigger: 'blur'},],
+        message: [{required: true, trigger: 'blur'},],
+      },
+      exportPdfForm: {
+        version: null,
+        message: '',
+      },
+    }
+  },
+
+  methods: {
+    close() {
+      this.dialogVisible = false;
+    },
+    open() {
+      this.dialogVisible = true;
+      this.fetchSuggestionVersionList();
+    },
+    fetchSuggestionVersionList() {
+      projectApi.fetchSuggestionVersion(this.projectId)
+          .then(res => {
+            const {latestVersion, suggestionVersionList} = res.data;
+            this.latestVersion = latestVersion;
+            this.suggestVersionList = suggestionVersionList;
+          });
+    },
+    exportPdf() {
+      projectApi.exportReport(this.projectId, this.exportPdfForm)
+          .then(res => {
+            let createdReport = res.data;
+            this.$emit('exported', createdReport);
+          }).then(() => {
+            this.exportPdfForm.version = null;
+            this.exportPdfForm.message = '';
+            this.close();
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

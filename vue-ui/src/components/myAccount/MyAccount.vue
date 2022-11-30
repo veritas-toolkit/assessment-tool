@@ -42,7 +42,8 @@
           <el-input type="password" placeholder="Please input new password" v-model="passwordForm.newPassword"></el-input>
         </el-form-item>
         <el-form-item class="login" label="Password confirmation" prop="passwordConfirm">
-          <el-input type="password" placeholder="Please input new password again" v-model="passwordForm.passwordConfirm"></el-input>
+          <el-input type="password" placeholder="Please input new password again" v-model="passwordForm.passwordConfirm"
+                    @keyup.enter.native="changePassword"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
