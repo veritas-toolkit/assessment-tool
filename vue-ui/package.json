@@ -14,7 +14,7 @@
     "less": "^3.13.1",
     "less-loader": "^5.0.0",
     "loader": "^2.1.1",
-    "tinymce": "^5.10.5",
+    "tinymce": "^5.10.7",
     "vue": "^2.7.7",
     "vue-cookies": "^1.8.1",
     "vue-router": "^3.5.4",
