@@ -142,3 +142,31 @@ html, body, #app {
 .el-notification {
     box-shadow:  0 2px 12px 0 rgba(0, 0, 0, 0.2);
 }
+.el-steps--simple {
+    width: 100px;
+    margin: auto;
+    padding: 0;
+    border-radius: 4px;
+    background: #FFFFFF;
+}
+.el-step.is-simple .el-step__icon {
+    width: 10px;
+    height: 10px;
+    font-size: 10px;
+}
+.el-step__head.is-finish {
+    color: #78BED3;
+    border-color: #78BED3;
+}
+.el-step.is-simple .el-step__arrow::after, .el-step.is-simple .el-step__arrow::before {
+    content: none;
+    display: inline-block;
+    position: absolute;
+    height: 15px;
+    width: 1px;
+    background: #C0C4CC;
+}
+.GreyBC {
+    background-color: #F5F7F9 !important;
+    border: 0px;
+}
