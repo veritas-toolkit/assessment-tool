@@ -1,4 +1,4 @@
-FROM centos:7 AS build
+docker/Dockerfile FROM centos:7 AS build
 
 ENV GOSU_VERSION=1.14
 RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
@@ -37,7 +37,7 @@ FROM centos:7
 ENV LANG='en_US.UTF-8' \
     LANGUAGE='en_US:en' \
     LC_ALL='en_US.UTF-8' \
-    PYTHON_VERSION=3.8.13
+    PYTHON_VERSION=3.8.15
 
 RUN groupadd -g 1000 veritas &&\
     useradd -d /home/veritas -u 1000 -g veritas -G root veritas &&\
