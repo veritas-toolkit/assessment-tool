@@ -35,10 +35,22 @@
             </el-menu-item>
           </el-menu>
         </div>
-        <div class="leftBottom BarlowBold">
-          <img src="../assets/groupPic/info.png" class="menuIcon">
-          <span>{{accountInfo.fullName}}</span>
-        </div>
+        <el-popover
+            placement="top"
+            width="400"
+            trigger="click">
+          <div class="popover-title">
+            <div class="not-style">Notification</div>
+            <div class="mark-style">Mark all as read</div>
+          </div>
+          <div class="divide-line"></div>
+          <div class="leftBottom BarlowBold" slot="reference">
+            <img src="../assets/projectPic/notification.png" class="menuIcon">
+            <div>Notifications</div>
+          </div>
+
+        </el-popover>
+
       </el-aside>
       <!--main area-->
       <el-main>
@@ -65,7 +77,6 @@
       </span>
     </el-dialog>
     <el-button type="primary" @click="userWizardShow=true">主要按钮</el-button>
-    <el-button type="danger" @click="userWizardShow=false">危险按钮</el-button>
     <!--user wizardPic-->
     <el-dialog
         id="wizard"
@@ -222,11 +233,12 @@ export default {
     height: 60px;
   }
   .leftBottom {
+    border: 1px solid red;
     display: flex;
     align-items: center;
     margin-left: 20px;
-    margin-bottom: 24px;
-    > span {
+    margin-bottom: 10px;
+    > div {
       font-size: 16px;
       font-weight: 600;
       color: #333333;
@@ -262,5 +274,26 @@ export default {
   }
   .el-steps {
     margin-top: 20px;
+  }
+  .popover-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .not-style {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: BarlowBold;
+  }
+  .mark-style {
+    font-size: 14px;
+    font-family: BarlowMedium;
+    color: #175EC2;
+  }
+  .divide-line {
+    height: 1px;
+    width: calc(100% + 24px);
+    background-color: #CED3D9;
+    margin-left: -12px;
   }
 </style>
