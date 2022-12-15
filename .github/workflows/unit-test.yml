@@ -27,6 +27,11 @@ jobs:
           java-version: '8'
           cache: 'maven'
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.16'
+
       - name: Setup python env
         run: sh bin/install.sh && source py/venv/bin/activate
 
