@@ -34,13 +34,16 @@ jobs:
           distribution: 'adopt'
           cache: 'maven'
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.15'
+
       - name: Setup python env
-        run: sh bin/install.sh && source py/venv/bin/activate
+        run: bash bin/install.sh && source py/venv/bin/activate
 
       - name: Build with Maven
-        run: ./mvnw -B clean package -ntp && sh bin/release.sh
-#        run: ./mvnw -B clean package -Dmaven.test.skip=true -ntp && sh bin/release.sh
-#        run: ./mvnw -v
+        run: source py/venv/bin/activate && ./mvnw -B clean test package -ntp && bash bin/release.sh
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
