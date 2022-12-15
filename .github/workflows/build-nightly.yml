@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
@@ -34,6 +34,8 @@ jobs:
           distribution: 'adopt'
           cache: 'maven'
 
+      - name: Setup python env
+        run: sh bin/install.sh && source py/venv/bin/activate
 
       - name: Build with Maven
         run: ./mvnw -B clean package -ntp && sh bin/release.sh
@@ -41,10 +43,10 @@ jobs:
 #        run: ./mvnw -v
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Cache Docker layers
         uses: actions/cache@v2
