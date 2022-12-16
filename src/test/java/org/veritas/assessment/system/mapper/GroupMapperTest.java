@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+@DirtiesContext(classMode= DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class GroupMapperTest {
     @Autowired
     private GroupMapper groupMapper;
