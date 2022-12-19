@@ -170,3 +170,6 @@ html, body, #app {
     background-color: #F5F7F9 !important;
     border: 0px;
 }
+.el-autocomplete {
+    width: 100%;
+}
