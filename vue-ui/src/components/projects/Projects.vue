@@ -15,7 +15,7 @@
     <div style="margin-top: 10px">
       <el-tabs class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="All" name="first">
-          <el-row :gutter="20" style="margin-top: 6px">
+          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
             <el-col v-for="(item,index) in projectList" :span="6">
               <el-card class="box-card" @click.native="projectPage(item)">
                 <div slot="header" class="boxCardHeader">
@@ -24,19 +24,21 @@
                   <div class="projName oneLine BarlowBold">{{item.name}}</div>
                   <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
-                <div class="progress-text">6/50</div>
-                <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
-<!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
-<!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
-<!--                </el-tooltip>-->
-                <!--<div class="progressLabel">6/18</div>
-                <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                <div style="padding: 20px">
+                  <div class="progress-text">6/50</div>
+                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                  <!--                </el-tooltip>-->
+                  <!--<div class="progressLabel">6/18</div>
+                  <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                </div>
               </el-card>
             </el-col>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Created by me" name="second">
-          <el-row :gutter="20" style="margin-top: 6px">
+          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
             <el-col v-for="(item,index) in myProjectList" :span="6">
               <el-card class="box-card" @click.native="projectPage(item)">
                 <div slot="header" class="boxCardHeader">
@@ -45,13 +47,15 @@
                   <div class="projName oneLine BarlowBold">{{item.name}}</div>
                   <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
-                <div class="progress-text">6/50</div>
-                <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
-<!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
-<!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
-<!--                </el-tooltip>-->
-                <!--<div class="progressLabel">13/18</div>
-                <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                <div style="padding: 20px">
+                  <div class="progress-text">6/50</div>
+                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                  <!--                </el-tooltip>-->
+                  <!--<div class="progressLabel">13/18</div>
+                  <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                </div>
               </el-card>
             </el-col>
           </el-row>
@@ -126,20 +130,29 @@
 <!--              <span class="addr">{{ item.address }}</span>-->
             </template>
           </el-autocomplete>
-          <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
-            <el-form-item class="BarlowMedium" label="Project name" prop="name">
-              <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Project description" prop="description">
-              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
-            </el-form-item>
+          <el-form :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
             <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-              <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
+              <el-select v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
                 <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="assessPrinciple">
+              <div style="display: flex">
+                <div class="generic">Generic</div>
+                <div>Fairness</div>
+                <div>Ethics & Accountability</div>
+                <div>Transparency</div>
+              </div>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project name" prop="name">
+              <el-input placeholder="Please input a project name" v-model="existingProjectForm.name"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project description" prop="description">
+              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="existingProjectForm.description"></el-input>
+            </el-form-item>
+
             <el-form-item class="BarlowMedium" label="Owner" prop="ownerType">
-              <el-select v-model="projectForm.ownerType" placeholder="Please choose a owner">
+              <el-select v-model="existingProjectForm.ownerType" placeholder="Please choose a owner">
                 <el-option-group
                     v-for="group in ownerTypeList"
                     :key="group.label"
@@ -181,11 +194,25 @@
           ownerType: '',
           questionnaireTemplateId: '',
         },
+        existingProjectForm: {
+          businessScenario: '',
+          assessPrinciple: '',
+          name: '',
+          description: '',
+          ownerType: '',
+        },
         projectFormRules: {
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           businessScenario: [{ required: true, trigger: 'blur' },],
           questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
+        },
+        existingProjectFormRules: {
+          businessScenario: [{ required: true, trigger: 'blur' },],
+          assessPrinciple: [{ required: true, trigger: 'blur' },],
+          name: [{ required: true, trigger: 'blur' },],
+          description: [{ required: true, trigger: 'blur' },],
           ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
         },
         groupList: [],
@@ -474,5 +501,13 @@
     height: 32px;
     margin-top: 4px !important;
     padding: 0 !important;
+  }
+  .generic {
+    background: #78BED3;
+    font-size: 16px;
+    line-height: 16px !important;
+    border-radius: 20px;
+    opacity: 0.65;
+    padding: 0px 12px;
   }
 </style>
