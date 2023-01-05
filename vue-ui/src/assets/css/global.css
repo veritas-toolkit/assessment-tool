@@ -185,3 +185,18 @@ html, body, #app {
 .el-card__body {
     padding: 0;
 }
+.principle-group .el-radio-button__inner {
+    padding: 7px 12px !important;
+    background-color: #EDF2F6;
+}
+.principle-group .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    background: #78BED3;
+    border-color: #78BED3;
+}
+.principle-group.el-radio-group {
+    background-color: #EDF2F6;
+}
+.el-footer {
+    border-top: 1px solid #D7D9DB;
+    padding: 0;
+}
