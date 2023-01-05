@@ -57,8 +57,8 @@ springdoc:
 #    enabled: false
     path: '/api-docs'
   swagger-ui:
-#    enabled: false
-#    path: '/swagger-ui-custom.html'
+    enabled: false
+    path: '/swagger-ui-custom.html'
 
 mybatis:
   configuration:
@@ -72,7 +72,7 @@ mybatis-plus:
     db-config:
       logic-delete-value: 1
       logic-not-delete-value: 0
-      table-prefix: vat_
+      table-prefix: vat2_
 
 management:
   endpoints:
