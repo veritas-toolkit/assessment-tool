@@ -72,7 +72,7 @@
                       :auto-upload="true">
                     <div class="upload-div">
                       <div>
-                        <img class="upload-icon" src="../../assets/projectPic/upload_new.png" alt="">
+                        <img class="upload-icon" src="../../assets/projectPic/upload.svg" alt="">
                       </div>
                       <div>
                         <div id="click-text">Click or drag and drop the file here to upload.</div>
@@ -83,15 +83,16 @@
                 </div>
                 <div class="file-info" v-if="jsonInfoVisible">
                   <div style="display: flex">
-                    <img style="width: 40px;height: 40px;margin: 0px 16px" src="../../assets/projectPic/upload_new.png" alt="">
+                    <img style="width: 40px;height: 40px;margin: 0px 16px" src="../../assets/projectPic/medium.svg" alt="">
                     <div>
                       <div id="click-text">{{ jsonInfo.filename }}</div>
                       <div id="json-text">{{ dateFormat(jsonInfo.uploadTime) }}</div>
                     </div>
                   </div>
-                  <div style="margin-right: 16px">
-                    <el-button size="mini" icon="el-icon-download" circle plain style="margin-left: 10px"
-                               @click="downloadJsonFile"></el-button>
+                  <div style="margin-right: 16px;cursor: pointer">
+                    <img src="../../assets/projectPic/download.svg" alt="" @click="downloadJsonFile">
+<!--                    <el-button size="mini" icon="el-icon-download" circle plain style="margin-left: 10px"-->
+<!--                               ></el-button>-->
                   </div>
                 </div>
               </div>
@@ -500,7 +501,7 @@ export default {
       })
     },
     questionnaire() {
-      this.$router.push({path: '/assessmentTool', query: {id: this.projectId}})
+      this.$router.push({path: '/questionnaire', query: {id: this.projectId}})
     },
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})

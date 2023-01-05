@@ -18,7 +18,7 @@
             <img src="../../assets/projectPic/modelArtifacts.png" alt=""><span>Model artifacts</span>
           </div>
           <div class="fairness-assessment" @click="questionnaireHistory(item)">
-            <img src="../../assets/projectPic/questionnaire.png" alt=""><span>Fairness assessment</span>
+            <img src="../../assets/projectPic/questionnaire.png" alt=""><span>Questionnaire</span>
           </div>
           <div class="pdf-report" @click="previewHistoryPdf(item)">
             <img src="../../assets/projectPic/report.png" alt=""><span>Report</span>
