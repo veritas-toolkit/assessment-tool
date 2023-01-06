@@ -75,12 +75,14 @@ class ProjectMapperTest {
         project.setName("name_" + i);
         project.setDescription("description_" + i);
         project.setCreatorUserId(2);
-        project.setBusinessScenario(5);
+        project.setBusinessScenario(4);
         project.setLastEditedTime(new Date());
+        project.setPrincipleFairness(true);
+
         int result = projectMapper.addProject(project);
         assertEquals(1, result);
 //        projectMapper.addProject(project);
-        log.info("table: {}", jdbcTemplate.queryForList("select * from vat_project"));
+        log.info("table: {}", jdbcTemplate.queryForList("select * from vat2_project"));
     }
 
     @Test

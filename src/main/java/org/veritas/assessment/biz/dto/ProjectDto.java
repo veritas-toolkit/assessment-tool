@@ -20,15 +20,56 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.entity.Project;
-import org.veritas.assessment.system.entity.Group;
+
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class ProjectDto extends Project {
-    private UserSimpleDto userOwner;
-    private Group groupOwner;
+public class ProjectDto {
+    private Integer id;
 
-    public ProjectDto(Project project) {
+    private String name;
+
+    private String description;
+
+    private Integer userOwnerId;
+
+    private Integer groupOwnerId;
+
+    private Integer businessScenario;
+
+    private Boolean principleGeneric;
+
+    private Boolean principleFairness;
+
+    private Boolean principleEA;
+
+    private Boolean principleTransparency;
+
+    private Integer currentModelArtifactVid;
+
+    private Integer currentQuestionnaireVid;
+
+    private Integer creatorUserId;
+
+    private Date createdTime;
+
+    private Date lastEditedTime;
+
+    private boolean archived;
+
+
+    private UserSimpleDto userOwner;
+
+    private GroupDto groupOwner;
+
+    public ProjectDto(Project project, UserSimpleDto userOwner) {
         BeanUtils.copyProperties(project, this);
+        this.userOwner = userOwner;
+    }
+
+    public ProjectDto(Project project, GroupDto groupOwner) {
+        BeanUtils.copyProperties(project, this);
+        this.groupOwner = groupOwner;
     }
 }

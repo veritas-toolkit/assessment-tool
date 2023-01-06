@@ -46,6 +46,22 @@ public class Project {
 
     private Integer businessScenario;
 
+    @TableField(value = "principle_g")
+    private boolean principleGeneric = DEFAULT_PRINCIPLE_GENERIC;
+
+    @TableField(value = "principle_f")
+    private boolean principleFairness;
+
+    @TableField(value = "principle_ea")
+    private boolean principleEA;
+
+    @TableField(value = "principle_t")
+    private boolean principleTransparency;
+
+    private Integer currentModelArtifactVid;
+
+    private Integer currentQuestionnaireVid;
+
     private Integer creatorUserId;
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
@@ -53,6 +69,8 @@ public class Project {
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date lastEditedTime;
+
+    private boolean archived = DEFAULT_ARCHIVED;
 
     /**
      * logic delete field flag.
@@ -67,6 +85,10 @@ public class Project {
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     @JsonIgnore
     private Date deleteTime = null;
+
+    private static final boolean DEFAULT_PRINCIPLE_GENERIC = true;
+
+    private static final boolean DEFAULT_ARCHIVED = false;
 
     @JsonIgnore
     public boolean isPersonProject() {

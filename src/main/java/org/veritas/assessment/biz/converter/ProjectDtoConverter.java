@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.veritas.assessment.biz.dto.GroupDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.Project;
@@ -41,13 +42,16 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
     @Override
     public ProjectDto convertFrom(Project project) {
         Objects.requireNonNull(project, "The arg[project] cannot be null.");
-        ProjectDto projectDto = new ProjectDto(project);
+        ProjectDto projectDto;
         if (project.isPersonProject()) {
             User user = userService.findUserById(project.getUserOwnerId());
-            projectDto.setUserOwner(new UserSimpleDto(user));
+            UserSimpleDto userSimpleDto = new UserSimpleDto(user);
+            projectDto = new ProjectDto(project, userSimpleDto);
+
         } else if (project.isGroupProject()) {
             Group group = groupService.findGroupById(project.getGroupOwnerId());
-            projectDto.setGroupOwner(group);
+            GroupDto groupDto = new GroupDto(group);
+            projectDto = new ProjectDto(project, groupDto);
         } else {
             throw new IllegalArgumentException("Illegal [project] object: " + project);
         }

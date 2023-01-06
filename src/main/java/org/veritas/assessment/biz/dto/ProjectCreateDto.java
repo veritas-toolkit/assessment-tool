@@ -16,6 +16,7 @@
 
 package org.veritas.assessment.biz.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.entity.Project;
@@ -26,17 +27,39 @@ import java.util.Date;
 
 @Data
 public class ProjectCreateDto implements BasicDtoInterface<Project> {
+
+    @Schema(description = "Name of the project.", required = true)
     private String name;
 
+    @Schema(description = "Description of the project.", required = true)
     private String description;
 
+    @Schema(description = "The owner's user id, if the project belongs to a user.")
     private Integer userOwnerId;
 
+    @Schema(description = "The owner's group id, if the project belongs to a group.")
     private Integer groupOwnerId;
 
+    @Schema(description = "Business scenario of the project.", required = true)
     private Integer businessScenario;
 
+    @Schema(description = "Created questionnaire from questionnaire template.")
     private Integer questionnaireTemplateId;
+
+    @Schema(description = "Copy questionnaire from the other project.")
+    private Integer copyFromProjectId;
+
+    @Schema(description = "Assess generic principle.", required = true)
+    private Boolean principleGeneric;
+
+    @Schema(description = "Assess generic principle.", required = true)
+    private Boolean principleFairness;
+
+    @Schema(description = "Assess generic principle.", required = true)
+    private Boolean principleEA;
+
+    @Schema(description = "Assess generic principle.", required = true)
+    private Boolean principleTransparency;
 
     public Project toEntity(Integer creator) {
         if (StringUtils.isEmpty(name)) {
@@ -57,6 +80,11 @@ public class ProjectCreateDto implements BasicDtoInterface<Project> {
         project.setCreatorUserId(creator);
         project.setUserOwnerId(userOwnerId);
         project.setGroupOwnerId(groupOwnerId);
+        project.setPrincipleGeneric(this.principleGeneric);
+        project.setPrincipleFairness(this.principleFairness);
+        project.setPrincipleEA(this.principleEA);
+        project.setPrincipleTransparency(this.principleTransparency);
+        project.setArchived(false);
         Date now = new Date();
         project.setCreatedTime(now);
         project.setLastEditedTime(now);
