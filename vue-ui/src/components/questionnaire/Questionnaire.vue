@@ -21,10 +21,10 @@
         </div>
       </el-header>
       <el-main>
-        Main
+        <QuestionnaireMenu style="width: 400px"></QuestionnaireMenu>
       </el-main>
       <el-footer style="height: 64px">
-        <div style="display: flex">
+        <div style="display: flex;width: 100%">
           <div class="notification-collapse">
             <div class="not-box">
               <img src="../../assets/projectPic/notification.png" alt="">
@@ -55,8 +55,12 @@
 </template>
 
 <script>
+import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 export default {
   name: "Questionnaire",
+  components: {
+    QuestionnaireMenu
+  },
   data() {
     return {
       principle: '',
@@ -150,7 +154,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: calc(100% - 400px);
 }
 .footer-text {
   padding: 8px 12px;
