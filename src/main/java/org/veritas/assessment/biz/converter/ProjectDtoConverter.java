@@ -39,6 +39,9 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
     @Autowired
     private GroupService groupService;
 
+    @Autowired
+    private GroupDtoConverter groupDtoConverter;
+
     @Override
     public ProjectDto convertFrom(Project project) {
         Objects.requireNonNull(project, "The arg[project] cannot be null.");
@@ -50,7 +53,7 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
 
         } else if (project.isGroupProject()) {
             Group group = groupService.findGroupById(project.getGroupOwnerId());
-            GroupDto groupDto = new GroupDto(group);
+            GroupDto groupDto = groupDtoConverter.convertFrom(group);
             projectDto = new ProjectDto(project, groupDto);
         } else {
             throw new IllegalArgumentException("Illegal [project] object: " + project);
