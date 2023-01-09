@@ -2,7 +2,6 @@
 create table vat2_questionnaire_version (
     vid integer primary key autoincrement, -- version id
     project_id integer,
-    template_id integer,
     model_artifact_vid integer,
     creator_user_id integer not null,
     created_time varchar(100) not null,
@@ -47,11 +46,26 @@ create table vat2_question_version (
 );
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-create table vat_questionnaire_template (
+create table vat2_questionnaire_template (
     id integer primary key,
     name varchar(2000) not null,
     description varchar(2000) not null,
     type number(1) not null,                -- 1-system, 2-user defined
-    created_time varchar(100) not null,
-    current_questionnaire_vid not null
-)
+    creator_user_id number not null,
+    created_time varchar(100) not null
+);
+
+create table vat2_template_question (
+    id integer primary key autoincrement,
+    template_id integer not null,
+    main_question_id integer not null,
+    principle varchar(10) not null,
+    serial_no integer not null,
+    sub_serial_no integer not null,
+    content varchar(2000) not null,
+    hint varchar(255),
+    editable number(1) not null,
+    editor_user_id integer not null,
+    edit_time varchar(100) not null,
+    answer_required number(1) not null default 0
+);
