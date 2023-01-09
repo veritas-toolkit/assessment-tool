@@ -20,8 +20,9 @@
           <div id="export">Export</div>
         </div>
       </el-header>
-      <el-main>
+      <el-main style="display: flex;">
         <QuestionnaireMenu style="width: 400px"></QuestionnaireMenu>
+        <QuestionnaireAnswer style="width: calc(100% - 400px)"></QuestionnaireAnswer>
       </el-main>
       <el-footer style="height: 64px">
         <div style="display: flex;width: 100%">
@@ -56,10 +57,13 @@
 
 <script>
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
+import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
+
 export default {
   name: "Questionnaire",
   components: {
-    QuestionnaireMenu
+    QuestionnaireMenu,
+    QuestionnaireAnswer
   },
   data() {
     return {
@@ -71,7 +75,7 @@ export default {
 
 <style scoped lang="less">
 .el-header {
-  height: 64px;
+  height: 162px;
   display: flex;
   justify-content: space-between;
   align-items: center;
