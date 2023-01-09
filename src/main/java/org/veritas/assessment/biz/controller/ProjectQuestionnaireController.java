@@ -72,7 +72,7 @@ public class ProjectQuestionnaireController {
     ) {
         ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
         if (questionnaire == null) {
-            throw new NotFoundException("Not found the project's questionnaire. Please check the project's scenario.");
+            throw new NotFoundException("Not found the project's questionnaire. Please check the project's id.");
         }
         if (onlyWithFirstAnswer) {
             final String NO_CONTENT = " ";
