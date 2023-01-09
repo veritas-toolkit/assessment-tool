@@ -200,3 +200,19 @@ html, body, #app {
     border-top: 1px solid #D7D9DB;
     padding: 0;
 }
+.el-collapse-item__header {
+    border-bottom: none;
+    border-radius: 8px;
+    padding: 0px 12px;
+}
+.el-collapse-item__header.is-active {
+    border-bottom: none;
+    border-radius: 8px 8px 0px 0px;
+    padding: 0px 12px;
+}
+.el-collapse-item__content {
+    padding-bottom: 10px;
+}
+.el-collapse-item__wrap {
+    border-radius: 0px 0px 8px 8px;
+}
