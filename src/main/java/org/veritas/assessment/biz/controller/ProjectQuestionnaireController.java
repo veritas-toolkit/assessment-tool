@@ -35,7 +35,7 @@ import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.QuestionnaireForProjectDto;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
@@ -92,7 +92,7 @@ public class ProjectQuestionnaireController {
                 }
             }
         }
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
                 questionnaireService.findCommentReadLog(operator.getId(), projectId);
         Map<Integer, List<QuestionCommentDto>> map =
@@ -132,10 +132,10 @@ public class ProjectQuestionnaireController {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @RequestBody QuestionCommentCreateDto dto) {
-        ProjectQuestionComment comment = dto.toEntity(operator.getId(), projectId);
+        QuestionComment comment = dto.toEntity(operator.getId(), projectId);
         questionnaireService.addComment(comment);
 
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByQuestionId(comment.getQuestionId());
+        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(comment.getQuestionId());
         return commentDtoConverter.convertFrom(list);
 
     }
@@ -146,7 +146,7 @@ public class ProjectQuestionnaireController {
     public Map<Integer, List<QuestionCommentDto>> findCommentListByProject(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId) {
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
                 questionnaireService.findCommentReadLog(operator.getId(), projectId);
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
@@ -160,8 +160,8 @@ public class ProjectQuestionnaireController {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId) {
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByQuestionId(questionId);
-        for (ProjectQuestionComment comment : list) {
+        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(questionId);
+        for (QuestionComment comment : list) {
             if (!Objects.equals(projectId, comment.getProjectId())) {
                 throw new ErrorParamException(String.format(
                         "The question[%d] does not belong to the project[%d]", questionId, projectId));
@@ -169,7 +169,7 @@ public class ProjectQuestionnaireController {
         }
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
                 questionnaireService.findCommentReadLog(operator.getId(), projectId);
-        Optional<Integer> optional = list.stream().map(ProjectQuestionComment::getId).max(Integer::compareTo);
+        Optional<Integer> optional = list.stream().map(QuestionComment::getId).max(Integer::compareTo);
         if (optional.isPresent()) {
             Integer commentId = optional.get();
             questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);

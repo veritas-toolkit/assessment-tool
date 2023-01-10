@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
@@ -29,14 +29,14 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto, ProjectQuestionComment> {
+public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto, QuestionComment> {
     @Autowired
     @Lazy
     private UserService userService;
 
 
     @Override
-    public QuestionCommentDto convertFrom(ProjectQuestionComment comment) {
+    public QuestionCommentDto convertFrom(QuestionComment comment) {
         Objects.requireNonNull(comment, "The arg[comment] cannot be null.");
         QuestionCommentDto dto = new QuestionCommentDto();
         dto.setId(comment.getId());

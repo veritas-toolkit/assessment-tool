@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.mapper.questionnaire;
+package org.veritas.assessment.biz.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -23,7 +23,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 
 import java.util.Collections;
 import java.util.Date;
@@ -32,7 +32,7 @@ import java.util.Objects;
 
 @Repository
 @CacheConfig(cacheNames = "project_question_comment")
-public interface ProjectQuestionCommentMapper extends BaseMapper<ProjectQuestionComment> {
+public interface QuestionCommentMapper extends BaseMapper<QuestionComment> {
 
     @Caching(
             evict = {
@@ -40,7 +40,7 @@ public interface ProjectQuestionCommentMapper extends BaseMapper<ProjectQuestion
                     @CacheEvict(key = "'p_' + #comment.projectId")
             }
     )
-    default int add(ProjectQuestionComment comment) {
+    default int add(QuestionComment comment) {
         Objects.requireNonNull(comment);
         if (comment.getCreatedTime() == null) {
             comment.setCreatedTime(new Date());
@@ -49,21 +49,21 @@ public interface ProjectQuestionCommentMapper extends BaseMapper<ProjectQuestion
     }
 
     @Cacheable(key = "'q_' + #questionId", unless = "#result==null")
-    default List<ProjectQuestionComment> findByQuestionId(Integer questionId) {
+    default List<QuestionComment> findByQuestionId(Integer questionId) {
         Objects.requireNonNull(questionId);
-        LambdaQueryWrapper<ProjectQuestionComment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ProjectQuestionComment::getQuestionId, questionId);
-        wrapper.orderByDesc(ProjectQuestionComment::getId);
+        LambdaQueryWrapper<QuestionComment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(QuestionComment::getQuestionId, questionId);
+        wrapper.orderByDesc(QuestionComment::getId);
         return Collections.unmodifiableList(selectList(wrapper));
     }
 
     @Cacheable(key = "'p_' + #projectId", unless = "#result==null")
-    default List<ProjectQuestionComment> findByProjectId(Integer projectId) {
+    default List<QuestionComment> findByProjectId(Integer projectId) {
         Objects.requireNonNull(projectId);
-        LambdaQueryWrapper<ProjectQuestionComment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ProjectQuestionComment::getProjectId, projectId);
-        wrapper.orderByAsc(ProjectQuestionComment::getQuestionId);
-        wrapper.orderByDesc(ProjectQuestionComment::getId);
+        LambdaQueryWrapper<QuestionComment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(QuestionComment::getProjectId, projectId);
+        wrapper.orderByAsc(QuestionComment::getQuestionId);
+        wrapper.orderByDesc(QuestionComment::getId);
         return Collections.unmodifiableList(selectList(wrapper));
     }
 }

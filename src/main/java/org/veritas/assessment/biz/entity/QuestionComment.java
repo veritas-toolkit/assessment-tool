@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.entity.questionnaire;
+package org.veritas.assessment.biz.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -31,11 +31,13 @@ import java.util.Date;
 @Slf4j
 @Data
 @TableName(autoResultMap = true)
-public class ProjectQuestionComment implements Serializable {
+public class QuestionComment implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     private Integer questionId;
+
+    private Integer mainQuestionId;
 
     private Integer projectId;
 

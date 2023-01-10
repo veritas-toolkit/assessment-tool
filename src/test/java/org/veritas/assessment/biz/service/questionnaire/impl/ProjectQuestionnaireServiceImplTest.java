@@ -26,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
@@ -190,7 +190,7 @@ class ProjectQuestionnaireServiceImplTest {
         String title = "B1";
         ProjectQuestion main = questionnaire.findMainQuestionWitSubByTitle(title);
 
-        ProjectQuestionComment comment = new ProjectQuestionComment();
+        QuestionComment comment = new QuestionComment();
         comment.setProjectId(projectId);
         comment.setUserId(1);
         comment.setQuestionId(main.getId());
@@ -219,7 +219,7 @@ class ProjectQuestionnaireServiceImplTest {
         String title = "B1";
         ProjectQuestion main = questionnaire.findMainQuestionWitSubByTitle(title);
 
-        ProjectQuestionComment comment = new ProjectQuestionComment();
+        QuestionComment comment = new QuestionComment();
         comment.setProjectId(projectId);
         comment.setUserId(1);
         comment.setQuestionId(main.getId());
@@ -236,7 +236,7 @@ class ProjectQuestionnaireServiceImplTest {
         String title = "B1";
         ProjectQuestion main = questionnaire.findMainQuestionWitSubByTitle(title);
 
-        ProjectQuestionComment comment = new ProjectQuestionComment();
+        QuestionComment comment = new QuestionComment();
         comment.setProjectId(projectId);
         comment.setUserId(1);
         comment.setQuestionId(main.getId());
@@ -247,7 +247,7 @@ class ProjectQuestionnaireServiceImplTest {
 
         service.updateCommentReadLog(2, projectId, main.getId(), comment.getId());
 
-        ProjectQuestionComment comment2 = new ProjectQuestionComment();
+        QuestionComment comment2 = new QuestionComment();
         comment2.setProjectId(projectId);
         comment2.setUserId(1);
         comment2.setQuestionId(main.getId());
@@ -262,9 +262,9 @@ class ProjectQuestionnaireServiceImplTest {
     void testFindCommentListByProjectId() {
         int projectId = RandomUtils.nextInt(10, 100);
         ProjectQuestionnaire questionnaire = service.create(projectId, 1);
-        List<ProjectQuestionComment> addedList = addComment(projectId);
+        List<QuestionComment> addedList = addComment(projectId);
 
-        List<ProjectQuestionComment> list = service.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = service.findCommentListByProjectId(projectId);
         assertEquals(addedList.size(), list.size());
     }
 
@@ -272,28 +272,28 @@ class ProjectQuestionnaireServiceImplTest {
     void testFindCommentListByQuestionId() {
         int projectId = RandomUtils.nextInt(10, 100);
         ProjectQuestionnaire questionnaire = service.create(projectId, 1);
-        List<ProjectQuestionComment> addedList = addComment(projectId);
+        List<QuestionComment> addedList = addComment(projectId);
 
         int questionId = questionnaire.getQuestions().get(0).getId();
 
-        List<ProjectQuestionComment> questionCommentList = addedList.stream()
+        List<QuestionComment> questionCommentList = addedList.stream()
                 .filter(q -> q.getQuestionId() == questionId)
                 .collect(Collectors.toList());
 
-        List<ProjectQuestionComment> list = service.findCommentListByQuestionId(questionId);
+        List<QuestionComment> list = service.findCommentListByQuestionId(questionId);
         assertEquals(questionCommentList.size(), list.size());
         list.forEach(e -> assertEquals(questionId, e.getQuestionId()));
     }
 
-    private List<ProjectQuestionComment> addComment(int projectId) {
+    private List<QuestionComment> addComment(int projectId) {
         ProjectQuestionnaire questionnaire = service.findQuestionnaireById(projectId);
         String title = "B1";
         ProjectQuestion main = questionnaire.findMainQuestionWitSubByTitle(title);
         int commentSeq = 1;
-        List<ProjectQuestionComment> list = new ArrayList<>();
+        List<QuestionComment> list = new ArrayList<>();
         for (ProjectQuestion projectQuestion : questionnaire.allQuestionsWithSub()) {
             for (int userId = 1; userId < 50; userId++) {
-                ProjectQuestionComment comment = new ProjectQuestionComment();
+                QuestionComment comment = new QuestionComment();
                 comment.setProjectId(projectId);
                 comment.setUserId(userId);
                 comment.setQuestionId(main.getId());

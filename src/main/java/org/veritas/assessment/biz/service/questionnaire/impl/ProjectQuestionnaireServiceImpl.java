@@ -23,12 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
-import org.veritas.assessment.biz.mapper.questionnaire.ProjectQuestionCommentMapper;
+import org.veritas.assessment.biz.mapper.QuestionCommentMapper;
 import org.veritas.assessment.biz.mapper.questionnaire.ProjectQuestionnaireDao;
 import org.veritas.assessment.biz.service.questionnaire.AbstractQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
@@ -56,7 +56,7 @@ public class ProjectQuestionnaireServiceImpl
     private TemplateQuestionnaireService templateQuestionnaireService;
 
     @Autowired
-    private ProjectQuestionCommentMapper commentMapper;
+    private QuestionCommentMapper commentMapper;
 
     @Autowired
     private QuestionCommentReadLogMapper commentReadLogMapper;
@@ -146,7 +146,7 @@ public class ProjectQuestionnaireServiceImpl
 
     @Override
     @Transactional
-    public int addComment(ProjectQuestionComment comment) {
+    public int addComment(QuestionComment comment) {
         ProjectQuestionnaire questionnaire = dao.findQuestionnaire(comment.getProjectId());
         if (questionnaire == null) {
             throw new NotFoundException("Not found the projectId.");
@@ -160,13 +160,13 @@ public class ProjectQuestionnaireServiceImpl
 
     @Override
     @Transactional
-    public List<ProjectQuestionComment> findCommentListByQuestionId(Integer questionId) {
+    public List<QuestionComment> findCommentListByQuestionId(Integer questionId) {
         return commentMapper.findByQuestionId(questionId);
     }
 
     @Override
     @Transactional
-    public List<ProjectQuestionComment> findCommentListByProjectId(Integer projectId) {
+    public List<QuestionComment> findCommentListByProjectId(Integer projectId) {
         return commentMapper.findByProjectId(projectId);
     }
 

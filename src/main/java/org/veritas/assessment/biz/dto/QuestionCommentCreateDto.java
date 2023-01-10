@@ -17,7 +17,7 @@
 package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 
 @Data
 public class QuestionCommentCreateDto {
@@ -28,8 +28,8 @@ public class QuestionCommentCreateDto {
 
     private Integer referCommentId;
 
-    public ProjectQuestionComment toEntity(Integer userId, Integer projectId) {
-        ProjectQuestionComment comment = new ProjectQuestionComment();
+    public QuestionComment toEntity(Integer userId, Integer projectId) {
+        QuestionComment comment = new QuestionComment();
         comment.setQuestionId(this.getQuestionId());
         comment.setComment(this.getComment());
         comment.setReferCommentId(this.getReferCommentId());

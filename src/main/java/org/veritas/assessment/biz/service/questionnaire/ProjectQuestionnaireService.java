@@ -18,7 +18,7 @@ package org.veritas.assessment.biz.service.questionnaire;
 
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
 
 import java.util.List;
@@ -41,13 +41,13 @@ public interface ProjectQuestionnaireService extends BaseQuestionnaireService<Pr
 
 
     // comment
-    int addComment(ProjectQuestionComment comment);
+    int addComment(QuestionComment comment);
 
     // find comment list question
-    List<ProjectQuestionComment> findCommentListByQuestionId(Integer questionId);
+    List<QuestionComment> findCommentListByQuestionId(Integer questionId);
 
     // find comment list by project
-    List<ProjectQuestionComment> findCommentListByProjectId(Integer projectId);
+    List<QuestionComment> findCommentListByProjectId(Integer projectId);
 
     Map<Integer, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId);
 
