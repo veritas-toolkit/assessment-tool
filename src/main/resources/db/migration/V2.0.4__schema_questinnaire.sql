@@ -1,7 +1,7 @@
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_questionnaire_version (
     vid integer primary key autoincrement, -- version id
-    project_id integer,
+    project_id integer not null,
     model_artifact_vid integer,
     creator_user_id integer not null,
     created_time varchar(100) not null,
