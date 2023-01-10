@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/action/edit</title>
+    <defs>
+        <path d="M9.9413,16.6103 L7.8203,14.4893 L16.3073,6.0003 L16.3093,6.0003 L16.3093,6.0003 L18.4303,8.1213 L9.9413,16.6103 Z M4.8009,15.4207 L9.0099,19.6297 L5.2009,20.4097 C4.4979,20.5537 3.8769,19.9327 4.0209,19.2297 L4.8009,15.4207 Z M16.3093,4.0003 C16.8203,4.0003 17.3323,4.1953 17.7233,4.5853 L19.8443,6.7073 C20.6253,7.4883 20.6253,8.7543 19.8443,9.5353 L10.0873,19.2933 L5.1373,14.3433 L14.8943,4.5853 C15.2853,4.1953 15.7973,4.0003 16.3093,4.0003 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/action/edit" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Fill-4" fill="#42526E" xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>
