@@ -27,6 +27,7 @@ import org.veritas.assessment.common.metadata.Pageable;
 import java.util.List;
 
 @Repository
+@Deprecated
 public interface TemplateQuestionnaireMapper extends QuestionnaireValueMapper<TemplateQuestionnaire> {
 
     default Pageable<TemplateQuestionnaire> findTemplatePageable(String prefix, String keyword,

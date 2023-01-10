@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.mapper.questionnaire;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireValue;
 
+@Deprecated
 public interface QuestionnaireValueMapper<Q extends QuestionnaireValue<?>> extends BaseMapper<Q> {
     default Q findById(Integer id) {
         return selectById(id);

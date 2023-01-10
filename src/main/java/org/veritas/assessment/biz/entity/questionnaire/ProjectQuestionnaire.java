@@ -27,9 +27,10 @@ import java.util.Optional;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName(autoResultMap = true)
+@TableName(value = "vat_project_questionnaire", autoResultMap = true)
 @ToString(callSuper = true)
 @Slf4j
+@Deprecated
 public class ProjectQuestionnaire extends QuestionnaireValue<ProjectQuestion> {
     @TableId
     private Integer projectId;

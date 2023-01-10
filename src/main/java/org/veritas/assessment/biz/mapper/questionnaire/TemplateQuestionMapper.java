@@ -17,12 +17,14 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import lombok.Data;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 
 import java.util.function.Supplier;
 
 @Repository
+@Deprecated
 public interface TemplateQuestionMapper extends QuestionValueMapper<TemplateQuestion> {
     @Override
     default Class<TemplateQuestion> getEntityClass() {

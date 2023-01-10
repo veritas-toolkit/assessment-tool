@@ -31,8 +31,9 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName(autoResultMap = true)
+@TableName(value = "vat_project_version_questionnaire", autoResultMap = true)
 @ToString(callSuper = true)
+@Deprecated
 public class ProjectVersionQuestionnaire extends QuestionnaireValue<ProjectVersionQuestion> {
     @TableId(type = IdType.AUTO)
     private Integer versionId;

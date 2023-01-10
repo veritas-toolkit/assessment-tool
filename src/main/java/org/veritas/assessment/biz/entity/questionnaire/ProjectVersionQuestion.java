@@ -33,11 +33,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @EqualsAndHashCode(callSuper = true)
-@TableName(autoResultMap = true)
+@TableName(value = "vat_project_version_question", autoResultMap = true)
 @Slf4j
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor
+@Deprecated
 public class ProjectVersionQuestion extends QuestionValue<ProjectVersionQuestion> {
 
     private Integer projectId;

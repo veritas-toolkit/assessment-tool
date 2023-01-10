@@ -48,10 +48,10 @@ class QuestionCommentReadLogMapperTest {
     @Test
     @SqlGroup(
             value = {
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 3, 4)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 13, 5)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 23, 6)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 43, 7)")
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 3, 4)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 13, 5)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 23, 6)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 43, 7)")
             }
     )
     void testFind() {

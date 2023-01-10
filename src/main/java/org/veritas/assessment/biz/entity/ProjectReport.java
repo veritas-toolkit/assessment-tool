@@ -27,7 +27,7 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 import java.util.Date;
 
 @Data
-@TableName(autoResultMap = true)
+@TableName(value = "vat_project_report", autoResultMap = true)
 public class ProjectReport {
     @TableId(type = IdType.AUTO)
     private Integer versionId;

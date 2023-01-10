@@ -43,7 +43,7 @@ class TemplateQuestionnaireDaoTest {
     private ObjectWriter objectWriter;
 
     @Test
-    void name() throws IOException {
+    void testFindQuestionnaire_success() throws IOException {
         assertNotNull(dao);
         TemplateQuestionnaire questionnaire = dao.findQuestionnaire(1);
         log.info("json:\n{}", objectWriter.writeValueAsString(questionnaire));

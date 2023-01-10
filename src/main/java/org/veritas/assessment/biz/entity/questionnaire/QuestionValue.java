@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 @NoArgsConstructor
+@Deprecated
 public abstract class QuestionValue<T extends QuestionValue<T>> implements Comparable<T>, Serializable {
 
     public static final Integer MAIN_QUESTION_SUB_SERIAL = 0;

@@ -23,6 +23,7 @@ import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestion;
 import java.util.function.Supplier;
 
 @Repository
+@Deprecated
 public interface ProjectVersionQuestionMapper extends QuestionValueMapper<ProjectVersionQuestion> {
 
     @Override

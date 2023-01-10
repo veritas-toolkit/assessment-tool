@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
 
 @Repository
+@Deprecated
 public interface ProjectQuestionnaireMapper extends QuestionnaireValueMapper<ProjectQuestionnaire> {
 
 

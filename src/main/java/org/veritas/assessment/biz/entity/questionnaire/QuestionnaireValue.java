@@ -17,7 +17,9 @@
 package org.veritas.assessment.biz.entity.questionnaire;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -30,7 +32,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Data
+@Deprecated
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class QuestionnaireValue<T extends QuestionValue<T>> implements Serializable {
 
     private static final boolean DEFAULT_EDITABLE = true;
@@ -157,5 +161,49 @@ public abstract class QuestionnaireValue<T extends QuestionValue<T>> implements 
 
     public List<QuestionnairePartition<T>> toPartitionList() {
         return QuestionnairePartition.toPartitionList(this);
+    }
+
+    public String getPartATitle() {
+        return partATitle;
+    }
+
+    public void setPartATitle(String partATitle) {
+        this.partATitle = partATitle;
+    }
+
+    public String getPartBTitle() {
+        return partBTitle;
+    }
+
+    public void setPartBTitle(String partBTitle) {
+        this.partBTitle = partBTitle;
+    }
+
+    public String getPartCTitle() {
+        return partCTitle;
+    }
+
+    public void setPartCTitle(String partCTitle) {
+        this.partCTitle = partCTitle;
+    }
+
+    public String getPartDTitle() {
+        return partDTitle;
+    }
+
+    public void setPartDTitle(String partDTitle) {
+        this.partDTitle = partDTitle;
+    }
+
+    public String getPartETitle() {
+        return partETitle;
+    }
+
+    public void setPartETitle(String partETitle) {
+        this.partETitle = partETitle;
+    }
+
+    public List<T> getQuestions() {
+        return questions;
     }
 }

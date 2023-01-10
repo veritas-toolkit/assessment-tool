@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @Repository
+@Deprecated
 public interface QuestionValueMapper<T extends QuestionValue<T>> extends BaseMapper<T> {
 
     default T findById(Integer id) {

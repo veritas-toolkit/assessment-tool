@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
+@Deprecated
 public class QuestionnairePartition<T extends QuestionValue<T>>
         implements Serializable {
 

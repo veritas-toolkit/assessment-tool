@@ -24,9 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(autoResultMap = true)
+@TableName(value = "vat_template_question", autoResultMap = true)
 @ToString(callSuper = true)
 @Slf4j
+@Deprecated
 public class TemplateQuestion extends QuestionValue<TemplateQuestion> {
 
     private Integer templateId;

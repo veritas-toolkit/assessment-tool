@@ -27,7 +27,7 @@ import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(autoResultMap = true)
+@TableName(value = "vat_model_artifact_version", autoResultMap = true)
 @Slf4j
 public class ModelArtifactVersion extends ModelArtifactValue {
     @TableId(type = IdType.AUTO)

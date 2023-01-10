@@ -20,8 +20,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
@@ -29,16 +31,19 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.Date;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
-@TableName(autoResultMap = true)
+@TableName(value = "vat_template_questionnaire", autoResultMap = true)
 @ToString(callSuper = true)
+@Deprecated
+@AllArgsConstructor
+@NoArgsConstructor
 public class TemplateQuestionnaire extends QuestionnaireValue<TemplateQuestion> {
     @TableId(type = IdType.AUTO)
     private Integer templateId;
 
     private String name;
 
+//    @TableField(value = "type", jdbcType = JdbcType.INTEGER)
     private QuestionnaireTemplateType type;
 
     private String description;
@@ -64,5 +69,45 @@ public class TemplateQuestionnaire extends QuestionnaireValue<TemplateQuestion> 
         } else {
             throw new IllegalStateException("The property[type] is [%s] null or unknown.");
         }
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public QuestionnaireTemplateType getType() {
+        return type;
+    }
+
+    public void setType(QuestionnaireTemplateType type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 }

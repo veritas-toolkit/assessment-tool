@@ -23,6 +23,7 @@ import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestionnai
 import java.util.List;
 
 @Repository
+@Deprecated
 public interface ProjectVersionQuestionnaireMapper extends QuestionnaireValueMapper<ProjectVersionQuestionnaire> {
 
 
