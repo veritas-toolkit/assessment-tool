@@ -60,7 +60,7 @@ class ProjectQuestionMapperTest {
     }
 
     @Test
-    void name() {
+    void testAddQuestionList_success() {
         assertNotNull(mapper);
         List<ProjectQuestion> list = data();
         int result = mapper.addQuestionList(list);

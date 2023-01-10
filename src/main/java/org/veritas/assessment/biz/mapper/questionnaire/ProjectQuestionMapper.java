@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Repository
+@Deprecated
 public interface ProjectQuestionMapper extends QuestionValueMapper<ProjectQuestion> {
 
     @Override

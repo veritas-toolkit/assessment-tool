@@ -31,10 +31,11 @@ import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-@TableName(autoResultMap = true)
+@TableName(value = "vat_project_question", autoResultMap = true)
 @Slf4j
 @Data
 @ToString(callSuper = true)
+@Deprecated
 public class ProjectQuestion extends QuestionValue<ProjectQuestion> {
 
     private Integer projectId;
