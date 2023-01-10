@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
-    <el-container style="height: 100%">
-      <el-header>
+    <el-container style="height: calc(100% - 2px);display: flex;flex-direction: column">
+      <el-header height="64px">
         <div class="title BarlowBold">
           <img class="backPic" src="../../assets/groupPic/back.png" alt="">
 <!--          <router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
@@ -20,10 +20,15 @@
           <div id="export">Export</div>
         </div>
       </el-header>
-      <el-main style="display: flex;">
-        <QuestionnaireMenu style="width: 400px"></QuestionnaireMenu>
-        <QuestionnaireAnswer style="width: calc(100% - 400px)"></QuestionnaireAnswer>
-      </el-main>
+      <!--flex-direction: column ; overflow-y: auto-->
+      <el-container style="flex: 1;overflow-y: auto">
+          <el-aside width="400px">
+            <QuestionnaireMenu></QuestionnaireMenu>
+          </el-aside>
+          <el-main style="width: calc(100% - 400px)">
+            <QuestionnaireAnswer></QuestionnaireAnswer>
+          </el-main>
+      </el-container>
       <el-footer style="height: 64px">
         <div style="display: flex;width: 100%">
           <div class="notification-collapse">
@@ -75,7 +80,6 @@ export default {
 
 <style scoped lang="less">
 .el-header {
-  height: 162px;
   display: flex;
   justify-content: space-between;
   align-items: center;
