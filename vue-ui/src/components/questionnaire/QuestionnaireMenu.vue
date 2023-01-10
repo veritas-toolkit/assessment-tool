@@ -30,6 +30,13 @@ export default {
     return {
       activeName: '',
       menu: '',
+      stepPic: {
+        '0': '../../assets/questionnairePic/portfolio.svg',
+        '1': '../../assets/questionnairePic/department.svg',
+        '2': '../../assets/questionnairePic/page.svg',
+        '3': '../../assets/questionnairePic/issues.svg',
+        '4': '../../assets/questionnairePic/screen.svg'
+      }
     }
   },
   created() {
