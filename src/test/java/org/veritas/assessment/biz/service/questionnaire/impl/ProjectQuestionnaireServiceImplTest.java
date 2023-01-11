@@ -25,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
 

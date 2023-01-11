@@ -19,8 +19,8 @@ package org.veritas.assessment.biz.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
-import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 
 import java.util.Date;
 

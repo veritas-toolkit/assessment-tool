@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireValue;
-import org.veritas.assessment.biz.mapper.questionnaire.QuestionnaireValueDao;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
+import org.veritas.assessment.biz.mapper.questionnaire1.QuestionnaireValueDao;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 

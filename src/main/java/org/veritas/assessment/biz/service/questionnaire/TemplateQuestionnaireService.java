@@ -16,8 +16,8 @@
 
 package org.veritas.assessment.biz.service.questionnaire;
 
-import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;

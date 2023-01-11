@@ -16,8 +16,8 @@
 
 package org.veritas.assessment.biz.service.questionnaire;
 
-import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
 
 public interface BaseQuestionnaireService<T extends QuestionValue<T>, Q extends QuestionnaireValue<T>> {
 

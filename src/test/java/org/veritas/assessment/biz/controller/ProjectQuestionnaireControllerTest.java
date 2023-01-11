@@ -37,8 +37,8 @@ import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.QuestionnaireForProjectDto;
 import org.veritas.assessment.biz.entity.JsonModelTest;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

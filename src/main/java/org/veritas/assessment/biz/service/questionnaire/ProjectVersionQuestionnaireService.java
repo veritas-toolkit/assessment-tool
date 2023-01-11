@@ -16,8 +16,8 @@
 
 package org.veritas.assessment.biz.service.questionnaire;
 
-import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 
 import java.util.List;
 

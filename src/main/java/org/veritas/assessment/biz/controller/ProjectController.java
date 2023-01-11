@@ -43,7 +43,7 @@ import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.RoleDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;

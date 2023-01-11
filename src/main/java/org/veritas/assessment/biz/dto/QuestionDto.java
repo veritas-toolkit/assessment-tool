@@ -16,7 +16,7 @@
 
 package org.veritas.assessment.biz.dto;
 
-import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
 
 public class QuestionDto extends QuestionValue<QuestionDto> {
 

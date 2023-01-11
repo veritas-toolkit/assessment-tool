@@ -18,8 +18,8 @@ package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 
 import java.util.List;
 import java.util.Objects;

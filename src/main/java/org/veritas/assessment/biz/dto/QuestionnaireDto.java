@@ -19,8 +19,8 @@ package org.veritas.assessment.biz.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;

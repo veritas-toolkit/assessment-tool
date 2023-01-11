@@ -17,9 +17,9 @@
 package org.veritas.assessment.biz.service.questionnaire;
 
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 
 import java.util.List;
 import java.util.Map;
