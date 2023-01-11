@@ -27,6 +27,7 @@ import java.util.List;
 
 @Repository
 @Slf4j
+@Deprecated
 public class ProjectVersionQuestionnaireDao
         extends QuestionnaireValueDao<ProjectVersionQuestion, ProjectVersionQuestionnaire> {
 

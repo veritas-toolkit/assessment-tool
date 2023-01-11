@@ -28,6 +28,7 @@ import java.util.List;
 
 @Repository
 @Slf4j
+@Deprecated
 public class TemplateQuestionnaireDao extends QuestionnaireValueDao<TemplateQuestion, TemplateQuestionnaire> {
     @Autowired
     private TemplateQuestionnaireMapper questionnaireMapper;

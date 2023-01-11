@@ -31,6 +31,7 @@ import java.util.Objects;
 @Repository
 @Slf4j
 @CacheConfig(cacheNames = "project_questionnaire")
+@Deprecated
 public class ProjectQuestionnaireDao extends QuestionnaireValueDao<ProjectQuestion, ProjectQuestionnaire> {
     @Autowired
     private ProjectQuestionMapper projectQuestionMapper;
