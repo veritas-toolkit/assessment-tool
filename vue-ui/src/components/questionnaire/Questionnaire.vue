@@ -23,7 +23,7 @@
       <!--flex-direction: column ; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
           <el-aside width="400px">
-            <QuestionnaireMenu></QuestionnaireMenu>
+            <QuestionnaireMenu :principle="principle" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main style="width: calc(100% - 400px)">
             <QuestionnaireAnswer></QuestionnaireAnswer>
@@ -37,7 +37,7 @@
               <span class="BarlowBold">Notifications</span>
               <div>6</div>
             </div>
-            <div class="collapse-box">
+            <div class="collapse-box" @click="isCollapse=true">
               <img src="../../assets/projectPic/chevron-left.svg" alt="">
             </div>
           </div>
@@ -72,8 +72,12 @@ export default {
   },
   data() {
     return {
-      principle: '',
+      principle: 'Generic',
+      isCollapse: false,
     }
+  },
+  methods: {
+
   }
 }
 </script>
@@ -146,6 +150,7 @@ export default {
 }
 .collapse-box {
   position: relative;
+  cursor: pointer;
   width: 64px;
   border-left: 1px solid #D7D9DB;
   text-align: center;
