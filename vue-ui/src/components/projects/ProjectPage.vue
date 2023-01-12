@@ -50,76 +50,94 @@
       </div>
       <el-tabs style="margin-top: 16px" v-model="activeName" class="BarlowMedium">
         <el-tab-pane label="Assessment" name="first">
-          <div style="display: flex;justify-content: space-between;align-items:center;margin-top: 16px">
-            <div style="width: 40%" v-show="has_permission(PermissionType.PROJECT_UPLOAD_JSON)">
+          <div style="margin-top: 16px">
+            <div v-show="has_permission(PermissionType.PROJECT_UPLOAD_JSON)">
               <div class="artifacts">Model artifacts</div>
-              <div class="file-accepted">only .JSON file accepted</div>
+<!--              <div class="file-accepted">only .JSON file accepted</div>-->
               <!--upload JSON File-->
-              <el-upload
-                  style="width: 60%"
-                  class="upload-demo"
-                  ref="upload"
-                  :action="actionUrl"
-                  multiple
-                  accept=".json"
-                  :limit="1"
-                  :file-list="fileList"
-                  :on-success="handleSuccess"
-                  :on-error="handleFailed"
-                  :auto-upload="false">
-                <el-button slot="trigger" class="transparent BarlowMedium" size="small"><i class="el-icon-upload"></i>&nbsp;&nbsp;&nbsp;Add
-                  a JSON file
-                </el-button>
-                <el-button class="BarlowMedium" style="margin-left: 8px" size="small" @click="submitUpload">Upload
-                </el-button>
-              </el-upload>
-            </div>
-            <div style="width: 60%" v-if="jsonInfoVisible">
-              <div class="artifacts">File name</div>
-              <div style="display: flex;align-items: center">
-                <div class="file-accepted">{{ jsonInfo.filename }}</div>
-                <div>
-                  <el-button size="mini" icon="el-icon-download" circle plain style="margin-left: 10px"
-                             @click="downloadJsonFile"></el-button>
+              <div style="display: flex;align-items:center;">
+                <div style="width: 40%">
+                  <el-upload
+                      class="upload-demo"
+                      ref="upload"
+                      drag
+                      :action="actionUrl"
+                      multiple
+                      accept=".json"
+                      :limit="1"
+                      :show-file-list="false"
+                      :file-list="fileList"
+                      :on-success="handleSuccess"
+                      :on-error="handleFailed"
+                      :auto-upload="true">
+                    <div class="upload-div">
+                      <div>
+                        <img class="upload-icon" src="../../assets/projectPic/upload.svg" alt="">
+                      </div>
+                      <div>
+                        <div id="click-text">Click or drag and drop the file here to upload.</div>
+                        <div id="json-text">only .JSON file accepted</div>
+                      </div>
+                    </div>
+                  </el-upload>
+                </div>
+                <div class="file-info" v-if="jsonInfoVisible">
+                  <div style="display: flex">
+                    <img style="width: 40px;height: 40px;margin: 0px 16px" src="../../assets/projectPic/medium.svg" alt="">
+                    <div>
+                      <div id="click-text">{{ jsonInfo.filename }}</div>
+                      <div id="json-text">{{ dateFormat(jsonInfo.uploadTime) }}</div>
+                    </div>
+                  </div>
+                  <div style="margin-right: 16px;cursor: pointer">
+                    <img src="../../assets/projectPic/download.svg" alt="" @click="downloadJsonFile">
+<!--                    <el-button size="mini" icon="el-icon-download" circle plain style="margin-left: 10px"-->
+<!--                               ></el-button>-->
+                  </div>
                 </div>
               </div>
-              <div class="artifacts">Upload time</div>
-              <div class="file-accepted">{{ dateFormat(jsonInfo.uploadTime) }}</div>
             </div>
           </div>
           <div v-if="has_permission(PermissionType.PROJECT_UPLOAD_JSON) || jsonInfoVisible" class="dividingLine"></div>
           <div>
-            <div class="artifacts">Fairness assessment</div>
-            <div style="display: flex;align-items: center;margin-top: 16px;justify-content: space-between">
-              <div>
+            <div class="artifacts">Assessment questionnaire</div>
+            <div style="display: flex;align-items: center;margin-top: 12px;">
+              <el-card v-for="(item,index) in [1,2,3,4]" class="box-card" :style="index == 0? '':'margin-left:12px'">
+                <div class="artifacts" style="margin-bottom: 12px">Generic</div>
                 <div class="progressLabel">
                   {{ progressCompleted }}/{{ progressCount }}
                 </div>
-                <el-progress :percentage="progressCompleted/progressCount*100" color="#78BED3"
-                             :show-text="false"></el-progress>
+                <el-progress :percentage="progressCompleted/progressCount*100" color="#78BED3" :show-text="false"></el-progress>
+              </el-card>
+<!--              <div>-->
+<!--                <div class="progressLabel">-->
+<!--                  {{ progressCompleted }}/{{ progressCount }}-->
+<!--                </div>-->
+<!--                <el-progress :percentage="progressCompleted/progressCount*100" color="#78BED3"-->
+<!--                             :show-text="false"></el-progress>-->
+<!--              </div>-->
+            </div>
+            <div style="display: flex;align-items: center;">
+              <div class="fairnessButton" @click="questionnaire">
+                <img src="../../assets/projectPic/new_edit.png" alt="">
+                <span>Edit</span>
               </div>
-              <div style="display: flex;align-items: center;">
-                <div class="fairnessButton" @click="questionnaire">
-                  <img src="../../assets/projectPic/edit.png" alt="">
-                  <span>Edit answer</span>
-                </div>
-                <div class="fairnessButton" @click="previewPdf">
-                  <img src="../../assets/projectPic/preview.png" alt="">
-                  <span>Preview</span>
-                </div>
-                <!--
-                <div class="fairnessButton" @click="exportPdfVisible = true"  v-show="fairnessAssessmentVisible">
-                  <img src="../../assets/projectPic/exportReport.png" alt="">
-                  <span>Export report</span>
-                </div>
-                -->
-                <div class="fairnessButton" @click="openExportDialog" v-show="fairnessAssessmentVisible">
-                  <img src="../../assets/projectPic/exportReport.png" alt="">
-                  <span>Export Report</span>
-                </div>
-                <export-report-dialog ref="exportDialog" :projectId="projectId"
-                                      @exported="createdReport"></export-report-dialog>
+              <div class="fairnessButton" @click="previewPdf">
+                <img src="../../assets/projectPic/new_preview.png" alt="">
+                <span>Preview</span>
               </div>
+              <!--
+              <div class="fairnessButton" @click="exportPdfVisible = true"  v-show="fairnessAssessmentVisible">
+                <img src="../../assets/projectPic/exportReport.png" alt="">
+                <span>Export report</span>
+              </div>
+              -->
+              <div class="fairnessButton" @click="openExportDialog" v-show="fairnessAssessmentVisible">
+                <img src="../../assets/projectPic/new_export.png" alt="">
+                <span>Export</span>
+              </div>
+              <export-report-dialog ref="exportDialog" :projectId="projectId"
+                                    @exported="createdReport"></export-report-dialog>
             </div>
           </div>
           <div class="dividingLine"></div>
@@ -483,15 +501,15 @@ export default {
       })
     },
     questionnaire() {
-      this.$router.push({path: '/assessmentTool', query: {id: this.projectId}})
+      this.$router.push({path: '/questionnaire', query: {id: this.projectId}})
     },
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})
     },
     // upload json file
-    submitUpload() {
-      this.$refs.upload.submit()
-    },
+    // submitUpload() {
+    //   this.$refs.upload.submit()
+    // },
     handleSuccess() {
       this.$message.success('Upload successfully')
       this.getProjectDetail()
@@ -746,8 +764,7 @@ export default {
   width: 40px;
   height: 40px;
   position: relative;
-  background-color: #FFF;
-  border: 1px solid rgba(0, 0, 0, 0.85);
+  background: #EDF2F6;
   border-radius: 4px;
 
   > img {
@@ -862,7 +879,7 @@ export default {
 
 .artifacts {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .file-accepted {
@@ -874,7 +891,7 @@ export default {
 
 .el-progress {
   margin: 8px 0px;
-  width: 360px;
+
 }
 
 .progressLabel {
@@ -973,11 +990,10 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
-  border: 1px solid;
+  background: #EDF2F6;
   padding: 8px 12px;
   border-radius: 4px;
-  margin-left: 12px;
-
+  margin-right: 12px;
   > img {
     width: 24px;
     height: 24px;
@@ -1055,5 +1071,40 @@ export default {
   padding: 0px 4px;
   border-radius: 4px;
   color: #FFF;
+}
+.upload-div {
+  padding: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.upload-icon {
+  margin-right: 16px;
+  width: 40px;
+  height: 40px;
+}
+#click-text {
+  font-size: 16px;
+  font-family: BarlowBold;
+}
+#json-text {
+  font-size: 14px;
+  font-family: BarlowMedium;
+}
+.file-info {
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+  width: 600px;
+  align-items: center;
+  height: 74px;
+  background: #F5F7F9;
+  border-radius: 4px;
+  border: 1px solid #D5D8DD;
+}
+.box-card {
+  width: 25%;
+  margin-bottom: 12px;
+  padding: 12px;
 }
 </style>

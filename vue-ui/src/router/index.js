@@ -17,6 +17,7 @@ import EditTemplate from "../components/questionnaire/EditTemplate";
 import AssessmentToolHistory from "../components/questionnaire/AssessmentToolHistory";
 import GroupProjectPage from "../components/group/GroupProjectPage";
 import AdminTemplatePage from "../components/administration/AdminTemplatePage";
+import Questionnaire from "@/components/questionnaire/Questionnaire";
 
 import MenuQuestionaire from "../components/MenuQuestionaire";
 
@@ -49,6 +50,7 @@ const router = new VueRouter({
     {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
     {path: '/test', component: MenuQuestionaire},
+    {path: '/questionnaire', component: Questionnaire}
   ]
 })
 

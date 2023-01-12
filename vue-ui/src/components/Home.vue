@@ -35,10 +35,22 @@
             </el-menu-item>
           </el-menu>
         </div>
-        <div class="leftBottom BarlowBold">
-          <img src="../assets/groupPic/info.png" class="menuIcon">
-          <span>{{accountInfo.fullName}}</span>
-        </div>
+        <el-popover
+            placement="top"
+            width="400"
+            trigger="click">
+          <div class="popover-title">
+            <div class="not-style">Notification</div>
+            <div class="mark-style">Mark all as read</div>
+          </div>
+          <div class="divide-line"></div>
+          <div class="leftBottom BarlowBold" slot="reference">
+            <img src="../assets/projectPic/notification.png" class="menuIcon">
+            <div>Notifications</div>
+          </div>
+
+        </el-popover>
+
       </el-aside>
       <!--main area-->
       <el-main>
@@ -64,6 +76,60 @@
         <el-button type="info" class="GreenBC" @click="changePassword">Save</el-button>
       </span>
     </el-dialog>
+    <el-button type="primary" @click="userWizardShow=true">主要按钮</el-button>
+    <!--user wizardPic-->
+    <el-dialog
+        id="wizard"
+      class="BarlowMedium"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      :visible.sync="userWizardShow"
+      width="560px"
+      append-to-body>
+      <!--<template slot="title"><span class="dialogTitle BarlowBold">User Guide</span></template>-->
+      <!--tour wizard-->
+      <div v-show="activeStep==0">
+        <img class="tour" src="../assets/wizardPic/tour1.png" alt="">
+        <div class="tour-title">Create your project</div>
+        <div class="tour-text">Create a project to assess fairness, ethics, accountability and transparency principles.</div>
+      </div>
+      <div v-show="activeStep==1">
+        <img class="tour" src="../assets/wizardPic/tour2.png" alt="">
+        <div class="tour-title">Add model artifact</div>
+        <div class="tour-text">Upload json file as model artifact.</div>
+      </div>
+      <div v-show="activeStep==2">
+        <img class="tour" src="../assets/wizardPic/tour3.png" alt="">
+        <div class="tour-title">Answer assessment questions</div>
+        <div class="tour-text">Upload charts, create table and answer questions set by the template.</div>
+      </div>
+      <div v-show="activeStep==3">
+        <img class="tour" src="../assets/wizardPic/tour4.png" alt="">
+        <div class="tour-title">Compare with history versions</div>
+        <div class="tour-text">Compare the difference with any history version or recent drafts.</div>
+      </div>
+      <div v-show="activeStep==4">
+        <img class="tour" src="../assets/wizardPic/tour5.png" alt="">
+        <div class="tour-title">Export as PDF file</div>
+        <div class="tour-text">Preview and export the questionnaire as a PDF assessment report.</div>
+      </div>
+      <el-steps :active=activeStep simple>
+        <el-step></el-step>
+        <el-step></el-step>
+        <el-step></el-step>
+        <el-step></el-step>
+        <el-step></el-step>
+      </el-steps>
+      <div style="display: flex;justify-content: space-between">
+        <span slot="footer" class="dialog-footer">
+        <el-button type="info" class="GreyBC" style="color: #000000" @click="userWizardShow=false">Skip</el-button>
+      </span>
+        <span slot="footer" class="dialog-footer">
+        <el-button type="info" class="GreenBC" @click="nextStep">Next</el-button>
+      </span>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,10 +138,12 @@ export default {
   name: 'Home',
   data() {
     return {
+      activeStep: 0,
       activeName: '',
       accountInfo: {},
       admin: false,
       shouldChangePassword: false,
+      userWizardShow: false,
       passwordForm: {
         oldPassword: '',
         newPassword: '',
@@ -88,6 +156,10 @@ export default {
     this.activeName = window.location.href.split('/')[window.location.href.split('/').length - 1]
   },
   methods: {
+    nextStep() {
+      this.activeStep++
+      if (this.activeStep == 5) this.userWizardShow = false;
+    },
     getWhoAmI() {
       this.$http.get('/api/account').then(res => {
         if(res.status == 200) {
@@ -161,11 +233,12 @@ export default {
     height: 60px;
   }
   .leftBottom {
+    border: 1px solid red;
     display: flex;
     align-items: center;
     margin-left: 20px;
-    margin-bottom: 24px;
-    > span {
+    margin-bottom: 10px;
+    > div {
       font-size: 16px;
       font-weight: 600;
       color: #333333;
@@ -175,5 +248,52 @@ export default {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+  }
+  .tour {
+    width: 560px;
+    height: 290px;
+    margin: -30px 0 0 -20px;
+    border-radius: 3px;
+  }
+  .tour-title {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: BarlowBold;
+    text-align: center;
+    margin-top: 14px;
+  }
+  .tour-text {
+    height: 48px;
+    margin: auto;
+    font-size: 16px;
+    font-family: BarlowMedium;
+    margin-top: 10px;
+    width: 344px;
+    text-align: center;
+    word-break: break-word;
+  }
+  .el-steps {
+    margin-top: 20px;
+  }
+  .popover-title {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .not-style {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: BarlowBold;
+  }
+  .mark-style {
+    font-size: 14px;
+    font-family: BarlowMedium;
+    color: #175EC2;
+  }
+  .divide-line {
+    height: 1px;
+    width: calc(100% + 24px);
+    background-color: #CED3D9;
+    margin-left: -12px;
   }
 </style>

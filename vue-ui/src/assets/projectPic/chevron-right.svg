@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/action/chevron-right</title>
+    <defs>
+        <path d="M11.2928932,8.70710678 C11.6834175,8.31658249 12.3165825,8.31658249 12.7071068,8.70710678 L17.3,13.3 C17.6865993,13.6865993 17.6865993,14.3134007 17.3,14.7 C16.9134007,15.0865993 16.2865993,15.0865993 15.9,14.7 L12,10.8 L8.1,14.7 C7.71340068,15.0865993 7.08659932,15.0865993 6.7,14.7 C6.31340068,14.3134007 6.31340068,13.6865993 6.7,13.3 L11.2928932,8.70710678 L11.2928932,8.70710678 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/action/chevron-right" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1" transform="translate(12.000000, 11.702082) rotate(90.000000) translate(-12.000000, -11.702082) "></use>
+        </mask>
+        <use id="Shape" fill="#FFFFFF" transform="translate(12.000000, 11.702082) rotate(90.000000) translate(-12.000000, -11.702082) " xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>

@@ -19,7 +19,8 @@ axios.interceptors.response.use(
     return response
   },
   function(err) {
-    if (err.response.data.status == '403') {
+    if (err.response.status == '403') {
+
       window.location.href = '/'
     } else {
       if (err.response.config.responseType != "blob") {

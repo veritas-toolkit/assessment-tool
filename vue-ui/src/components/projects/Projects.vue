@@ -15,39 +15,47 @@
     <div style="margin-top: 10px">
       <el-tabs class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="All" name="first">
-          <el-row :gutter="20" style="margin-top: 6px">
+          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
             <el-col v-for="(item,index) in projectList" :span="6">
               <el-card class="box-card" @click.native="projectPage(item)">
                 <div slot="header" class="boxCardHeader">
                   <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
                   <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
                   <div class="projName oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited at {{dateFormat(item.lastEditedTime)}}</span>
+                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
-                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">
-                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>
-                </el-tooltip>
-                <!--<div class="progressLabel">6/18</div>
-                <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                <div style="padding: 20px">
+                  <div class="progress-text">6/50</div>
+                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                  <!--                </el-tooltip>-->
+                  <!--<div class="progressLabel">6/18</div>
+                  <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                </div>
               </el-card>
             </el-col>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Created by me" name="second">
-          <el-row :gutter="20" style="margin-top: 6px">
+          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
             <el-col v-for="(item,index) in myProjectList" :span="6">
               <el-card class="box-card" @click.native="projectPage(item)">
                 <div slot="header" class="boxCardHeader">
                   <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
                   <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
                   <div class="projName oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited at {{dateFormat(item.lastEditedTime)}}</span>
+                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
-                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">
-                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>
-                </el-tooltip>
-                <!--<div class="progressLabel">13/18</div>
-                <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                <div style="padding: 20px">
+                  <div class="progress-text">6/50</div>
+                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                  <!--                </el-tooltip>-->
+                  <!--<div class="progressLabel">13/18</div>
+                  <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                </div>
               </el-card>
             </el-col>
           </el-row>
@@ -67,41 +75,100 @@
     </div>
     <!--create project-->
     <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="createProjectVisible" width="480px" append-to-body>
-      <template slot="title"><span class="dialogTitle">New assessment project</span></template>
-      <!--create project form-->
-      <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
-        <el-form-item class="BarlowMedium" label="Project name" prop="name">
-          <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Project description" prop="description">
-          <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-          <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
-            <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">
-          <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
-            <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Owner" prop="ownerType">
-          <el-select v-model="projectForm.ownerType" placeholder="Please choose a owner">
-            <el-option-group
+      <template slot="title"><span class="dialogTitle">Create project</span></template>
+      <!--tabs-->
+      <el-tabs v-model="activeNewProjectName" @tab-click="handleClickProject">
+        <el-tab-pane label="New project" name="create">
+          <!--create project form-->
+          <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
+            <el-form-item class="BarlowMedium" label="Project name" prop="name">
+              <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project description" prop="description">
+              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
+              <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
+                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">
+              <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
+                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Owner" prop="ownerType">
+              <el-select v-model="projectForm.ownerType" placeholder="Please choose a owner">
+                <el-option-group
                     v-for="group in ownerTypeList"
                     :key="group.label"
                     :label="group.label">
-              <el-option
+                  <el-option
                       v-for="item in group.options"
                       :key="item.id"
                       :label="item.name"
                       :value="item.id">
-              </el-option>
-            </el-option-group>
-          </el-select>
-        </el-form-item>
-      </el-form>
+                  </el-option>
+                </el-option-group>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="Create from existing project" name="copy">
+          <!--Create from existing project-->
+          <div class="form-label">Existing project</div>
+          <el-autocomplete
+              class="inline-input"
+              clearable
+              v-model="state1"
+              :fetch-suggestions="querySearch"
+              placeholder="Please input a existing project name"
+              @select="handleSelect">
+              <i class="el-icon-search el-input__icon" slot="suffix"></i>
+            <template slot-scope="{ item }">
+              <div class="name">{{ item.value }}</div>
+<!--              <span class="addr">{{ item.address }}</span>-->
+            </template>
+          </el-autocomplete>
+          <el-form :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
+            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
+              <el-select v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
+                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="assessPrinciple">
+              <div style="display: flex">
+                <div class="generic">Generic</div>
+                <div>Fairness</div>
+                <div>Ethics & Accountability</div>
+                <div>Transparency</div>
+              </div>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project name" prop="name">
+              <el-input placeholder="Please input a project name" v-model="existingProjectForm.name"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project description" prop="description">
+              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="existingProjectForm.description"></el-input>
+            </el-form-item>
+
+            <el-form-item class="BarlowMedium" label="Owner" prop="ownerType">
+              <el-select v-model="existingProjectForm.ownerType" placeholder="Please choose a owner">
+                <el-option-group
+                    v-for="group in ownerTypeList"
+                    :key="group.label"
+                    :label="group.label">
+                  <el-option
+                      v-for="item in group.options"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                  </el-option>
+                </el-option-group>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button @click="createProjectVisible = false" class="BlackBorder BarlowMedium">Cancel</el-button>
         <el-button type="primary" @click="createProject" class="GreenBC BarlowMedium">Create</el-button>
@@ -115,7 +182,9 @@
     name: "Projects",
     data() {
       return {
+        state1: '',
         activeName: 'first',
+        activeNewProjectName: 'create',
         createProjectVisible: false,
         keyword: '',
         projectForm: {
@@ -125,11 +194,25 @@
           ownerType: '',
           questionnaireTemplateId: '',
         },
+        existingProjectForm: {
+          businessScenario: '',
+          assessPrinciple: '',
+          name: '',
+          description: '',
+          ownerType: '',
+        },
         projectFormRules: {
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           businessScenario: [{ required: true, trigger: 'blur' },],
           questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
+        },
+        existingProjectFormRules: {
+          businessScenario: [{ required: true, trigger: 'blur' },],
+          assessPrinciple: [{ required: true, trigger: 'blur' },],
+          name: [{ required: true, trigger: 'blur' },],
+          description: [{ required: true, trigger: 'blur' },],
           ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
         },
         groupList: [],
@@ -156,6 +239,23 @@
       this.getProjectList()
     },
     methods: {
+      querySearch(queryString, cb) {
+        let restaurants =
+            [
+              { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+              { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" }];
+        let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
+      handleSelect(item) {
+        console.log(item);
+      },
       handleSizeChange(val) {
         this.pageSize = val
         this.getProjectList()
@@ -173,6 +273,9 @@
       },
       handleClick(tab, event) {
         this.activeName = tab.name
+      },
+      handleClickProject(tab, event) {
+        this.activeNewProjectName = tab.name
       },
       getBusinessScenarioList() {
         this.$http.get('/api/system/business_scenario').then(res => {
@@ -381,5 +484,30 @@
     font-weight: bold;
     color: #175EC2;
     margin-bottom: 4px;
+  }
+  .progress-text {
+    margin-top: -10px;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: BarlowBold;
+  }
+  .form-label {
+    line-height: 40px;
+    float: none;
+    font-size: 14px;
+    color: #aaa;
+    display: flex !important;
+    text-align: left;
+    height: 32px;
+    margin-top: 4px !important;
+    padding: 0 !important;
+  }
+  .generic {
+    background: #78BED3;
+    font-size: 16px;
+    line-height: 16px !important;
+    border-radius: 20px;
+    opacity: 0.65;
+    padding: 0px 12px;
   }
 </style>
