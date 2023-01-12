@@ -18,6 +18,8 @@ import AssessmentToolHistory from "../components/questionnaire/AssessmentToolHis
 import GroupProjectPage from "../components/group/GroupProjectPage";
 import AdminTemplatePage from "../components/administration/AdminTemplatePage";
 
+import MenuQuestionaire from "../components/MenuQuestionaire";
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -46,6 +48,7 @@ const router = new VueRouter({
     {path: '/assessmentToolHistory', component: AssessmentToolHistory},
     {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
+    {path: '/test', component: MenuQuestionaire},
   ]
 })
 

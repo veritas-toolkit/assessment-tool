@@ -122,6 +122,7 @@ html, body, #app {
 .el-collapse-item__header {
     border-bottom: none;
 }
+
 .el-pagination {
     margin-top: 16px;
     text-align: center;
@@ -142,3 +143,52 @@ html, body, #app {
 .el-notification {
     box-shadow:  0 2px 12px 0 rgba(0, 0, 0, 0.2);
 }
+
+/* ————————————————————————collapseMenu style—————————————————————— */
+.collapseMenu.el-menu {
+  border-right: none;
+  background-color: transparent;
+}
+.collapseMenu .el-submenu__title:hover {
+  background-color: transparent;
+}
+.collapseMenu .el-submenu__title {
+  padding: 0 12px;
+}
+
+.collapseMenu.el-collapse {
+  border-top: none;
+}
+.collapseMenu .el-collapse-item__header {
+  background-color: transparent;
+  padding: 0 12px;
+}
+.collapseMenu .el-collapse-item__wrap {
+  background-color: transparent;
+  padding: 0 8px;
+}
+.collapseMenu .el-collapse-item__content {
+  padding-bottom: 8px;
+}
+/* .menu-item.myCollapse title-txt {
+  visibility: hidden;
+} */
+.menu-item.myCollapse .el-collapse-item__header {
+  justify-content: center;
+  /* transition: justify-content .7s ease-in .5s; */
+}
+.menu-item.myCollapse .el-collapse-item__arrow.el-icon-arrow-right{
+  display: none;
+  /* visibility: hidden; */
+}
+.menu-item.myCollapse .el-collapse-item__wrap .content {
+  display: none;
+  /* visibility: hidden; */
+}
+/* .menu-item .el-collapse-item__arrow.el-icon-arrow-right{
+  transition: visibility .3s;
+}
+.menu-item .el-collapse-item__wrap .content {
+  transition: visibility .3s;
+} */
+/* ————————————————————————collapseMenu style end—————————————————————— */
