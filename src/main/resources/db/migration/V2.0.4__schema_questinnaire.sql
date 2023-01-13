@@ -16,8 +16,9 @@ create table vat2_questionnaire_structure_version (
     question_vid integer not null,
     main_question_vid integer not null,
     principle varchar(10) not null,
-    serial_no integer not null,
-    sub_serial_no integer not null
+    step integer not null,
+    principle_serial integer not null,
+    sub_serial integer not null
 );
 create index vat2_ix_qsv_pid on vat2_questionnaire_structure_version(project_id);
 
@@ -38,10 +39,12 @@ create table vat2_question_version (
     vid integer primary key autoincrement,
     question_id integer not null,
     project_id integer,
-    content varchar(255) not null,
-    hint varchar(255),
-    edit_time varchar(100) not null,
+    content clob not null,
+    hint varchar(2000),
+    content_edit_user_id integer,
+    content_edit_time varchar(100),
     answer clob,
+    answer_edit_user_id integer,
     answer_edit_time varchar(100)
 );
 
