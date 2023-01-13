@@ -37,7 +37,7 @@ import org.veritas.assessment.biz.dto.TemplateQuestionnaireCreateDto;
 import org.veritas.assessment.biz.dto.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.metadata.Pageable;
 

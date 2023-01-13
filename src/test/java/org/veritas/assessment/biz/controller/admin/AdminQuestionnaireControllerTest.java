@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;

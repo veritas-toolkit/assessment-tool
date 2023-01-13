@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire.impl;
+package org.veritas.assessment.biz.service.questionnaire1.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -28,8 +28,8 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 

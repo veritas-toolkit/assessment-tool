@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire.impl;
+package org.veritas.assessment.biz.service.questionnaire1.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.PermissionException;
 
 import java.util.List;

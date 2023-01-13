@@ -34,7 +34,7 @@ import org.veritas.assessment.biz.dto.QuestionDto;
 import org.veritas.assessment.biz.dto.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 
 /**

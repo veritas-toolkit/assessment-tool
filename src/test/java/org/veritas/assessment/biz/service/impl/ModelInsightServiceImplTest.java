@@ -36,7 +36,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire.impl;
+package org.veritas.assessment.biz.service.questionnaire1.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectQuestionnaireDao;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectVersionQuestionnaireDao;
-import org.veritas.assessment.biz.service.questionnaire.AbstractQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectVersionQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.QuestionnaireNotCompletedException;
 
 import java.util.List;

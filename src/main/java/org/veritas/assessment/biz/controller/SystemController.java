@@ -27,7 +27,7 @@ import org.veritas.assessment.biz.dto.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 import org.veritas.assessment.system.service.SystemConfigService;
 
 import java.util.List;

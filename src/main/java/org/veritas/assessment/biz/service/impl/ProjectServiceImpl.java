@@ -28,7 +28,7 @@ import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;

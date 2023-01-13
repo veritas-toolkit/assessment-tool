@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire;
+package org.veritas.assessment.biz.service.questionnaire1;
 
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;

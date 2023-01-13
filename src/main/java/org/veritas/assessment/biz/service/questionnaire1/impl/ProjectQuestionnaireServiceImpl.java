@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire.impl;
+package org.veritas.assessment.biz.service.questionnaire1.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +30,9 @@ import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
 import org.veritas.assessment.biz.mapper.QuestionCommentMapper;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectQuestionnaireDao;
-import org.veritas.assessment.biz.service.questionnaire.AbstractQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 

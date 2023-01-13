@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.service.questionnaire.impl;
+package org.veritas.assessment.biz.service.questionnaire1.impl;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
 
 import java.io.IOException;

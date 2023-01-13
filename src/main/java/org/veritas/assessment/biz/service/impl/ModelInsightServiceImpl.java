@@ -37,7 +37,7 @@ import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.system.config.VeritasProperties;
 
