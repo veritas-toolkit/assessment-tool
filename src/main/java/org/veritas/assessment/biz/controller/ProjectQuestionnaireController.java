@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.dto.QuestionnaireForProjectDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireForProjectDto;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;

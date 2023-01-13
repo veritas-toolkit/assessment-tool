@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
-import org.veritas.assessment.biz.dto.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;

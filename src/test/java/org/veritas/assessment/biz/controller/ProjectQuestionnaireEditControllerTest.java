@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.QuestionDto;
-import org.veritas.assessment.biz.dto.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;

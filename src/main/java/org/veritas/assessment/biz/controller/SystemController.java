@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
-import org.veritas.assessment.biz.dto.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.SystemService;

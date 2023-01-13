@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.dto;
+package org.veritas.assessment.biz.dto.v1.questionnaire;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
 import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
 

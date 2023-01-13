@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.dto;
+package org.veritas.assessment.biz.dto.v1.questionnaire;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

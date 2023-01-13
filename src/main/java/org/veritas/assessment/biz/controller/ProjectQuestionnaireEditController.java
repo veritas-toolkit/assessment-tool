@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.dto.QuestionDto;
-import org.veritas.assessment.biz.dto.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;

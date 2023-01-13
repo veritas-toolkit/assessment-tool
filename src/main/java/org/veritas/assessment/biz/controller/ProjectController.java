@@ -38,7 +38,7 @@ import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.dto.QuestionnaireProgressDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireProgressDto;
 import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.RoleDto;
 import org.veritas.assessment.biz.entity.Project;

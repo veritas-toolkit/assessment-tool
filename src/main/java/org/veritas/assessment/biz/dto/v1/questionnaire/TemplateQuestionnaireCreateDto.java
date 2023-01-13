@@ -14,31 +14,15 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.dto;
+package org.veritas.assessment.biz.dto.v1.questionnaire;
 
 import lombok.Data;
-import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireProgressDto;
-
-import java.util.List;
 
 @Data
-public class ProjectDetailDto {
-    // project
-    private ProjectDto project;
+public class TemplateQuestionnaireCreateDto {
+    private Integer basicTemplateId;
 
-    // json info
-    private ModelArtifactDto modelArtifact;
+    private String name;
 
-    // questionnaire detail
-    private QuestionnaireProgressDto questionnaireProgress;
-
-    // user's role for project
-    private RoleDto projectRole;
-
-    // user's role for project's group
-    private RoleDto groupRole;
-
-    // history version ?
-    @Deprecated
-    private List<ReportHistoryDto> reportHistoryList;
+    private String description;
 }

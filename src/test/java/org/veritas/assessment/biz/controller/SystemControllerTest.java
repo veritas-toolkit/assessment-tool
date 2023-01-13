@@ -28,7 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.dto.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 
 import java.util.List;

@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package org.veritas.assessment.biz.dto;
+package org.veritas.assessment.biz.dto.v1.questionnaire;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
+
+import java.util.Date;
 
 @Data
-public class TemplateQuestionnaireCreateDto {
-    private Integer basicTemplateId;
+public class TemplateQuestionnaireBasicDto {
+    private Integer templateId;
 
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private QuestionnaireTemplateType type;
+
     private String description;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date createdTime;
 }
