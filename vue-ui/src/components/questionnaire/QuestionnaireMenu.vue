@@ -1,14 +1,14 @@
 <template>
   <div style="height: 100%;background-color: #F2F2F2;">
-    <el-collapse class="BarlowBold" v-model="activeName" accordion>
-      <el-menu unique-opened active-text-color="#78BED3" :collapse="isCollapse">
+    <el-collapse :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeName" accordion>
+      <el-menu unique-opened active-text-color="#78BED3">
         <div class="main-question" v-for="(item1,index1) in menu" :key="index1">
-          <el-collapse-item :name="item1.serial" :style="index1 == 0? 'margin-top: 6px;':''">
+          <el-collapse-item :class="isCollapse ? 'myCollapseContent' : ''" :name="item1.serial" :style="index1 == 0? 'margin-top: 6px;':''">
             <!--main question-->
             <template slot="title" class="BarlowBold">
               <div class="step-box">
-                <img class="step-pic" :src="stepPic[item1.serial]" alt="">
-                <span class="collapse-step">{{item1.step}}</span>
+                <img class="step-pic" :style="isCollapse?'':'margin-right: 12px;'" :src="stepPic[item1.serial]" alt="">
+                <span class="collapse-step" v-show="!isCollapse">{{item1.step}}</span>
               </div>
             </template>
             <el-menu-item class="BarlowMedium" v-for="(item2,index2) in item1.mainQuestionList" :key="item2.id" :index="item2.id.toString()">
@@ -23,7 +23,7 @@
                       <div class="vertical-line"></div>
                     </div>
                   </div>
-                  <div class="ques-content">{{item2.question}}</div>
+                  <div class="ques-content" v-show="!isCollapse">{{item2.question}}</div>
                 </div>
               </template>
             </el-menu-item>
@@ -118,7 +118,6 @@ export default {
   >img {
     width: 24px;
     height: 24px;
-    margin-right: 12px;
   }
 }
 .ques-list {

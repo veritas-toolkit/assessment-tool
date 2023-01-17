@@ -145,9 +145,8 @@ html, body, #app {
 }
 
 /* ————————————————————————collapseMenu style—————————————————————— */
-.collapseMenu.el-menu {
+.el-menu {
   border-right: none;
-  background-color: transparent;
 }
 .collapseMenu .el-submenu__title:hover {
   background-color: transparent;
@@ -268,4 +267,10 @@ html, body, #app {
 }
 .el-menu-item {
     padding: 0px !important;
+}
+.myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right:before {
+    content: none;
+}
+.myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right {
+    margin: 0px;
 }

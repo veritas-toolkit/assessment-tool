@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <el-container style="height: calc(100% - 2px);display: flex;flex-direction: column">
+    <el-container :style="isCollapse?'height: calc(100% - 3px);display: flex;flex-direction: column':'height: calc(100% - 2px);display: flex;flex-direction: column'">
       <el-header height="64px">
         <div class="title BarlowBold">
           <img class="backPic" src="../../assets/groupPic/back.png" alt="">
@@ -22,16 +22,16 @@
       </el-header>
       <!--flex-direction: column ; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
-          <el-aside width="400px">
+          <el-aside :width="isCollapse? '72px':'400px'">
             <QuestionnaireMenu :principle="principle" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
-          <el-main style="width: calc(100% - 400px)">
+          <el-main>
             <QuestionnaireAnswer></QuestionnaireAnswer>
           </el-main>
       </el-container>
-      <el-footer style="height: 64px">
-        <div style="display: flex;width: 100%">
-          <div class="notification-collapse">
+      <el-footer style="height: 64px;">
+        <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
+          <div class="notification-collapse"  v-if="!isCollapse">
             <div class="not-box">
               <img src="../../assets/projectPic/notification.png" alt="">
               <span class="BarlowBold">Notifications</span>
@@ -41,7 +41,10 @@
               <img src="../../assets/projectPic/chevron-left.svg" alt="">
             </div>
           </div>
-          <div class="footer-right BarlowMedium">
+          <div class="collapse-right" @click="isCollapse=false" v-if="isCollapse">
+            <img src="../../assets/projectPic/chevron-right.svg" alt="">
+          </div>
+          <div class="footer-right BarlowMedium"  :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
             <div class="footer-text" style="margin-left: 24px">Compare</div>
             <div style="display: flex">
               <div class="footer-prev">
@@ -151,7 +154,7 @@ export default {
 .collapse-box {
   position: relative;
   cursor: pointer;
-  width: 64px;
+  width: 72px;
   border-left: 1px solid #D7D9DB;
   text-align: center;
   >img {
@@ -167,7 +170,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: calc(100% - 400px);
 }
 .footer-text {
   padding: 8px 12px;
@@ -193,5 +195,19 @@ export default {
   align-items:center;
   margin-left: 12px;
   margin-right: 24px
+}
+.collapse-right {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 72px;
+  background-color: #F2F5F7;
+  line-height: 64px;
+  >img {
+    margin: auto;
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
