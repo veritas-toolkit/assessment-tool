@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;background-color: #F2F2F2;">
+  <div style="height: 100%;background-color: #F2F2F2;transition: all .5s">
     <el-collapse :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeName" accordion>
       <el-menu unique-opened active-text-color="#78BED3">
         <div class="main-question" v-for="(item1,index1) in menu" :key="index1">

@@ -4,7 +4,7 @@
       <el-header height="64px">
         <div class="title BarlowBold">
           <img class="backPic" src="../../assets/groupPic/back.png" alt="">
-<!--          <router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
+          <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
           <span>Project</span>
         </div>
         <div class="BarlowMedium">
@@ -15,17 +15,19 @@
             <el-radio-button label="Transparency"></el-radio-button>
           </el-radio-group>
         </div>
-        <div style="display: flex" class="BarlowMedium">
+        <div id="endComSty" class="BarlowMedium" @click="openCompare=false" v-if="openCompare">End comparison</div>
+        <div style="display: flex" class="BarlowMedium" v-if="!openCompare">
           <div id="preview">Preview</div>
           <div id="export">Export</div>
         </div>
       </el-header>
-      <!--flex-direction: column ; overflow-y: auto-->
+      <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
           <el-aside :width="isCollapse? '72px':'400px'">
             <QuestionnaireMenu :principle="principle" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
-          <el-main>
+          <el-main :style="openCompare?'display:flex':''">
+            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD"></QuestionnaireAnswer>
             <QuestionnaireAnswer></QuestionnaireAnswer>
           </el-main>
       </el-container>
@@ -45,7 +47,23 @@
             <img src="../../assets/projectPic/chevron-right.svg" alt="">
           </div>
           <div class="footer-right BarlowMedium"  :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
-            <div class="footer-text" style="margin-left: 24px">Compare</div>
+            <el-popover
+                placement="top-start"
+                width="480"
+                trigger="click">
+              <div>
+                <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
+                  <el-tab-pane label="Exported Version" name="exportedVersion">
+                    导出版本
+                  </el-tab-pane>
+                  <el-tab-pane label="Recent Draft" name="recentDraft">
+                    最近草稿
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+              <div class="footer-text" style="margin-left: 24px" slot="reference">Compare</div>
+            </el-popover>
+            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>
             <div style="display: flex">
               <div class="footer-prev">
                 <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">
@@ -77,10 +95,14 @@ export default {
     return {
       principle: 'Generic',
       isCollapse: false,
+      compareTab: 'exportedVersion',
+      openCompare: 'false'
     }
   },
   methods: {
-
+    handleCompareClick(tab, event) {
+      console.log(tab, event);
+    }
   }
 }
 </script>
@@ -119,6 +141,12 @@ export default {
   background-color: #78BED3;
   border-radius: 4px;
   color: #FFFFFF;
+  margin-right: 24px;
+}
+#endComSty {
+  padding: 8px 12px;
+  background-color: #EDF2F6;
+  border-radius: 4px;
   margin-right: 24px;
 }
 .notification-collapse {
@@ -172,6 +200,7 @@ export default {
   justify-content: space-between;
 }
 .footer-text {
+  cursor: pointer;
   padding: 8px 12px;
   background-color: #EDF2F6;
   border-radius: 4px;
@@ -181,6 +210,7 @@ export default {
   height: 24px;
 }
 .footer-prev {
+  cursor: pointer;
   padding: 5px 12px 5px 8px;
   background-color: #EDF2F6;
   border-radius: 4px;
@@ -188,6 +218,7 @@ export default {
   align-items: center
 }
 .footer-next {
+  cursor: pointer;
   padding: 5px 12px 5px 8px;
   background-color: #EDF2F6;
   border-radius: 4px;
