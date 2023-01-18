@@ -27,8 +27,8 @@
             <QuestionnaireMenu :principle="principle" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
-            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD"></QuestionnaireAnswer>
-            <QuestionnaireAnswer></QuestionnaireAnswer>
+            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>
+            <QuestionnaireAnswer style="overflow-y: auto"></QuestionnaireAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
