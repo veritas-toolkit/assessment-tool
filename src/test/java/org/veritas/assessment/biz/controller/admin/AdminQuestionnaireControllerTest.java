@@ -31,6 +31,7 @@ import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireSe
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,6 +47,26 @@ class AdminQuestionnaireControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private TemplateQuestionnaireService service;
+
+    @Test
+    void testList_success() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire2")
+                        .param("keyword", "te")
+                        .param("businessScenario", "1")
+                        .with(user("admin").roles("ADMIN", "USER")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void testGetQuestionnaireToc_success() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire2/1/toc")
+                        .with(user("admin").roles("ADMIN", "USER")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 
     @Test
     void testDelete_fail() throws Exception {
