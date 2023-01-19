@@ -21,6 +21,7 @@ import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireBasi
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 
 @Component
+@Deprecated
 public class TemplateQuestionnaireBasicDtoConverter implements Converter<TemplateQuestionnaireBasicDto, TemplateQuestionnaire> {
     @Override
     public TemplateQuestionnaireBasicDto convertFrom(TemplateQuestionnaire source) {
