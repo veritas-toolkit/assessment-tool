@@ -21,13 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
-import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter2;
+import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.BusinessScenario;
-import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.system.service.SystemConfigService;
 
 import java.util.List;
@@ -39,11 +40,12 @@ public class SystemController {
 
     @Autowired
     TemplateQuestionnaireService templateQuestionnaireService;
-    @Autowired
-    TemplateQuestionnaireBasicDtoConverter questionnaireBasicDtoConverter;
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private TemplateQuestionnaireBasicDtoConverter2 questionnaireBasicDtoConverter;
 
     @Autowired
     private SystemConfigService systemConfigService;
@@ -54,8 +56,10 @@ public class SystemController {
     }
 
     @GetMapping("/questionnaire_template")
-    public List<TemplateQuestionnaireBasicDto> templateQuestionnaireList() {
-        List<TemplateQuestionnaire> list = templateQuestionnaireService.findTemplateList();
+    public List<TemplateQuestionnaireBasicDto> templateQuestionnaireList(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "businessScenario", required = false) Integer businessScenario) {
+        List<TemplateQuestionnaire> list = templateQuestionnaireService.findByKeywordAndBiz(keyword, businessScenario);
         if (list == null || list.isEmpty()) {
             log.error("There is no questionnaire template.");
         }
