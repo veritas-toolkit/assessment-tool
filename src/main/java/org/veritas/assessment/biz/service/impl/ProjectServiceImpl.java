@@ -75,23 +75,37 @@ public class ProjectServiceImpl implements ProjectService {
     private ModelArtifactService modelArtifactService;
 
 
+    /**
+     * Create a new project.
+     * <br/>
+     * <pre>
+     * Steps:
+     *  1. Create basic project.
+     *  2. Grant role and permission for the creator.
+     *  3. Copy questionnaire from questionnaire-template or other project's.
+     * </pre>
+     * @param creator The project's creator. The owner of the project.
+     * @param project
+     * @param questionnaireTemplateId
+     * @return
+     */
     @Override
     @Transactional
-    public Project createProject(User operator, Project project, Integer questionnaireTemplateId) {
+    public Project createProject(User creator, Project project, Integer questionnaireTemplateId) {
         log.info("create project:\n{}", project);
         Objects.requireNonNull(questionnaireTemplateId);
-        int operatorId = operator.getId();
+        int operatorId = creator.getId();
         long created = projectMapper.numberOfProjectCreatedByUser(operatorId);
-        if (created >= operator.getProjectLimited()) {
-            log.warn("User [{}] has created too much projects[{}].", operator.identification(), created);
+        if (created >= creator.getProjectLimited()) {
+            log.warn("User [{}] has created too much projects[{}].", creator.identification(), created);
             throw new QuotaException("Your quota of project creating is " +
-                    operator.getProjectLimited() +
+                    creator.getProjectLimited() +
                     ", and can't create more project.");
         }
         if (project.isPersonProject()) {
             if (!Objects.equals(project.getOwnerId(), operatorId)) {
                 log.warn("User[{}] want to create a project for user[{}]. rejected!",
-                        operator.identification(), project.getOwnerId());
+                        creator.identification(), project.getOwnerId());
                 throw new ErrorParamException("You cannot create project for other users.");
             }
         } else if (project.isGroupProject()) {
@@ -101,10 +115,10 @@ public class ProjectServiceImpl implements ProjectService {
                 log.warn("The group id[{}] is not exist.", groupId);
                 throw new ErrorParamException(String.format("The group[%d] does not exist.", groupId));
             }
-            boolean permission = roleService.hasPermission(operator, group, PermissionType.PROJECT_CREATE.getAction());
+            boolean permission = roleService.hasPermission(creator, group, PermissionType.PROJECT_CREATE.getAction());
             if (!permission) {
                 log.warn("The user[{}] does not has permission to create a project for the group[{}]",
-                        operator.identification(), group.identification());
+                        creator.identification(), group.identification());
                 throw new ErrorParamException(
                         String.format("You do not have permission create a project for the group[%s]",
                                 group.getName()));
@@ -126,7 +140,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
 
-        questionnaireService1.create(project.getId(), questionnaireTemplateId);
+//        questionnaireService1.create(project.getId(), questionnaireTemplateId);
 
 
         return project;
