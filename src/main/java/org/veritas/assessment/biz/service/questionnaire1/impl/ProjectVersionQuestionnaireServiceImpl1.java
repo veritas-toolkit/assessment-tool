@@ -25,19 +25,20 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectQuestionnaireDao;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectVersionQuestionnaireDao;
-import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.QuestionnaireNotCompletedException;
 
 import java.util.List;
 
 @Service
 @Slf4j
-public class ProjectVersionQuestionnaireServiceImpl
-        extends AbstractQuestionnaireService<ProjectVersionQuestion, ProjectVersionQuestionnaire,
-        ProjectVersionQuestionnaireDao>
-        implements ProjectVersionQuestionnaireService {
+@Deprecated
+public class ProjectVersionQuestionnaireServiceImpl1
+        extends AbstractQuestionnaireService1<ProjectVersionQuestion, ProjectVersionQuestionnaire,
+                ProjectVersionQuestionnaireDao>
+        implements ProjectVersionQuestionnaireService1 {
 
     @Autowired
     private ProjectVersionQuestionnaireDao dao;
@@ -46,7 +47,7 @@ public class ProjectVersionQuestionnaireServiceImpl
     private ProjectQuestionnaireDao questionnaireDao;
 
     @Autowired
-    private TemplateQuestionnaireService templateQuestionnaireService;
+    private TemplateQuestionnaireService1 templateQuestionnaireService1;
 
     @Override
     @Transactional

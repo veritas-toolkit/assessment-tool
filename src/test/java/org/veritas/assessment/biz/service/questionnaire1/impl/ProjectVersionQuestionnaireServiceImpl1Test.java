@@ -28,8 +28,8 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
@@ -43,15 +43,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
-class ProjectVersionQuestionnaireServiceImplTest {
+class ProjectVersionQuestionnaireServiceImpl1Test {
     @Autowired
     private UserService userService;
     @Autowired
     private ProjectService projectService;
     @Autowired
-    private ProjectVersionQuestionnaireService service;
+    private ProjectVersionQuestionnaireService1 service;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService;
 
 
     public Project createProject() {

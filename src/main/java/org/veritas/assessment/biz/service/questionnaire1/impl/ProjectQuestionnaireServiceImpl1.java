@@ -30,9 +30,9 @@ import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
 import org.veritas.assessment.biz.mapper.QuestionCommentMapper;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectQuestionnaireDao;
-import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 
@@ -45,15 +45,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ProjectQuestionnaireServiceImpl
-        extends AbstractQuestionnaireService<ProjectQuestion, ProjectQuestionnaire, ProjectQuestionnaireDao>
-        implements ProjectQuestionnaireService {
+@Deprecated
+public class ProjectQuestionnaireServiceImpl1
+        extends AbstractQuestionnaireService1<ProjectQuestion, ProjectQuestionnaire, ProjectQuestionnaireDao>
+        implements ProjectQuestionnaireService1 {
 
     @Autowired
     private ProjectQuestionnaireDao dao;
 
     @Autowired
-    private TemplateQuestionnaireService templateQuestionnaireService;
+    private TemplateQuestionnaireService1 templateQuestionnaireService1;
 
     @Autowired
     private QuestionCommentMapper commentMapper;
@@ -64,7 +65,7 @@ public class ProjectQuestionnaireServiceImpl
     @Override
     @Transactional
     public ProjectQuestionnaire create(Integer projectId, Integer templateId) {
-        TemplateQuestionnaire template = templateQuestionnaireService.findQuestionnaireById(templateId);
+        TemplateQuestionnaire template = templateQuestionnaireService1.findQuestionnaireById(templateId);
         if (template == null) {
             throw new ErrorParamException("The questionnaire template does not exist.");
         }

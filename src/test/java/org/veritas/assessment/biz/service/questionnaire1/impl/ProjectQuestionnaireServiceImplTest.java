@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.NotFoundException;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 class ProjectQuestionnaireServiceImplTest {
     @Autowired
-    private ProjectQuestionnaireService service;
+    private ProjectQuestionnaireService1 service;
 
     @Autowired
     private ObjectWriter objectWriter;

@@ -25,8 +25,8 @@ import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.questionnaire1.TemplateQuestionnaireDao;
-import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.PermissionException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -36,9 +36,10 @@ import java.util.Objects;
 
 @Service
 @Slf4j
-public class TemplateQuestionnaireServiceImpl
-        extends AbstractQuestionnaireService<TemplateQuestion, TemplateQuestionnaire, TemplateQuestionnaireDao>
-        implements TemplateQuestionnaireService {
+@Deprecated
+public class TemplateQuestionnaireServiceImpl1
+        extends AbstractQuestionnaireService1<TemplateQuestion, TemplateQuestionnaire, TemplateQuestionnaireDao>
+        implements TemplateQuestionnaireService1 {
 
     @Autowired
     private TemplateQuestionnaireDao dao;
@@ -92,7 +93,7 @@ public class TemplateQuestionnaireServiceImpl
     }
 
     /**
-     * Use {@link TemplateQuestionnaireServiceImpl#create(java.lang.Integer, java.lang.String, java.lang.String)}
+     * Use {@link TemplateQuestionnaireServiceImpl1#create(java.lang.Integer, java.lang.String, java.lang.String)}
      * instead.
      */
     @Override

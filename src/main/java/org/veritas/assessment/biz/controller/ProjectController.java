@@ -48,7 +48,7 @@ import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
 import org.veritas.assessment.common.exception.NotFoundException;
@@ -92,7 +92,7 @@ public class ProjectController {
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService;
     @Autowired
     private ProjectReportService reportService;
     @Autowired

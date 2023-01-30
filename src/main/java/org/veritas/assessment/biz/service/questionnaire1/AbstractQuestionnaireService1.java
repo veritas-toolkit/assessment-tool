@@ -34,10 +34,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class AbstractQuestionnaireService<
+@Deprecated
+public abstract class AbstractQuestionnaireService1<
         T extends QuestionValue<T>,
         Q extends QuestionnaireValue<T>,
-        D extends QuestionnaireValueDao<T, Q>> implements BaseQuestionnaireService<T, Q> {
+        D extends QuestionnaireValueDao<T, Q>> implements BaseQuestionnaireService1<T, Q> {
     @Autowired
     private D questionnaireDao;
 

@@ -37,7 +37,7 @@ import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
@@ -57,7 +57,7 @@ import java.util.TreeMap;
 public class ProjectQuestionnaireController {
 
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService;
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;

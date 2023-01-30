@@ -37,7 +37,7 @@ import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireCrea
 import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.metadata.Pageable;
 
@@ -49,7 +49,7 @@ import java.util.Objects;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminQuestionnaireController {
     @Autowired
-    private TemplateQuestionnaireService service;
+    private TemplateQuestionnaireService1 service;
 
     @Autowired
     private TemplateQuestionnaireDtoConverter dtoConverter;

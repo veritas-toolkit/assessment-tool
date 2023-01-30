@@ -36,7 +36,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionna
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.common.exception.NotFoundException;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class ProjectVersionController {
     private ProjectReportService reportService;
 
     @Autowired
-    private ProjectVersionQuestionnaireService questionnaireService;
+    private ProjectVersionQuestionnaireService1 questionnaireService;
 
     // {versionId}/report
     @Operation(summary = "Download the report.")

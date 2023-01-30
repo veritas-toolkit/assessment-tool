@@ -22,7 +22,7 @@ import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
 
-public interface TemplateQuestionnaireService extends BaseQuestionnaireService<TemplateQuestion, TemplateQuestionnaire> {
+public interface TemplateQuestionnaireService1 extends BaseQuestionnaireService1<TemplateQuestion, TemplateQuestionnaire> {
 
     void delete(Integer templateId);
 

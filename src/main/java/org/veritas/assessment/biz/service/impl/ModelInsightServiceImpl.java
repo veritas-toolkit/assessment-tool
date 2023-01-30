@@ -37,7 +37,7 @@ import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.system.config.VeritasProperties;
 
@@ -60,7 +60,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     private GraphService graphService;
 
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService;
 
     @Autowired
     private VeritasProperties veritasProperties;

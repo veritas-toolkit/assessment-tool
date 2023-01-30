@@ -16,22 +16,22 @@
 
 package org.veritas.assessment.biz.service.questionnaire1;
 
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
+import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
 
-import java.util.List;
+@Deprecated
+public interface BaseQuestionnaireService1<T extends QuestionValue<T>, Q extends QuestionnaireValue<T>> {
 
-public interface ProjectVersionQuestionnaireService
-        extends BaseQuestionnaireService<ProjectVersionQuestion, ProjectVersionQuestionnaire> {
+    Q findQuestionnaireById(Integer questionnaireId);
 
-    default ProjectVersionQuestionnaire findByVersionId(Integer versionId) {
-        return findQuestionnaireById(versionId);
-    }
+    Q add(Q questionnaire);
 
-    // create questionnaire from a template
-    ProjectVersionQuestionnaire create(Integer projectId);
+    T addMainQuestion(Integer questionnaireId, T mainQuestion);
 
-    List<ProjectVersionQuestionnaire> findListByProjectId(Integer projectId);
+    int deleteMainQuestion(Integer questionnaireId, Integer mainQuestionId);
 
+    int deleteSubQuestion(Integer questionnaireId, Integer subQuestionId);
+
+    T updateMainQuestionWithSub(Integer questionnaireId, T mainQuestion);
 
 }

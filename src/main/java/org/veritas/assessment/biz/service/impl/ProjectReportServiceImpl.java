@@ -54,8 +54,8 @@ import org.veritas.assessment.biz.mapper.ProjectReportMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.biz.util.Version;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -91,9 +91,9 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Autowired
     private ProjectReportMapper reportMapper;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService1;
     @Autowired
-    private ProjectVersionQuestionnaireService projectVersionQuestionnaireService;
+    private ProjectVersionQuestionnaireService1 projectVersionQuestionnaireService;
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
@@ -106,7 +106,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Override
     @Transactional
     public String previewReport(Project project) throws IOException {
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(project.getId());
+        ProjectQuestionnaire questionnaire = questionnaireService1.findByProject(project.getId());
         ModelMap modelMap = modelMap(project, questionnaire);
         return generateReportHtml(modelMap);
     }

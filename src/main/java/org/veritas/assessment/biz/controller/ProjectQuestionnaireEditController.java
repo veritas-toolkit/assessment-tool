@@ -34,7 +34,7 @@ import org.veritas.assessment.biz.dto.QuestionDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 
 /**
@@ -47,7 +47,7 @@ import org.veritas.assessment.common.exception.ErrorParamException;
 public class ProjectQuestionnaireEditController {
 
     @Autowired
-    private ProjectQuestionnaireService service;
+    private ProjectQuestionnaireService1 service;
 
 
     @Operation(summary = "Get the project's questionnaire without any answer.")

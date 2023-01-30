@@ -24,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.PermissionException;
 
 import java.util.List;
@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @SpringBootTest
 @ActiveProfiles("test")
-class TemplateQuestionnaireServiceImplTest {
+class TemplateQuestionnaireServiceImpl1Test {
     @Autowired
-    TemplateQuestionnaireService service;
+    TemplateQuestionnaireService1 service;
 
     @Test
     void testCreate_success() {

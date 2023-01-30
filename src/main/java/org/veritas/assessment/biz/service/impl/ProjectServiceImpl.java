@@ -28,7 +28,7 @@ import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
@@ -70,7 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ModelInsightService modelInsightService;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private ProjectQuestionnaireService1 questionnaireService1;
     @Autowired
     private ModelArtifactService modelArtifactService;
 
@@ -126,7 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
 
-        questionnaireService.create(project.getId(), questionnaireTemplateId);
+        questionnaireService1.create(project.getId(), questionnaireTemplateId);
 
 
         return project;
