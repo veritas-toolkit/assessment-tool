@@ -123,7 +123,7 @@ public class ProjectController {
     }
 
     @Operation(summary = "Create a project")
-    @PutMapping("/new")
+    @PostMapping("/new")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#dto, 'create')")
     public ProjectDto createProject(@Parameter(hidden = true) User operator,
