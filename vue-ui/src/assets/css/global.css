@@ -265,12 +265,37 @@ html, body, #app {
 .el-collapse-item__wrap {
     border-radius: 0px 0px 8px 8px;
 }
-.el-menu-item {
-    padding: 0px !important;
+.myMenu .el-menu-item {
+    padding-left: 0 !important;
 }
 .myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right:before {
     content: none;
 }
 .myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right {
     margin: 0px;
+}
+.createProject .el-checkbox__inner {
+    display: none;
+}
+.createProject .el-checkbox__label {
+    padding: 5px 12px;
+    background: #F2F4F7;
+    border-radius: 20px;
+}
+.createProject .el-checkbox {
+    margin-right: 0;
+}
+.createProject .el-checkbox__input.is-disabled+span.el-checkbox__label {
+    background: #78BED3;
+    border-radius: 20px;
+    opacity: 0.65;
+    color: #FFFFFF;
+    padding: 5px 12px;
+}
+.createProject .el-checkbox__input.is-checked+.el-checkbox__label {
+    color: #FFFFFF;
+    background: #78BED3;
+}
+.el-menu-item {
+    padding: 0;
 }
