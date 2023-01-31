@@ -80,7 +80,7 @@
       <el-tabs v-model="activeNewProjectName" @tab-click="handleClickProject">
         <el-tab-pane label="New project" name="create">
           <!--create project form-->
-          <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
+          <el-form class="createProject" :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
             <el-form-item class="BarlowMedium" label="Project name" prop="name">
               <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
             </el-form-item>
@@ -88,17 +88,23 @@
               <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
             </el-form-item>
             <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-              <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
+              <el-select clearable v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
                 <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">
-              <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
+            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="projectForm.businessScenario || projectForm.businessScenario===0">
+              <el-select clearable v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
                 <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item class="BarlowMedium" label="Owner" prop="ownerType">
-              <el-select v-model="projectForm.ownerType" placeholder="Please choose a owner">
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
+              <el-checkbox disabled v-model="projectForm.principleGeneric">Generic</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleFairness">Fairness</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleEA">Ethics & Accountability</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleTransparency">Transparency</el-checkbox>
+            </el-form-item>
+            <el-form-item style="margin-top: -6px" class="BarlowMedium" label="Owner" prop="ownerType">
+              <el-select clearable v-model="projectForm.ownerType" placeholder="Please choose a owner">
                 <el-option-group
                     v-for="group in ownerTypeList"
                     :key="group.label"
@@ -136,7 +142,7 @@
                 <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item class="BarlowMedium" label="Assess Principle" prop="assessPrinciple">
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
               <div style="display: flex">
                 <div class="generic">Generic</div>
                 <div>Fairness</div>
@@ -191,12 +197,19 @@
           name: '',
           description: '',
           businessScenario: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
           ownerType: '',
           questionnaireTemplateId: '',
         },
         existingProjectForm: {
           businessScenario: '',
-          assessPrinciple: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
           name: '',
           description: '',
           ownerType: '',
@@ -206,11 +219,12 @@
           description: [{ required: true, trigger: 'blur' },],
           businessScenario: [{ required: true, trigger: 'blur' },],
           questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          principleGeneric: [{ required: true, message: 'principle is required', trigger: 'blur' },],
           ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
         },
         existingProjectFormRules: {
           businessScenario: [{ required: true, trigger: 'blur' },],
-          assessPrinciple: [{ required: true, trigger: 'blur' },],
+          principleGeneric: [{ required: true, trigger: 'blur' },],
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
@@ -233,6 +247,9 @@
         this.page = 1
         this.keyword = ''
         this.getProjectList()
+      },
+      'projectForm.businessScenario':function () {
+        this.getCreateTemplateList()
       }
     },
     created() {
@@ -285,7 +302,7 @@
         })
       },
       getCreateTemplateList() {
-        this.$http.get('/api/system/questionnaire_template').then(res => {
+        this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':this.projectForm.businessScenario}}).then(res => {
           if(res.status == 200) {
             this.createTemplateList = res.data
           }
@@ -335,7 +352,7 @@
             if (ownerType.indexOf('+') === -1) {
               this.projectForm.userOwnerId = ''
               this.projectForm.groupOwnerId = ownerType
-              this.$http.put('/api/project/new',this.projectForm).then(res => {
+              this.$http.post('/api/project/new',this.projectForm).then(res => {
                 if(res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.projectFormRefs.resetFields()
@@ -345,7 +362,7 @@
             } else {
               this.projectForm.groupOwnerId = ''
               this.projectForm.userOwnerId = ownerType.split('+')[0]
-              this.$http.put('/api/project/new',this.projectForm).then(res => {
+              this.$http.post('/api/project/new',this.projectForm).then(res => {
                 if(res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.projectFormRefs.resetFields()
