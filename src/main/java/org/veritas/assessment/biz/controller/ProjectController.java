@@ -30,7 +30,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
@@ -38,9 +48,9 @@ import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireProgressDto;
 import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.RoleDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
@@ -67,6 +77,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -152,16 +163,22 @@ public class ProjectController {
                                              @PathVariable("projectId") int projectId) {
         Project project = projectService.findProjectById(projectId);
         ProjectDto projectDto = projectDtoConverter.convertFrom(project);
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
-        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
+//        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
+
+//        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
+
         List<ReportHistoryDto> list = ReportHistoryDto.copyFrom(reportService.findReportHistoryList(projectId));
 
         ProjectDetailDto projectDetailDto = new ProjectDetailDto();
         projectDetailDto.setProject(projectDto);
-        projectDetailDto.setQuestionnaireProgress(new QuestionnaireProgressDto(questionnaire));
-        if (modelArtifact != null) {
-            projectDetailDto.setModelArtifact(new ModelArtifactDto(modelArtifact));
-        }
+        // FIXME: 2023/1/31 query from the database.
+        projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.testData());
+
+
+//        if (modelArtifact != null) {
+//            projectDetailDto.setModelArtifact(new ModelArtifactDto(modelArtifact));
+//        }
+
         projectDetailDto.setReportHistoryList(list);
         UserRole userRole = roleService.findUserRole(operator.getId(), ResourceType.PROJECT, projectId);
         if (userRole != null) {

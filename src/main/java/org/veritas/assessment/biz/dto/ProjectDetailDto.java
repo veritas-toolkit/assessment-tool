@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireProgressDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class ProjectDetailDto {
 
     // questionnaire detail
     private QuestionnaireProgressDto questionnaireProgress;
+
+    private List<PrincipleAssessmentProgressDto> progressList;
 
     // user's role for project
     private RoleDto projectRole;
