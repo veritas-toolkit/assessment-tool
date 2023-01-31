@@ -102,20 +102,13 @@
           <div>
             <div class="artifacts">Assessment questionnaire</div>
             <div style="display: flex;align-items: center;margin-top: 12px;">
-              <el-card v-for="(item,index) in [1,2,3,4]" class="box-card" :style="index == 0? '':'margin-left:12px'">
-                <div class="artifacts" style="margin-bottom: 12px">Generic</div>
+              <el-card v-for="(item,index) in progressList" class="box-card" :style="index == 0? '':'margin-left:12px'">
+                <div class="artifacts" style="margin-bottom: 12px">{{ item.principle }}</div>
                 <div class="progressLabel">
-                  {{ progressCompleted }}/{{ progressCount }}
+                  {{ item.count }}/{{ item.completed }}
                 </div>
-                <el-progress :percentage="progressCompleted/progressCount*100" color="#78BED3" :show-text="false"></el-progress>
+                <el-progress :percentage="item.count/item.completed*100" color="#78BED3" :show-text="false"></el-progress>
               </el-card>
-<!--              <div>-->
-<!--                <div class="progressLabel">-->
-<!--                  {{ progressCompleted }}/{{ progressCount }}-->
-<!--                </div>-->
-<!--                <el-progress :percentage="progressCompleted/progressCount*100" color="#78BED3"-->
-<!--                             :show-text="false"></el-progress>-->
-<!--              </div>-->
             </div>
             <div style="display: flex;align-items: center;">
               <div class="fairnessButton" @click="questionnaire">
@@ -296,6 +289,7 @@ export default {
       progressCount: 18,
       fairnessAssessmentVisible: false,
       reportHistoryList: [],
+      progressList: [],
       jsonData: {},
       permissionList: [],
       userOwnerId: '',
@@ -335,6 +329,7 @@ export default {
       this.progressCount = 18
       this.$http.get(`/api/project/${this.projectId}/detail`).then(res => {
         this.jsonInfo = res.data.modelArtifact
+        this.progressList = res.data.progressList
         if (res.data.project.groupOwnerId) {
           this.groupOwnerId = res.data.project.groupOwnerId
           if (res.data.groupRole) {
