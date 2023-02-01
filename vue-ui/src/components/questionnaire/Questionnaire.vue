@@ -35,9 +35,10 @@
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
           <div class="notification-collapse"  v-if="!isCollapse">
             <el-popover
-                placement="top"
+                placement="top-start"
                 width="400"
                 trigger="click">
+              <Notifications></Notifications>
               <div class="not-box" slot="reference">
                 <img src="../../assets/projectPic/notification.png" alt="">
                 <span class="BarlowBold">Notifications</span>
@@ -89,12 +90,14 @@
 <script>
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
+import Notifications from "@/components/comment/Notifications";
 
 export default {
   name: "Questionnaire",
   components: {
     QuestionnaireMenu,
-    QuestionnaireAnswer
+    QuestionnaireAnswer,
+    Notifications
   },
   data() {
     return {

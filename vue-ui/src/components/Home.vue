@@ -36,7 +36,7 @@
           </el-menu>
         </div>
         <el-popover
-            placement="top"
+            placement="top-start"
             width="400"
             trigger="click">
 <!--          <div class="popover-title">-->
@@ -44,6 +44,7 @@
 <!--            <div class="mark-style">Mark all as read</div>-->
 <!--          </div>-->
 <!--          <div class="divide-line"></div>-->
+          <Notifications></Notifications>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
@@ -135,8 +136,13 @@
 </template>
 
 <script>
+import Notifications from "@/components/comment/Notifications";
+
 export default {
   name: 'Home',
+  components: {
+    Notifications
+  },
   data() {
     return {
       activeStep: 0,
