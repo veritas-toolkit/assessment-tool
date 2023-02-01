@@ -63,6 +63,7 @@
       </el-tabs>
       <div class="block">
         <el-pagination
+          hide-on-single-page
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page=page
