@@ -39,14 +39,15 @@
             placement="top"
             width="400"
             trigger="click">
-          <div class="popover-title">
-            <div class="not-style">Notification</div>
-            <div class="mark-style">Mark all as read</div>
-          </div>
-          <div class="divide-line"></div>
-          <div class="leftBottom BarlowBold" slot="reference">
-            <img src="../assets/projectPic/notification.png" class="menuIcon">
-            <div>Notifications</div>
+<!--          <div class="popover-title">-->
+<!--            <div class="not-style">Notification</div>-->
+<!--            <div class="mark-style">Mark all as read</div>-->
+<!--          </div>-->
+<!--          <div class="divide-line"></div>-->
+          <div class="not-box" slot="reference">
+            <img src="../assets/projectPic/notification.png" alt="">
+            <span class="BarlowBold">Notifications</span>
+            <div>6</div>
           </div>
 
         </el-popover>
@@ -295,5 +296,29 @@ export default {
     width: calc(100% + 24px);
     background-color: #CED3D9;
     margin-left: -12px;
+  }
+  .not-box {
+    display: flex;
+    align-items: center;
+    line-height: 64px;
+    margin-left: 16px;
+    >img {
+      width: 24px;
+      height: 24px;
+    }
+    >span {
+      margin-left: 8px;
+      font-size: 16px;
+      color: #333333;
+    }
+    >div {
+      margin-left: 8px;
+      text-align: center;
+      width: 24px;
+      line-height: 24px;
+      background-color: #FCB215;
+      border-radius: 12px;
+      color: #FFFFFF;
+    }
   }
 </style>

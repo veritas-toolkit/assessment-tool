@@ -34,11 +34,16 @@
       <el-footer style="height: 64px;">
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
           <div class="notification-collapse"  v-if="!isCollapse">
-            <div class="not-box">
-              <img src="../../assets/projectPic/notification.png" alt="">
-              <span class="BarlowBold">Notifications</span>
-              <div>6</div>
-            </div>
+            <el-popover
+                placement="top"
+                width="400"
+                trigger="click">
+              <div class="not-box" slot="reference">
+                <img src="../../assets/projectPic/notification.png" alt="">
+                <span class="BarlowBold">Notifications</span>
+                <div>6</div>
+              </div>
+            </el-popover>
             <div class="collapse-box" @click="isCollapse=true">
               <img src="../../assets/projectPic/chevron-left.svg" alt="">
             </div>
