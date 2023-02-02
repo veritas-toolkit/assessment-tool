@@ -56,7 +56,6 @@ public class TimestampHandler extends BaseTypeHandler<Date> {
         }
         try {
             String format = StringUtils.substring(JAVA_DATE_FORMAT, 0, dateString.length());
-//            DateFormat dateFormat = new SimpleDateFormat(JAVA_DATE_FORMAT);
             DateFormat dateFormat = new SimpleDateFormat(format);
             dateFormat.setTimeZone(UTC_TIMEZONE);
             return dateFormat.parse(dateString);
