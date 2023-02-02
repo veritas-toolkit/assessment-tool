@@ -304,6 +304,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.findById(user.getId());
     }
 
+    @Override
+    public void finishUserGuide(User user) {
+        int result = userMapper.finishUserGuide(user);
+    }
+
     private void exceptionHandler(PersistenceException exception, String username, String email) {
 
     }

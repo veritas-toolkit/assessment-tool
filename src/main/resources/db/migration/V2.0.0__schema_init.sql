@@ -10,9 +10,10 @@ create table vat2_user (
     group_limited integer not null,
     created_time varchar(100),
     last_login_time varchar(100),
-    locked number(1) not null default 0,
-    should_change_password number(1) not null default 1,
-    deleted number(1) not null default 0,
+    finished_user_guide boolean not null default false,
+    locked boolean not null default false,
+    should_change_password boolean not null default true,
+    deleted boolean not null default false,
     delete_time varchar(100) not null default 'null'
 );
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----

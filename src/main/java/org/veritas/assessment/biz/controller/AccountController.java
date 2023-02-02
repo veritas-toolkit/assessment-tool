@@ -19,12 +19,17 @@ package org.veritas.assessment.biz.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.biz.converter.UserDetailDtoConverter;
 import org.veritas.assessment.biz.dto.UserChangePasswordDto;
+import org.veritas.assessment.biz.dto.UserDetailDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
@@ -43,16 +48,19 @@ public class AccountController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserDetailDtoConverter userDetailDtoConverter;
+
     @GetMapping("")
-    public User whoami(User operator) throws Exception {
+    public UserDetailDto whoami(User operator) throws Exception {
         if (operator == null) {
             throw new NotFoundException("Not found user.");
         }
-        return operator;
+        return userDetailDtoConverter.convertFrom(operator);
     }
 
     @PostMapping("")
-    public User modifySelf(User operator, @Valid @RequestBody UserSimpleDto userDto) throws Exception {
+    public UserDetailDto modifySelf(User operator, @Valid @RequestBody UserSimpleDto userDto) throws Exception {
         if (userDto.getId() == null) {
             userDto.setId(operator.getId());
         }
@@ -60,11 +68,13 @@ public class AccountController {
             throw new PermissionException("Cannot change other's information.");
         }
         User user = userDto.toEntity();
-        return userService.modify(operator, user);
+        user = userService.modify(operator, user);
+        return userDetailDtoConverter.convertFrom(user);
+
     }
 
     @PostMapping("/change_password")
-    public User changePassword(User operator, @Valid @RequestBody UserChangePasswordDto dto) throws Exception {
+    public UserDetailDto changePassword(User operator, @Valid @RequestBody UserChangePasswordDto dto) throws Exception {
         if (dto.getId() == null) {
             dto.setId(operator.getId());
         }
@@ -74,7 +84,14 @@ public class AccountController {
         if (StringUtils.equals(dto.getNewPassword(), dto.getOldPassword())) {
             throw new ErrorParamException("The new password should not be same as the old.");
         }
-        return userService.changePassword(operator, dto.getOldPassword(), dto.getNewPassword());
+        User user = userService.changePassword(operator, dto.getOldPassword(), dto.getNewPassword());
+        return userDetailDtoConverter.convertFrom(user);
+    }
+
+    @RequestMapping(path = "/finish_user_guide", method = {RequestMethod.PUT, RequestMethod.POST})
+    @ResponseStatus(value = HttpStatus.OK)
+    public void finishUserGuide(User operator) {
+        userService.finishUserGuide(operator);
     }
 
 }

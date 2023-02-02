@@ -61,4 +61,6 @@ public interface UserService {
     User withdrawAdminPrivileges(Integer userId);
 
     User changePasswordByAdmin(User user, String newRawPassword);
+
+    void finishUserGuide(User user);
 }
