@@ -1,6 +1,7 @@
 package org.veritas.assessment.biz.constant;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 public enum AssessmentStep {
@@ -15,6 +16,7 @@ public enum AssessmentStep {
      */
     @Getter
     @EnumValue
+    @JsonValue
     private final int stepSerial;
 
     @Getter

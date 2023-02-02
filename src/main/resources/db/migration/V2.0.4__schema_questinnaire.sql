@@ -1,6 +1,6 @@
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_questionnaire_version (
-    vid integer primary key autoincrement, -- version id
+    vid bigint primary key, -- version id
     project_id integer not null,
     model_artifact_vid integer,
     creator_user_id integer not null,
@@ -9,43 +9,46 @@ create table vat2_questionnaire_version (
 );
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-create table vat2_questionnaire_version_structure (
-    questionnaire_vid integer not null,
+create table vat2_question_node (
+    questionnaire_vid bigint not null,
     project_id integer not null,
-    question_id integer not null,
-    question_vid integer not null,
-    main_question_vid integer not null,
+    question_id bigint not null,
+    question_vid bigint not null,
+    main_question_id bigint not null,
     principle varchar(10) not null,
     step integer not null,
     serial_of_principle integer not null,
-    sub_serial integer not null
+    sub_serial integer not null,
+    primary key (questionnaire_vid, question_id)
 );
-create index vat2_ix_qsv_pid on vat2_questionnaire_version_structure(project_id);
+create index vat2_ix_qsv_pid on vat2_question_node(project_id);
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_question_meta (
-    id integer primary key autoincrement,
-    current_vid integer,
+    id bigint primary key, -- same as the question init version
     project_id integer not null,
-    main_question_id integer not null,
-    editable boolean not null default false, -- The questionMeta content can be edited.
-    answer_required number(1) not null default 0,
-    add_start_questionnaire_vid integer not null,
-    delete_start_questionnaire_vid integer
+    main_question_id bigint not null,
+    current_vid bigint not null,
+    content_editable boolean not null default false, -- whether the question can be edited.
+    answer_required boolean not null default false,
+    add_start_questionnaire_vid bigint not null,
+    delete_start_questionnaire_vid bigint
 );
 create index vat2_ix_qm_pid on vat2_question_meta (project_id);
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_question_version (
-    vid integer primary key autoincrement,
+    vid integer primary key,
     question_id integer not null,
     main_question_id integer not null,
     project_id integer,
     content clob not null,
     hint varchar(2000),
+    content_editable boolean not null default false, -- whether the question can be edited.
     content_edit_user_id integer,
     content_edit_time varchar(100),
     answer clob,
+    answer_required boolean not null default false,
     answer_edit_user_id integer,
     answer_edit_time varchar(100)
 );

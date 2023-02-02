@@ -3,30 +3,36 @@ package org.veritas.assessment.biz.entity.questionnaire;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Question Version for Question
  */
 @Data
 @Slf4j
+@NoArgsConstructor
+@TableName(autoResultMap = true)
 public class QuestionVersion implements Comparable<QuestionVersion> {
     /**
      * Version Id
      */
-    @TableId(type = IdType.AUTO)
-    private int vid;
+    @TableId(type = IdType.INPUT)
+    private Long vid;
 
-    private int questionId;
+    private Long questionId;
 
-    private int mainQuestionId;
+    private Long mainQuestionId;
 
-    private int projectId;
+    private Integer projectId;
 
     /** question content */
     private String content;
@@ -34,47 +40,54 @@ public class QuestionVersion implements Comparable<QuestionVersion> {
     /** Hint for user to answer the question */
     private String hint;
 
-    private int contentEditUserId;
+    private boolean contentEditable = DEFAULT_EDITABLE;
+
+    private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
+
+    private Integer contentEditUserId;
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date contentEditTime;
 
     private String answer;
 
-    private int answerEditUserId;
+    private Integer answerEditUserId;
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date answerEditTime;
 
-    @TableField(exist = false)
-    private QuestionMeta questionMeta;
+    private static final boolean DEFAULT_EDITABLE = false;
+    private static final boolean DEFAULT_ANSWER_REQUIRED = false;
 
-
-
-    public boolean isMain() {
-        return this.getQuestionId() == this.getMainQuestionId();
+    public QuestionVersion(TemplateQuestion templateQuestion) {
+        this.setContent(templateQuestion.getContent());
+        this.setHint(templateQuestion.getHint());
+        this.setContentEditable(templateQuestion.isEditable());
+        this.setAnswerRequired(templateQuestion.isAnswerRequired());
     }
 
-    public void setQuestionMeta(QuestionMeta questionMeta) {
-        boolean sameQuestion = this.getQuestionId() == questionMeta.getId();
-        if (!sameQuestion) {
-            if (log.isDebugEnabled()) {
-                log.debug("Current question id is [{}], the arg question id is [{}]",
-                        this.getQuestionId(), questionMeta.getId());
-            }
-            throw new IllegalArgumentException("The question IDs are different.");
+
+    @JsonIgnore
+    public boolean isMain() {
+        if (this.getQuestionId() == null || this.getMainQuestionId() == null) {
+            throw new IllegalStateException();
         }
-        this.questionMeta = questionMeta;
+        return Objects.equals(this.getQuestionId(), this.getMainQuestionId());
+    }
+
+    @JsonIgnore
+    public boolean isSub() {
+        return !isMain();
     }
 
     // compare version id for the diff version of same question
     @Override
     public int compareTo(QuestionVersion o) {
-        boolean sameProjectId = this.getProjectId() == o.getProjectId();
-        boolean sameQid = this.getQuestionId() == o.getQuestionId();
+        boolean sameProjectId = Objects.equals(this.getProjectId(), o.getProjectId());
+        boolean sameQid = Objects.equals(this.getQuestionId(), o.getQuestionId());
         if (!sameProjectId || !sameQid) {
             throw new IllegalArgumentException();
         }
-        return this.getVid() - o.getVid();
+        return this.getVid().compareTo(o.getVid());
     }
 }

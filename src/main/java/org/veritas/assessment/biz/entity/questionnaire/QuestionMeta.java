@@ -2,47 +2,68 @@ package org.veritas.assessment.biz.entity.questionnaire;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 /**
  * Save Question metadata.
  * Every question, including main-question and sub-question, only has one record.
  */
 @Data
+@NoArgsConstructor
 public class QuestionMeta {
-    @TableId(type = IdType.AUTO)
-    private int id;
+    @TableId(type = IdType.INPUT)
+    private Long id;
 
     /**
      * Point to the current version id of the question.
      * <br/>
      * This property can be used as the LOCK to add a new {@link QuestionVersion} record.
      */
-    private int currentVid;
+    private Long currentVid;
 
-    private int projectId;
-    private int mainQuestionId;
+    private Integer projectId;
+    private Long mainQuestionId;
 
-    private boolean editable = DEFAULT_EDITABLE;
+    private boolean contentEditable = DEFAULT_EDITABLE;
+
+    private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
 
     /**
      * Add this question the questionnaire from this questionnaire version.
      */
-    private int addStartQuestionnaireVid;
+    private Long addStartQuestionnaireVid;
 
     /**
      * If the question be deleted
      */
-    private Integer deleteStartQuestionnaireVid;
+    private Long deleteStartQuestionnaireVid;
 
     private static final boolean DEFAULT_EDITABLE = false;
+    private static final boolean DEFAULT_ANSWER_REQUIRED = false;
 
     /**
      * Check if current question the main question.
      * @return main question return <b>true</b>, other return <b>false</b>
      */
+    @JsonIgnore
     public boolean isMain() {
-        return id == mainQuestionId;
+        if (id == null || mainQuestionId == null) {
+            throw new IllegalStateException();
+        }
+        return Objects.equals(id, mainQuestionId);
     }
 
+    @JsonIgnore
+    public boolean isSub() {
+        return !this.isMain();
+    }
+
+    public QuestionMeta(TemplateQuestion templateQuestion) {
+        this.contentEditable = templateQuestion.isEditable();
+        this.setAnswerRequired(templateQuestion.isAnswerRequired());
+    }
 }

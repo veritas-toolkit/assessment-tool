@@ -24,10 +24,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
@@ -70,9 +72,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ModelInsightService modelInsightService;
     @Autowired
-    private ProjectQuestionnaireService1 questionnaireService1;
-    @Autowired
     private ModelArtifactService modelArtifactService;
+
+    @Autowired
+    private QuestionnaireService questionnaireService;
 
 
     /**
@@ -129,22 +132,21 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setCreatorUserId(operatorId);
-        Date now = new Date();
-        project.setCreatedTime(now);
-        project.setLastEditedTime(now);
+        Date createdTime = new Date();
+        project.setCreatedTime( createdTime);
+        project.setLastEditedTime( createdTime);
         try {
             projectMapper.addProject(project);
         } catch (PersistenceException exception) {
             exceptionHandler(exception, project);
         }
-
         roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
-
-//        questionnaireService1.create(project.getId(), questionnaireTemplateId);
-
-
+        QuestionnaireVersion questionnaire = questionnaireService.createByTemplate(
+                creator.getId(), project, createdTime, questionnaireTemplateId);
+        questionnaireService.saveNewQuestionnaire(questionnaire);
         return project;
     }
+    // create project
 
     @Override
     @Transactional

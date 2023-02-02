@@ -11,7 +11,6 @@ import org.veritas.assessment.biz.mapper.questionnaire.TemplateQuestionnaireDao;
 import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +26,16 @@ public class TemplateQuestionnaireService {
         return templateQuestionnaireDao.findAllWithoutQuestion();
     }
 
+    /**
+     * Find the questionnaire template list by keyword and business scenario.
+     * <br/>
+     * The keyword will search in template's name and description.
+     * <br/>
+     * Both <code>keyword</code> and <code>businessScenario</code> can be null.
+     * @param keyword
+     * @param businessScenario
+     * @return
+     */
     @Transactional(readOnly = true)
     public List<TemplateQuestionnaire> findByKeywordAndBiz(String keyword, Integer businessScenario) {
         List<TemplateQuestionnaire> list = templateQuestionnaireDao.findAllWithoutQuestion();

@@ -3,21 +3,31 @@ package org.veritas.assessment.biz.entity.questionnaire;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Data
-public class QuestionnaireVersion {
-    @TableId(type = IdType.AUTO)
-    private int vid;
+@NoArgsConstructor
+@TableName(autoResultMap = true)
+public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
+    /**
+     * Version id
+     */
+    @TableId(type = IdType.INPUT)
+    private Long vid;
 
-    private int projectId;
+    private Integer projectId;
 
     private Integer modelArtifactVid;
 
@@ -29,48 +39,116 @@ public class QuestionnaireVersion {
     private String message;
 
     @TableField(exist = false)
-    private List<QuestionnaireVersionStructure> structureList;
+    private List<QuestionNode> mainQuestionNodeList;
 
-    @TableField(exist = false)
-    private List<QuestionMeta> questionMetaList;
-
-    @TableField(exist = false)
-    private List<QuestionVersion> questionVersionList;
-
-
-    public void addContent(List<QuestionnaireVersionStructure> structureList,
-                    List<QuestionMeta> questionMetaList,
-                    List<QuestionVersion> questionVersionList) {
-        this.structureList = structureList.stream().sorted().collect(Collectors.toList());
-        this.questionMetaList = questionMetaList.stream().sorted().collect(Collectors.toList());
-        this.questionVersionList = questionVersionList.stream().sorted().collect(Collectors.toList());
-        for (QuestionnaireVersionStructure structure : structureList) {
-            for(QuestionVersion questionVersion : questionVersionList) {
-                if (structure.getQuestionVid() == questionVersion.getVid()) {
-                    structure.setQuestionVersion(questionVersion);
-                    for (QuestionMeta questionMeta : questionMetaList) {
-                        if (questionVersion.getQuestionId() == questionMeta.getId()) {
-                            questionVersion.setQuestionMeta(questionMeta);
-                        }
-                    }
-                }
-            }
+    @Override
+    public int compareTo(QuestionnaireVersion o) {
+        if (this.projectId == null) {
+            throw new IllegalStateException();
         }
-
+        return this.getVid().compareTo(o.vid);
     }
 
-    // 获取所有主问题 QV
 
-    List<QuestionVersion> getMainQuestionList() {
-        if (questionVersionList == null) {
+    public QuestionnaireVersion(int creatorUserId,
+                                int projectId,
+                                Date createdTime,
+                                TemplateQuestionnaire templateQuestionnaire,
+                                Supplier<Long> idGenerator) {
+        this.mainQuestionNodeList = templateQuestionnaire.getMainQuestionList().stream()
+                .map(QuestionNode::createFromTemplate)
+                .collect(Collectors.toList());
+        this.init(creatorUserId, projectId, createdTime, idGenerator);
+    }
+
+
+    public List<QuestionMeta> findAllQuestionMetaList() {
+        if (mainQuestionNodeList == null || mainQuestionNodeList.isEmpty()) {
             return Collections.emptyList();
         }
-        return questionVersionList.stream()
-                .filter(QuestionVersion::isMain)
-                .sorted()
-                .collect(Collectors.toList());
+        List<QuestionMeta> list = new ArrayList<>();
+        for (QuestionNode node : mainQuestionNodeList) {
+            list.add(node.getMeta());
+            for (QuestionNode subNode : node.getSubList()) {
+                list.add(subNode.getMeta());
+            }
+        }
+        return Collections.unmodifiableList(list);
     }
 
+    public List<QuestionNode> finAllQuestionNodeList() {
+        if (mainQuestionNodeList == null || mainQuestionNodeList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<QuestionNode> list = new ArrayList<>();
+        for (QuestionNode node : mainQuestionNodeList) {
+            list.add(node);
+            list.addAll(node.getSubList());
+        }
+        return Collections.unmodifiableList(list);
+    }
 
+    public List<QuestionVersion> finAllQuestionVersionList() {
+        if (mainQuestionNodeList == null || mainQuestionNodeList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<QuestionVersion> list = new ArrayList<>();
+        for (QuestionNode node : mainQuestionNodeList) {
+            list.add(node.getQuestionVersion());
+            for (QuestionNode subNode : node.getSubList()) {
+                list.add(subNode.getQuestionVersion());
+            }
+        }
+        return Collections.unmodifiableList(list);
+    }
 
+    public void fill(List<QuestionNode> allNodeList, List<QuestionMeta> allMetaList, List<QuestionVersion> allQuestions) {
+        Map<Long, QuestionMeta> metaMap = allMetaList.stream()
+                .collect(Collectors.toMap(QuestionMeta::getId, meta -> meta));
+        Map<Long, QuestionVersion> vidToQuestionMap = allQuestions.stream()
+                .collect(Collectors.toMap(QuestionVersion::getVid, q -> q));
+
+        for (QuestionNode node : allNodeList) {
+            node.setMeta(metaMap.get(node.getQuestionId()));
+            node.setQuestionVersion(vidToQuestionMap.get(node.getQuestionVid()));
+        }
+
+        List<QuestionNode> mainNodeList = allNodeList.stream()
+                .filter(QuestionNode::isMain)
+                .sorted()
+                .collect(Collectors.toList());
+        List<QuestionNode> subNodeList = allNodeList.stream()
+                .filter(QuestionNode::isSub)
+                .sorted()
+                .collect(Collectors.toList());
+
+        mainNodeList.forEach(node -> {
+            node.setSubList(subNodeList);
+        });
+        this.mainQuestionNodeList = mainNodeList;
+    }
+
+    private void init(int creatorUserId, int projectId, Date createdTime, Supplier<Long> idGenerator) {
+        Long questionnaireVid = idGenerator.get();
+        // user, created time, project
+        this.setProjectId(projectId);
+        this.setCreatorUserId(creatorUserId);
+        this.setCreatedTime(createdTime);
+        this.setMessage(String.format("Created by user[%s], at %s", creatorUserId, createdTime));
+
+        // questionnaire id
+        this.setVid(questionnaireVid);
+        for (QuestionNode node : mainQuestionNodeList) {
+            node.initGenericPropertiesWithSubs(creatorUserId, projectId, questionnaireVid, createdTime);
+        }
+
+        // question id
+        for (QuestionNode node : mainQuestionNodeList) {
+            node.initQuestionId(idGenerator);
+        }
+        // question version id
+        for (QuestionNode node : mainQuestionNodeList) {
+            node.initQuestionVid(idGenerator);
+        }
+    }
 }

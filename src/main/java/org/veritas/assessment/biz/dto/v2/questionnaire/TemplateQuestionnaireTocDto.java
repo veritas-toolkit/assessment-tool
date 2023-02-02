@@ -12,7 +12,6 @@ import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +101,7 @@ public class TemplateQuestionnaireTocDto {
             PrinciplePart part = new PrinciplePart();
             part.setPrinciple(principle.getDescription());
             part.setPrincipleShortName(principle.getShortName());
-            List<TemplateQuestion> questionList = questionnaire.getQuestionList().stream()
+            List<TemplateQuestion> questionList = questionnaire.getMainQuestionList().stream()
                     .filter(q -> q.getPrinciple() == principle)
                     .collect(Collectors.toList());
             for (AssessmentStep s : AssessmentStep.values()) {

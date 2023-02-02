@@ -24,6 +24,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public interface ProjectQuestionnaireService1 extends BaseQuestionnaireService1<ProjectQuestion, ProjectQuestionnaire> {
 
     default ProjectQuestionnaire findByProject(Integer projectId) {

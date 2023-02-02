@@ -35,8 +35,10 @@ import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireForProjectDto;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
@@ -56,10 +58,14 @@ import java.util.TreeMap;
 public class ProjectQuestionnaireController2 {
 
     @Autowired
-    private ProjectQuestionnaireService1 questionnaireService;
+    @Deprecated
+    private ProjectQuestionnaireService1 questionnaireService1;
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;
+
+    @Autowired
+    private QuestionnaireService questionnaireService;
 
     // 1. 获取问卷目录结构
     // 2. 获取指定问题（主问题）的题干和答案
@@ -72,6 +78,20 @@ public class ProjectQuestionnaireController2 {
     // comment 查询
 
 
+    @Operation(summary = "Get the project's questionnaire.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    @GetMapping("/test")
+    public QuestionnaireVersion findQuestionnaireTest(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") Integer projectId,
+            @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer) {
+        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
+        if (q == null) {
+            throw new NotFoundException("");
+        }
+        return q;
+    }
+
 
     @Operation(summary = "Get the project's questionnaire.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
@@ -81,7 +101,7 @@ public class ProjectQuestionnaireController2 {
             @PathVariable("projectId") Integer projectId,
             @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer
     ) {
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
+        ProjectQuestionnaire questionnaire = questionnaireService1.findByProject(projectId);
         if (questionnaire == null) {
             throw new NotFoundException("Not found the project's questionnaire. Please check the project's id.");
         }
@@ -103,9 +123,9 @@ public class ProjectQuestionnaireController2 {
                 }
             }
         }
-        List<QuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = questionnaireService1.findCommentListByProjectId(projectId);
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
+                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
         Map<Integer, List<QuestionCommentDto>> map =
                 toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
         return new QuestionnaireForProjectDto<>(questionnaire, map);
@@ -118,7 +138,7 @@ public class ProjectQuestionnaireController2 {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId) {
-        ProjectQuestionnaire questionnaire = questionnaireService.findQuestionnaireById(projectId);
+        ProjectQuestionnaire questionnaire = questionnaireService1.findQuestionnaireById(projectId);
         ProjectQuestion projectQuestion = questionnaire.findQuestionById(questionId);
         if (projectQuestion == null) {
             throw new NotFoundException("Not found the question");
@@ -133,7 +153,7 @@ public class ProjectQuestionnaireController2 {
                                       @PathVariable("projectId") Integer projectId,
                                       @RequestBody ProjectQuestion projectQuestion) {
         projectQuestion.configQuestionnaireId(projectId);
-        return questionnaireService.editAnswer(projectId, projectQuestion);
+        return questionnaireService1.editAnswer(projectId, projectQuestion);
     }
 
     @Operation(summary = "Add a comment on the question.")
@@ -144,9 +164,9 @@ public class ProjectQuestionnaireController2 {
             @PathVariable("projectId") Integer projectId,
             @RequestBody QuestionCommentCreateDto dto) {
         QuestionComment comment = dto.toEntity(operator.getId(), projectId);
-        questionnaireService.addComment(comment);
+        questionnaireService1.addComment(comment);
 
-        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(comment.getQuestionId());
+        List<QuestionComment> list = questionnaireService1.findCommentListByQuestionId(comment.getQuestionId());
         return commentDtoConverter.convertFrom(list);
 
     }
@@ -157,9 +177,9 @@ public class ProjectQuestionnaireController2 {
     public Map<Integer, List<QuestionCommentDto>> findCommentListByProject(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId) {
-        List<QuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = questionnaireService1.findCommentListByProjectId(projectId);
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
+                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
 
@@ -171,7 +191,7 @@ public class ProjectQuestionnaireController2 {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId) {
-        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(questionId);
+        List<QuestionComment> list = questionnaireService1.findCommentListByQuestionId(questionId);
         for (QuestionComment comment : list) {
             if (!Objects.equals(projectId, comment.getProjectId())) {
                 throw new ErrorParamException(String.format(
@@ -179,11 +199,11 @@ public class ProjectQuestionnaireController2 {
             }
         }
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
+                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
         Optional<Integer> optional = list.stream().map(QuestionComment::getId).max(Integer::compareTo);
         if (optional.isPresent()) {
             Integer commentId = optional.get();
-            questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
+            questionnaireService1.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
         }
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
@@ -197,7 +217,7 @@ public class ProjectQuestionnaireController2 {
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId,
             @PathVariable("commentId") Integer commentId) {
-        questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
+        questionnaireService1.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
     }
 
 

@@ -1,6 +1,5 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
@@ -21,7 +20,7 @@ public class TemplateQuestionnaireDao {
         List<TemplateQuestionnaire> list = questionnaireMapper.findAll();
         for (TemplateQuestionnaire questionnaire : list) {
             List<TemplateQuestion> questionList = questionMapper.findByTemplateId(questionnaire.getId());
-            questionnaire.setQuestionList(questionList);
+            questionnaire.addAllQuestionList(questionList);
         }
         return list;
     }
@@ -41,7 +40,7 @@ public class TemplateQuestionnaireDao {
             return null;
         }
         List<TemplateQuestion> questionList = questionMapper.findByTemplateId(q.getId());
-        q.setQuestionList(questionList);
+        q.addAllQuestionList(questionList);
         return q;
     }
 

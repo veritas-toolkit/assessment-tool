@@ -1,5 +1,5 @@
 insert into vat2_template_questionnaire(id, name, description, business_scenario, type, creator_user_id, created_time)
-values(1, 'test', 'test template questionnaire', 1, 1, 1, datetime('now'));
+values(1, 'Credit Scoring', 'Credit Scoring template questionnaire', 1, 1, 1, datetime('now'));
 
 insert into vat2_template_question(template_id, principle, step, serial_of_principle, sub_serial,
                                    content, hint, editable, editor_user_id, edit_time, answer_required)
