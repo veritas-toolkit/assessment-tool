@@ -25,9 +25,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.security.core.parameters.P;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName(autoResultMap = true)
@@ -133,5 +138,22 @@ public class Project {
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    public List<Principle> principles() {
+        List<Principle> list = new ArrayList<>();
+        if (this.principleGeneric) {
+            list.add(Principle.G);
+        }
+        if (this.principleFairness) {
+            list.add(Principle.F);
+        }
+        if (this.principleEA) {
+            list.add(Principle.EA);
+        }
+        if (this.principleTransparency) {
+            list.add(Principle.T);
+        }
+        return Collections.unmodifiableList(list);
     }
 }

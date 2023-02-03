@@ -32,17 +32,22 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
+import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireForProjectDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
+import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,12 +59,18 @@ import java.util.TreeMap;
 
 @RestController
 @Slf4j
-@RequestMapping("/project/{projectId}/questionnaire2")
+@RequestMapping("/project/{projectId}/questionnaire")
 public class ProjectQuestionnaireController2 {
 
     @Autowired
     @Deprecated
     private ProjectQuestionnaireService1 questionnaireService1;
+
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;
@@ -90,6 +101,23 @@ public class ProjectQuestionnaireController2 {
             throw new NotFoundException("");
         }
         return q;
+    }
+
+    // latest questionnaire table of contents.
+    @Operation(summary = "Fetch project latest questionnaire table of contents.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    @GetMapping("/toc")
+    public QuestionnaireTocDto findLatestToc(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") Integer projectId) {
+        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
+        if (q == null) {
+            throw new NotFoundException("Not found the questionnaire.");
+        }
+        Project project = projectService.findProjectById(projectId);
+        User user = userService.findUserById(q.getCreatorUserId());
+        UserSimpleDto userSimpleDto = new UserSimpleDto(user);
+        return new QuestionnaireTocDto(q, project, userSimpleDto);
     }
 
 

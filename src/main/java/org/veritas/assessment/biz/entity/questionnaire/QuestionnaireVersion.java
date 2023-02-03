@@ -7,13 +7,17 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.JdbcType;
+import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -150,5 +154,29 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         for (QuestionNode node : mainQuestionNodeList) {
             node.initQuestionVid(idGenerator);
         }
+    }
+
+    public Map<Principle, Map<AssessmentStep, List<QuestionNode>>> structure() {
+        Map<Principle, Map<AssessmentStep, List<QuestionNode>>> map = new LinkedHashMap<>();
+        for (Principle principle : Principle.values()) {
+            Map<AssessmentStep, List<QuestionNode>> stepNode = new LinkedHashMap<>();
+            for (AssessmentStep step : AssessmentStep.values()) {
+                List<QuestionNode> questionNodeList = this.mainQuestionNodeList.stream()
+                        .filter(q -> principle == q.getPrinciple() && step == q.getStep())
+                        .sorted().collect(Collectors.toList());
+                stepNode.put(step, questionNodeList);
+            }
+            map.put(principle, Collections.unmodifiableMap(stepNode));
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
+    public List<QuestionNode> find(Principle principle, AssessmentStep step) {
+        Objects.requireNonNull(principle);
+        Objects.requireNonNull(step);
+        return this.mainQuestionNodeList.stream()
+                .filter(q -> principle == q.getPrinciple() && step == q.getStep())
+                .sorted().collect(Collectors.toList());
+
     }
 }

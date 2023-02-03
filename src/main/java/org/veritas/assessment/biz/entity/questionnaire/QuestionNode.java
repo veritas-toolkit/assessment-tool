@@ -96,6 +96,10 @@ public class QuestionNode implements Comparable<QuestionNode> {
         }
     }
 
+    public String serial() {
+        return this.principle.getShortName() + this.getSerialOfPrinciple();
+    }
+
     public List<QuestionNode> toPlaneNodeList() {
         List<QuestionNode> list = new ArrayList<>();
         list.add(this);

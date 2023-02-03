@@ -53,7 +53,7 @@ import java.util.TreeMap;
 @RestController
 @Slf4j
 @Deprecated
-@RequestMapping("/project/{projectId}/questionnaire")
+@RequestMapping("/project/{projectId}/questionnaire1")
 public class ProjectQuestionnaireController {
 
     @Autowired
