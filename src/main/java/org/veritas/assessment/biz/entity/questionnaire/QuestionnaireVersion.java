@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -178,5 +179,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
                 .filter(q -> principle == q.getPrinciple() && step == q.getStep())
                 .sorted().collect(Collectors.toList());
 
+    }
+
+    public QuestionNode findMainQuestionById(long questionId) {
+        return mainQuestionNodeList.stream().filter(q -> q.getQuestionId() == questionId)
+                .findFirst().orElse(null);
     }
 }

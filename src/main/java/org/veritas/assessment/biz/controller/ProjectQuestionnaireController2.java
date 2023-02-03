@@ -34,10 +34,12 @@ import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireForProjectDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
@@ -121,6 +123,7 @@ public class ProjectQuestionnaireController2 {
     }
 
 
+    @Deprecated
     @Operation(summary = "Get the project's questionnaire.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     @GetMapping("")
@@ -162,16 +165,22 @@ public class ProjectQuestionnaireController2 {
     @Operation(summary = "Get answer of question, including sub question's answers.")
     @GetMapping(path = "/question/{questionId}")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public ProjectQuestion findProjectQuestion(
+    public QuestionDto findProjectQuestion(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Integer questionId) {
-        ProjectQuestionnaire questionnaire = questionnaireService1.findQuestionnaireById(projectId);
-        ProjectQuestion projectQuestion = questionnaire.findQuestionById(questionId);
-        if (projectQuestion == null) {
-            throw new NotFoundException("Not found the question");
+            @PathVariable("questionId") Long questionId) {
+        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
+        if (q == null) {
+            throw new NotFoundException("Not found the questionnaire.");
         }
-        return projectQuestion;
+        QuestionNode questionNode = q.findMainQuestionById(questionId);
+        if (questionNode == null) {
+            throw new NotFoundException("Not found the question in current project.");
+        }
+//        List<Integer> userIdList = new ArrayList<>();
+
+//        UserSimpleDto questionEditor = userService.findUserById(questionNode.getQuestionVersion().getAnswerEditUserId());
+        return new QuestionDto(questionNode);
     }
 
     @Operation(summary = "Update answer of question, including sub question's answers.")
