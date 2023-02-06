@@ -78,7 +78,6 @@
         <el-button type="info" class="GreenBC" @click="changePassword">Save</el-button>
       </span>
     </el-dialog>
-    <el-button type="primary" @click="userWizardShow=true">主要按钮</el-button>
     <!--user wizardPic-->
     <el-dialog
         id="wizard"
@@ -150,6 +149,7 @@ export default {
       accountInfo: {},
       admin: false,
       shouldChangePassword: false,
+      finishedUserGuide: true,
       userWizardShow: false,
       passwordForm: {
         oldPassword: '',
@@ -173,6 +173,7 @@ export default {
           this.accountInfo = res.data
           this.admin = res.data.admin
           this.shouldChangePassword = res.data.shouldChangePassword
+          this.finishedUserGuide = res.data.finishedUserGuide
         }
       })
     },
@@ -191,6 +192,10 @@ export default {
                 this.$message.success('Change successfully')
                 this.shouldChangePassword = false
               }
+            })
+            this.userWizardShow = !this.finishedUserGuide
+            this.$http.post('/api/account/finish_user_guide').then(res => {
+              console.log(res)
             })
           } else {
             this.$message.warning('Old password and new password cannot be the same')
