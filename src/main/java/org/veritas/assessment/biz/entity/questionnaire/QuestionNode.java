@@ -220,4 +220,12 @@ public class QuestionNode implements Comparable<QuestionNode> {
             this.getSubList().forEach(sub -> sub.initMainQuestionIdWithSubs(mainQuestionId));
         }
     }
+
+    public void updateQuestionVersion(QuestionVersion questionVersion) {
+        Objects.requireNonNull(questionVersion);
+        Objects.requireNonNull(questionVersion.getVid());
+        this.setQuestionVid(questionVersion.getVid());
+        this.getMeta().setCurrentVid(questionVersion.getVid());
+        this.setQuestionVersion(questionVersion);
+    }
 }

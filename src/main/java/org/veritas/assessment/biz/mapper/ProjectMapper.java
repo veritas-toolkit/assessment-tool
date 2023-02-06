@@ -261,4 +261,14 @@ public interface ProjectMapper extends BaseMapper<Project> {
         Page<Project> page1 = selectPage(projectPage, wrapper);
         return Pageable.convert(page1);
     }
+
+//    default boolean updateQuestionnaireForLock(int projectId, long questionnaireVid, long questionnaireNewVid) {
+    default boolean updateQuestionnaireForLock(int projectId, long questionnaireNewVid) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+//        wrapper.eq(Project::getCurrentQuestionnaireVid, questionnaireVid);
+        wrapper.set(Project::getCurrentQuestionnaireVid, questionnaireNewVid);
+        int result = update(null, wrapper);
+        return result > 0;
+    }
 }

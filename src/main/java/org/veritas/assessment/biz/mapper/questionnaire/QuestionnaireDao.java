@@ -7,6 +7,7 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.mapper.ProjectMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,8 @@ public class QuestionnaireDao {
     private QuestionVersionMapper questionVersionMapper;
 
     private QuestionNodeMapper questionNodeMapper;
+
+
 
     @Autowired
     public QuestionnaireDao(QuestionMetaMapper questionMetaMapper,
@@ -61,5 +64,33 @@ public class QuestionnaireDao {
         return questionnaire;
     }
     // 加载Questionnaire by vid
+
+    // cache?
+    public boolean updateQuestionVidForLock(long questionId, long oldVid, long newVid) {
+        return questionMetaMapper.updateVersionId(questionId, oldVid, newVid);
+    }
+
+    // edit question
+    public boolean createNewVersion(QuestionnaireVersion questionnaireVersion, QuestionVersion questionVersion) {
+        int questionnaireCount = questionnaireMapper.insert(questionnaireVersion);
+        if (questionnaireCount != 1) {
+            return false;
+        }
+        List<QuestionNode> questionNodeList = questionnaireVersion.finAllQuestionNodeList();
+        int nodeCount = questionNodeMapper.saveAll(questionNodeList);
+        if (nodeCount != questionNodeList.size()) {
+            return false;
+        }
+        int questionCount = questionVersionMapper.insert(questionVersion);
+        if (questionCount != 1) {
+            return false;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("questionnaire insert[{}] record, question-node insert [{}] records, question insert [{}] record",
+                    questionnaireCount, nodeCount, questionCount);
+        }
+        return true;
+        // meta has been update, not need to update.
+    }
 
 }

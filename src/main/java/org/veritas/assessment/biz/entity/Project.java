@@ -65,7 +65,7 @@ public class Project {
 
     private Integer currentModelArtifactVid;
 
-    private Integer currentQuestionnaireVid;
+    private Long currentQuestionnaireVid;
 
     private Integer creatorUserId;
 

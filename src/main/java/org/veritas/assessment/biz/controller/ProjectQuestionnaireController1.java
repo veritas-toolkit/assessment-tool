@@ -19,7 +19,6 @@ package org.veritas.assessment.biz.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,29 +26,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.dto.UserSimpleDto;
-import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireForProjectDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
-import org.veritas.assessment.biz.entity.Project;
-import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
+import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
-import org.veritas.assessment.system.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,126 +49,29 @@ import java.util.TreeMap;
 
 @RestController
 @Slf4j
-@RequestMapping("/project/{projectId}/questionnaire")
-public class ProjectQuestionnaireController2 {
+@Deprecated
+@RequestMapping("/project/{projectId}/questionnaire1")
+public class ProjectQuestionnaireController1 {
 
     @Autowired
-    @Deprecated
-    private ProjectQuestionnaireService1 questionnaireService1;
-
-    @Autowired
-    private ProjectService projectService;
-
-    @Autowired
-    private UserService userService;
+    private ProjectQuestionnaireService1 questionnaireService;
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;
 
-    @Autowired
-    private QuestionnaireService questionnaireService;
-
-    // 1. 获取问卷目录结构
-    // 2. 获取指定问题（主问题）的题干和答案
-
-    // 3. 修改答案
-    // project_id, main_q_vid, sub_q_vid
-
-    // comment 新增
-
-    // comment 查询
-
-
-    @Operation(summary = "Get the project's questionnaire.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    @GetMapping("/test")
-    public QuestionnaireVersion findQuestionnaireTest(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
-            throw new NotFoundException("");
-        }
-        return q;
-    }
-
-    // latest questionnaire table of contents.
-    @Operation(summary = "Fetch project latest questionnaire table of contents.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    @GetMapping("/toc")
-    public QuestionnaireTocDto findLatestToc(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
-            throw new NotFoundException("Not found the questionnaire.");
-        }
-        Project project = projectService.findProjectById(projectId);
-        User user = userService.findUserById(q.getCreatorUserId());
-        UserSimpleDto userSimpleDto = new UserSimpleDto(user);
-        return new QuestionnaireTocDto(q, project, userSimpleDto);
-    }
-
-
-    @Deprecated
-    @Operation(summary = "Get the project's questionnaire.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    @GetMapping("")
-    public QuestionnaireForProjectDto<ProjectQuestion, ProjectQuestionnaire> findQuestionnaire(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer
-    ) {
-        ProjectQuestionnaire questionnaire = questionnaireService1.findByProject(projectId);
-        if (questionnaire == null) {
-            throw new NotFoundException("Not found the project's questionnaire. Please check the project's id.");
-        }
-        if (onlyWithFirstAnswer) {
-            final String NO_CONTENT = " ";
-            boolean isFirst = true;
-            for (ProjectQuestion question : questionnaire.getQuestions()) {
-                if (isFirst) {
-                    isFirst = false;
-                    continue;
-                }
-                if (!StringUtils.isEmpty(question.getAnswer())) {
-                    question.setAnswer(NO_CONTENT);
-                }
-                for (ProjectQuestion subQuestion : question.getSubQuestions()) {
-                    if (!StringUtils.isEmpty(subQuestion.getAnswer())) {
-                        subQuestion.setAnswer(NO_CONTENT);
-                    }
-                }
-            }
-        }
-        List<QuestionComment> list = questionnaireService1.findCommentListByProjectId(projectId);
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
-        Map<Integer, List<QuestionCommentDto>> map =
-                toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
-        return new QuestionnaireForProjectDto<>(questionnaire, map);
-    }
-
     @Operation(summary = "Get answer of question, including sub question's answers.")
     @GetMapping(path = "/question/{questionId}")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public QuestionDto findProjectQuestion(
+    public ProjectQuestion findProjectQuestion(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Long questionId) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
-            throw new NotFoundException("Not found the questionnaire.");
+            @PathVariable("questionId") Integer questionId) {
+        ProjectQuestionnaire questionnaire = questionnaireService.findQuestionnaireById(projectId);
+        ProjectQuestion projectQuestion = questionnaire.findQuestionById(questionId);
+        if (projectQuestion == null) {
+            throw new NotFoundException("Not found the question");
         }
-        QuestionNode questionNode = q.findMainQuestionById(questionId);
-        if (questionNode == null) {
-            throw new NotFoundException("Not found the question in current project.");
-        }
-//        List<Integer> userIdList = new ArrayList<>();
-
-//        UserSimpleDto questionEditor = userService.findUserById(questionNode.getQuestionVersion().getAnswerEditUserId());
-        return new QuestionDto(questionNode);
+        return projectQuestion;
     }
 
     @Operation(summary = "Update answer of question, including sub question's answers.")
@@ -190,7 +81,7 @@ public class ProjectQuestionnaireController2 {
                                       @PathVariable("projectId") Integer projectId,
                                       @RequestBody ProjectQuestion projectQuestion) {
         projectQuestion.configQuestionnaireId(projectId);
-        return questionnaireService1.editAnswer(projectId, projectQuestion);
+        return questionnaireService.editAnswer(projectId, projectQuestion);
     }
 
     @Operation(summary = "Add a comment on the question.")
@@ -201,9 +92,9 @@ public class ProjectQuestionnaireController2 {
             @PathVariable("projectId") Integer projectId,
             @RequestBody QuestionCommentCreateDto dto) {
         QuestionComment comment = dto.toEntity(operator.getId(), projectId);
-        questionnaireService1.addComment(comment);
+        questionnaireService.addComment(comment);
 
-        List<QuestionComment> list = questionnaireService1.findCommentListByQuestionId(comment.getQuestionId());
+        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(comment.getQuestionId());
         return commentDtoConverter.convertFrom(list);
 
     }
@@ -214,9 +105,9 @@ public class ProjectQuestionnaireController2 {
     public Map<Integer, List<QuestionCommentDto>> findCommentListByProject(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId) {
-        List<QuestionComment> list = questionnaireService1.findCommentListByProjectId(projectId);
+        List<QuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
+                questionnaireService.findCommentReadLog(operator.getId(), projectId);
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
 
@@ -228,7 +119,7 @@ public class ProjectQuestionnaireController2 {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId) {
-        List<QuestionComment> list = questionnaireService1.findCommentListByQuestionId(questionId);
+        List<QuestionComment> list = questionnaireService.findCommentListByQuestionId(questionId);
         for (QuestionComment comment : list) {
             if (!Objects.equals(projectId, comment.getProjectId())) {
                 throw new ErrorParamException(String.format(
@@ -236,11 +127,11 @@ public class ProjectQuestionnaireController2 {
             }
         }
         Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService1.findCommentReadLog(operator.getId(), projectId);
+                questionnaireService.findCommentReadLog(operator.getId(), projectId);
         Optional<Integer> optional = list.stream().map(QuestionComment::getId).max(Integer::compareTo);
         if (optional.isPresent()) {
             Integer commentId = optional.get();
-            questionnaireService1.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
+            questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
         }
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
@@ -254,7 +145,7 @@ public class ProjectQuestionnaireController2 {
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Integer questionId,
             @PathVariable("commentId") Integer commentId) {
-        questionnaireService1.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
+        questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
     }
 
 

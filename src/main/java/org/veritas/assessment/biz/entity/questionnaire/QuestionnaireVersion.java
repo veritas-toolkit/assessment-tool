@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
@@ -18,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -185,4 +185,25 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         return mainQuestionNodeList.stream().filter(q -> q.getQuestionId() == questionId)
                 .findFirst().orElse(null);
     }
+
+    // serial example: F1
+    public QuestionNode findMainQuestionBySerial(String serial) {
+        return mainQuestionNodeList.stream().filter(node -> StringUtils.equals(node.serial(), serial))
+                .findFirst().orElse(null);
+    }
+
+    public QuestionNode findNodeByQuestionId(long questionId) {
+        List<QuestionNode> all = this.finAllQuestionNodeList();
+        return all.stream()
+                .filter(node -> questionId == node.getQuestionId())
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void updateQuestionnaireVid(long newVid) {
+        this.setVid(newVid);
+        this.finAllQuestionNodeList().forEach(node -> node.setQuestionnaireVid(newVid));
+    }
+
+
 }

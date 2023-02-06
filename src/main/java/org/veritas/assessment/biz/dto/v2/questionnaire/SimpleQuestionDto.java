@@ -17,23 +17,36 @@
 package org.veritas.assessment.biz.dto.v2.questionnaire;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
-public class SubQuestionDto {
+@NoArgsConstructor
+public class SimpleQuestionDto {
 
-    private int id;
+    private Long id;
 
-    private int vid;
+    private Long vid;
 
     private String content;
 
     private String answer;
 
-    private UserSimpleDto answerEditUser;
-
     private Date answerEditTime;
+
+    public SimpleQuestionDto(QuestionNode questionNode) {
+        this.id = questionNode.getQuestionId();
+        this.vid = questionNode.getQuestionVid();
+        QuestionVersion qv = questionNode.getQuestionVersion();
+        if (qv != null) {
+            this.content = qv.getContent();
+            this.answer = qv.getAnswer();
+            this.answerEditTime = qv.getAnswerEditTime();
+        }
+
+    }
 }

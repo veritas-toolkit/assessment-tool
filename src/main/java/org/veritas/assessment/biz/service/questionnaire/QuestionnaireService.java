@@ -28,6 +28,8 @@ public interface QuestionnaireService {
 
     // edit answer
 
+    QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
+
 
 
 }

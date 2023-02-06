@@ -41,6 +41,14 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
         return selectList(wrapper);
     }
 
+    default boolean updateVersionId(long questionId, long oldVid, long newVid) {
+        LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(QuestionMeta::getId, questionId);
+        wrapper.eq(QuestionMeta::getCurrentVid, oldVid);
+        wrapper.isNotNull(QuestionMeta::getDeleteStartQuestionnaireVid);
+        wrapper.set(QuestionMeta::getCurrentVid, newVid);
+        return update(null, wrapper) > 0;
+    }
     // select list by main-question id.
 
     // soft delete.
