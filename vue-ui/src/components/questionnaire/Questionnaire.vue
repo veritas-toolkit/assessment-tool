@@ -24,7 +24,7 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
           <el-aside :width="isCollapse? '72px':'400px'">
-            <QuestionnaireMenu :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
+            <QuestionnaireMenu @getQuestionId="getQuestionId" :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
             <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>
@@ -130,6 +130,9 @@ export default {
   methods: {
     handleCompareClick(tab, event) {
       // console.log(tab, event);
+    },
+    getQuestionId(data) {
+      console.log(data)
     },
     getQuestionnaireMenu() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {

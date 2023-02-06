@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;background-color: #F2F2F2;transition: all .5s">
     <el-collapse :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeName" accordion>
-      <el-menu class="myMenu" unique-opened active-text-color="#78BED3">
+      <el-menu class="myMenu" unique-opened active-text-color="#78BED3" @select="handleSelect">
         <div class="main-question" v-for="(item1,index1) in menuData" :key="index1">
           <el-collapse-item :disabled="item1.mainQuestionList.length == 0" :class="isCollapse ? 'myCollapseContent' : ''" :name="item1.serial" :style="index1 == 0? 'margin-top: 6px;':''">
             <!--main question-->
@@ -53,7 +53,7 @@ export default {
     menuData: {
       type: Array,
       required: true
-    }
+    },
   },
   data() {
     return {
@@ -71,7 +71,9 @@ export default {
 
   },
   methods: {
-
+    handleSelect(questionId) {
+      this.$emit("getQuestionId",questionId)
+    }
   }
 }
 </script>
