@@ -2,12 +2,12 @@
   <div style="height: 100%;background-color: #F2F2F2;transition: all .5s">
     <el-collapse :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeName" accordion>
       <el-menu class="myMenu" unique-opened active-text-color="#78BED3">
-        <div class="main-question" v-for="(item1,index1) in menu" :key="index1">
-          <el-collapse-item :class="isCollapse ? 'myCollapseContent' : ''" :name="item1.serial" :style="index1 == 0? 'margin-top: 6px;':''">
+        <div class="main-question" v-for="(item1,index1) in menuData" :key="index1">
+          <el-collapse-item :disabled="item1.mainQuestionList.length == 0" :class="isCollapse ? 'myCollapseContent' : ''" :name="item1.serial" :style="index1 == 0? 'margin-top: 6px;':''">
             <!--main question-->
             <template slot="title" class="BarlowBold">
               <div class="step-box">
-                <img class="step-pic" :style="isCollapse?'':'margin-right: 12px;'" :src="stepPic[item1.serial]" alt="">
+                <img class="step-pic" :style="isCollapse?'':'margin-right: 12px;'" :src="stepPic[item1.serialNo]" alt="">
                 <span class="collapse-step" v-show="!isCollapse">{{item1.step}}</span>
               </div>
             </template>
@@ -45,12 +45,19 @@ export default {
     isCollapse: {
       type: Boolean,
       required: true
+    },
+    projectId: {
+      type: String,
+      required: true
+    },
+    menuData: {
+      type: Array,
+      required: true
     }
   },
   data() {
     return {
       activeName: '',
-      menu: '',
       stepPic: {
         '0': require('../../assets/questionnairePic/portfolio.svg'),
         '1': require('../../assets/questionnairePic/department.svg'),
@@ -58,36 +65,13 @@ export default {
         '3': require('../../assets/questionnairePic/issues.svg'),
         '4': require('../../assets/questionnairePic/screen.svg')
       },
-      principleMap: {
-        "Generic" : "G",
-        "Fairness" : "F",
-        "Ethics & Accountability" : "EA",
-        "Transparency" : "T"
-      },
     }
   },
   created() {
-    this.questionnaireMenu()
-  },
-  watch: {
-    'principle': function () {
-      this.questionnaireMenu();
-    }
+
   },
   methods: {
-    questionnaireMenu() {
-      // this.$http.get(`/api/project/1/questionnaire`, {params: {onlyWithFirstAnswer:true}}).then(res => {
-      //   if(res.status == 200) {
-      //     this.menu = res.data.partList
-      //   }
-      // })
-      this.$http.get('questionnaire-toc.json').then(res => {
-        if (res.status == 200) {
-          this.menu = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          console.log(this.menu)
-        }
-      })
-    },
+
   }
 }
 </script>

@@ -9,10 +9,10 @@
         </div>
         <div class="BarlowMedium">
           <el-radio-group v-model="principle" class="principle-group">
-            <el-radio-button label="Generic"></el-radio-button>
-            <el-radio-button label="Fairness"></el-radio-button>
-            <el-radio-button label="Ethics & Accountability"></el-radio-button>
-            <el-radio-button label="Transparency"></el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic"></el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness"></el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability"></el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency"></el-radio-button>
           </el-radio-group>
         </div>
         <div id="endComSty" class="BarlowMedium" @click="openCompare=false" v-if="openCompare">End comparison</div>
@@ -24,7 +24,7 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
           <el-aside :width="isCollapse? '72px':'400px'">
-            <QuestionnaireMenu :principle="principle" :isCollapse="isCollapse"></QuestionnaireMenu>
+            <QuestionnaireMenu :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
             <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>
@@ -99,18 +99,46 @@ export default {
     QuestionnaireAnswer,
     Notifications
   },
+  mounted() {
+
+  },
   data() {
     return {
       principle: 'Generic',
+      principleList: [],
       isCollapse: false,
       compareTab: 'exportedVersion',
-      openCompare: 'false'
+      openCompare: false,
+      projectId: this.$route.query.id,
+      menuData: [],
+      principleMap: {
+        "Generic" : "G",
+        "Fairness" : "F",
+        "Ethics & Accountability" : "EA",
+        "Transparency" : "T"
+      },
+    }
+  },
+  created() {
+    this.getQuestionnaireMenu()
+  },
+  watch: {
+    'principle': function () {
+      this.getQuestionnaireMenu()
     }
   },
   methods: {
     handleCompareClick(tab, event) {
-      console.log(tab, event);
-    }
+      // console.log(tab, event);
+    },
+    getQuestionnaireMenu() {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
+        if (res.status == 200) {
+          this.principleList = Object.keys(res.data.principles)
+          this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+        }
+      })
+    },
   }
 }
 </script>
