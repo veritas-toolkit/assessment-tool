@@ -28,6 +28,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
@@ -52,7 +53,8 @@ class ProjectVersionQuestionnaireServiceImpl1Test {
     private ProjectVersionQuestionnaireService1 service;
     @Autowired
     private ProjectQuestionnaireService1 questionnaireService;
-
+    @Autowired
+    private TemplateQuestionnaireService templateQuestionnaireService;
 
     public Project createProject() {
         int userId = 1;
@@ -62,7 +64,7 @@ class ProjectVersionQuestionnaireServiceImpl1Test {
         project.setDescription("description");
         project.setBusinessScenario(1);
         project.setUserOwnerId(userId);
-        project = projectService.createProject(user, project, 1);
+        project = projectService.createProject(user, project, templateQuestionnaireService.findByTemplateId(1));
         return project;
     }
 

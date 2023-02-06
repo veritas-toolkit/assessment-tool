@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.service;
 
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.RoleType;
 import org.veritas.assessment.system.dto.MembershipDto;
@@ -28,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ProjectService {
-    Project createProject(User operator, Project project, Integer questionnaireTemplateId);
+    Project createProject(User operator, Project project, TemplateQuestionnaire templateQuestionnaire);
+    Project createProject(User operator, Project project, Project copyFromProject);
 
     int delete(Integer projectId);
 

@@ -31,8 +31,6 @@ import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
@@ -80,6 +78,19 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private QuestionnaireService questionnaireService;
 
+    @Override
+    @Transactional
+    public Project createProject(User operator, Project project, TemplateQuestionnaire template) {
+        Objects.requireNonNull(template);
+        return innerCreateProject(operator, project, template, null);
+    }
+
+    @Override
+    @Transactional
+    public Project createProject(User operator, Project project, Project copyFromProject) {
+        Objects.requireNonNull(copyFromProject);
+        return innerCreateProject(operator, project, null, copyFromProject);
+    }
 
     /**
      * Create a new project.
@@ -92,15 +103,14 @@ public class ProjectServiceImpl implements ProjectService {
      * </pre>
      * @param creator The project's creator. The owner of the project.
      * @param project
-     * @param questionnaireTemplateId
      * @return
      */
-    @Override
-    @Transactional
-    public Project createProject(User creator, Project project,
-                                 Integer questionnaireTemplateId) {
-        log.info("create project:\n{}", project);
-        Objects.requireNonNull(questionnaireTemplateId);
+    private Project innerCreateProject(User creator, Project project,
+                                       TemplateQuestionnaire template, Project copyFromProject) {
+
+        if (template == null && copyFromProject == null) {
+            throw new IllegalDataException("");
+        }
         int operatorId = creator.getId();
         long created = projectMapper.numberOfProjectCreatedByUser(operatorId);
         if (created >= creator.getProjectLimited()) {
@@ -143,8 +153,12 @@ public class ProjectServiceImpl implements ProjectService {
 
         try {
             projectMapper.addProject(project);
-            QuestionnaireVersion questionnaire = createQuestionnaire(
-                    creator.getId(), project, createdTime, questionnaireTemplateId, null);
+            QuestionnaireVersion questionnaire = null;
+            if (template != null) {
+                questionnaire = questionnaireService.createByTemplate(operatorId, project, createdTime, template);;
+            } else {
+                questionnaire = questionnaireService.copyFrom(operatorId, project, createdTime, copyFromProject);
+            }
             project.setCurrentQuestionnaireVid(questionnaire.getVid());
             projectMapper.updateQuestionnaireVid(project);
 
@@ -154,21 +168,6 @@ public class ProjectServiceImpl implements ProjectService {
             exceptionHandler(exception, project);
         }
         return project;
-    }
-    @Autowired
-    private TemplateQuestionnaireService templateQuestionnaireService;
-    private QuestionnaireVersion createQuestionnaire(int creatorUserId, Project project, Date createdTime, Integer templateId, Integer copyFromProjectId) {
-        if (templateId == null && copyFromProjectId == null) {
-            throw new IllegalStateException("");
-        }
-
-        if (templateId != null) {
-            TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
-            return questionnaireService.createByTemplate(creatorUserId, project, createdTime, template);
-        } else {
-            Project old = this.findProjectById(copyFromProjectId);
-            return questionnaireService.copyFrom(creatorUserId, project, createdTime, old);
-        }
     }
 
     @Override

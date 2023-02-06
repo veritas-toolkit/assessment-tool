@@ -39,6 +39,7 @@ import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
@@ -69,6 +70,9 @@ class ProjectReportServiceImplTest {
     @Autowired
     private ModelInsightService modelInsightService;
 
+    @Autowired
+    TemplateQuestionnaireService templateQuestionnaireService;
+
     private void fillAnswer(Project project) {
         ProjectQuestionnaire questionnaire = questionnaireService.findQuestionnaireById(project.getId());
         for (ProjectQuestion main : questionnaire.getQuestions()) {
@@ -96,7 +100,7 @@ class ProjectReportServiceImplTest {
         project.setUserOwnerId(user.getId());
         project.setBusinessScenario(1);
 
-        projectService.createProject(user, project, 1);
+        projectService.createProject(user, project, templateQuestionnaireService.findByTemplateId(1));
         fillAnswer(project);
 
         byte[] content = reportService.previewReportPdf(project);
@@ -120,7 +124,7 @@ class ProjectReportServiceImplTest {
         project.setDescription("Project Description");
         project.setUserOwnerId(user.getId());
         project.setBusinessScenario(1);
-        projectService.createProject(user, project, 1);
+        projectService.createProject(user, project, templateQuestionnaireService.findByTemplateId(1));
         fillAnswer(project);
 
         String html = reportService.previewReport(project);
@@ -147,7 +151,7 @@ class ProjectReportServiceImplTest {
         project.setDescription("description: " + builder);
         project.setBusinessScenario(1);
 
-        project = projectService.createProject(admin, project, 1);
+        project = projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
 
         JsonModel jsonModel = JsonModelTest.load(JsonModelTest.creditScoringUrl);
@@ -188,7 +192,7 @@ class ProjectReportServiceImplTest {
         project.setDescription("description: " + builder);
         project.setBusinessScenario(1);
 
-        project = projectService.createProject(admin, project, 1);
+        project = projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
 //        ModelArtifact modelArtifact = new ModelArtifact();
 //        modelArtifact.setProjectId(project.getId());

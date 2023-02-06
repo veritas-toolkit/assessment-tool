@@ -29,6 +29,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.LastOwnerRoleException;
@@ -67,6 +68,9 @@ class GroupServiceImplTest {
     private User test1;
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private TemplateQuestionnaireService templateQuestionnaireService;
 
     @BeforeEach
     public void init() {
@@ -196,7 +200,7 @@ class GroupServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
         project.setBusinessScenario(1);
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         assertThrows(ErrorParamException.class, () -> {
             groupService.delete(group.getId(), false);
@@ -216,7 +220,7 @@ class GroupServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
         project.setBusinessScenario(1);
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         groupService.delete(group.getId(), true);
     }

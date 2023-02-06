@@ -53,11 +53,13 @@ import org.veritas.assessment.biz.dto.RoleDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -133,6 +135,7 @@ public class ProjectController {
         Pageable<Project> pageable = projectService.findProjectPageableByCreator(operator, prefix, keyword, page, pageSize);
         return projectDtoConverter.convertFrom(pageable);
     }
+    TemplateQuestionnaireService templateQuestionnaireService;
 
     @Operation(summary = "Create a project")
     @PostMapping("/new")
@@ -147,10 +150,19 @@ public class ProjectController {
         Integer templateId = dto.getQuestionnaireTemplateId();
         Integer copyFromProjectId = dto.getCopyFromProjectId();
         Project newProject = null;
+
         if (templateId != null) {
-            newProject = projectService.createProject(operator, project, templateId);
+            TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
+            if (template == null) {
+
+            }
+            newProject = projectService.createProject(operator, project, template);
         } else if (copyFromProjectId != null){
-            newProject = projectService.createProject(operator, project, copyFromProjectId);
+            Project old = projectService.findProjectById(copyFromProjectId);
+            if (old == null) {
+
+            }
+            newProject = projectService.createProject(operator, project, old);
         } else {
             throw new IllegalDataException("Choose a questionnaire template or copy from other project's questionnaire.");
         }

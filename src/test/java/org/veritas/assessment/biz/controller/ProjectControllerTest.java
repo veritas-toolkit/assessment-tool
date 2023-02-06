@@ -45,6 +45,7 @@ import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.RoleType;
 import org.veritas.assessment.system.dto.MembershipDto;
@@ -92,6 +93,9 @@ class ProjectControllerTest {
         }
     }
 
+    @Autowired
+    TemplateQuestionnaireService templateQuestionnaireService;
+
     @Test
     void findByKeyword_success() throws Exception {
         String keyword = "keyword";
@@ -103,7 +107,7 @@ class ProjectControllerTest {
         project.setUserOwnerId(admin.getId());
         project.setBusinessScenario(1);
 
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         MvcResult mvcResult = mockMvc.perform(get("/api/project")
                         .param("keyword", keyword)

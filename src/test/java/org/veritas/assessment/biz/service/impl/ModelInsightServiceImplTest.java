@@ -36,6 +36,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
@@ -60,6 +61,9 @@ class ModelInsightServiceImplTest {
     @Autowired
     private ModelInsightService modelInsightService;
 
+    @Autowired
+    private TemplateQuestionnaireService templateQuestionnaireService;
+
     @Test
     @DisplayName("Auto generate answer")
     void testAutoGenerateAnswer_success() throws Exception {
@@ -70,7 +74,7 @@ class ModelInsightServiceImplTest {
         project.setDescription("description-" + RandomStringUtils.randomAlphanumeric(10));
         project.setBusinessScenario(1);
 
-        project = projectService.createProject(admin, project, 1);
+        project = projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
         String jsonUrl = JsonModelTest.creditScoringUrl;
         String filename = FilenameUtils.getName(jsonUrl);
         String json = JsonModelTest.loadJson(jsonUrl);
