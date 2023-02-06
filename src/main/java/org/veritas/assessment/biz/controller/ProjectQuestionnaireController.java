@@ -172,7 +172,6 @@ public class ProjectQuestionnaireController {
 
         List<QuestionComment> list = questionnaireService1.findCommentListByQuestionId(comment.getQuestionId());
         return commentDtoConverter.convertFrom(list);
-
     }
 
     @Operation(summary = "Find comment by project.")

@@ -61,6 +61,7 @@ import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
+import org.veritas.assessment.common.exception.IllegalDataException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.ResourceType;
@@ -139,11 +140,20 @@ public class ProjectController {
     @PreAuthorize("hasPermission(#dto, 'create')")
     public ProjectDto createProject(@Parameter(hidden = true) User operator,
                                     @RequestBody ProjectCreateDto dto) {
-        if (dto.getQuestionnaireTemplateId() == null) {
-            throw new ErrorParamException("Creating project needs questionnaire template id.");
+        if (dto.getQuestionnaireTemplateId() == null && dto.getCopyFromProjectId() == null) {
+            throw new ErrorParamException("Creating project needs questionnaire template id or copy from other project.");
         }
         Project project = dto.toEntity(operator.getId());
-        Project newProject = projectService.createProject(operator, project, dto.getQuestionnaireTemplateId());
+        Integer templateId = dto.getQuestionnaireTemplateId();
+        Integer copyFromProjectId = dto.getCopyFromProjectId();
+        Project newProject = null;
+        if (templateId != null) {
+            newProject = projectService.createProject(operator, project, templateId);
+        } else if (copyFromProjectId != null){
+            newProject = projectService.createProject(operator, project, copyFromProjectId);
+        } else {
+            throw new IllegalDataException("Choose a questionnaire template or copy from other project's questionnaire.");
+        }
         return projectDtoConverter.convertFrom(newProject);
     }
 

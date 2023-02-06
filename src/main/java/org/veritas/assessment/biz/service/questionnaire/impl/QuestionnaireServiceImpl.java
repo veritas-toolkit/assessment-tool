@@ -24,8 +24,7 @@ import java.util.Objects;
 @Slf4j
 public class QuestionnaireServiceImpl implements QuestionnaireService {
 
-    @Autowired
-    private TemplateQuestionnaireService templateQuestionnaireService;
+
 
     @Autowired
     private QuestionnaireDao questionnaireDao;
@@ -41,17 +40,32 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
-    public QuestionnaireVersion copyFrom(int projectId, int fromProject) {
-        return null;
+    public QuestionnaireVersion copyFrom(int creatorUserId, Project project, Date createdTime, Project fromProject) {
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(project.getId());
+        Objects.requireNonNull(fromProject);
+        Objects.requireNonNull(fromProject.getBusinessScenario());
+        Objects.requireNonNull(fromProject.getId());
+
+        boolean sameBiz = Objects.equals(project.getBusinessScenario(), fromProject.getBusinessScenario());
+        if (!sameBiz) {
+            throw new IllegalArgumentException();
+        }
+        QuestionnaireVersion oldQ = questionnaireDao.findLatestQuestionnaire(fromProject.getId());
+        QuestionnaireVersion questionnaire = new QuestionnaireVersion(creatorUserId, project.getId(),
+                createdTime, oldQ, idGenerateService::nextId);
+        questionnaire.setMessage("Created.");
+
+        return questionnaire;
     }
 
     @Override
-    public QuestionnaireVersion createByTemplate(int creatorUserId, Project project, Date createdTime, int templateId) {
+    public QuestionnaireVersion createByTemplate(int creatorUserId, Project project, Date createdTime, TemplateQuestionnaire template) {
         Objects.requireNonNull(project, "Arg[project] should not be null.");
         Objects.requireNonNull(project.getBusinessScenario(),
                 "Arg[project] businessScenario should not be null.");
+        Objects.requireNonNull(template);
 
-        TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
         boolean sameBiz = project.getBusinessScenario() == template.getBusinessScenario();
         if (!sameBiz) {
             throw new IllegalArgumentException();

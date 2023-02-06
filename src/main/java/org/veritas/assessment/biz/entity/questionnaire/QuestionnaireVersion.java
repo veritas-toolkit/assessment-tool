@@ -66,6 +66,19 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         this.init(creatorUserId, projectId, createdTime, idGenerator);
     }
 
+    public QuestionnaireVersion(int creatorUserId,
+                                int projectId,
+                                Date createdTime,
+                                QuestionnaireVersion old,
+                                Supplier<Long> idGenerator) {
+        this.mainQuestionNodeList = old.getMainQuestionNodeList().stream()
+                .map(QuestionNode::createFromOther)
+                .collect(Collectors.toList());
+
+
+        this.init(creatorUserId, projectId, createdTime, idGenerator);
+
+    }
 
     public List<QuestionMeta> findAllQuestionMetaList() {
         if (mainQuestionNodeList == null || mainQuestionNodeList.isEmpty()) {
@@ -146,7 +159,6 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         for (QuestionNode node : mainQuestionNodeList) {
             node.initGenericPropertiesWithSubs(creatorUserId, projectId, questionnaireVid, createdTime);
         }
-
         // question id
         for (QuestionNode node : mainQuestionNodeList) {
             node.initQuestionId(idGenerator);

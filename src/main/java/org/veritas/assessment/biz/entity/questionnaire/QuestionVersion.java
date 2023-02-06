@@ -66,6 +66,14 @@ public class QuestionVersion implements Comparable<QuestionVersion> {
         this.setAnswerRequired(templateQuestion.isAnswerRequired());
     }
 
+    public QuestionVersion(QuestionVersion other) {
+        this.setContent(other.getContent());
+        this.setHint(other.getHint());
+        this.setContentEditTime(other.getContentEditTime());
+        this.setContentEditUserId(other.getContentEditUserId());
+        this.setContentEditable(other.isContentEditable());
+        this.setAnswerRequired(other.isAnswerRequired());
+    }
 
     @JsonIgnore
     public boolean isMain() {

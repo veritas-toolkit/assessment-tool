@@ -170,6 +170,28 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return node;
     }
 
+    public static QuestionNode createFromOther(QuestionNode other) {
+        QuestionNode node = new QuestionNode();
+        node.setPrinciple(other.getPrinciple());
+        node.setStep(other.getStep());
+        node.setSerialOfPrinciple(other.getSerialOfPrinciple());
+        node.setSubSerial(other.getSubSerial());
+
+        QuestionMeta meta = new QuestionMeta(other.getMeta());
+        node.setMeta(meta);
+
+        QuestionVersion questionVersion = new QuestionVersion(other.getQuestionVersion());
+        node.setQuestionVersion(questionVersion);
+
+        if (other.isMain()) {
+            List<QuestionNode> subList = other.getSubList().stream()
+                    .map(QuestionNode::createFromOther)
+                    .collect(Collectors.toList());
+            node.setSubList(subList);
+        }
+        return node;
+    }
+
     public void initGenericPropertiesWithSubs(int creatorUserId, int projectId, long questionnaireVid,
                                               Date createdTime) {
         List<QuestionNode> nodeList = this.toPlaneNodeList();

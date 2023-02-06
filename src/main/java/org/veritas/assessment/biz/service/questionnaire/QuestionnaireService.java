@@ -2,6 +2,7 @@ package org.veritas.assessment.biz.service.questionnaire;
 
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
 import java.util.Date;
 
@@ -15,11 +16,11 @@ public interface QuestionnaireService {
 
     // create a new one from another project.
     // check the biz
-    QuestionnaireVersion copyFrom(int projectId, int fromProject);
+    QuestionnaireVersion copyFrom(int creatorUserId, Project project, Date createdTime , Project copyFrom);
 
     // create a new one by the template questionnaire.
     // check the biz
-    QuestionnaireVersion createByTemplate(int creatorUserId, Project project, Date createdTime , int templateId);
+    QuestionnaireVersion createByTemplate(int creatorUserId, Project project, Date createdTime, TemplateQuestionnaire template);
 
     // copy from
 //    QuestionnaireVersion createByProject(int userId, Project project, Date createdTime ,int projectId);

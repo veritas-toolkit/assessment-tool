@@ -25,15 +25,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.IllegalDataException;
 import org.veritas.assessment.common.exception.PermissionException;
 import org.veritas.assessment.common.exception.QuotaException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -94,7 +97,8 @@ public class ProjectServiceImpl implements ProjectService {
      */
     @Override
     @Transactional
-    public Project createProject(User creator, Project project, Integer questionnaireTemplateId) {
+    public Project createProject(User creator, Project project,
+                                 Integer questionnaireTemplateId) {
         log.info("create project:\n{}", project);
         Objects.requireNonNull(questionnaireTemplateId);
         int operatorId = creator.getId();
@@ -135,18 +139,37 @@ public class ProjectServiceImpl implements ProjectService {
         Date createdTime = new Date();
         project.setCreatedTime( createdTime);
         project.setLastEditedTime( createdTime);
+
+
         try {
             projectMapper.addProject(project);
+            QuestionnaireVersion questionnaire = createQuestionnaire(
+                    creator.getId(), project, createdTime, questionnaireTemplateId, null);
+            project.setCurrentQuestionnaireVid(questionnaire.getVid());
+            projectMapper.updateQuestionnaireVid(project);
+
+            questionnaireService.saveNewQuestionnaire(questionnaire);
+            roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
         } catch (PersistenceException exception) {
             exceptionHandler(exception, project);
         }
-        roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
-        QuestionnaireVersion questionnaire = questionnaireService.createByTemplate(
-                creator.getId(), project, createdTime, questionnaireTemplateId);
-        questionnaireService.saveNewQuestionnaire(questionnaire);
         return project;
     }
-    // create project
+    @Autowired
+    private TemplateQuestionnaireService templateQuestionnaireService;
+    private QuestionnaireVersion createQuestionnaire(int creatorUserId, Project project, Date createdTime, Integer templateId, Integer copyFromProjectId) {
+        if (templateId == null && copyFromProjectId == null) {
+            throw new IllegalStateException("");
+        }
+
+        if (templateId != null) {
+            TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
+            return questionnaireService.createByTemplate(creatorUserId, project, createdTime, template);
+        } else {
+            Project old = this.findProjectById(copyFromProjectId);
+            return questionnaireService.copyFrom(creatorUserId, project, createdTime, old);
+        }
+    }
 
     @Override
     @Transactional

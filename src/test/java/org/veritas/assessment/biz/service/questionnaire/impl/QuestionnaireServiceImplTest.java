@@ -45,6 +45,7 @@ class QuestionnaireServiceImplTest {
     @Autowired
     ProjectMapper projectMapper;
 
+
     private QuestionnaireVersion create(int projectId, int templateId, int userId) {
         TemplateQuestionnaire templateQuestionnaire = templateQuestionnaireService.findByTemplateId(templateId);
         Date now = new Date();
@@ -61,7 +62,7 @@ class QuestionnaireServiceImplTest {
         project.setPrincipleEA(true);
         project.setPrincipleTransparency(true);
 
-        QuestionnaireVersion questionnaire = questionnaireService.createByTemplate(userId, project, now, templateId);
+        QuestionnaireVersion questionnaire = questionnaireService.createByTemplate(userId, project, now, templateQuestionnaire);
         questionnaireService.saveNewQuestionnaire(questionnaire);
 
         project.setCurrentQuestionnaireVid(questionnaire.getVid());
@@ -81,8 +82,7 @@ class QuestionnaireServiceImplTest {
         project.setCreatorUserId(userId);
         project.setId(projectId);
         project.setCreatedTime(now);
-
-        QuestionnaireVersion questionnaireVersion = questionnaireService.createByTemplate(userId, project, now, 1);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.createByTemplate(userId, project, now, templateQuestionnaire);
         log.info("questionnaire: {}", questionnaireVersion);
         log.info("questionnaire:\n{}", TestUtils.toJson(questionnaireVersion));
         questionnaireService.saveNewQuestionnaire(questionnaireVersion);

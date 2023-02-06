@@ -66,4 +66,10 @@ public class QuestionMeta {
         this.contentEditable = templateQuestion.isEditable();
         this.setAnswerRequired(templateQuestion.isAnswerRequired());
     }
+
+    public QuestionMeta(QuestionMeta questionMeta) {
+        this.contentEditable = questionMeta.isContentEditable();
+        this.setAnswerRequired(questionMeta.isAnswerRequired());
+    }
+
 }
