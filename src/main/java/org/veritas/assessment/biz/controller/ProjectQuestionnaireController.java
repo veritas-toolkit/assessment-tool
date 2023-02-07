@@ -77,16 +77,6 @@ public class ProjectQuestionnaireController {
     @Autowired
     CommentService commentService;
 
-    // 1. 获取问卷目录结构
-    // 2. 获取指定问题（主问题）的题干和答案
-
-    // 3. 修改答案
-    // project_id, main_q_vid, sub_q_vid
-
-    // comment 新增
-
-    // comment 查询
-
 
     @Operation(summary = "Get the project's questionnaire.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
@@ -152,7 +142,7 @@ public class ProjectQuestionnaireController {
         Long questionId = projectQuestion.getQuestionId();
 
         QuestionnaireVersion questionnaire = questionnaireService.editAnswer(projectId,
-                questionId, projectQuestion.getBaseQuestionVid(),
+                questionId, projectQuestion.getBasedQuestionVid(),
                 projectQuestion.getAnswer(),
                 operator.getId());
         QuestionNode questionNode = questionnaire.findNodeByQuestionId(questionId);

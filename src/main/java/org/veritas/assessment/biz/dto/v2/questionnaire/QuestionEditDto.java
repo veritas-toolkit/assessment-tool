@@ -13,7 +13,7 @@ public class QuestionEditDto {
     @NotNull
     private Long questionId;
     @NotNull
-    private Long baseQuestionVid;
+    private Long basedQuestionVid;
     @NotNull
     private String answer;
 }
