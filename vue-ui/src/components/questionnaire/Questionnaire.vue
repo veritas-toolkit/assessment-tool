@@ -146,7 +146,6 @@ export default {
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
           this.defaultId = this.questionId.toString()
-
         }
       })
     },
