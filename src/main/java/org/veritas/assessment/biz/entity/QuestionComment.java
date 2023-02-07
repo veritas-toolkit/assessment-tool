@@ -35,9 +35,9 @@ public class QuestionComment implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer questionId;
+    private Long questionId;
 
-    private Integer mainQuestionId;
+    private Long mainQuestionId;
 
     private Integer projectId;
 

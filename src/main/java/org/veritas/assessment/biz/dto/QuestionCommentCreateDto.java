@@ -22,7 +22,7 @@ import org.veritas.assessment.biz.entity.QuestionComment;
 @Data
 public class QuestionCommentCreateDto {
 
-    private Integer questionId;
+    private Long questionId;
 
     private String comment;
 

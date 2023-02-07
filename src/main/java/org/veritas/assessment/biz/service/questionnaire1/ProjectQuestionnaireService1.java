@@ -39,18 +39,4 @@ public interface ProjectQuestionnaireService1 extends BaseQuestionnaireService1<
 
     // force update the answers to the main question with all sub questions.
     void forceUpdateAnswerList(Integer projectId, List<ProjectQuestion> mainQuestionList);
-
-
-    // comment
-    int addComment(QuestionComment comment);
-
-    // find comment list question
-    List<QuestionComment> findCommentListByQuestionId(Integer questionId);
-
-    // find comment list by project
-    List<QuestionComment> findCommentListByProjectId(Integer projectId);
-
-    Map<Integer, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId);
-
-    void updateCommentReadLog(Integer userId, Integer projectId, Integer questionId, Integer commentId);
 }

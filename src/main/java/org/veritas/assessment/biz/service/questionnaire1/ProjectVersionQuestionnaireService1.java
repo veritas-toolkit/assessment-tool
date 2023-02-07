@@ -21,6 +21,7 @@ import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionna
 
 import java.util.List;
 
+@Deprecated
 public interface ProjectVersionQuestionnaireService1
         extends BaseQuestionnaireService1<ProjectVersionQuestion, ProjectVersionQuestionnaire> {
 

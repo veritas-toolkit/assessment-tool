@@ -21,20 +21,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
-import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
 import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
 import org.veritas.assessment.biz.mapper.QuestionCommentMapper;
+import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
 import org.veritas.assessment.biz.mapper.questionnaire1.ProjectQuestionnaireDao;
 import org.veritas.assessment.biz.service.questionnaire1.AbstractQuestionnaireService1;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
-import org.veritas.assessment.common.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -145,66 +142,5 @@ public class ProjectQuestionnaireServiceImpl1
         }
     }
 
-    @Override
-    @Transactional
-    public int addComment(QuestionComment comment) {
-        ProjectQuestionnaire questionnaire = dao.findQuestionnaire(comment.getProjectId());
-        if (questionnaire == null) {
-            throw new NotFoundException("Not found the projectId.");
-        }
-        ProjectQuestion question = questionnaire.findQuestionById(comment.getQuestionId());
-        if (question == null) {
-            throw new NotFoundException("Not found the question.");
-        }
-        return commentMapper.add(comment);
-    }
 
-    @Override
-    @Transactional
-    public List<QuestionComment> findCommentListByQuestionId(Integer questionId) {
-        return commentMapper.findByQuestionId(questionId);
-    }
-
-    @Override
-    @Transactional
-    public List<QuestionComment> findCommentListByProjectId(Integer projectId) {
-        return commentMapper.findByProjectId(projectId);
-    }
-
-    @Override
-    @Transactional
-    public Map<Integer, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId) {
-        return commentReadLogMapper.findLog(userId, projectId);
-    }
-
-    @Override
-    @Transactional
-    public void updateCommentReadLog(Integer userId, Integer projectId, Integer questionId, Integer commentId) {
-        ProjectQuestionnaire questionnaire = dao.findQuestionnaire(projectId);
-        ErrorParamException.requireNonNull(questionnaire, "Not found the questionnaire for project:" + projectId);
-        ProjectQuestion question = questionnaire.findQuestionById(questionId);
-        ErrorParamException.requireNonNull(question, "Not found the question.");
-        ErrorParamException.requireNonNull(commentId, "The comment not fund.");
-
-
-        QuestionCommentReadLog readLog = commentReadLogMapper.findLog(userId, projectId).get(questionId);
-        if (readLog != null) {
-            int readCommentId = readLog.getLatestReadCommentId();
-            if (readCommentId >= commentId) {
-                return;
-            } else {
-                readLog.setLatestReadCommentId(commentId);
-            }
-        } else {
-            readLog = new QuestionCommentReadLog();
-            readLog.setUserId(userId);
-            readLog.setProjectId(projectId);
-            readLog.setQuestionId(questionId);
-            readLog.setLatestReadCommentId(commentId);
-        }
-        int result = commentReadLogMapper.addOrUpdate(readLog);
-        if (result <= 0) {
-            log.warn("Update fail.");
-        }
-    }
 }

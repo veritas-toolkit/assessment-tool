@@ -49,7 +49,7 @@ public interface QuestionCommentMapper extends BaseMapper<QuestionComment> {
     }
 
     @Cacheable(key = "'q_' + #questionId", unless = "#result==null")
-    default List<QuestionComment> findByQuestionId(Integer questionId) {
+    default List<QuestionComment> findByQuestionId(Long questionId) {
         Objects.requireNonNull(questionId);
         LambdaQueryWrapper<QuestionComment> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(QuestionComment::getQuestionId, questionId);

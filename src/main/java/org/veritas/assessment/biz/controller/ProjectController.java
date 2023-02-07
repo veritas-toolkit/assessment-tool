@@ -54,13 +54,11 @@ import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgre
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
 import org.veritas.assessment.common.exception.IllegalDataException;
@@ -80,7 +78,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -105,8 +102,6 @@ public class ProjectController {
     private ProjectDtoConverter projectDtoConverter;
     @Autowired
     private ModelArtifactService modelArtifactService;
-    @Autowired
-    private ProjectQuestionnaireService1 questionnaireService;
     @Autowired
     private ProjectReportService reportService;
     @Autowired
@@ -135,6 +130,7 @@ public class ProjectController {
         Pageable<Project> pageable = projectService.findProjectPageableByCreator(operator, prefix, keyword, page, pageSize);
         return projectDtoConverter.convertFrom(pageable);
     }
+
     TemplateQuestionnaireService templateQuestionnaireService;
 
     @Operation(summary = "Create a project")
@@ -157,7 +153,7 @@ public class ProjectController {
 
             }
             newProject = projectService.createProject(operator, project, template);
-        } else if (copyFromProjectId != null){
+        } else if (copyFromProjectId != null) {
             Project old = projectService.findProjectById(copyFromProjectId);
             if (old == null) {
 
