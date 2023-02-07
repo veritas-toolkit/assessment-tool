@@ -29,7 +29,7 @@ import java.util.Objects;
 public class QuestionCommentDto {
     private Integer id;
 
-    private Integer questionId;
+    private Long questionId;
 
     private Integer projectId;
 
@@ -47,7 +47,7 @@ public class QuestionCommentDto {
 
     private boolean hasRead = false;
 
-    public void fillHasRead(Map<Integer, QuestionCommentReadLog> readLogMap) {
+    public void fillHasRead(Map<Long, QuestionCommentReadLog> readLogMap) {
         if (readLogMap == null || readLogMap.isEmpty()) {
             this.setHasRead(false);
             return;

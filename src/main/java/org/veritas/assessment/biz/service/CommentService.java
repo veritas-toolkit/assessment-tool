@@ -17,7 +17,8 @@ public interface CommentService {
     List<QuestionComment> findCommentListByProjectId(Integer projectId);
 
 
-    Map<Integer, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId);
+
+    Map<Long, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId);
 
     void updateCommentReadLog(Integer userId, Integer projectId, Long questionId, Integer commentId);
 

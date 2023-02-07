@@ -41,8 +41,8 @@ class QuestionCommentMapperTest {
     @Autowired
     private QuestionCommentMapper mapper;
 
-    public static List<QuestionComment> data(int count, int userId, int questionId, int projectId) {
-        final int MAIN_QUESTION_ID = 22;
+    public static List<QuestionComment> data(int count, int userId, long questionId, int projectId) {
+        final long MAIN_QUESTION_ID = 22L;
         List<QuestionComment> list = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             QuestionComment comment = new QuestionComment();
@@ -72,7 +72,7 @@ class QuestionCommentMapperTest {
     @Test
     void testFindByQuestionId_success() {
         int count = 10;
-        int questionId = 3;
+        long questionId = 3L;
         List<QuestionComment> commentList = data(count, 2, questionId, 4);
         for (QuestionComment comment : commentList) {
             mapper.add(comment);
@@ -97,7 +97,7 @@ class QuestionCommentMapperTest {
     @Test
     void testFindByProjectId() {
         int count = 10;
-        int questionId = 20;
+        long questionId = 20L;
         int projectId = 30;
         int userId = 40;
         for (int i = 0; i < 3; ++i) {

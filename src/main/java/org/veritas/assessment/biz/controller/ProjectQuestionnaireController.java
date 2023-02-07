@@ -170,17 +170,19 @@ public class ProjectQuestionnaireController {
         commentService.addComment(comment);
 
         List<QuestionComment> list = commentService.findCommentListByQuestionId(comment.getQuestionId());
-        return commentDtoConverter.convertFrom(list);
+        List<QuestionCommentDto> dtoList = commentDtoConverter.convertFrom(list);
+        dtoList.forEach(d -> d.setHasRead(true));
+        return dtoList;
     }
 
     @Operation(summary = "Find comment by project.")
     @GetMapping(path = "/comment")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public Map<Integer, List<QuestionCommentDto>> findCommentListByProject(
+    public Map<Long, List<QuestionCommentDto>> findCommentListByProject(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId) {
         List<QuestionComment> list = commentService.findCommentListByProjectId(projectId);
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
+        Map<Long, QuestionCommentReadLog> commentReadLogMap =
                 commentService.findCommentReadLog(operator.getId(), projectId);
         return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
@@ -189,7 +191,7 @@ public class ProjectQuestionnaireController {
     @Operation(summary = "Find comment by project or question.")
     @GetMapping(path = "/question/{questionId}/comment")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public Map<Integer, List<QuestionCommentDto>> findCommentListByQuestionId(
+    public Map<Long, List<QuestionCommentDto>> findCommentListByQuestionId(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @PathVariable("questionId") Long questionId) {
@@ -200,7 +202,7 @@ public class ProjectQuestionnaireController {
                         "The question[%d] does not belong to the project[%d]", questionId, projectId));
             }
         }
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
+        Map<Long, QuestionCommentReadLog> commentReadLogMap =
                 commentService.findCommentReadLog(operator.getId(), projectId);
         Optional<Integer> optional = list.stream().map(QuestionComment::getId).max(Integer::compareTo);
         if (optional.isPresent()) {
@@ -223,11 +225,11 @@ public class ProjectQuestionnaireController {
     }
 
 
-    private Map<Integer, List<QuestionCommentDto>> toMapList(List<QuestionCommentDto> dtoList) {
+    private Map<Long, List<QuestionCommentDto>> toMapList(List<QuestionCommentDto> dtoList) {
         if (dtoList == null || dtoList.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<Integer, List<QuestionCommentDto>> map = new TreeMap<>();
+        Map<Long, List<QuestionCommentDto>> map = new TreeMap<>();
         for (QuestionCommentDto dto : dtoList) {
             List<QuestionCommentDto> qDtoList = map.computeIfAbsent(dto.getQuestionId(), k -> new ArrayList<>());
             qDtoList.add(dto);

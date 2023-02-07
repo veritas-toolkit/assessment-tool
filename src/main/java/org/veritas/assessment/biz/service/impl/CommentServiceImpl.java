@@ -15,6 +15,7 @@ import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.IllegalDataException;
 import org.veritas.assessment.common.exception.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,15 +38,15 @@ public class CommentServiceImpl implements CommentService {
         QuestionnaireVersion questionnaireVersion = questionnaireDao.findLatestQuestionnaire(projectId);
         QuestionNode questionNode = questionnaireVersion.findNodeByQuestionId(comment.getQuestionId());
         if (questionNode == null) {
-            throw new NotFoundException("");
+            throw new NotFoundException("Not fund the question in current project.");
         }
-        if (!Objects.equals(comment.getMainQuestionId(), questionNode.getMainQuestionId())) {
-            throw new IllegalDataException("");
-        }
+        comment.setMainQuestionId(questionNode.getMainQuestionId());
         int result = commentMapper.add(comment);
         if (result <= 0) {
             log.warn("Add comment failed.");
         }
+        // mark all as read for current user.
+        this.updateCommentReadLog(comment.getUserId(), projectId, comment.getQuestionId(), comment.getId());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Map<Integer, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId) {
+    public Map<Long, QuestionCommentReadLog> findCommentReadLog(Integer userId, Integer projectId) {
         return commentReadLogMapper.findLog(userId, projectId);
     }
 

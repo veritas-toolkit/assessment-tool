@@ -37,7 +37,7 @@ public interface QuestionCommentReadLogMapper extends BaseMapper<QuestionComment
 
 
     @Cacheable(key = "'u_' + #userId + '_p_' + #projectId")
-    default Map<Integer, QuestionCommentReadLog> findLog(int userId, int projectId) {
+    default Map<Long, QuestionCommentReadLog> findLog(int userId, int projectId) {
         LambdaQueryWrapper<QuestionCommentReadLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(QuestionCommentReadLog::getUserId, userId);
         wrapper.eq(QuestionCommentReadLog::getProjectId, projectId);
