@@ -33,7 +33,7 @@
             <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
           </div>
         </div>
-        <div v-show="item.answer" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>
+        <div v-show="item.answer && !editorShow[item.id]" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>
         <editor v-if="editorShow[item.id]" :key="item.id.toString()" :id='item.id.toString()' v-model="textarea[item.id]" :init="init"></editor>
         <div v-if="editorShow[item.id]" style="display: flex;justify-content: right;margin-top: 16px">
           <div class="editor-cancel" @click="editorShow[item.id]=false">Cancel</div>
