@@ -29,7 +29,7 @@
             {{ item.question }}
           </div>
           <div style="display: flex">
-            <img @click="editorShow[item.id] = true" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+            <img @click="subQuesEcho(item.id)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
             <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
           </div>
         </div>
@@ -100,9 +100,11 @@ export default {
     return {
       answerDict: {},
       init: {},
+      rowAnswer: {},
       textarea: {},
       answerDictId: '',
       editorShow: {},
+
     }
   },
   methods: {
@@ -111,10 +113,12 @@ export default {
         if (res.status == 200) {
           this.answerDict = res.data
           this.answerDictId = res.data.id
+          this.rowAnswer[res.data.id] = res.data.answer
           this.$set(this.editorShow,this.answerDictId,false)
           if (res.data.subQuestionList) {
             for (let i=0;i<res.data.subQuestionList.length;i++) {
               this.$set(this.editorShow,res.data.subQuestionList[i].id,false)
+              this.rowAnswer[res.data.subQuestionList[i].id] = res.data.subQuestionList[i].answer
             }
           }
           console.log(this.answerDict)
@@ -134,6 +138,10 @@ export default {
           this.getQuestionnaireAnswer()
         }
       })
+    },
+    subQuesEcho(id) {
+      this.textarea[id] = this.rowAnswer[id]
+      this.editorShow[id] = true
     }
   }
 }
