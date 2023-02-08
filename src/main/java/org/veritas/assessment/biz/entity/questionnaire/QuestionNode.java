@@ -11,8 +11,10 @@ import org.veritas.assessment.biz.constant.Principle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -267,5 +269,23 @@ public class QuestionNode implements Comparable<QuestionNode> {
                 .filter(q -> q.getQuestionId() == questionId)
                 .findFirst().orElse(null);
 
+    }
+
+    public boolean hasBeenEdited(QuestionNode newNode) {
+        Objects.requireNonNull(newNode);
+        if (!Objects.equals(this.questionId, newNode.getQuestionId())) {
+            throw new IllegalArgumentException();
+        }
+        if (!Objects.equals(this.getQuestionVid(), newNode.getQuestionVid())) {
+            return true;
+        }
+        if (this.isMain()) {
+            Set<Long> subQuestionVidSet = new HashSet<>(this.subList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toSet()));
+            subQuestionVidSet.addAll(newNode.subList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toSet()));
+            if (subQuestionVidSet.size() != this.subList.size() || subQuestionVidSet.size() != newNode.subList.size()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -207,7 +207,7 @@ public class QuestionnaireDiffTocDto {
                 this.newVid = newQuestionNode.getQuestionVid();
                 this.serial = newQuestionNode.serial();
                 this.question = newQuestionNode.questionContent();
-                if (Objects.equals(oldQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid())) {
+                if (oldQuestionNode.hasBeenEdited(newQuestionNode)) {
                     this.editType = EditType.UNMODIFIED;
                 } else {
                     this.editType = EditType.EDIT;
