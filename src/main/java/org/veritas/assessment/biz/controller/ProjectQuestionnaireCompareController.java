@@ -72,9 +72,6 @@ public class ProjectQuestionnaireCompareController {
 
     @Autowired
     private QuestionnaireService questionnaireService;
-    // 查询 可以用于对比的列表
-
-    // find project list
 
     // fetch toc with diff
     @Operation(summary = "Fetch the diff Table of Content.")
@@ -98,10 +95,10 @@ public class ProjectQuestionnaireCompareController {
         boolean basedVidBelongProject = Objects.equals(project.getId(), based.getProjectId());
         boolean newVidBelongProject = Objects.equals(project.getId(), newVersion.getProjectId());
         if (!basedVidBelongProject) {
-            throw new IllegalRequestException("");
+            throw new IllegalRequestException("The based questionnaire is not belong current project.");
         }
         if (!newVidBelongProject) {
-            throw new IllegalRequestException("");
+            throw new IllegalRequestException("The questionnaire is not belong current project.");
         }
         return new QuestionnaireDiffTocDto(project, based, newVersion);
     }

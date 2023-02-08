@@ -161,7 +161,8 @@ public class QuestionnaireDiffTocDto {
     @Data
     public static class MainQuestion {
         private Long id;
-        private Long vid;
+        private Long basedVid;
+        private Long newVid;
         // F5
         private String serial;
         // Have you documented how are these impacts being mitigated?
@@ -177,21 +178,22 @@ public class QuestionnaireDiffTocDto {
             if (oldQuestionNode == null) {
                 // add
                 this.id = newQuestionNode.getQuestionId();
-                this.vid = newQuestionNode.getQuestionVid();
+                this.newVid = newQuestionNode.getQuestionVid();
                 this.serial = newQuestionNode.serial();
                 this.question = newQuestionNode.questionContent();
                 this.editType = EditType.NEW;
             } else if (newQuestionNode == null) {
                 // delete
                 this.id = oldQuestionNode.getQuestionId();
-                this.vid = oldQuestionNode.getQuestionVid();
+                this.basedVid = oldQuestionNode.getQuestionVid();
                 this.serial = oldQuestionNode.serial();
                 this.question = oldQuestionNode.questionContent();
                 this.editType = EditType.DELETE;
             } else {
                 // unmodified or edited
                 this.id = newQuestionNode.getQuestionId();
-                this.vid = newQuestionNode.getQuestionVid();
+                this.basedVid = oldQuestionNode.getQuestionVid();
+                this.newVid = newQuestionNode.getQuestionVid();
                 this.serial = newQuestionNode.serial();
                 this.question = newQuestionNode.questionContent();
                 if (Objects.equals(oldQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid())) {
