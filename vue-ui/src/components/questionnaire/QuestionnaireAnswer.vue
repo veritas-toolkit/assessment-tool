@@ -119,7 +119,6 @@ export default {
               this.rowAnswer[res.data.subQuestionList[i].id] = res.data.subQuestionList[i].answer
             }
           }
-          console.log(this.answerDict)
         }
       })
     },

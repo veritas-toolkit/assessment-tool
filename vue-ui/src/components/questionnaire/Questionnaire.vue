@@ -52,22 +52,29 @@
           <div class="collapse-right" @click="isCollapse=false" v-if="isCollapse">
             <img src="../../assets/projectPic/chevron-right.svg" alt="">
           </div>
-          <div class="footer-right BarlowMedium"  :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
+          <div class="footer-right BarlowMedium draft-popover"  :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
             <el-popover
+                class=""
                 placement="top-start"
                 width="480"
                 trigger="click">
               <div>
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
-                  <el-tab-pane label="Exported Version" name="exportedVersion">
-                    导出版本
+                  <el-tab-pane label="Exported Version" name="exportedOnly">
+                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                      <div class="draft-left">
+                        <img src="../../assets/groupPic/Avatar.png" alt="">
+                        <div>{{item.creator.username}}</div>
+                      </div>
+                      <div class="draft-right">{{item.createdTime}}</div>
+                    </div>
                   </el-tab-pane>
-                  <el-tab-pane label="Recent Draft" name="recentDraft">
+                  <el-tab-pane label="Recent Draft" name="draftOnly">
                     最近草稿
                   </el-tab-pane>
                 </el-tabs>
               </div>
-              <div class="footer-text" style="margin-left: 24px" slot="reference">Compare</div>
+              <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">Compare</div>
             </el-popover>
             <div @click="openCompare=true" style="border: 1px solid red">open compare</div>
             <div style="display: flex">
@@ -107,7 +114,7 @@ export default {
       principle: 'Generic',
       principleList: [],
       isCollapse: false,
-      compareTab: 'exportedVersion',
+      compareTab: 'exportedOnly',
       openCompare: false,
       projectId: this.$route.query.id,
       questionId: '',
@@ -119,22 +126,27 @@ export default {
         "Ethics & Accountability" : "EA",
         "Transparency" : "T"
       },
+      draftList: [],
+      compareFlag: false,
+      questionnaireVid: ''
     }
   },
   created() {
     this.getQuestionnaireMenu()
-
   },
 
   watch: {
     'principle': function () {
-      this.getQuestionnaireMenu()
+      if (this.compareFlag) {
+        this.compare(this.questionnaireVid)
+      } else {
+        this.getQuestionnaireMenu()
+      }
     },
-
   },
   methods: {
-    handleCompareClick(tab, event) {
-      // console.log(tab, event);
+    handleCompareClick() {
+      this.getDiffVersion(this.compareTab)
     },
     getQuestionId(data) {
       this.questionId = data
@@ -149,7 +161,24 @@ export default {
         }
       })
     },
-
+    getDiffVersion(compareType) {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/history`).then(res => {
+        if (res.status == 200) {
+          this.draftList = res.data.records
+          console.log(this.draftList)
+        }
+        console.log(compareType)
+      })
+    },
+    compare(questionnaireVid) {
+      this.compareFlag = true
+      this.questionnaireVid = questionnaireVid
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
+        if (res.status == 200) {
+          this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+        }
+      })
+    }
   }
 }
 </script>
@@ -288,4 +317,25 @@ export default {
     height: 40px;
   }
 }
+.draft-box {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+.draft-left {
+  display: flex;
+  align-items: center;
+  > img {
+    width: 32px;
+    height: 32px;
+  }
+  > div {
+    font-size: 16px;
+    font-family: BarlowBold;
+    margin-left: 8px;
+  }
+}
+
 </style>
