@@ -12,6 +12,7 @@ public interface QuestionnaireService {
 
     // find the latest version by project's id.
     QuestionnaireVersion findLatestQuestionnaire(int projectId);
+    QuestionnaireVersion findByQuestionnaireVid(long vid);
 
     // find by version id.
 

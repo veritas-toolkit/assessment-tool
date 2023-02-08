@@ -34,6 +34,7 @@ import org.veritas.assessment.biz.dto.QuestionDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 
@@ -47,8 +48,27 @@ import org.veritas.assessment.common.exception.ErrorParamException;
 public class ProjectQuestionnaireEditController {
 
     @Autowired
+    @Deprecated
     private ProjectQuestionnaireService1 service;
 
+    @Autowired
+    private QuestionnaireService questionnaireService;
+
+    // fetch toc
+
+    // fetch mian-question wit subs
+
+    // add question
+
+    // add sub-question
+
+    // edit question-content, main or sub
+
+    // change sub-q seq in main-q
+
+    // change main-q seq in a principle
+
+    // delete question, main or sub
 
     @Operation(summary = "Get the project's questionnaire without any answer.")
     @GetMapping("")

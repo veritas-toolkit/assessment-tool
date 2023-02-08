@@ -65,10 +65,22 @@ public class QuestionnaireDao {
         List<Long> questionVidList = nodeList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toList());
         List<QuestionVersion> questionVersionList = questionVersionMapper.findByIdList(questionVidList);
         questionnaire.fill(nodeList, questionMetaList, questionVersionList);
-
         return questionnaire;
     }
-    // 加载Questionnaire by vid
+    public QuestionnaireVersion findByQuestionnaireVid(long vid) {
+        QuestionnaireVersion questionnaire = questionnaireMapper.findByQuestionnaireVid(vid);
+        if (questionnaire == null) {
+            return null;
+        }
+        List<QuestionNode> nodeList = questionNodeMapper.findByQuestionnaireVid(questionnaire.getVid());
+        Integer projectId = questionnaire.getProjectId();
+        List<QuestionMeta> questionMetaList = questionMetaMapper.findByProjectId(projectId);
+        List<Long> questionVidList = nodeList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toList());
+        List<QuestionVersion> questionVersionList = questionVersionMapper.findByIdList(questionVidList);
+        questionnaire.fill(nodeList, questionMetaList, questionVersionList);
+        return questionnaire;
+    }
+
 
     // cache?
     public boolean updateQuestionVidForLock(long questionId, long oldVid, long newVid) {

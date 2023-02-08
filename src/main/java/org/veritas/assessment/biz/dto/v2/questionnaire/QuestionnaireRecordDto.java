@@ -26,5 +26,6 @@ public class QuestionnaireRecordDto {
         this.questionnaireVid = questionnaire.getVid();
         this.message = questionnaire.getMessage();
         this.createdTime = questionnaire.getCreatedTime();
+        this.exported = questionnaire.getExported();
     }
 }

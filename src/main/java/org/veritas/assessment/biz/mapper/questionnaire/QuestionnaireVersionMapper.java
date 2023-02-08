@@ -14,12 +14,8 @@ public interface QuestionnaireVersionMapper extends BaseMapper<QuestionnaireVers
     @Select("select max(vid) from vat2_questionnaire_version qa_v where qa_v.project_id = #{projectId}")
     Integer findLatestVersionId(@Param("projectId") int projectId);
 
-    default QuestionnaireVersion findLatestQuestionnaire(@Param("projectId") int projectId) {
-        LambdaQueryWrapper<QuestionnaireVersion> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(QuestionnaireVersion::getProjectId, projectId);
-        wrapper.orderByDesc(QuestionnaireVersion::getVid);
-        wrapper.last("limit 1");
-        return selectOne(wrapper);
+    default QuestionnaireVersion findByQuestionnaireVid(long vid) {
+        return selectById(vid);
     }
 
     default QuestionnaireVersion findLatest(int projectId) {

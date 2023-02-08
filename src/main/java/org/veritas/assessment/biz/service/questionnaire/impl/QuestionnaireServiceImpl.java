@@ -40,6 +40,13 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         return questionnaireDao.findLatestQuestionnaire(projectId);
     }
 
+    @Transactional
+    @Override
+    public QuestionnaireVersion findByQuestionnaireVid(long vid) {
+        return questionnaireDao.findByQuestionnaireVid(vid);
+    }
+
+
     @Override
     public QuestionnaireVersion copyFrom(int creatorUserId, Project project, Date createdTime, Project fromProject) {
         Objects.requireNonNull(project);

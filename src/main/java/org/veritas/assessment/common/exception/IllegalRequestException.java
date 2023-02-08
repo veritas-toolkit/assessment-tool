@@ -20,24 +20,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Bad Request.")
-public class IllegalDataException extends AbstractVeritasException {
-    public IllegalDataException() {
+public class IllegalRequestException extends AbstractVeritasException {
+    public IllegalRequestException() {
         super();
     }
 
-    public IllegalDataException(String message) {
+    public IllegalRequestException(String message) {
         super(message);
     }
 
-    public IllegalDataException(String message, Throwable cause) {
+    public IllegalRequestException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IllegalDataException(Throwable cause) {
+    public IllegalRequestException(Throwable cause) {
         super(cause);
     }
 
-    protected IllegalDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected IllegalRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
