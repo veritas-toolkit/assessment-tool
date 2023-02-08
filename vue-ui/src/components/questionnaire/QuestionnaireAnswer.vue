@@ -12,9 +12,7 @@
           <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
         </div>
       </div>
-      <div v-show="answerDict.answer" class="sub-ques-ans BarlowMedium">
-        {{ answerDict.answer }}
-      </div>
+      <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="answerDict.answer" class="sub-ques-ans BarlowMedium"></div>
       <editor v-if="editorShow[answerDictId]" :key="answerDictId.toString()" :id='answerDictId.toString()' v-model="textarea[answerDictId]" :init="init"></editor>
       <div v-if="editorShow[answerDictId]" style="display: flex;justify-content: right;margin-top: 16px">
         <div class="editor-cancel" @click="editorShow[answerDictId]=false">Cancel</div>
