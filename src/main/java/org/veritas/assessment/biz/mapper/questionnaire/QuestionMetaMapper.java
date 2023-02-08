@@ -45,7 +45,7 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
         LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(QuestionMeta::getId, questionId);
         wrapper.eq(QuestionMeta::getCurrentVid, oldVid);
-        wrapper.isNotNull(QuestionMeta::getDeleteStartQuestionnaireVid);
+        wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
         wrapper.set(QuestionMeta::getCurrentVid, newVid);
         return update(null, wrapper) > 0;
     }

@@ -93,7 +93,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         long questionNewVid = idGenerateService.nextId();
         // lock question-meta
         boolean questionLocked = questionnaireDao.updateQuestionVidForLock(questionId, basedQuestionVid, questionNewVid);
-        if (questionLocked) {
+        if (!questionLocked) {
             throw new HasBeenModifiedException("The question has been modify by others.");
         }
 
