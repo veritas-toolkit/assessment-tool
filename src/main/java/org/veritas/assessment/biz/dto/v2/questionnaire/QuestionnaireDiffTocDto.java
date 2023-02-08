@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
@@ -138,8 +139,10 @@ public class QuestionnaireDiffTocDto {
                     }
                 });
             }
-            // sort by serial
-            this.mainQuestionList = Collections.unmodifiableList(list);
+            List<MainQuestion> sortedList = list.stream()
+                    .sorted((left, right) -> StringUtils.compare(left.serial, right.serial))
+                    .collect(Collectors.toList());;
+            this.mainQuestionList = Collections.unmodifiableList(sortedList);
         }
 
         public int diffCount() {
@@ -165,7 +168,6 @@ public class QuestionnaireDiffTocDto {
         private Long newVid;
         // F5
         private String serial;
-        // Have you documented how are these impacts being mitigated?
         private String question;
 
         private EditType editType;
