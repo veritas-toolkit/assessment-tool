@@ -13,6 +13,7 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +53,9 @@ public class QuestionnaireTocDto {
         supportPrincipleList = project.principles();
         principles = supportPrincipleList.stream().collect(Collectors.toMap(
                 Principle::getShortName,
-                Principle::getDescription));
+                Principle::getDescription,
+                (value1, value2) -> value1,
+                LinkedHashMap::new));
         this.fillQuestions(q.getMainQuestionNodeList());
     }
 
@@ -68,11 +71,11 @@ public class QuestionnaireTocDto {
         this.principleAssessments = supportPrincipleList.stream()
                 .collect(Collectors.toMap(
                         Principle::getShortName,
-                        p -> new PrincipleAssessment(
-                                p,
-                                questionNodeList.stream()
-                                        .filter(q -> p == q.getPrinciple())
-                                        .collect(Collectors.toList()))));
+                        p -> new PrincipleAssessment(p, questionNodeList.stream()
+                                .filter(q -> p == q.getPrinciple())
+                                .collect(Collectors.toList())),
+                        (value1, value2) -> value1,
+                        LinkedHashMap::new));
     }
 
     @Data

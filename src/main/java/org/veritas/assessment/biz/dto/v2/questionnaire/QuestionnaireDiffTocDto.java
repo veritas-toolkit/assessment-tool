@@ -16,6 +16,7 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class QuestionnaireDiffTocDto {
 
     private Integer projectId;
 
-    private Long oldQuestionnaireVid;
+    private Long basedQuestionnaireVid;
 
     private Long newQuestionnaireVid;
 
@@ -42,23 +43,29 @@ public class QuestionnaireDiffTocDto {
 
     @JsonIgnore
 
-    public QuestionnaireDiffTocDto(Project project, QuestionnaireVersion oldQ, QuestionnaireVersion newQ) {
-        this.projectId = newQ.getProjectId();
-        this.oldQuestionnaireVid = oldQ.getVid();
-        this.newQuestionnaireVid = newQ.getVid();
+    public QuestionnaireDiffTocDto(Project project,
+                                   QuestionnaireVersion basedQuestionnaire,
+                                   QuestionnaireVersion newQuestionnaire) {
+        this.projectId = newQuestionnaire.getProjectId();
+        this.basedQuestionnaireVid = basedQuestionnaire.getVid();
+        this.newQuestionnaireVid = newQuestionnaire.getVid();
 
         List<Principle> supportPrincipleList = project.principles();
 
-        this.principles = supportPrincipleList.stream().collect(Collectors.toMap(
-                Principle::getShortName,
-                Principle::getDescription));
+        this.principles = supportPrincipleList.stream()
+                .collect(Collectors.toMap(
+                        Principle::getShortName,
+                        Principle::getDescription,
+                        (a, b) -> a,
+                        LinkedHashMap::new));
 
         this.principleAssessments = supportPrincipleList.stream()
                 .collect(Collectors.toMap(
                         Principle::getShortName,
-                        p -> new PrincipleAssessment(p, oldQ.getMainQuestionNodeList(),
-                                newQ.getMainQuestionNodeList())));
-
+                        p -> new PrincipleAssessment(p, basedQuestionnaire.getMainQuestionNodeList(),
+                                newQuestionnaire.getMainQuestionNodeList()),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new));
     }
 
     @Data
@@ -71,25 +78,25 @@ public class QuestionnaireDiffTocDto {
 
         private List<Step> stepList;
 
-        public PrincipleAssessment(Principle p, List<QuestionNode> oldList, List<QuestionNode> newList) {
+        public PrincipleAssessment(Principle p, List<QuestionNode> basedList, List<QuestionNode> newList) {
             Objects.requireNonNull(p);
             this.principle = p.getDescription();
             this.principleShortName = p.getShortName();
 
-            oldList = oldList == null ? Collections.emptyList() : oldList;
+            basedList = basedList == null ? Collections.emptyList() : basedList;
             newList = newList == null ? Collections.emptyList() : newList;
 
-            List<QuestionNode> finalOldList = oldList;
+            List<QuestionNode> finalOldList = basedList;
             List<QuestionNode> finalNewList = newList;
             this.stepList = Arrays.stream(AssessmentStep.values())
                     .map(s -> {
-                        List<QuestionNode> olds = finalOldList.stream()
+                        List<QuestionNode> basedNodes = finalOldList.stream()
                                 .filter(n -> n.getPrinciple() == p && n.getStep() == s)
                                 .collect(Collectors.toList());
-                        List<QuestionNode> news = finalNewList.stream()
+                        List<QuestionNode> newNodes = finalNewList.stream()
                                 .filter(n -> n.getPrinciple() == p && n.getStep() == s)
                                 .collect(Collectors.toList());
-                        return new Step(s, olds, news);
+                        return new Step(s, basedNodes, newNodes);
                     }).collect(Collectors.toList());
         }
 
@@ -114,27 +121,29 @@ public class QuestionnaireDiffTocDto {
         List<MainQuestion> mainQuestionList;
 
         public Step(AssessmentStep assessmentStep,
-                    List<QuestionNode> oldQuestionList, List<QuestionNode> newQuestionList) {
+                    List<QuestionNode> basedQuestionList,
+                    List<QuestionNode> newQuestionList) {
             Objects.requireNonNull(assessmentStep);
             this.serialNo = assessmentStep.getStepSerial();
             this.step = assessmentStep.getDescription();
-            boolean noneOld = oldQuestionList == null || oldQuestionList.isEmpty();
-            boolean noneNew = newQuestionList == null || newQuestionList.isEmpty();
-            if (noneOld && noneNew) {
+            boolean hasBasedNode = basedQuestionList != null && !basedQuestionList.isEmpty();
+            boolean hasNewNode = newQuestionList != null && !newQuestionList.isEmpty();
+            if (!hasBasedNode && !hasNewNode) {
                 this.mainQuestionList = Collections.emptyList();
             }
             List<MainQuestion> list = new ArrayList<>();
-            if (!noneNew) {
+            if (hasNewNode) {
                 newQuestionList.forEach(newQ -> {
-                    QuestionNode oldQ = QuestionNode.findByQuestionId(oldQuestionList, newQ.getQuestionId());
-                    MainQuestion mainQuestion = new MainQuestion(oldQ, newQ);
+                    QuestionNode basedNode = QuestionNode.findByQuestionId(basedQuestionList, newQ.getQuestionId());
+                    MainQuestion mainQuestion = new MainQuestion(basedNode, newQ);
                     list.add(mainQuestion);
                 });
             }
-            if (!noneOld) {
-                oldQuestionList.forEach(old -> {
-                    QuestionNode newOne = QuestionNode.findByQuestionId(newQuestionList, old.getQuestionId());
-                    if (newOne == null) {
+            // find all deleted questions.
+            if (hasBasedNode) {
+                basedQuestionList.forEach(old -> {
+                    QuestionNode newNode = QuestionNode.findByQuestionId(newQuestionList, old.getQuestionId());
+                    if (newNode == null) {
                         list.add(new MainQuestion(old, null));
                     }
                 });
