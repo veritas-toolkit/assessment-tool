@@ -46,7 +46,6 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.CommentService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -60,7 +59,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.BiConsumer;
 
 @RestController
 @Slf4j
@@ -145,18 +143,21 @@ public class ProjectQuestionnaireController {
     public QuestionDto findProjectQuestion(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Long questionId) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
+            @PathVariable("questionId") Long questionId,
+            @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid) {
+        QuestionnaireVersion questionnaire;
+        if (questionnaireVid == null) {
+            questionnaire = questionnaireService.findLatestQuestionnaire(projectId);
+        } else {
+            questionnaire = questionnaireService.findByQuestionnaireVid(questionnaireVid);
+        }
+        if (questionnaire == null) {
             throw new NotFoundException("Not found the questionnaire.");
         }
-        QuestionNode questionNode = q.findMainQuestionById(questionId);
+        QuestionNode questionNode = questionnaire.findMainQuestionById(questionId);
         if (questionNode == null) {
             throw new NotFoundException("Not found the question in current project.");
         }
-//        List<Integer> userIdList = new ArrayList<>();
-
-//        UserSimpleDto questionEditor = userService.findUserById(questionNode.getQuestionVersion().getAnswerEditUserId());
         return new QuestionDto(questionNode);
     }
 
