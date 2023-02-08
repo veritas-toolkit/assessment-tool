@@ -107,6 +107,8 @@ public class ProjectController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    TemplateQuestionnaireService templateQuestionnaireService;
     @Operation(summary = "Get pageable project list which current user can access.")
     @GetMapping("")
     public Pageable<ProjectDto> listProject(
@@ -131,7 +133,6 @@ public class ProjectController {
         return projectDtoConverter.convertFrom(pageable);
     }
 
-    TemplateQuestionnaireService templateQuestionnaireService;
 
     @Operation(summary = "Create a project")
     @PostMapping("/new")
