@@ -32,6 +32,7 @@ import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDiffDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireDiffTocDto;
@@ -82,9 +83,7 @@ public class ProjectQuestionnaireCompareController {
             @PathVariable("projectId") int projectId,
             @RequestParam(name= "based") long basedVid,
             @RequestParam(name = "new", required = false) Long newVid) {
-
         QuestionnaireVersion based = questionnaireService.findByQuestionnaireVid(basedVid);
-
         Project project = projectService.findProjectById(projectId);
         QuestionnaireVersion newVersion = null;
         if (newVid == null) {
@@ -92,16 +91,56 @@ public class ProjectQuestionnaireCompareController {
         } else {
             newVersion = questionnaireService.findByQuestionnaireVid(newVid);
         }
+        this.validProjectAndQuestionnaires(project, based, newVersion);
+
+        return new QuestionnaireDiffTocDto(project, based, newVersion);
+    }
+
+    @Operation(summary = "Fetch the diff Table of Content.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    @GetMapping("/question/{questionId}")
+    public QuestionDiffDto findQuestionDiff(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") int projectId,
+            @PathVariable("questionId") Long questionId,
+            @RequestParam(name= "based") long basedVid,
+            @RequestParam(name = "new", required = false) Long newVid) {
+        Project project = projectService.findProjectById(projectId);
+        QuestionnaireVersion based = questionnaireService.findByQuestionnaireVid(basedVid);
+        QuestionnaireVersion newVersion = null;
+        if (newVid == null) {
+            newVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        } else {
+            newVersion = questionnaireService.findByQuestionnaireVid(newVid);
+        }
+        this.validProjectAndQuestionnaires(project, based, newVersion);
+        QuestionNode basedQuestionNode = based.findNodeByQuestionId(questionId);
+        QuestionNode newQuestionNode = newVersion.findNodeByQuestionId(questionId);
+        return new QuestionDiffDto(basedQuestionNode, newQuestionNode);
+
+    }
+
+    private void validProjectAndQuestionnaires(Project project,
+                                               QuestionnaireVersion based,
+                                               QuestionnaireVersion newVersion) {
+        if (project == null) {
+            throw new NotFoundException("Not found the project");
+        }
+        if (based == null) {
+            throw new NotFoundException("Not found the based questionnaire.");
+        }
+        if (newVersion == null) {
+            throw new NotFoundException("Not found the new questionnaire version.");
+        }
         boolean basedVidBelongProject = Objects.equals(project.getId(), based.getProjectId());
         boolean newVidBelongProject = Objects.equals(project.getId(), newVersion.getProjectId());
         if (!basedVidBelongProject) {
             throw new IllegalRequestException("The based questionnaire is not belong current project.");
         }
         if (!newVidBelongProject) {
-            throw new IllegalRequestException("The questionnaire is not belong current project.");
+            throw new IllegalRequestException("The new questionnaire new is not belong current project.");
         }
-        return new QuestionnaireDiffTocDto(project, based, newVersion);
+
     }
 
-    // fetch question with question-vid
 }
