@@ -29,11 +29,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
+import org.veritas.assessment.biz.converter.QuestionnaireRecordDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireRecordDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.SimpleQuestionDto;
 import org.veritas.assessment.biz.entity.Project;
@@ -47,6 +49,7 @@ import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
@@ -57,6 +60,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 
 @RestController
 @Slf4j
@@ -77,6 +81,9 @@ public class ProjectQuestionnaireController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    QuestionnaireRecordDtoConverter questionnaireRecordDtoConverter;
+
 
     @Operation(summary = "Get the project's questionnaire.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
@@ -90,6 +97,28 @@ public class ProjectQuestionnaireController {
             throw new NotFoundException("");
         }
         return q;
+    }
+
+    @Operation(summary = "Find the project's questionnaire history list.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    @GetMapping("/history")
+    public Pageable<QuestionnaireRecordDto> findHistory(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") Integer projectId,
+            @RequestParam(name = "mainQuestionId", required = false) Long mainQuestionId,
+            @RequestParam(name = "draftOnly", required = false) Boolean draftOnly,
+            @RequestParam(name = "exportedOnly", required = false) Boolean exportedOnly,
+            @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "20", required = false) Integer pageSize
+    ) {
+        Pageable<QuestionnaireVersion> page2 = questionnaireService.findHistory(projectId, page, pageSize);
+
+        return questionnaireRecordDtoConverter.convertFrom(page2,
+                (questionnaireRecordDto, questionnaireVersion) -> {
+                    User user = userService.findUserById(questionnaireVersion.getCreatorUserId());
+                    UserSimpleDto simpleDto = new UserSimpleDto(user);
+                    questionnaireRecordDto.setCreator(simpleDto);
+                });
     }
 
     // latest questionnaire table of contents.

@@ -149,6 +149,14 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return !this.isMain();
     }
 
+    public String questionContent() {
+        if (questionVersion == null) {
+            return "";
+        } else {
+            return questionVersion.getContent();
+        }
+    }
+
     public static QuestionNode createFromTemplate(TemplateQuestion templateQuestion) {
         QuestionNode node = new QuestionNode();
         node.setPrinciple(templateQuestion.getPrinciple());
@@ -249,5 +257,15 @@ public class QuestionNode implements Comparable<QuestionNode> {
         this.setQuestionVid(questionVersion.getVid());
         this.getMeta().setCurrentVid(questionVersion.getVid());
         this.setQuestionVersion(questionVersion);
+    }
+
+    public static QuestionNode findByQuestionId(List<QuestionNode> questionNodeList, long questionId) {
+        if (questionNodeList == null || questionNodeList.isEmpty()) {
+            return null;
+        }
+        return questionNodeList.stream()
+                .filter(q -> q.getQuestionId() == questionId)
+                .findFirst().orElse(null);
+
     }
 }

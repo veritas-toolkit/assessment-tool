@@ -16,6 +16,7 @@ import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.Date;
 import java.util.Objects;
@@ -129,5 +130,10 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             throw new IllegalStateException("Edit answer failed.");
         }
         return questionnaire;
+    }
+
+    @Override
+    public Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize) {
+        return questionnaireDao.findHistoryPageable(projectId, page, pageSize);
     }
 }

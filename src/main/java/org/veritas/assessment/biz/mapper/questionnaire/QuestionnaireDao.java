@@ -1,25 +1,30 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.mapper.ProjectMapper;
+import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO: 2023/2/8 cache
 @Repository
 @Slf4j
 public class QuestionnaireDao {
-    private QuestionMetaMapper questionMetaMapper;
-    private QuestionnaireVersionMapper questionnaireMapper;
-    private QuestionVersionMapper questionVersionMapper;
+    private final QuestionMetaMapper questionMetaMapper;
+    private final QuestionnaireVersionMapper questionnaireMapper;
+    private final QuestionVersionMapper questionVersionMapper;
 
-    private QuestionNodeMapper questionNodeMapper;
+    private final QuestionNodeMapper questionNodeMapper;
 
 
 
@@ -93,4 +98,15 @@ public class QuestionnaireDao {
         // meta has been update, not need to update.
     }
 
+    public Pageable<QuestionnaireVersion> findHistoryPageable(int projectId, int page, int pageSize) {
+        LambdaQueryWrapper<QuestionnaireVersion> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(QuestionnaireVersion::getProjectId, projectId);
+
+        wrapper.orderByAsc(QuestionnaireVersion::getVid);
+        Page<QuestionnaireVersion> p = new Page<>();
+        p.setCurrent(page);
+        p.setSize(pageSize);
+        Page<QuestionnaireVersion> page1 = questionnaireMapper.selectPage(p, wrapper);
+        return Pageable.convert(page1);
+    }
 }
