@@ -43,6 +43,8 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
 
     private String message;
 
+    private Boolean exported;
+
     @TableField(exist = false)
     private List<QuestionNode> mainQuestionNodeList;
 

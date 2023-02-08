@@ -5,7 +5,8 @@ create table vat2_questionnaire_version (
     model_artifact_vid integer,
     creator_user_id integer not null,
     created_time varchar(100) not null,
-    message varchar(2000)
+    message varchar(2000),
+    exported boolean default false
 );
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
