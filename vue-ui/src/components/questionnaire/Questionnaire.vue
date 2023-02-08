@@ -15,8 +15,8 @@
             <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency"></el-radio-button>
           </el-radio-group>
         </div>
-        <div id="endComSty" class="BarlowMedium" @click="openCompare=false" v-if="openCompare">End comparison</div>
-        <div style="display: flex" class="BarlowMedium" v-if="!openCompare">
+        <div id="endComSty" class="BarlowMedium" @click="compareFlag=false" v-if="compareFlag">End comparison</div>
+        <div style="display: flex" class="BarlowMedium" v-if="!compareFlag">
           <div id="preview">Preview</div>
           <div id="export">Export</div>
         </div>
@@ -28,8 +28,8 @@
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
-            <QuestionnaireAnswer :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-if="compareFlag"></QuestionnaireCompareAnswer>
+            <QuestionnaireAnswer v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
+            <QuestionnaireCompareAnswer v-show="compareFlag"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -146,6 +146,13 @@ export default {
         this.getQuestionnaireMenu()
       }
     },
+    'compareFlag': function () {
+      if(this.compareFlag) {
+        this.compare(this.questionnaireVid)
+      } else {
+        this.getQuestionnaireMenu()
+      }
+    }
   },
   methods: {
     handleCompareClick() {
