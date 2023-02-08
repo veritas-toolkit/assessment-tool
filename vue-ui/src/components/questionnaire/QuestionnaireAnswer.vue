@@ -70,7 +70,7 @@ export default {
     questionId: {
       type: String,
       required: true
-    }
+    },
   },
   created() {
     this.init = {

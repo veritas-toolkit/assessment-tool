@@ -27,8 +27,9 @@
             <QuestionnaireMenu @getId="getQuestionId" :defaultId="defaultId" :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
-            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>
+<!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
             <QuestionnaireAnswer :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
+            <QuestionnaireCompareAnswer v-if="compareFlag"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -98,13 +99,15 @@
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
 import Notifications from "@/components/comment/Notifications";
+import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
 
 export default {
   name: "Questionnaire",
   components: {
     QuestionnaireMenu,
     QuestionnaireAnswer,
-    Notifications
+    QuestionnaireCompareAnswer,
+    Notifications,
   },
   mounted() {
 
@@ -175,6 +178,7 @@ export default {
       this.questionnaireVid = questionnaireVid
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
+          this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
