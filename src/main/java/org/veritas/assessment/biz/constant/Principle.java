@@ -1,6 +1,7 @@
 package org.veritas.assessment.biz.constant;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 public enum Principle {
@@ -12,6 +13,7 @@ public enum Principle {
 
     @EnumValue
     @Getter
+    @JsonValue
     private final String shortName;
     @Getter
     private final String description;

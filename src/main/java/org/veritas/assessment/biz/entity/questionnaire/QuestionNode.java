@@ -280,11 +280,16 @@ public class QuestionNode implements Comparable<QuestionNode> {
             return true;
         }
         if (this.isMain()) {
-            Set<Long> subQuestionVidSet = new HashSet<>(this.subList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toSet()));
-            subQuestionVidSet.addAll(newNode.subList.stream().map(QuestionNode::getQuestionVid).collect(Collectors.toSet()));
-            if (subQuestionVidSet.size() != this.subList.size() || subQuestionVidSet.size() != newNode.subList.size()) {
-                return true;
-            }
+            Set<Long> subQuestionVidSet = new HashSet<>();
+            subQuestionVidSet.addAll(this.subList.stream()
+                    .map(QuestionNode::getQuestionVid)
+                    .collect(Collectors.toSet()));
+            subQuestionVidSet.addAll(newNode.subList.stream()
+                    .map(QuestionNode::getQuestionVid)
+                    .collect(Collectors.toSet()));
+            boolean thisDiff = subQuestionVidSet.size() != this.subList.size();
+            boolean newDiff = subQuestionVidSet.size() != newNode.subList.size();
+            return thisDiff || newDiff;
         }
         return false;
     }

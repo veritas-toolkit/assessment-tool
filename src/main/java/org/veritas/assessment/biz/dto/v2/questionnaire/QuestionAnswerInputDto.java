@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class QuestionEditDto {
+public class QuestionAnswerInputDto {
     @NotNull
     private Integer projectId;
     @NotNull

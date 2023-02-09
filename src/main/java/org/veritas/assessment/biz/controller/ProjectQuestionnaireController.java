@@ -34,7 +34,7 @@ import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAnswerInputDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireRecordDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.SimpleQuestionDto;
@@ -166,7 +166,7 @@ public class ProjectQuestionnaireController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'input answer')")
     public SimpleQuestionDto editAnswer(@Parameter(hidden = true) User operator,
                                         @PathVariable("projectId") Integer projectId,
-                                        @RequestBody QuestionEditDto projectQuestion) {
+                                        @RequestBody QuestionAnswerInputDto projectQuestion) {
         Objects.requireNonNull(projectQuestion);
         Objects.requireNonNull(projectQuestion.getQuestionId());
         Long questionId = projectQuestion.getQuestionId();
