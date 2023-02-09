@@ -50,7 +50,7 @@ public class QuestionDiffDto {
         } else if (basedQuestionNode == null) {
             this.onlyNew(newQuestionNode);
         } else {
-            this.twoNode(basedQuestionNode, newQuestionNode);
+            this.compareTwoVersions(basedQuestionNode, newQuestionNode);
         }
     }
 
@@ -74,7 +74,7 @@ public class QuestionDiffDto {
         }
     }
 
-    private void twoNode(QuestionNode basedQuestionNode, QuestionNode newQuestionNode) {
+    private void compareTwoVersions(QuestionNode basedQuestionNode, QuestionNode newQuestionNode) {
         boolean sameQuestion = Objects.equals(basedQuestionNode.getQuestionId(), newQuestionNode.getQuestionId());
         if (!sameQuestion) {
             throw new IllegalArgumentException();
@@ -110,9 +110,9 @@ public class QuestionDiffDto {
 
     @Data
     public static class QuestionRecordDto {
-        private Long id;
+        private Long questionId;
 
-        private Long vid;
+        private Long questionVid;
 
         private String serial;
 
@@ -130,8 +130,8 @@ public class QuestionDiffDto {
 
         public QuestionRecordDto(QuestionNode questionNode) {
             QuestionVersion questionVersion = questionNode.getQuestionVersion();
-            this.id = questionNode.getQuestionId();
-            this.vid = questionVersion.getVid();
+            this.questionId = questionNode.getQuestionId();
+            this.questionVid = questionVersion.getVid();
             this.serial = questionNode.serial();
             this.question = questionVersion.getContent();
             this.questionEditTime = questionVersion.getContentEditTime();
