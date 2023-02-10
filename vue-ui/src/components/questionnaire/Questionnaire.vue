@@ -29,7 +29,7 @@
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
             <QuestionnaireAnswer v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-show="compareFlag"></QuestionnaireCompareAnswer>
+            <QuestionnaireCompareAnswer v-show="compareFlag" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -175,14 +175,14 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/history`).then(res => {
         if (res.status == 200) {
           this.draftList = res.data.records
-          console.log(this.draftList)
+          // console.log(this.draftList)
         }
-        console.log(compareType)
+        // console.log(compareType)
       })
     },
     compare(questionnaireVid) {
       this.compareFlag = true
-      this.questionnaireVid = questionnaireVid
+      this.questionnaireVid = questionnaireVid.toString()
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
           this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()

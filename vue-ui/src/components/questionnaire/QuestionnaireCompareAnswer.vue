@@ -1,44 +1,29 @@
 <template>
   <div style="position: relative;height: 100%">
     <div class="vertical-line"></div>
+<!--main-ques & ans-->
     <div class="main-ques-box">
-      <div class="main-ques">F1. Question content</div>
-      <div class="main-ques">F1. Question content</div>
-    </div>
-    <div class="compare-box">
-      <div class="compare-box-left">
-        <div class="sub-ques">sub-ques</div>
-        <div class="sub-ans">sub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-
+      <div class="main-ques-box-left">
+        <div class="main-ques">{{ mainBasedQuestion.serial }}. {{mainBasedQuestion.question}}</div>
+        <div class="sub-ques" style="margin-top: 16px" v-show="!diffSummary.subList">{{ mainBasedQuestion.question }}</div>
+        <div class="sub-ans" v-show="!diffSummary.subList"> {{mainBasedQuestion.answer}}
         </div>
       </div>
-      <div class="compare-box-right">
-        <div class="sub-ques">sub-ques</div>
-        <div class="sub-ans">sub-ans</div>
+      <div class="main-ques-box-right">
+        <div class="main-ques">{{ mainNewQuestion.serial }}. {{mainNewQuestion.question}}</div>
+        <div class="sub-ques" style="margin-top: 16px" v-show="!diffSummary.subList">{{ mainNewQuestion.question }}</div>
+        <div class="sub-ans" v-show="!diffSummary.subList">{{ mainNewQuestion.answer }}</div>
       </div>
     </div>
-    <div class="compare-box">
+<!--    sub-ques & ans-->
+    <div class="compare-box" v-for="(item,index) in diffSummary.subList" v-show="diffSummary.subList">
       <div class="compare-box-left">
-        <div class="sub-ques">sub-ques</div>
-        <div class="sub-ans">sub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-          sub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-anssub-ans
-
-        </div>
+        <div class="sub-ques">{{ item.basedQuestion.question }}</div>
+        <div class="sub-ans">{{ item.basedQuestion.answer}}</div>
       </div>
       <div class="compare-box-right">
-        <div class="sub-ques">sub-ques</div>
-        <div class="sub-ans">sub-ans</div>
+        <div class="sub-ques">{{ item.newQuestion.question }}</div>
+        <div class="sub-ans">{{ item.newQuestion.answer }}</div>
       </div>
     </div>
   </div>
@@ -46,7 +31,61 @@
 
 <script>
 export default {
-  name: "QuestionnaireCompareAnswer"
+  name: "QuestionnaireCompareAnswer",
+  props: {
+    projectId: {
+      type: String,
+      required: true
+    },
+    questionId: {
+      type: String,
+      required: true
+    },
+    questionnaireVid: {
+      type: String,
+      required: true
+    },
+    compareFlag: {
+      type: Boolean,
+      required: true
+    }
+  },
+  data() {
+    return {
+      diffSummary: {},
+      mainBasedQuestion: {},
+      mainNewQuestion: {},
+    }
+  },
+  created() {
+    console.log(this.questionnaireVid)
+    console.log(this.compareFlag)
+
+  },
+  watch: {
+    'questionnaireVid': function() {
+      if (this.compareFlag) {
+        this.getQuesDiffData()
+      }
+    },
+    'questionId': function () {
+      if (this.compareFlag) {
+        this.getQuesDiffData()
+      }
+    }
+  },
+  methods: {
+    getQuesDiffData() {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/question/${this.questionId}`,{params:{'basedQuestionnaireVid':this.questionnaireVid}}).then(res => {
+        if (res.status == 200) {
+          this.diffSummary = res.data
+          this.mainBasedQuestion = res.data.basedQuestion
+          this.mainNewQuestion = res.data.newQuestion
+
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -63,11 +102,18 @@ export default {
 .main-ques-box {
   display: flex;
 }
+.main-ques-box-left {
+  padding: 0px 24px 16px 24px;
+  width: calc(50% - 49px);
+}
+.main-ques-box-right {
+  padding: 0px 24px 16px 24px;
+  width: calc(50% - 49px);
+}
 .main-ques {
   font-size: 16px;
   font-family: BarlowBold;
-  width: calc(50% - 1px);
-  margin: 16px 24px;
+  margin-top: 16px;
 }
 .compare-box {
   display: flex;
