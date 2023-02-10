@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireDiffTocDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -159,17 +158,17 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         Date now = new Date();
         // lock questionnaire
-        QuestionnaireVersion newQuestionnaire = latest.createNewVersion(operator, now, idGenerateService::nextId);
-        Long questionnaireVid = newQuestionnaire.getVid();
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
         boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
         if (!locked) {
             throw new HasBeenModifiedException("The questionnaire has been modify by others.");
         }
         QuestionNode newNode = action.toNode(idGenerateService::nextId);
-        newQuestionnaire.addMainQuestion(newNode);
+        current.addMainQuestion(newNode);
 
         // save question version & question meta
-        boolean result = questionnaireDao.addNewQuestion(newQuestionnaire, newNode);
+        boolean result = questionnaireDao.addNewQuestion(current, newNode);
         if (!result) {
             log.error("Add question failed, question: {}", newNode);
         }
@@ -185,6 +184,11 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
 
         QuestionNode delete = current.findMainQuestionById(questionId);
         if (delete == null) {
@@ -203,6 +207,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+
         current.reorder(principle, step, questionIdReorderList);
 
         questionnaireDao.saveStructure(current);

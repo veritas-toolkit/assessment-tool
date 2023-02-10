@@ -1,5 +1,8 @@
 package org.veritas.assessment.biz.dto.v2.questionnaire;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -21,17 +24,17 @@ public class QuestionEditContentDto {
     @NotNull
     private String question;
 
-    private boolean edited;
+    private Boolean edited;
 
     List<SubQuestionEditDto> existingSubList;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     List<Long> deletedSubList;
 
     @Data
     public static class SubQuestionEditDto {
         // null, if the sub is added.
         private Long questionId;
-
         // null, if the sub is added.
         private Long basedQuestionVid;
 
@@ -40,8 +43,6 @@ public class QuestionEditContentDto {
         private Boolean add;
 
         private String question;
-
-
     }
 
 }

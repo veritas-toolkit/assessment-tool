@@ -32,8 +32,10 @@ import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditContentDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionReorderDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocWithMainQuestionDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ProjectService;
@@ -44,7 +46,6 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Date;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -68,13 +69,16 @@ public class ProjectQuestionnaireEditController {
     // add question
     @Operation(summary = "Add a main question with subs into the project's questionnaire.")
     @PostMapping("/question/new")
-    public QuestionDto addMainQuestion(@Parameter(hidden = true) User operator,
-                                       @PathVariable("projectId") Integer projectId,
-                                       @RequestBody QuestionAddDto dto) {
+    public QuestionnaireTocWithMainQuestionDto addMainQuestion(@Parameter(hidden = true) User operator,
+                                                               @PathVariable("projectId") Integer projectId,
+                                                               @RequestBody QuestionAddDto dto) {
+        Project project = projectService.findProjectById(projectId);
         dto.setProjectId(projectId);
         AddMainQuestionAction action = dto.toAction();
         action.setCreator(operator);
-        questionnaireService.addMainQuestion(operator, action);
+        QuestionnaireVersion questionnaire = questionnaireService.addMainQuestion(operator, action);
+        QuestionnaireTocDto questionnaireTocDto = new QuestionnaireTocDto(questionnaire, project, operator);
+
         return null;
     }
 
@@ -102,7 +106,8 @@ public class ProjectQuestionnaireEditController {
     @PostMapping("/question/{questionId}")
     public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
                                         @PathVariable("projectId") Integer projectId,
-                                        @RequestBody QuestionAddDto dto) {
+                                        @PathVariable("questionId") Long questionId,
+                                        @Valid @RequestBody QuestionEditContentDto dto) {
 
         return null;
     }
