@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,10 +39,12 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.IllegalRequestException;
+import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Date;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -55,22 +58,6 @@ public class ProjectQuestionnaireEditController {
 
     @Autowired
     private QuestionnaireService questionnaireService;
-
-    // fetch toc
-
-    // fetch mian-question wit subs
-
-    // add question
-
-    // add sub-question
-
-    // edit question-content, main or sub
-
-    // change sub-q seq in main-q
-
-    // change main-q seq in a principle
-
-    // delete question, main or sub
 
     @Autowired
     UserService userService;
@@ -87,14 +74,41 @@ public class ProjectQuestionnaireEditController {
         dto.setProjectId(projectId);
         AddMainQuestionAction action = dto.toAction();
         action.setCreator(operator);
-        questionnaireService.addMainQuestion(action);
+        questionnaireService.addMainQuestion(operator, action);
+        return null;
+    }
+
+    @Operation(summary = "Add a main question with subs into the project's questionnaire.")
+    @DeleteMapping("/question/{questionId}")
+    public QuestionnaireTocDto deleteMainQuestion(@Parameter(hidden = true) User operator,
+                                                  @PathVariable("projectId") Integer projectId,
+                                                  @PathVariable("questionId") Long questionId) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        QuestionnaireVersion questionnaire = questionnaireService.deleteMainQuestion(operator, project, questionId);
+        return new QuestionnaireTocDto(questionnaire, project, operator);
+    }
+
+
+    // edit main question, including:
+    //  a. edit main's content
+    //  b. edit sub's content
+    //  c. add new sub questions
+    //  d. delete sub questions
+    //  e. reorder sub questions
+    @Operation(summary = "Add a main question with subs into the project's questionnaire.")
+    @PostMapping("/question/{questionId}")
+    public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
+                                        @PathVariable("projectId") Integer projectId,
+                                        @RequestBody QuestionAddDto dto) {
 
         return null;
     }
 
-
     @Operation(summary = "Reorder the sequence of the main questions.")
-    @RequestMapping(path = "/question/reorder", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(path = "/reorder", method = {RequestMethod.POST, RequestMethod.PUT})
     public QuestionnaireTocDto reorder(@Parameter(hidden = true) User operator,
                                        @PathVariable("projectId") Integer projectId,
                                        @Valid @RequestBody QuestionReorderDto dto) {

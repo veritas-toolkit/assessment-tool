@@ -13,7 +13,9 @@ import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.handler.TimestampHandler;
+import org.veritas.assessment.system.entity.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +63,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         return this.getVid().compareTo(o.vid);
     }
 
+
+    public List<QuestionNode> getMainQuestionNodeList() {
+        return mainQuestionNodeList == null ? Collections.emptyList() : mainQuestionNodeList;
+    }
 
     public QuestionnaireVersion(int creatorUserId,
                                 int projectId,
@@ -231,12 +237,17 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     }
 
     // create a new version for questionnaire.
-    public QuestionnaireVersion createNewVersion(Supplier<Long> idSupplier) {
+    public QuestionnaireVersion createNewVersion(User operator, Date now, Supplier<Long> idSupplier) {
+        Objects.requireNonNull(operator);
+        if (now == null) {
+            now = new Date();
+        }
         Long newVide = idSupplier.get();
         QuestionnaireVersion newQuestionnaire = new QuestionnaireVersion();
         BeanUtils.copyProperties(this, newQuestionnaire);
+        newQuestionnaire.setCreatedTime(now);
+        newQuestionnaire.setCreatorUserId(operator.getId());
         newQuestionnaire.mainQuestionNodeList = QuestionNode.createNewList(this.mainQuestionNodeList);
-
         newQuestionnaire.configureQuestionnaireVid(newVide);
         return newQuestionnaire;
     }
@@ -269,6 +280,28 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         main.initAddStartQuestionnaireVid(this.getVid());
 
         this.setMainQuestionNodeList(list);
+    }
+
+    synchronized
+    public void deleteMainQuestion(Long questionId) {
+        Objects.requireNonNull(questionId);
+        QuestionNode toDelete = this.findMainQuestionById(questionId);
+        if (toDelete == null) {
+            throw new IllegalRequestException("The question not existing.");
+        }
+        List<QuestionNode> list = new ArrayList<>(this.getMainQuestionNodeList().size());
+        for (QuestionNode questionNode : this.getMainQuestionNodeList()) {
+            if (questionNode != toDelete) {
+                list.add(questionNode);
+            }
+            boolean samePrinciple = questionNode.getPrinciple() == toDelete.getPrinciple();
+            if (samePrinciple) {
+                if (questionNode.getSerialOfPrinciple() > toDelete.getSerialOfPrinciple()) {
+                    questionNode.setSerialOfPrinciple(questionNode.getSerialOfPrinciple() - 1);
+                }
+            }
+        }
+        this.mainQuestionNodeList = list;
     }
 
     synchronized

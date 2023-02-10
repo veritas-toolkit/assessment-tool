@@ -12,6 +12,7 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 // TODO: 2023/2/8 cache
@@ -150,5 +151,12 @@ public class QuestionnaireDao {
             return false;
         }
         return true;
+    }
+
+    public boolean deleteMainQuestion(QuestionnaireVersion questionnaireVersion, QuestionNode delete) {
+        Objects.requireNonNull(questionnaireVersion);
+        Objects.requireNonNull(delete);
+        questionMetaMapper.deleteMain(questionnaireVersion.getVid(), delete.getQuestionId());
+        return this.saveStructure(questionnaireVersion);
     }
 }

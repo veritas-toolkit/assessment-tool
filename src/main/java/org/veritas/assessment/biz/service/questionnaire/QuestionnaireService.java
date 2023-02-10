@@ -40,7 +40,9 @@ public interface QuestionnaireService {
 
     Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize);
 
-    QuestionnaireVersion addMainQuestion(AddMainQuestionAction action);
+    QuestionnaireVersion addMainQuestion(User operator, AddMainQuestionAction action);
+
+    QuestionnaireVersion deleteMainQuestion(User operator, Project project, Long questionId);
 
     QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle, AssessmentStep step, List<Long> questionIdList);
 

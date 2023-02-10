@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireDiffTocDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -152,20 +153,18 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     @Transactional
-    public QuestionnaireVersion addMainQuestion(AddMainQuestionAction action) {
+    public QuestionnaireVersion addMainQuestion(User operator, AddMainQuestionAction action) {
         Integer projectId = action.getProjectId();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
 
+        Date now = new Date();
         // lock questionnaire
-        Long questionnaireVid = idGenerateService.nextId();
+        QuestionnaireVersion newQuestionnaire = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = newQuestionnaire.getVid();
         boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
         if (!locked) {
             throw new HasBeenModifiedException("The questionnaire has been modify by others.");
         }
-        // create node
-
-        QuestionnaireVersion newQuestionnaire = latest.createNewVersion(idGenerateService::nextId);
-        newQuestionnaire.configureQuestionnaireVid(questionnaireVid);
         QuestionNode newNode = action.toNode(idGenerateService::nextId);
         newQuestionnaire.addMainQuestion(newNode);
 
@@ -178,13 +177,31 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
+    public QuestionnaireVersion deleteMainQuestion(User operator, Project project, Long questionId) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(questionId);
+        Date now = new Date();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+
+        QuestionNode delete = current.findMainQuestionById(questionId);
+        if (delete == null) {
+            log.warn("The question[{}] is not existing in current project.", questionId);
+            return latest;
+        }
+        current.deleteMainQuestion(questionId);
+        questionnaireDao.saveStructure(current);
+        return current;
+    }
+
+    @Override
     @Transactional
     public QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle,
                                                 AssessmentStep step, List<Long> questionIdReorderList) {
+        Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
-        QuestionnaireVersion current = latest.createNewVersion(idGenerateService::nextId);
-        current.setCreatedTime(new Date());
-        current.setCreatorUserId(operator.getId());
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
         current.reorder(principle, step, questionIdReorderList);
 
         questionnaireDao.saveStructure(current);

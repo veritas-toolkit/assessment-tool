@@ -28,9 +28,8 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
     }
 
     default int addMainQuestionWithSubs(QuestionMeta main) {
-        int result = insert(main);
 
-        return result;
+        return insert(main);
     }
 
     // select list by projectId.
@@ -49,11 +48,12 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
         wrapper.set(QuestionMeta::getCurrentVid, newVid);
         return update(null, wrapper) > 0;
     }
-    // select list by main-question id.
 
-    // soft delete.
-    // update deleteStartQuestionnaireVid to not null value
-    // need project id;
-
+    default int deleteMain(long deleteStartQuestionnaireVid, long mainQuestionId) {
+        LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(QuestionMeta::getMainQuestionId, mainQuestionId);
+        wrapper.set(QuestionMeta::getDeleteStartQuestionnaireVid, deleteStartQuestionnaireVid);
+        return update(null, wrapper);
+    }
 
 }

@@ -36,6 +36,7 @@ create table vat2_question_meta (
     delete_start_questionnaire_vid bigint
 );
 create index vat2_ix_qm_pid on vat2_question_meta (project_id);
+create index vat2_ix_qm_mqid on vat2_question_meta (main_question_id);
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_question_version (
