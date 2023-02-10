@@ -101,7 +101,9 @@ public class QuestionDiffDto {
                     } else {
                         return null;
                     }
-                }).collect(Collectors.toList());
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         List<QuestionDiffDto> allSubs = new ArrayList<>(subsInNew);
         allSubs.addAll(subsOnlyInBased);
