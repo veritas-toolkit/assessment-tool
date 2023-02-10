@@ -278,10 +278,10 @@ public interface ProjectMapper extends BaseMapper<Project> {
     }
 
 //    default boolean updateQuestionnaireForLock(int projectId, long questionnaireVid, long questionnaireNewVid) {
-    default boolean updateQuestionnaireForLock(int projectId, long questionnaireNewVid) {
+    default boolean updateQuestionnaireForLock(int projectId, long questionnaireOldVid, long questionnaireNewVid) {
         LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Project::getId, projectId);
-//        wrapper.eq(Project::getCurrentQuestionnaireVid, questionnaireVid);
+        wrapper.eq(Project::getCurrentQuestionnaireVid, questionnaireOldVid);
         wrapper.set(Project::getCurrentQuestionnaireVid, questionnaireNewVid);
         int result = update(null, wrapper);
         return result > 0;

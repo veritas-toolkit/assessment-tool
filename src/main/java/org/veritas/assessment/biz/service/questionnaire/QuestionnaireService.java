@@ -1,6 +1,8 @@
 package org.veritas.assessment.biz.service.questionnaire;
 
+import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -34,5 +36,7 @@ public interface QuestionnaireService {
     QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
 
     Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize);
+
+    QuestionnaireVersion addMainQuestion(AddMainQuestionAction action);
 
 }

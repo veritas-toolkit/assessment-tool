@@ -107,7 +107,22 @@ public class QuestionnaireDao {
                     questionnaireCount, nodeCount, questionCount);
         }
         return true;
-        // meta has been update, not need to update.
+    }
+
+    public boolean addNewQuestion(QuestionnaireVersion questionnaireVersion, QuestionNode questionNode) {
+        log.info("questionnaire: {}", questionnaireVersion);
+        log.info("question: {}", questionNode);
+        int questionnaireCount = questionnaireMapper.insert(questionnaireVersion);
+        if (questionnaireCount <= 0) {
+            log.error("");
+            return false;
+        }
+        // insert meta
+        int result = questionMetaMapper.saveAll(questionNode.toPlaneMetaList());
+        // insert version
+        result += questionVersionMapper.saveAll(questionNode.toPlaneQuestionList());
+        result += questionNodeMapper.saveAll(questionnaireVersion.finAllQuestionNodeList());
+        return result > 0;
     }
 
     public Pageable<QuestionnaireVersion> findHistoryPageable(int projectId, int page, int pageSize) {

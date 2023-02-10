@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 
@@ -26,6 +27,9 @@ public class QuestionNode implements Comparable<QuestionNode> {
      */
     private Long questionnaireVid;
 
+    /**
+     * belongs to the project
+     */
     private Integer projectId;
 
     /**
@@ -74,7 +78,6 @@ public class QuestionNode implements Comparable<QuestionNode> {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<QuestionNode> subList;
 
-
     public List<QuestionNode> getSubList() {
         if (!this.isMain()) {
             return Collections.emptyList();
@@ -98,8 +101,28 @@ public class QuestionNode implements Comparable<QuestionNode> {
         }
     }
 
+    // example: F1, G2 ...
     public String serial() {
         return this.principle.getShortName() + this.getSerialOfPrinciple();
+    }
+
+    public void configureQuestionnaireVid(Long _questionnaireVid) {
+        this.questionnaireVid = _questionnaireVid;
+        this.getSubList().forEach(s -> s.configureQuestionnaireVid(_questionnaireVid));
+    }
+    public void configureSerialOfPrinciple(int _serialOfPrinciple) {
+        this.serialOfPrinciple = _serialOfPrinciple;
+        this.getSubList().forEach(s -> s.configureSerialOfPrinciple(_serialOfPrinciple));
+    }
+
+    public void initAddStartQuestionnaireVid(Long questionnaireVid) {
+        this.meta.setAddStartQuestionnaireVid(questionnaireVid);
+        this.getSubList().forEach(s -> s.getMeta().setAddStartQuestionnaireVid(questionnaireVid));
+    }
+
+    public void configureDeleteStartQuestionnaireVid(Long questionnaireVid) {
+        this.meta.setDeleteStartQuestionnaireVid(questionnaireVid);
+        this.getSubList().forEach(s -> s.getMeta().setDeleteStartQuestionnaireVid(questionnaireVid));
     }
 
     public List<QuestionNode> toPlaneNodeList() {
@@ -139,6 +162,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         }
     }
 
+    @JsonIgnore
     public boolean isMain() {
         if (this.getSubSerial() == null) {
             throw new IllegalStateException();
@@ -180,6 +204,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return node;
     }
 
+    @Deprecated
     public static QuestionNode createFromOther(QuestionNode other) {
         QuestionNode node = new QuestionNode();
         node.setPrinciple(other.getPrinciple());
@@ -292,5 +317,23 @@ public class QuestionNode implements Comparable<QuestionNode> {
             return thisDiff || newDiff;
         }
         return false;
+    }
+
+    public QuestionNode createNew() {
+        QuestionNode questionNode = new QuestionNode();
+        BeanUtils.copyProperties(this, questionNode);
+        questionNode.setMeta(this.meta.clone());
+        questionNode.setQuestionVersion(this.getQuestionVersion().clone());
+        if (this.isMain()) {
+            questionNode.subList = this.subList.stream()
+                    .map(QuestionNode::createNew)
+                    .collect(Collectors.toList());
+        }
+        return questionNode;
+    }
+    public static List<QuestionNode> createNewList(List<QuestionNode> list) {
+        return list.stream()
+                .map(QuestionNode::createNew)
+                .collect(Collectors.toList());
     }
 }

@@ -21,7 +21,7 @@ import java.util.Objects;
 @Slf4j
 @NoArgsConstructor
 @TableName(autoResultMap = true)
-public class QuestionVersion implements Comparable<QuestionVersion> {
+public class QuestionVersion implements Comparable<QuestionVersion>, Cloneable {
     /**
      * Version Id
      */
@@ -36,23 +36,17 @@ public class QuestionVersion implements Comparable<QuestionVersion> {
 
     /** question content */
     private String content;
+    private boolean contentEditable = DEFAULT_EDITABLE;
+    private Integer contentEditUserId;
+    @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
+    private Date contentEditTime;
 
     /** Hint for user to answer the question */
     private String hint;
 
-    private boolean contentEditable = DEFAULT_EDITABLE;
-
-    private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
-
-    private Integer contentEditUserId;
-
-    @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
-    private Date contentEditTime;
-
     private String answer;
-
     private Integer answerEditUserId;
-
+    private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date answerEditTime;
 
@@ -67,12 +61,20 @@ public class QuestionVersion implements Comparable<QuestionVersion> {
     }
 
     public QuestionVersion(QuestionVersion other) {
+        this.setQuestionId(other.getQuestionId());
+        this.setMainQuestionId(other.getMainQuestionId());
+        this.setProjectId(other.getProjectId());
+
         this.setContent(other.getContent());
-        this.setHint(other.getHint());
+        this.setContentEditable(other.isContentEditable());
         this.setContentEditTime(other.getContentEditTime());
         this.setContentEditUserId(other.getContentEditUserId());
-        this.setContentEditable(other.isContentEditable());
+        this.setHint(other.getHint());
+
+        this.setAnswer(other.getAnswer());
+        this.setAnswerEditUserId(other.getAnswerEditUserId());
         this.setAnswerRequired(other.isAnswerRequired());
+        this.setAnswerEditTime(other.getAnswerEditTime());
     }
 
     @JsonIgnore
@@ -98,4 +100,14 @@ public class QuestionVersion implements Comparable<QuestionVersion> {
         }
         return this.getVid().compareTo(o.getVid());
     }
+
+    @Override
+    public QuestionVersion clone() {
+        try {
+            return (QuestionVersion) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 }
+

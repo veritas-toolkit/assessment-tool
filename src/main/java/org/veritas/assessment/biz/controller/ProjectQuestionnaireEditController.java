@@ -17,26 +17,26 @@
 package org.veritas.assessment.biz.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.veritas.assessment.biz.dto.QuestionDto;
+import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
-import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -47,9 +47,6 @@ import org.veritas.assessment.common.exception.ErrorParamException;
 @PreAuthorize("hasPermission(#projectId, 'project', 'edit questionnaire')")
 public class ProjectQuestionnaireEditController {
 
-    @Autowired
-    @Deprecated
-    private ProjectQuestionnaireService1 service;
 
     @Autowired
     private QuestionnaireService questionnaireService;
@@ -70,72 +67,21 @@ public class ProjectQuestionnaireEditController {
 
     // delete question, main or sub
 
-    @Operation(summary = "Get the project's questionnaire without any answer.")
-    @GetMapping("")
-    public QuestionnaireDto<ProjectQuestion, ProjectQuestionnaire> get(@PathVariable("projectId") Integer projectId) {
-        ProjectQuestionnaire questionnaire = service.findQuestionnaireById(projectId);
-        for (ProjectQuestion question : questionnaire.getQuestions()) {
-            if (!StringUtils.isEmpty(question.getAnswer())) {
-                question.setAnswer(null);
-            }
-            for (ProjectQuestion subQuestion : question.getSubQuestions()) {
-                if (!StringUtils.isEmpty(subQuestion.getAnswer())) {
-                    subQuestion.setAnswer(null);
-                }
-            }
-        }
-        return new QuestionnaireDto<>(questionnaire);
-    }
+    @Autowired
+    UserService userService;
 
     // add question
-    @Operation(summary = "Add a question with subs into the project's questionnaire.")
-    @PutMapping("/question")
-    public ProjectQuestion addMainQuestion(
+    @Operation(summary = "Add a main question with subs into the project's questionnaire.")
+    @PostMapping("/question/new")
+    public QuestionDto addMainQuestion(
+            @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @RequestBody QuestionDto dto) {
-        ProjectQuestion question = new ProjectQuestion();
-        question.copyFrom(dto, ProjectQuestion::new);
-        question.setProjectId(projectId);
-        question.setSubSerial(0);
-        return service.addMainQuestion(projectId, question);
-    }
+            @RequestBody QuestionAddDto dto) {
+        dto.setProjectId(projectId);
+        AddMainQuestionAction action = dto.toAction();
+        action.setCreator(operator);
+        questionnaireService.addMainQuestion(action);
 
-    // edit question
-    @Operation(summary = "Edit a question of the project's questionnaire.")
-    @PostMapping("/question")
-    public ProjectQuestion editMainQuestion(
-            @PathVariable("projectId") Integer projectId,
-            @RequestBody QuestionDto dto) {
-        ProjectQuestion question = new ProjectQuestion();
-        question.copyFrom(dto, ProjectQuestion::new);
-        question.setProjectId(projectId);
-        question.setSubSerial(0);
-        int subSerial = 1;
-        for (ProjectQuestion subQuestion : question.getSubQuestions()) {
-            subQuestion.setProjectId(projectId);
-            subQuestion.setSubSerial(subSerial);
-            ++subSerial;
-        }
-        return service.updateMainQuestionWithSub(projectId, question);
+        return null;
     }
-
-    // delete question
-    @Operation(summary = "Delete a question(main/sub) from the project's questionnaire.")
-    @DeleteMapping("/question")
-    public QuestionnaireDto<ProjectQuestion, ProjectQuestionnaire> deleteQuestion(
-            @PathVariable("projectId") Integer projectId,
-            @RequestParam(name = "questionId", required = false) Integer questionId,
-            @RequestParam(name = "subQuestionId", required = false) Integer subQuestionId) {
-        if (subQuestionId != null) {
-            service.deleteSubQuestion(projectId, subQuestionId);
-        } else if (questionId != null) {
-            service.deleteMainQuestion(projectId, questionId);
-        } else {
-            throw new ErrorParamException(
-                    "Error param: At least one value exists for [questionId] and [subQuestionId]");
-        }
-        ProjectQuestionnaire questionnaire = service.findQuestionnaireById(projectId);
-        return new QuestionnaireDto<>(questionnaire);
-    }
-
 }

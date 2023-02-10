@@ -24,13 +24,6 @@ public interface QuestionnaireVersionMapper extends BaseMapper<QuestionnaireVers
         wrapper.orderByDesc(QuestionnaireVersion::getVid);
         wrapper.last("limit 1");
         return selectOne(wrapper);
-//        Integer latestVid = findLatestVersionId(projectId);
-//        if (latestVid == null ) {
-//            return null;
-//        }
-//        LambdaQueryWrapper<QuestionnaireVersion> wrapper = new LambdaQueryWrapper<>();
-//        wrapper.eq(QuestionnaireVersion::getVid, latestVid);
-//        return selectOne(wrapper);
     }
 
 

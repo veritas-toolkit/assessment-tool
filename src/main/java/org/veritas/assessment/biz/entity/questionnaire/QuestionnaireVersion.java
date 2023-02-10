@@ -8,8 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireDiffTocDto;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.ArrayList;
@@ -214,10 +216,50 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
                 .orElse(null);
     }
 
-    public void updateQuestionnaireVid(long newVid) {
+    public void configureQuestionnaireVid(long newVid) {
         this.setVid(newVid);
         this.finAllQuestionNodeList().forEach(node -> node.setQuestionnaireVid(newVid));
     }
 
+    // create a new version for questionnaire.
+    public QuestionnaireVersion createNewVersion(Supplier<Long> idSupplier) {
+        Long newVide = idSupplier.get();
+        QuestionnaireVersion newQuestionnaire = new QuestionnaireVersion();
+        BeanUtils.copyProperties(this, newQuestionnaire);
+        newQuestionnaire.mainQuestionNodeList = QuestionNode.createNewList(this.mainQuestionNodeList);
+
+        newQuestionnaire.configureQuestionnaireVid(newVide);
+        return newQuestionnaire;
+    }
+
+    synchronized
+    public void addMainQuestion(QuestionNode main) {
+        main.setSerialOfPrinciple(Integer.MAX_VALUE);
+        List<QuestionNode> list = new ArrayList<>(this.getMainQuestionNodeList().size());
+        list.addAll(this.getMainQuestionNodeList());
+        list.add(main);
+        list = list.stream().sorted((a, b) -> {
+            int result = a.getPrinciple().compareTo(b.getPrinciple());
+            if (result == 0) {
+                result = a.getStep().compareTo(b.getStep());
+            }
+            if (result == 0) {
+                return a.getSerialOfPrinciple().compareTo(b.getSerialOfPrinciple());
+            }
+            return result;
+        }).collect(Collectors.toList());
+        Principle principle = main.getPrinciple();
+        int serial = 0;
+        for (QuestionNode questionNode : list) {
+            if (principle == questionNode.getPrinciple()) {
+                questionNode.configureSerialOfPrinciple(serial);
+                ++serial;
+            }
+        }
+        main.configureQuestionnaireVid(this.getVid());
+        main.initAddStartQuestionnaireVid(this.getVid());
+
+        this.setMainQuestionNodeList(list);
+    }
 
 }

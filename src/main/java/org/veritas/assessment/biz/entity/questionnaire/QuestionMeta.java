@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @Data
 @NoArgsConstructor
-public class QuestionMeta {
+public class QuestionMeta implements Cloneable {
     @TableId(type = IdType.INPUT)
     private Long id;
 
@@ -72,4 +72,12 @@ public class QuestionMeta {
         this.setAnswerRequired(questionMeta.isAnswerRequired());
     }
 
+    @Override
+    public QuestionMeta clone() {
+        try {
+            return (QuestionMeta) super.clone();
+        } catch (CloneNotSupportedException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 }

@@ -1,21 +1,36 @@
 package org.veritas.assessment.biz.dto.v2.questionnaire;
 
 import lombok.Data;
+import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.Principle;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 @Data
 public class QuestionAddDto {
-    private Long basedQuestionnaireVid;
 
-    // example: G, F, EA, T
-    private String principle;
+    @NotNull
+    private Integer projectId;
+    @NotNull
+    private Principle principle;
+
+    @NotNull
+    private AssessmentStep step;
 
     private String question;
 
-    // for main
-    // 新增主问题，新增的问题再beforeMainQuestionId问题之前，如果null，则该问题在此原则最后一个
-    private Long beforeMainQuestionId;
-
     private List<String> subQuestionList;
+
+    public AddMainQuestionAction toAction() {
+        AddMainQuestionAction action = new AddMainQuestionAction();
+        action.setProjectId(this.projectId);
+        action.setPrinciple(this.principle);
+        action.setStep(this.step);
+        action.setQuestion(this.getQuestion());
+        action.setSubQuestionList(Collections.unmodifiableList(this.subQuestionList));
+        return action;
+    }
 }

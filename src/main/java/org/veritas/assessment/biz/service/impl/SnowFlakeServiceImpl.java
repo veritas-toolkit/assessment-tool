@@ -62,7 +62,7 @@ public class SnowFlakeServiceImpl implements IdGenerateService {
      * Generate next id.
      */
     @Override
-    public synchronized long nextId() {
+    public synchronized Long nextId() {
         long currentTimestamp = getCurrentTimestamp();
         if (currentTimestamp < lastTimestamp) {
             throw new RuntimeException("Clock moved backwards. Refusing to generate id");

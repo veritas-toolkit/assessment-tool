@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -13,7 +14,6 @@ import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.mapper.questionnaire.QuestionnaireDao;
 import org.veritas.assessment.biz.service.IdGenerateService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -24,8 +24,6 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class QuestionnaireServiceImpl implements QuestionnaireService {
-
-
 
     @Autowired
     private QuestionnaireDao questionnaireDao;
@@ -106,13 +104,17 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 
         long questionnaireNewVid = idGenerateService.nextId();
+        QuestionnaireVersion questionnaire = questionnaireDao.findLatestQuestionnaire(projectId);
         // lock
         // update project table.
-        boolean questionnaireLocked = projectMapper.updateQuestionnaireForLock(projectId, questionnaireNewVid);
+        boolean questionnaireLocked = projectMapper.updateQuestionnaireForLock(projectId,
+                questionnaire.getVid(), questionnaireNewVid);
+        if (!questionnaireLocked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
 
 
         // load latestQuestionnaire
-        QuestionnaireVersion questionnaire = questionnaireDao.findLatestQuestionnaire(projectId);
         QuestionNode node = questionnaire.findNodeByQuestionId(questionId);
         if (node == null) {
             throw new NotFoundException("Not found the question.");
@@ -128,7 +130,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         questionVersion.setAnswerEditTime(now);
         node.updateQuestionVersion(questionVersion);
 
-        questionnaire.updateQuestionnaireVid(questionnaireNewVid);
+        questionnaire.configureQuestionnaireVid(questionnaireNewVid);
         questionnaire.setCreatorUserId(editorId);
         questionnaire.setCreatedTime(now);
         questionnaire.setMessage(String.format("Update question[%s] answer.", node.serial()));
@@ -142,5 +144,32 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     @Override
     public Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize) {
         return questionnaireDao.findHistoryPageable(projectId, page, pageSize);
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion addMainQuestion(AddMainQuestionAction action) {
+        Integer projectId = action.getProjectId();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+
+        // lock questionnaire
+        Long questionnaireVid = idGenerateService.nextId();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        // create node
+
+        QuestionnaireVersion newQuestionnaire = latest.createNewVersion(idGenerateService::nextId);
+        newQuestionnaire.configureQuestionnaireVid(questionnaireVid);
+        QuestionNode newNode = action.toNode(idGenerateService::nextId);
+        newQuestionnaire.addMainQuestion(newNode);
+
+        // save question version & question meta
+        boolean result = questionnaireDao.addNewQuestion(newQuestionnaire, newNode);
+        if (!result) {
+            log.error("Add question failed, question: {}", newNode);
+        }
+        return latest;
     }
 }
