@@ -30,6 +30,9 @@
 </template>
 
 <script>
+import {html2string} from "@/util/html2string";
+import {compareDiff} from "@/util/compareDiff";
+
 export default {
   name: "QuestionnaireCompareAnswer",
   props: {
@@ -58,9 +61,8 @@ export default {
     }
   },
   created() {
-    console.log(this.questionnaireVid)
-    console.log(this.compareFlag)
-
+    console.log(html2string('data'))
+    console.log(compareDiff('it is a dog 1','it is a cat 1'))
   },
   watch: {
     'questionnaireVid': function() {
@@ -81,7 +83,6 @@ export default {
           this.diffSummary = res.data
           this.mainBasedQuestion = res.data.basedQuestion
           this.mainNewQuestion = res.data.newQuestion
-
         }
       })
     }

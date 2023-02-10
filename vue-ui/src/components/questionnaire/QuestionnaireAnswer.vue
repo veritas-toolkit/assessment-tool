@@ -58,6 +58,7 @@ import 'tinymce/plugins/contextmenu'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
+import axios from "axios";
 
 export default {
   name: "QuestionnaireAnswer",
@@ -80,7 +81,21 @@ export default {
       plugins: 'autoresize image link lists code table wordcount',
       toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists image media table | removeformat',
       paste_data_images: true,
-      id: this.$route.query.id,
+      id: this.projectId,
+      images_dataimg_filter: function (img) {
+        return img.hasAttribute('internal-blob');
+      },
+      images_upload_handler: function (blobInfo, success, failure) {
+        let formData = new FormData();
+        formData.append("image", blobInfo.blob());
+        axios.put(`/api/project/${id}/image`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(res => {
+          success(res.data);
+        })
+      },
       branding: false,
       menubar: false,
       content_style: ' img { max-width:40%; display:block;height:auto; }'

@@ -77,7 +77,7 @@
               </div>
               <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">Compare</div>
             </el-popover>
-            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>
+<!--            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>-->
             <div style="display: flex">
               <div class="footer-prev">
                 <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">
