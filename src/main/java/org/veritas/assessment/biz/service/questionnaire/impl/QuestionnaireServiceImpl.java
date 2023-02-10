@@ -177,6 +177,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
+    @Transactional
     public QuestionnaireVersion deleteMainQuestion(User operator, Project project, Long questionId) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(project);
