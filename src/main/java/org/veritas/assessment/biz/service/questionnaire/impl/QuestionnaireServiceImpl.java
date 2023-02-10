@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -17,8 +19,10 @@ import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
+import org.veritas.assessment.system.entity.User;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -171,5 +175,19 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             log.error("Add question failed, question: {}", newNode);
         }
         return latest;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle,
+                                                AssessmentStep step, List<Long> questionIdReorderList) {
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(idGenerateService::nextId);
+        current.setCreatedTime(new Date());
+        current.setCreatorUserId(operator.getId());
+        current.reorder(principle, step, questionIdReorderList);
+
+        questionnaireDao.saveStructure(current);
+        return current;
     }
 }

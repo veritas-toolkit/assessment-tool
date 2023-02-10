@@ -21,22 +21,27 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
-import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionReorderDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
+
+import javax.validation.Valid;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -70,13 +75,15 @@ public class ProjectQuestionnaireEditController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    private ProjectService projectService;
+
     // add question
     @Operation(summary = "Add a main question with subs into the project's questionnaire.")
     @PostMapping("/question/new")
-    public QuestionDto addMainQuestion(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestBody QuestionAddDto dto) {
+    public QuestionDto addMainQuestion(@Parameter(hidden = true) User operator,
+                                       @PathVariable("projectId") Integer projectId,
+                                       @RequestBody QuestionAddDto dto) {
         dto.setProjectId(projectId);
         AddMainQuestionAction action = dto.toAction();
         action.setCreator(operator);
@@ -84,4 +91,23 @@ public class ProjectQuestionnaireEditController {
 
         return null;
     }
+
+
+    @Operation(summary = "Reorder the sequence of the main questions.")
+    @RequestMapping(path = "/question/reorder", method = {RequestMethod.POST, RequestMethod.PUT})
+    public QuestionnaireTocDto reorder(@Parameter(hidden = true) User operator,
+                                       @PathVariable("projectId") Integer projectId,
+                                       @Valid @RequestBody QuestionReorderDto dto) {
+        Principle principle = dto.getPrinciple();
+        if (principle == null) {
+            throw new IllegalRequestException();
+        }
+        Project project = projectService.findProjectById(projectId);
+        dto.setProjectId(projectId);
+        QuestionnaireVersion questionnaire = questionnaireService.reorderQuestion(operator, projectId,
+                dto.getPrinciple(), dto.getStep(),
+                dto.getQuestionIdList());
+        return new QuestionnaireTocDto(questionnaire, project, operator);
+    }
+
 }

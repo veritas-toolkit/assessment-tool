@@ -12,12 +12,12 @@ import java.util.List;
 @Data
 public class QuestionAddDto {
 
-    @NotNull
+    @NotNull(message = "The project id can't be null.")
     private Integer projectId;
-    @NotNull
+    @NotNull(message = "The principle can't be null.")
     private Principle principle;
 
-    @NotNull
+    @NotNull(message = "The step can't be null.")
     private AssessmentStep step;
 
     private String question;

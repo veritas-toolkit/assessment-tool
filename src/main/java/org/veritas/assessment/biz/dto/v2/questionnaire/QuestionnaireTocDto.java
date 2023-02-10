@@ -9,6 +9,7 @@ import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.system.entity.User;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,10 @@ public class QuestionnaireTocDto {
     @JsonIgnore
     List<Principle> supportPrincipleList;
 
+
+    public QuestionnaireTocDto(QuestionnaireVersion q, Project project, User user) {
+        this(q, project, new UserSimpleDto(user));
+    }
     public QuestionnaireTocDto(QuestionnaireVersion q, Project project, UserSimpleDto userSimpleDto) {
         this.projectId = q.getProjectId();
         this.questionnaireVid = q.getVid();

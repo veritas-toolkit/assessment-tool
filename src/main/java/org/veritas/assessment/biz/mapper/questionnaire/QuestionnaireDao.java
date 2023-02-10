@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
-import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
@@ -110,11 +108,13 @@ public class QuestionnaireDao {
     }
 
     public boolean addNewQuestion(QuestionnaireVersion questionnaireVersion, QuestionNode questionNode) {
-        log.info("questionnaire: {}", questionnaireVersion);
-        log.info("question: {}", questionNode);
+        if (log.isTraceEnabled()) {
+            log.trace("questionnaire: {}", questionnaireVersion);
+            log.trace("question: {}", questionNode);
+        }
         int questionnaireCount = questionnaireMapper.insert(questionnaireVersion);
         if (questionnaireCount <= 0) {
-            log.error("");
+            log.error("insert questionnaire record failed.");
             return false;
         }
         // insert meta
@@ -135,5 +135,20 @@ public class QuestionnaireDao {
         p.setSize(pageSize);
         Page<QuestionnaireVersion> page1 = questionnaireMapper.selectPage(p, wrapper);
         return Pageable.convert(page1);
+    }
+
+    public boolean saveStructure(QuestionnaireVersion questionnaireVersion) {
+        int questionnaireCount = questionnaireMapper.insert(questionnaireVersion);
+        if (questionnaireCount <= 0) {
+            log.error("insert questionnaire record failed.");
+            return false;
+        }
+        List<QuestionNode> allNodeList = questionnaireVersion.finAllQuestionNodeList();
+        int nodeCount = questionNodeMapper.saveAll(allNodeList);
+        if (nodeCount != allNodeList.size()) {
+            log.error("insert questionnaire record failed.");
+            return false;
+        }
+        return true;
     }
 }

@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireDiffTocDto;
+import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.ArrayList;
@@ -21,12 +22,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @TableName(autoResultMap = true)
+@Slf4j
 public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     /**
      * Version id
@@ -194,7 +197,13 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         return this.mainQuestionNodeList.stream()
                 .filter(q -> principle == q.getPrinciple() && step == q.getStep())
                 .sorted().collect(Collectors.toList());
+    }
 
+    public List<QuestionNode> findMainQuestion(Principle principle) {
+        Objects.requireNonNull(principle);
+        return this.mainQuestionNodeList.stream()
+                .filter(q -> principle == q.getPrinciple())
+                .sorted().collect(Collectors.toList());
     }
 
     public QuestionNode findMainQuestionById(long questionId) {
@@ -260,6 +269,32 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         main.initAddStartQuestionnaireVid(this.getVid());
 
         this.setMainQuestionNodeList(list);
+    }
+
+    synchronized
+    public void reorder(Principle principle, AssessmentStep step, List<Long> newOrderQuestionIdList) {
+        List<QuestionNode> currentMainList = this.find(principle, step);
+
+        List<QuestionNode> newOrderedList = new ArrayList<>(currentMainList.size());
+
+        int seq = 0;
+        for (Long questionId : newOrderQuestionIdList) {
+            Optional<QuestionNode> optional = currentMainList.stream()
+                    .filter(q -> Objects.equals(q.getQuestionId(), questionId))
+                    .findFirst();
+            if (optional.isPresent()) {
+                QuestionNode questionNode = optional.get();
+                newOrderedList.add(questionNode);
+                questionNode.configureSerialOfPrinciple(seq);
+                ++seq;
+            } else {
+                log.warn("Not found the question[{}]. It may be deleted.", questionId);
+            }
+        }
+        if (newOrderedList.size() != currentMainList.size()) {
+            throw new HasBeenModifiedException("Some questions have been added.");
+        }
+        this.mainQuestionNodeList = this.mainQuestionNodeList.stream().sorted().collect(Collectors.toList());
     }
 
 }

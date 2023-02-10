@@ -1,13 +1,16 @@
 package org.veritas.assessment.biz.service.questionnaire;
 
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
+import org.veritas.assessment.system.entity.User;
 
 import java.util.Date;
+import java.util.List;
 
 public interface QuestionnaireService {
 
@@ -38,5 +41,7 @@ public interface QuestionnaireService {
     Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize);
 
     QuestionnaireVersion addMainQuestion(AddMainQuestionAction action);
+
+    QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle, AssessmentStep step, List<Long> questionIdList);
 
 }
