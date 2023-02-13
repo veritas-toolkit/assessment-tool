@@ -59,7 +59,7 @@
                 placement="top-start"
                 width="480"
                 trigger="click">
-              <div>
+              <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
                     <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
@@ -67,7 +67,7 @@
                         <img src="../../assets/groupPic/Avatar.png" alt="">
                         <div>{{item.creator.username}}</div>
                       </div>
-                      <div class="draft-right">{{item.createdTime}}</div>
+                      <div class="draft-right">{{item.createdTime|changeTime}}</div>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">

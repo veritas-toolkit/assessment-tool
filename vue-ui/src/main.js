@@ -8,6 +8,7 @@ import './plugins/element.js'
 import '../src/assets/css/global.css'
 import Print from './plugins/print.js'
 import { Message } from 'element-ui';
+import { format } from 'timeago.js';
 
 Vue.use(Print) // 注册
 Vue.use(VueCookies)
@@ -33,6 +34,10 @@ axios.interceptors.response.use(
 
 /*全局挂载*/
 Vue.prototype.$http = axios
+//定义全局的过滤器 "changeTime":改变时间为几周前
+Vue.filter('changeTime', function(dateStr) {
+  return format(dateStr);
+})
 
 new Vue({
   router,
