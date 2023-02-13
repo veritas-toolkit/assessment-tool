@@ -361,7 +361,7 @@ export default {
       })
     },
     editTemplate() {
-      this.$router.push({path: '/editTemplate', query: {id: this.projectId}})
+      this.$router.push({path: '/template', query: {id: this.projectId}})
     },
     getProjectMember() {
       this.$http.get(`/api/project/${this.projectId}/member`).then(res => {

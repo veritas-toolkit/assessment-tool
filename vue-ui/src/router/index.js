@@ -20,6 +20,7 @@ import AdminTemplatePage from "../components/administration/AdminTemplatePage";
 import Questionnaire from "@/components/questionnaire/Questionnaire";
 
 import MenuQuestionaire from "../components/MenuQuestionaire";
+import Template from "@/components/template/Template";
 
 Vue.use(VueRouter)
 
@@ -50,7 +51,8 @@ const router = new VueRouter({
     {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
     {path: '/test', component: MenuQuestionaire},
-    {path: '/questionnaire', component: Questionnaire}
+    {path: '/questionnaire', component: Questionnaire},
+    {path: '/template', component: Template},
   ]
 })
 
