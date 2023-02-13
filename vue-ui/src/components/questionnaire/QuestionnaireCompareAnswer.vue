@@ -29,23 +29,23 @@
       </div>
       <div class="main-ques-box-right">
         <div class="main-ques">
-          <span :class="diffItem[0]== 1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.serial).text, html2string(mainNewQuestion.serial).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
+          <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.serial).text, html2string(mainNewQuestion.serial).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
           <span>. </span>
-          <span :class="diffItem[0]== 1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.question).text, html2string(mainNewQuestion.question).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
+          <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.question).text, html2string(mainNewQuestion.question).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
 <!--          {{ mainNewQuestion.serial }}. {{mainNewQuestion.question}}-->
         </div>
         <div class="sub-ques" style="margin-top: 16px" v-show="!diffSummary.subList">
-          <span :class="diffItem[0]== 1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.question).text, html2string(mainNewQuestion.question).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
+          <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.question).text, html2string(mainNewQuestion.question).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
 <!--          {{ mainNewQuestion.question }}-->
         </div>
         <div class="sub-ans" v-show="!diffSummary.subList">
-          <span :class="diffItem[0]== 1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.answer).text, html2string(mainNewQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
+          <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.answer).text, html2string(mainNewQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
 <!--          {{ mainNewQuestion.answer }}-->
