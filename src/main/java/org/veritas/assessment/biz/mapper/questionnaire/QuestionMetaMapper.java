@@ -52,6 +52,7 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
     default int deleteMain(long deleteStartQuestionnaireVid, long mainQuestionId) {
         LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(QuestionMeta::getMainQuestionId, mainQuestionId);
+        wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
         wrapper.set(QuestionMeta::getDeleteStartQuestionnaireVid, deleteStartQuestionnaireVid);
         return update(null, wrapper);
     }
