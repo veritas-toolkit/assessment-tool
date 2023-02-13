@@ -1,11 +1,11 @@
 <template>
   <div style="height: 100%">
-    <el-container style="height: 100%;display: flex;flex-direction: column">
+    <el-container style="height: calc(100% - 1px);display: flex;flex-direction: column">
       <el-header height="64px">
         <div class="title BarlowBold">
           <img class="backPic" src="../../assets/groupPic/back.png" alt="">
           <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
-          <span>Project</span>
+          <span>Template</span>
         </div>
         <div class="BarlowMedium">
           <el-radio-group v-model="principle" class="principle-group">
@@ -22,7 +22,7 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside width="400px">
-
+          <TemplateMenu :principle="principle" :defaultId="defaultId" :projectId="projectId" :menuData="menuData"></TemplateMenu>
         </el-aside>
         <el-main>
 
@@ -59,17 +59,20 @@
 
 <script>
 import Notifications from "@/components/comment/Notifications";
+import TemplateMenu from "@/components/template/TemplateMenu";
 
 export default {
   name: "Template",
   components: {
-    Notifications
+    Notifications,
+    TemplateMenu,
   },
 
   data() {
     return {
       projectId: this.$route.query.id,
       principle: 'Generic',
+      defaultId: '',
       principleMap: {
         "Generic" : "G",
         "Fairness" : "F",
@@ -77,6 +80,7 @@ export default {
         "Transparency" : "T"
       },
       principleList: [],
+      menuData: [],
     }
   },
   created() {
@@ -87,6 +91,9 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
         if (res.status == 200) {
           this.principleList = Object.keys(res.data.principles)
+          this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          this.defaultId = this.questionId.toString()
         }
       })
     },
