@@ -22,10 +22,10 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside width="400px">
-          <TemplateMenu :principle="principle" :defaultId="defaultId" :projectId="projectId" :menuData="menuData"></TemplateMenu>
+          <TemplateMenu @getId="getQuestionId"  :principle="principle" :defaultId="defaultId" :projectId="projectId" :menuData="menuData"></TemplateMenu>
         </el-aside>
         <el-main>
-
+          <TemplateSubQuestion @updateFlag="updateValue" :addSubQuesFlag="addSubQuesFlag" :projectId="projectId" :questionId="questionId"></TemplateSubQuestion>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -45,7 +45,7 @@
           </div>
           <div class="footer-right BarlowMedium draft-popover"  style="width: calc(100% - 400px)">
             <div style="display: flex;justify-content: right">
-              <div class="add-subques">
+              <div class="add-subques" @click="addSubQuesFlag = true">
                 <img class="watch" src="../../assets/questionnairePic/watch.svg" alt="">
                 Add subquestion
               </div>
@@ -60,18 +60,21 @@
 <script>
 import Notifications from "@/components/comment/Notifications";
 import TemplateMenu from "@/components/template/TemplateMenu";
+import TemplateSubQuestion from "@/components/template/TemplateSubQuestion";
 
 export default {
   name: "Template",
   components: {
     Notifications,
     TemplateMenu,
+    TemplateSubQuestion,
   },
 
   data() {
     return {
       projectId: this.$route.query.id,
       principle: 'Generic',
+      questionId: '',
       defaultId: '',
       principleMap: {
         "Generic" : "G",
@@ -81,12 +84,24 @@ export default {
       },
       principleList: [],
       menuData: [],
+      addSubQuesFlag: false,
     }
   },
   created() {
     this.getQuestionnaireMenu()
   },
+  watch: {
+    'addSubQuesFlag': function () {
+      console.log(this.addSubQuesFlag)
+    },
+  },
   methods: {
+    updateValue(data) {
+      this.addSubQuesFlag = data
+    },
+    getQuestionId(data) {
+      this.questionId = data
+    },
     getQuestionnaireMenu() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
         if (res.status == 200) {

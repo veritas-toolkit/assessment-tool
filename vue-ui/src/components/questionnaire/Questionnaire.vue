@@ -152,7 +152,7 @@ export default {
       } else {
         this.getQuestionnaireMenu()
       }
-    }
+    },
   },
   methods: {
     handleCompareClick() {
