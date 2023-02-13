@@ -2,17 +2,17 @@ package org.veritas.assessment.biz.constant;
 
 import lombok.Getter;
 
-public enum QuestionEditActionType {
-    UNMODIFIED("unmodified");
-    // input answer
-    // edit sub-question content.
-    // edit main-question content.
-    // delete
+public enum QuestionContentEditType {
+    UNMODIFIED("unmodified"),
+    ADD("add"),
+    DELETE("delete"),
+    MODIFIED("modify"),
+    ;
 
     @Getter
     private final String action;
 
-    QuestionEditActionType(String action) {
+    QuestionContentEditType(String action) {
         this.action = action;
     }
 }

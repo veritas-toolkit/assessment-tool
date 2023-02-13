@@ -38,10 +38,6 @@ public class QuestionEditContentDto {
         // null, if the sub is added.
         private Long basedQuestionVid;
 
-        private Boolean edited;
-
-        private Boolean add;
-
         private String question;
     }
 

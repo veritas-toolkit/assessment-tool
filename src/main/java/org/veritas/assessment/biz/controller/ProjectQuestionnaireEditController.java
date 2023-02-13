@@ -97,11 +97,11 @@ public class ProjectQuestionnaireEditController {
 
 
     // edit main question, including:
-    //  a. edit main's content
-    //  b. edit sub's content
-    //  c. add new sub questions
-    //  d. delete sub questions
-    //  e. reorder sub questions
+    //  edit main's question
+    //  delete sub questions
+    //  edit sub's question
+    //  add new sub questions
+    //  reorder sub questions
     @Operation(summary = "Add a main question with subs into the project's questionnaire.")
     @PostMapping("/question/{questionId}")
     public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,

@@ -57,4 +57,17 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
         return update(null, wrapper);
     }
 
+    default int logicallyDeleteSub(Integer projectId,
+                                   Long mainQuestionId,
+                                   List<Long> toDeleteSubQuestionIdList,
+                                   Long deleteStartQuestionnaireVid ) {
+        LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(QuestionMeta::getProjectId, projectId);
+        wrapper.eq(QuestionMeta::getMainQuestionId, mainQuestionId);
+        wrapper.in(QuestionMeta::getId, toDeleteSubQuestionIdList);
+        wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
+        wrapper.set(QuestionMeta::getDeleteStartQuestionnaireVid, deleteStartQuestionnaireVid);
+        return update(null, wrapper);
+    }
+
 }

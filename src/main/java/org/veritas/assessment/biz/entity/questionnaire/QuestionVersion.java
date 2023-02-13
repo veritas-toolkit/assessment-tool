@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
@@ -108,6 +109,16 @@ public class QuestionVersion implements Comparable<QuestionVersion>, Cloneable {
         } catch (CloneNotSupportedException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    public boolean isQuestionContentSame(QuestionVersion other) {
+        if (other == null) {
+            return true;
+        }
+        if (!Objects.equals(this.getQuestionId(), other.getQuestionId())) {
+            throw new IllegalArgumentException();
+        }
+        return !StringUtils.equals(this.getContent(), other.getContent());
     }
 }
 

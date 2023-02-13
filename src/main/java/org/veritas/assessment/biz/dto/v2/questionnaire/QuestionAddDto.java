@@ -20,6 +20,8 @@ public class QuestionAddDto {
     @NotNull(message = "The step can't be null.")
     private AssessmentStep step;
 
+    private Integer stepSerial = -1;
+
     private String question;
 
     private List<String> subQuestionList;

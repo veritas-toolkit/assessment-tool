@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
@@ -198,6 +199,56 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         current.deleteMainQuestion(questionId);
         questionnaireDao.saveStructure(current);
         return current;
+    }
+
+    @Override
+    public QuestionnaireVersion editMainQuestion(User operator, Project project, EditMainQuestionAction action) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(action);
+        // load latest
+        Date now = new Date();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
+        // create new version
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
+        // lock
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+
+        Long mainQuestionId = action.getMainQuestionId();
+        QuestionNode mainNode = current.findMainQuestionById(action.getMainQuestionId());
+        if (mainNode == null) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others. " +
+                    "The main question has been deleted.");
+        }
+
+        // delete
+        //      update meta
+        //      delete node from new questionnaire
+        questionnaireDao.deleteSubQuestion(current, mainNode.getQuestionId(), action.getDeletedSubList());
+        current.deleteSubQuestions(mainNode.getMainQuestionId(), action.getDeletedSubList());
+
+
+        // add new questions
+            // insert meta
+            // insert question-version
+            // create new node into new questionnaire
+
+//        List<QuestionNode> newNodeList = current.addSub(mainQuestionId, action.getAddSubQuestionList());
+
+        // creat new version for edited question
+            // update meta
+            // insert question-version
+        List<QuestionNode> editedNodeList = current.edite(mainQuestionId, action.toEditQuestionMap(),
+                idGenerateService::nextId);
+
+        // resort the node
+        // insert new question node list.
+
+        return null;
     }
 
     @Override

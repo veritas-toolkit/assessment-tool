@@ -10,10 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.IllegalRequestException;
+import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.system.entity.User;
 
@@ -242,13 +244,13 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         if (now == null) {
             now = new Date();
         }
-        Long newVide = idSupplier.get();
+        Long newVid = idSupplier.get();
         QuestionnaireVersion newQuestionnaire = new QuestionnaireVersion();
         BeanUtils.copyProperties(this, newQuestionnaire);
         newQuestionnaire.setCreatedTime(now);
         newQuestionnaire.setCreatorUserId(operator.getId());
         newQuestionnaire.mainQuestionNodeList = QuestionNode.createNewList(this.mainQuestionNodeList);
-        newQuestionnaire.configureQuestionnaireVid(newVide);
+        newQuestionnaire.configureQuestionnaireVid(newVid);
         return newQuestionnaire;
     }
 
@@ -328,6 +330,107 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
             throw new HasBeenModifiedException("Some questions have been added.");
         }
         this.mainQuestionNodeList = this.mainQuestionNodeList.stream().sorted().collect(Collectors.toList());
+    }
+
+    // TODO: 2023/2/13 to private
+    public void deleteSubQuestions(Long mainQuestionId, List<Long> deleteList) {
+        Objects.requireNonNull(mainQuestionId);
+        Objects.requireNonNull(deleteList);
+        if (deleteList.isEmpty()) {
+            return;
+        }
+        QuestionNode main = this.findMainQuestionById(mainQuestionId);
+        if (main == null) {
+            log.warn("");
+            return;
+        }
+
+        List<QuestionNode> newSubList = new ArrayList<>();
+        int subSerial = 1;
+        for (QuestionNode sub : main.getSubList()) {
+            if (deleteList.contains(sub.getQuestionId())) {
+                continue;
+            }
+            sub.setSubSerial(subSerial);
+            ++subSerial;
+            newSubList.add(sub);
+        }
+        main.setSubList(newSubList);
+    }
+
+    public List<QuestionNode> addSub(Long mainQuestionId, List<String> subQuestionList) {
+        QuestionNode main = this.findMainQuestionById(mainQuestionId);
+        if (main == null) {
+            throw new IllegalArgumentException("Not found the main questionId.");
+        }
+        return null;
+    }
+
+    public List<QuestionNode> edite(Long mainQuestionId, Map<Long, String> editMap, Supplier<Long> idGenerator) {
+        Objects.requireNonNull(mainQuestionId);
+        Objects.requireNonNull(editMap);
+        Objects.requireNonNull(idGenerator);
+        if (editMap.isEmpty()) {
+            return Collections.emptyList();
+        }
+        QuestionNode main = this.findMainQuestionById(mainQuestionId);
+        if (main == null) {
+            throw new NotFoundException("Not found the question.");
+        }
+        Map<Long, QuestionNode> allNode = main.toIdNodeMap();
+        List<QuestionNode> editedNodeList = new ArrayList<>();
+
+        // create version
+        for (Map.Entry<Long, String> entry : editMap.entrySet()) {
+            Long questionId = entry.getKey();
+            String questionContent = entry.getValue();
+
+            QuestionNode node = allNode.get(questionId);
+            if (node == null) {
+                throw new NotFoundException("Not found the question.");
+            }
+
+            QuestionVersion newVersion = node.getQuestionVersion().clone();
+            newVersion.setVid(idGenerator.get());
+            newVersion.setContent(questionContent);
+            newVersion.setContentEditTime(this.getCreatedTime());
+            newVersion.setContentEditUserId(this.creatorUserId);
+
+            node.setQuestionVersion(newVersion);
+            node.setQuestionVid(newVersion.getVid());
+
+            //meta
+            QuestionMeta meta = node.getMeta();
+            meta.setCurrentVid(newVersion.getVid());
+
+            editedNodeList.add(node);
+        }
+        return editedNodeList;
+    }
+
+    public void edit(EditMainQuestionAction action, Supplier<Long> idGenerator) {
+        Long mainQuestionId = action.getMainQuestionId();
+        QuestionNode main = this.findMainQuestionById(mainQuestionId);
+        QuestionNode basedMain = action.getBasedQuestionnaire().findMainQuestionById(mainQuestionId);
+        if (!main.isQuestionContentSame(basedMain)) {
+            throw new HasBeenModifiedException("The question has been modified.");
+        }
+        // delete
+        List<Long> deleteList = action.getDeletedSubList();
+        List<QuestionNode> newSubList = new ArrayList<>();
+        int subSerial = 1;
+        for (QuestionNode sub : main.getSubList()) {
+            if (deleteList.contains(sub.getQuestionId())) {
+                continue;
+            }
+            sub.setSubSerial(subSerial);
+            ++subSerial;
+            newSubList.add(sub);
+        }
+
+
+
+
     }
 
 }

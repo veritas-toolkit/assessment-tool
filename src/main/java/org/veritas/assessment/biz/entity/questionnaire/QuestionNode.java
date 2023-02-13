@@ -5,15 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.common.exception.HasBeenModifiedException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -110,6 +114,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         this.questionnaireVid = _questionnaireVid;
         this.getSubList().forEach(s -> s.configureQuestionnaireVid(_questionnaireVid));
     }
+
     public void configureSerialOfPrinciple(int _serialOfPrinciple) {
         this.serialOfPrinciple = _serialOfPrinciple;
         this.getSubList().forEach(s -> s.configureSerialOfPrinciple(_serialOfPrinciple));
@@ -131,12 +136,21 @@ public class QuestionNode implements Comparable<QuestionNode> {
         list.addAll(this.getSubList());
         return Collections.unmodifiableList(list);
     }
+
+    public Map<Long, QuestionNode> toIdNodeMap() {
+        Map<Long, QuestionNode> map = new LinkedHashMap<>();
+        map.put(this.getQuestionId(), this);
+        this.getSubList().forEach(s -> map.put(s.getQuestionId(), s));
+        return map;
+    }
+
     public List<QuestionMeta> toPlaneMetaList() {
         List<QuestionMeta> list = new ArrayList<>();
         list.add(this.getMeta());
         list.addAll(this.getSubList().stream().map(QuestionNode::getMeta).collect(Collectors.toList()));
         return Collections.unmodifiableList(list);
     }
+
     public List<QuestionVersion> toPlaneQuestionList() {
         List<QuestionVersion> list = new ArrayList<>();
         list.add(this.getQuestionVersion());
@@ -196,7 +210,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         QuestionVersion questionVersion = new QuestionVersion(templateQuestion);
         node.setQuestionVersion(questionVersion);
         if (templateQuestion.isMain()) {
-            List<QuestionNode>  subNodeList = templateQuestion.getSubList().stream()
+            List<QuestionNode> subNodeList = templateQuestion.getSubList().stream()
                     .map(QuestionNode::createFromTemplate)
                     .collect(Collectors.toList());
             node.setSubList(subNodeList);
@@ -331,9 +345,69 @@ public class QuestionNode implements Comparable<QuestionNode> {
         }
         return questionNode;
     }
+
     public static List<QuestionNode> createNewList(List<QuestionNode> list) {
         return list.stream()
                 .map(QuestionNode::createNew)
                 .collect(Collectors.toList());
     }
+
+    public List<Long> subQuestionIdList() {
+        return this.getSubList().stream().map(QuestionNode::getQuestionId).collect(Collectors.toList());
+    }
+
+    public QuestionNode addSub(String question) {
+
+        // return the sub
+        return null;
+    }
+
+
+    public void sortSubList(List<Long> subQuestionIdOrderList) {
+        if (!this.isMain()) {
+            throw new IllegalStateException();
+        }
+        if (this.getSubList().isEmpty()) {
+            return;
+        }
+        if (this.getSubList().size() != subQuestionIdOrderList.size()) {
+            throw new IllegalArgumentException();
+        }
+        Map<Long, QuestionNode> subMap = this.getSubList().stream()
+                .collect(Collectors.toMap(QuestionNode::getQuestionId, s -> s));
+
+        Map<Long, QuestionNode> newOrderedMap = new LinkedHashMap<>();
+        int serial = 1;
+        for (Long id : subQuestionIdOrderList) {
+            QuestionNode node = subMap.get(id);
+            if (node == null) {
+                throw new HasBeenModifiedException("");
+            }
+            newOrderedMap.put(id, node);
+        }
+    }
+
+    // check the question be edited.
+    public boolean isQuestionContentSame(QuestionNode other) {
+        if (!Objects.equals(this.getQuestionId(), other.getQuestionId())) {
+            throw new IllegalArgumentException();
+        }
+        List<QuestionVersion> thisVersionList = this.toPlaneQuestionList();
+        List<QuestionVersion> otherVersionList = other.toPlaneQuestionList();
+        if (thisVersionList.size() != otherVersionList.size()) {
+            return false;
+        }
+        for (int i = 0; i < thisVersionList.size(); ++i) {
+            QuestionVersion thisVersion = thisVersionList.get(i);
+            QuestionVersion otherVersion = otherVersionList.get(i);
+            if (!Objects.equals(thisVersion.getQuestionId(), otherVersion.getQuestionId())) {
+                return false;
+            }
+            if (!thisVersion.isQuestionContentSame(otherVersion)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

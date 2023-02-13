@@ -159,4 +159,17 @@ public class QuestionnaireDao {
         questionMetaMapper.deleteMain(questionnaireVersion.getVid(), delete.getQuestionId());
         return this.saveStructure(questionnaireVersion);
     }
+
+    public boolean deleteSubQuestion(QuestionnaireVersion questionnaire,
+                                     Long mainQuestionId,
+                                     List<Long> subQuestionIdList) {
+        Objects.requireNonNull(questionnaire);
+        Objects.requireNonNull(mainQuestionId);
+        int result = questionMetaMapper.logicallyDeleteSub(
+                questionnaire.getProjectId(),
+                mainQuestionId,
+                subQuestionIdList,
+                questionnaire.getVid());
+        return result > 0;
+    }
 }
