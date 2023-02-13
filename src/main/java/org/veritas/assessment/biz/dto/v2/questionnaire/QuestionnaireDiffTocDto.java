@@ -78,6 +78,16 @@ public class QuestionnaireDiffTocDto {
 
         private List<Step> stepList;
 
+        @JsonProperty
+        public int diffCount() {
+            if (stepList == null || stepList.isEmpty()) {
+                return 0;
+            }
+            return stepList.stream()
+                    .mapToInt(Step::diffCount)
+                    .sum();
+        }
+
         public PrincipleAssessment(Principle p, List<QuestionNode> basedList, List<QuestionNode> newList) {
             Objects.requireNonNull(p);
             this.principle = p.getDescription();
@@ -100,15 +110,7 @@ public class QuestionnaireDiffTocDto {
                     }).collect(Collectors.toList());
         }
 
-        @JsonProperty
-        public int diffCount() {
-            if (stepList == null || stepList.isEmpty()) {
-                return 0;
-            }
-            return stepList.stream()
-                    .mapToInt(Step::diffCount)
-                    .sum();
-        }
+
     }
 
     @Data
@@ -208,9 +210,9 @@ public class QuestionnaireDiffTocDto {
                 this.serial = newQuestionNode.serial();
                 this.question = newQuestionNode.questionContent();
                 if (oldQuestionNode.hasBeenEdited(newQuestionNode)) {
-                    this.editType = EditType.UNMODIFIED;
-                } else {
                     this.editType = EditType.EDIT;
+                } else {
+                    this.editType = EditType.UNMODIFIED;
                 }
 
             }

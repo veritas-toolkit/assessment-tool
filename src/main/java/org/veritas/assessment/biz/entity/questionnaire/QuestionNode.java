@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
@@ -310,24 +309,24 @@ public class QuestionNode implements Comparable<QuestionNode> {
 
     }
 
-    public boolean hasBeenEdited(QuestionNode newNode) {
-        Objects.requireNonNull(newNode);
-        if (!Objects.equals(this.questionId, newNode.getQuestionId())) {
+    public boolean hasBeenEdited(QuestionNode otherNode) {
+        Objects.requireNonNull(otherNode);
+        if (!Objects.equals(this.questionId, otherNode.getQuestionId())) {
             throw new IllegalArgumentException();
         }
-        if (!Objects.equals(this.getQuestionVid(), newNode.getQuestionVid())) {
+        if (!Objects.equals(this.getQuestionVid(), otherNode.getQuestionVid())) {
             return true;
         }
         if (this.isMain()) {
-            Set<Long> subQuestionVidSet = new HashSet<>();
-            subQuestionVidSet.addAll(this.subList.stream()
+            Set<Long> allSubQuestionVidSet = new HashSet<>();
+            allSubQuestionVidSet.addAll(this.subList.stream()
                     .map(QuestionNode::getQuestionVid)
                     .collect(Collectors.toSet()));
-            subQuestionVidSet.addAll(newNode.subList.stream()
+            allSubQuestionVidSet.addAll(otherNode.subList.stream()
                     .map(QuestionNode::getQuestionVid)
                     .collect(Collectors.toSet()));
-            boolean thisDiff = subQuestionVidSet.size() != this.subList.size();
-            boolean newDiff = subQuestionVidSet.size() != newNode.subList.size();
+            boolean thisDiff = allSubQuestionVidSet.size() != this.subList.size();
+            boolean newDiff = allSubQuestionVidSet.size() != otherNode.subList.size();
             return thisDiff || newDiff;
         }
         return false;
