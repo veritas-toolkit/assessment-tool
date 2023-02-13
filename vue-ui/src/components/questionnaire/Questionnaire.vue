@@ -174,7 +174,7 @@ export default {
     getDiffVersion(compareType) {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/history`).then(res => {
         if (res.status == 200) {
-          this.draftList = res.data.records
+          this.draftList = res.data.records.reverse()
           // console.log(this.draftList)
         }
         // console.log(compareType)
