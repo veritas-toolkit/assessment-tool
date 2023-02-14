@@ -49,9 +49,29 @@ public interface QuestionMetaMapper extends BaseMapper<QuestionMeta> {
         return update(null, wrapper) > 0;
     }
 
+    default boolean updateCurrentVersionId(long questionId, long newVid) {
+        LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(QuestionMeta::getId, questionId);
+        wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
+        wrapper.set(QuestionMeta::getCurrentVid, newVid);
+        return update(null, wrapper) > 0;
+    }
+
+
     default int deleteMain(long deleteStartQuestionnaireVid, long mainQuestionId) {
         LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(QuestionMeta::getMainQuestionId, mainQuestionId);
+        wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
+        wrapper.set(QuestionMeta::getDeleteStartQuestionnaireVid, deleteStartQuestionnaireVid);
+        return update(null, wrapper);
+    }
+
+    default int logicallyDelete(Integer projectId,
+                                Long questionId,
+                                Long deleteStartQuestionnaireVid ) {
+        LambdaUpdateWrapper<QuestionMeta> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(QuestionMeta::getProjectId, projectId);
+        wrapper.eq(QuestionMeta::getId, questionId);
         wrapper.isNull(QuestionMeta::getDeleteStartQuestionnaireVid);
         wrapper.set(QuestionMeta::getDeleteStartQuestionnaireVid, deleteStartQuestionnaireVid);
         return update(null, wrapper);

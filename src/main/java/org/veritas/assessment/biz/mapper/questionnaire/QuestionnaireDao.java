@@ -172,4 +172,33 @@ public class QuestionnaireDao {
                 questionnaire.getVid());
         return result > 0;
     }
+
+    public void save(QuestionnaireVersion questionnaire) {
+        Objects.requireNonNull(questionnaire);
+
+        // question node add action.
+        // insert meta
+        // insert version
+        questionnaire.getAddActionNodeList().forEach(node -> {
+            questionMetaMapper.insert(node.getMeta());
+            questionVersionMapper.insert(node.getQuestionVersion());
+        });
+
+        // delete
+        questionnaire.getDeleteActionNodeList().forEach(node -> {
+            questionMetaMapper.logicallyDelete(
+                    questionnaire.getProjectId(),
+                    node.getQuestionId(),
+                    node.getQuestionnaireVid());
+        });
+
+        // edite
+        // update meta
+        questionnaire.getModifyActionNodeList().forEach(node -> {
+            questionMetaMapper.updateCurrentVersionId(node.getQuestionId(), node.getQuestionVid());
+        });
+
+        // insert all node
+        questionNodeMapper.saveAll(questionnaire.finAllQuestionNodeList());
+    }
 }

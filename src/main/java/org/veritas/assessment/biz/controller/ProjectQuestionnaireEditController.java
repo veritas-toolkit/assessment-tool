@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.action.AddSubQuestionAction;
+import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
@@ -36,7 +38,10 @@ import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditContentDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionReorderDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocWithMainQuestionDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.SubQuestionAddDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.SubQuestionEditDto;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
@@ -112,6 +117,65 @@ public class ProjectQuestionnaireEditController {
         return null;
     }
 
+    @PostMapping("/question/{questionId}/sub/new")
+    public QuestionDto addSubQuestion(@Parameter(hidden = true) User operator,
+                                      @PathVariable("projectId") Integer projectId,
+                                      @PathVariable("questionId") Long questionId,
+                                      @Valid @RequestBody SubQuestionAddDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        AddSubQuestionAction action = new AddSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestion(dto.getQuestion());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.addSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+
+    @DeleteMapping("/question/{questionId}/sub/{subQuestionId}")
+    public QuestionDto deleteSubQuestion(@Parameter(hidden = true) User operator,
+                                         @PathVariable("projectId") Integer projectId,
+                                         @PathVariable("questionId") Long questionId,
+                                         @PathVariable("subQuestionId") Long subQuestionId) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        DeleteSubQuestionAction action = new DeleteSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestionId(subQuestionId);
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.deleteSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+    @PostMapping("/question/{questionId}/sub/{subQuestionId}")
+    public QuestionDto addSubQuestion(@Parameter(hidden = true) User operator,
+                                      @PathVariable("projectId") Integer projectId,
+                                      @PathVariable("questionId") Long questionId,
+                                      @PathVariable("subQuestionId") Long subQuestionId,
+                                      @Valid @RequestBody SubQuestionEditDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        AddSubQuestionAction action = new AddSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestion(dto.getQuestion());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.addSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+
+
+
     @Operation(summary = "Reorder the sequence of the main questions.")
     @RequestMapping(path = "/reorder", method = {RequestMethod.POST, RequestMethod.PUT})
     public QuestionnaireTocDto reorder(@Parameter(hidden = true) User operator,
@@ -128,5 +192,7 @@ public class ProjectQuestionnaireEditController {
                 dto.getQuestionIdList());
         return new QuestionnaireTocDto(questionnaire, project, operator);
     }
+
+
 
 }

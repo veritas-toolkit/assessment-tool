@@ -9,7 +9,10 @@ import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
+import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.system.entity.User;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -355,13 +358,6 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return this.getSubList().stream().map(QuestionNode::getQuestionId).collect(Collectors.toList());
     }
 
-    public QuestionNode addSub(String question) {
-
-        // return the sub
-        return null;
-    }
-
-
     public void sortSubList(List<Long> subQuestionIdOrderList) {
         if (!this.isMain()) {
             throw new IllegalStateException();
@@ -407,6 +403,151 @@ public class QuestionNode implements Comparable<QuestionNode> {
             }
         }
         return true;
+    }
+
+    public QuestionNode addSub(User operator, String subQuestionContent, Long beforeQuestionId, Date now,
+                               Supplier<Long> idSupplier) {
+        if (this.isSub()) {
+            throw new IllegalStateException("Sub question cannot add sub question.");
+        }
+
+        // meta
+        Long subQuestionId = idSupplier.get();
+        Long subQuestionVid = idSupplier.get();
+        QuestionMeta meta = new QuestionMeta();
+        meta.setId(subQuestionId);
+        meta.setCurrentVid(subQuestionVid);
+        meta.setProjectId(this.getProjectId());
+        meta.setMainQuestionId(this.getMainQuestionId());
+        meta.setContentEditable(true);
+        meta.setAnswerRequired(false);
+        meta.setAddStartQuestionnaireVid(this.questionnaireVid);
+
+        // version
+        QuestionVersion q = new QuestionVersion();
+        q.setVid(subQuestionVid);
+        q.setQuestionId(this.getQuestionId());
+        q.setMainQuestionId(this.getMainQuestionId());
+        q.setContent(subQuestionContent);
+        q.setContentEditable(true);
+        q.setContentEditUserId(operator.getId());
+        q.setContentEditTime(now);
+        // node
+        QuestionNode newNode = new QuestionNode();
+        newNode.setQuestionnaireVid(this.questionnaireVid);
+        newNode.setProjectId(this.getProjectId());
+        newNode.setQuestionId(subQuestionId);
+        newNode.setQuestionVid(subQuestionVid);
+        newNode.setMainQuestionId(this.getMainQuestionId());
+        newNode.setPrinciple(this.getPrinciple());
+        newNode.setStep(this.getStep());
+        newNode.setSerialOfPrinciple(this.getSerialOfPrinciple());
+
+        newNode.setMeta(meta);
+        newNode.setQuestionVersion(q);
+
+        // add the new node to the list
+        List<QuestionNode> newSubList = new ArrayList<>(this.getSubList().size() + 1);
+        boolean added = false;
+        int newSubSerial = 1;
+        for (QuestionNode sub : this.getSubList()) {
+            if (Objects.equals(sub.getQuestionId(), beforeQuestionId)) {
+                newNode.setSubSerial(newSubSerial);
+                ++newSubSerial;
+                newSubList.add(newNode);
+                added = true;
+            }
+            sub.setSubSerial(newSubSerial);
+            ++newSubSerial;
+            newSubList.add(sub);
+        }
+        if (!added) {
+            newNode.setSubSerial(newSubSerial);
+            newSubList.add(newNode);
+        }
+        this.setSubList(newSubList);
+
+
+        return newNode;
+    }
+
+    public QuestionNode deleteSub(@NotNull Long subQuestionId) {
+        if (this.isSub()) {
+            throw new IllegalStateException();
+        }
+        List<QuestionNode> newSubList = new ArrayList<>(this.getSubList());
+        QuestionNode deleted = null;
+        int newSubSerial = 1;
+        for (QuestionNode sub : this.getSubList()) {
+            if (Objects.equals(sub.getQuestionId(), subQuestionId)) {
+                deleted = sub;
+            } else {
+                sub.setSubSerial(newSubSerial);
+                ++newSubSerial;
+                newSubList.add(sub);
+            }
+        }
+        if (deleted == null) {
+            throw new NotFoundException("Not found the sub question in current main question.");
+        } else {
+            this.setSubList(newSubList);
+        }
+        return deleted;
+    }
+
+    public QuestionNode editSub(@NotNull User operator,
+                                @NotNull Long subQuestionId,
+                                String newContent,
+                                @NotNull Date now,
+                                @NotNull Supplier<Long> idSupplier) {
+        if (this.isSub()) {
+            throw new IllegalStateException();
+        }
+        QuestionNode subNode = this.getSubList().stream()
+                .filter(s -> Objects.equals(s.getQuestionId(), subQuestionId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Not found the question."));
+
+        Long subQuestionVid = idSupplier.get();
+        QuestionVersion q = new QuestionVersion();
+        q.setVid(subQuestionVid);
+        q.setQuestionId(this.getQuestionId());
+        q.setMainQuestionId(this.getMainQuestionId());
+        q.setContent(newContent);
+        q.setContentEditable(true);
+        q.setContentEditUserId(operator.getId());
+        q.setContentEditTime(now);
+
+        QuestionMeta subMeta = subNode.getMeta();
+        subMeta.setCurrentVid(subQuestionVid);
+
+        return subNode;
+    }
+
+    public List<QuestionNode> reorderSub(List<Long> subQuestionIdList) {
+        if (this.isSub()) {
+            throw new IllegalStateException();
+        }
+        if (this.getSubList().size() != subQuestionIdList.size()) {
+            throw new HasBeenModifiedException("The question has been modified.");
+        }
+        Map<Long, QuestionNode> map = new LinkedHashMap<>();
+        this.getSubList().forEach(sub -> map.put(sub.getQuestionId(), sub));
+        List<QuestionNode> newSubList = new ArrayList<>(this.getSubList().size());
+        subQuestionIdList.forEach(subId -> {
+            if (map.containsKey(subId)) {
+                newSubList.add(map.get(subId));
+            } else {
+                throw new HasBeenModifiedException("The question has been modified.");
+            }
+        });
+        int _subSerial = 1;
+        for (QuestionNode questionNode : newSubList) {
+            questionNode.setSubSerial(_subSerial);
+            ++_subSerial;
+        }
+        this.setSubList(newSubList);
+        return newSubList;
     }
 
 }

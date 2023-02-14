@@ -10,7 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
+import org.veritas.assessment.biz.action.AddSubQuestionAction;
+import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
 import org.veritas.assessment.biz.action.EditMainQuestionAction;
+import org.veritas.assessment.biz.action.EditSubQuestionAction;
+import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
@@ -19,6 +23,7 @@ import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.system.entity.User;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -56,6 +61,17 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
 
     @TableField(exist = false)
     private List<QuestionNode> mainQuestionNodeList;
+
+    @TableField(exist = false)
+    private List<QuestionNode> addActionNodeList = new ArrayList<>();
+    @TableField(exist = false)
+    private List<QuestionNode> deleteActionNodeList = new ArrayList<>();
+    @TableField(exist = false)
+    private List<QuestionNode> modifyActionNodeList = new ArrayList<>();
+
+
+
+
 
     @Override
     public int compareTo(QuestionnaireVersion o) {
@@ -284,6 +300,43 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         this.setMainQuestionNodeList(list);
     }
 
+    public void addSubQuestion(AddSubQuestionAction action, Supplier<Long> idSupplier) {
+        QuestionNode mainNode = this.findNodeByQuestionId(action.getMainQuestionId());
+        if (mainNode == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        QuestionNode sub = mainNode.addSub(action.getOperator(), action.getSubQuestion(),
+                action.getBeforeQuestionId(), this.getCreatedTime(), idSupplier);
+        this.addActionNodeList.add(sub);
+    }
+
+    public void deleteSubQuestion(@Valid DeleteSubQuestionAction action) {
+        QuestionNode mainNode = this.findNodeByQuestionId(action.getMainQuestionId());
+        if (mainNode == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        QuestionNode deleted = mainNode.deleteSub(action.getSubQuestionId());
+        this.deleteActionNodeList.add(deleted);
+    }
+
+    public void editSubQuestion(@Valid EditSubQuestionAction action, Supplier<Long> idSupplier) {
+        QuestionNode mainNode = this.findNodeByQuestionId(action.getMainQuestionId());
+        if (mainNode == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        QuestionNode subNode = mainNode.editSub(action.getOperator(), action.getSubQuestionId(),
+                action.getSubQuestion(), this.createdTime, idSupplier);
+        this.modifyActionNodeList.add(subNode);
+    }
+
+    public void reorderSubQuestion(@Valid ReorderSubQuestionAction action) {
+        QuestionNode mainNode = this.findNodeByQuestionId(action.getMainQuestionId());
+        if (mainNode == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        mainNode.reorderSub(action.getOrderedSubQuestionIdList());
+    }
+
     synchronized
     public void deleteMainQuestion(Long questionId) {
         Objects.requireNonNull(questionId);
@@ -358,13 +411,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         main.setSubList(newSubList);
     }
 
-    public List<QuestionNode> addSub(Long mainQuestionId, List<String> subQuestionList) {
-        QuestionNode main = this.findMainQuestionById(mainQuestionId);
-        if (main == null) {
-            throw new IllegalArgumentException("Not found the main questionId.");
-        }
-        return null;
-    }
+
 
     public List<QuestionNode> edite(Long mainQuestionId, Map<Long, String> editMap, Supplier<Long> idGenerator) {
         Objects.requireNonNull(mainQuestionId);

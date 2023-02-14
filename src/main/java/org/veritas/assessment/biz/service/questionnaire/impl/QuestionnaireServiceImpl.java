@@ -5,7 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
+import org.veritas.assessment.biz.action.AddSubQuestionAction;
+import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
 import org.veritas.assessment.biz.action.EditMainQuestionAction;
+import org.veritas.assessment.biz.action.EditSubQuestionAction;
+import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
@@ -22,6 +26,7 @@ import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -267,6 +272,79 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         current.reorder(principle, step, questionIdReorderList);
 
         questionnaireDao.saveStructure(current);
+        return current;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion addSubQuestion(@Valid AddSubQuestionAction action) {
+        Date now = new Date();
+        int projectId = action.getProjectId();
+
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+
+        current.addSubQuestion(action, idGenerateService::nextId);
+
+        questionnaireDao.save(current);
+        return current;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion deleteSubQuestion(DeleteSubQuestionAction action) {
+        Date now = new Date();
+        int projectId = action.getProjectId();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        current.deleteSubQuestion(action);
+
+        questionnaireDao.save(current);
+        return current;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion editSubQuestion(EditSubQuestionAction action) {
+        Date now = new Date();
+        int projectId = action.getProjectId();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        current.editSubQuestion(action, idGenerateService::nextId);
+        questionnaireDao.save(current);
+        return current;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion reorderSubQuestion(ReorderSubQuestionAction action) {
+        Date now = new Date();
+        int projectId = action.getProjectId();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        // do action
+        current.reorderSubQuestion(action);
+        questionnaireDao.save(current);
         return current;
     }
 }
