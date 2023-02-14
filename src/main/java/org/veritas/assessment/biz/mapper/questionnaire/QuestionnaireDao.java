@@ -200,5 +200,7 @@ public class QuestionnaireDao {
 
         // insert all node
         questionNodeMapper.saveAll(questionnaire.finAllQuestionNodeList());
+        // insert questionnaire
+        questionnaireMapper.insert(questionnaire);
     }
 }
