@@ -3,7 +3,6 @@ package org.veritas.assessment.biz.service.questionnaire;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
-import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -22,13 +21,14 @@ public interface QuestionnaireService {
 
     // find the latest version by project's id.
     QuestionnaireVersion findLatestQuestionnaire(int projectId);
+
     QuestionnaireVersion findByQuestionnaireVid(long vid);
 
     // find by version id.
 
     // create a new one from another project.
     // check the biz
-    QuestionnaireVersion copyFrom(int creatorUserId, Project project, Date createdTime , Project copyFrom);
+    QuestionnaireVersion copyFrom(int creatorUserId, Project project, Date createdTime, Project copyFrom);
 
     // create a new one by the template questionnaire.
     // check the biz

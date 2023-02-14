@@ -12,7 +12,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
-import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -68,9 +67,6 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     private List<QuestionNode> deleteActionNodeList = new ArrayList<>();
     @TableField(exist = false)
     private List<QuestionNode> modifyActionNodeList = new ArrayList<>();
-
-
-
 
 
     @Override
@@ -412,7 +408,6 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     }
 
 
-
     public List<QuestionNode> edite(Long mainQuestionId, Map<Long, String> editMap, Supplier<Long> idGenerator) {
         Objects.requireNonNull(mainQuestionId);
         Objects.requireNonNull(editMap);
@@ -453,31 +448,6 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
             editedNodeList.add(node);
         }
         return editedNodeList;
-    }
-
-    public void edit(EditMainQuestionAction action, Supplier<Long> idGenerator) {
-        Long mainQuestionId = action.getMainQuestionId();
-        QuestionNode main = this.findMainQuestionById(mainQuestionId);
-        QuestionNode basedMain = action.getBasedQuestionnaire().findMainQuestionById(mainQuestionId);
-        if (!main.isQuestionContentSame(basedMain)) {
-            throw new HasBeenModifiedException("The question has been modified.");
-        }
-        // delete
-        List<Long> deleteList = action.getDeletedSubList();
-        List<QuestionNode> newSubList = new ArrayList<>();
-        int subSerial = 1;
-        for (QuestionNode sub : main.getSubList()) {
-            if (deleteList.contains(sub.getQuestionId())) {
-                continue;
-            }
-            sub.setSubSerial(subSerial);
-            ++subSerial;
-            newSubList.add(sub);
-        }
-
-
-
-
     }
 
 }
