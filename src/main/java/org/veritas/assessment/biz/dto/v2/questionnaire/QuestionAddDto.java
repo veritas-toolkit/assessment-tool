@@ -5,6 +5,7 @@ import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,8 @@ public class QuestionAddDto {
 
 //    private Integer stepSerial = -1;
 
+    @NotNull(message = "The question content can't be null or empty.")
+    @NotEmpty(message = "The question content can't be null or empty.")
     private String question;
 
     private List<String> subQuestionList;

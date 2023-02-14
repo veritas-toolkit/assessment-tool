@@ -178,7 +178,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         if (!result) {
             log.error("Add question failed, question: {}", newNode);
         }
-        return latest;
+        return current;
     }
 
     @Override
