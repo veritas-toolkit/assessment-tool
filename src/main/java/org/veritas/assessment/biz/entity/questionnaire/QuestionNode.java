@@ -475,7 +475,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         if (this.isSub()) {
             throw new IllegalStateException();
         }
-        List<QuestionNode> newSubList = new ArrayList<>(this.getSubList());
+        List<QuestionNode> newSubList = new ArrayList<>(this.getSubList().size());
         QuestionNode deleted = null;
         int newSubSerial = 1;
         for (QuestionNode sub : this.getSubList()) {
