@@ -56,8 +56,6 @@ import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-
 /**
  * Edit the questions of project's questionnaire.
  */
@@ -189,6 +187,8 @@ public class ProjectQuestionnaireEditController {
         action.setProjectId(projectId);
         action.setMainQuestionId(questionId);
         action.setSubQuestion(dto.getQuestion());
+        action.setSubQuestionId(dto.getQuestionId());
+        action.setBasedSubQuestionVid(dto.getBasedQuestionVid());
         action.setOperator(operator);
         QuestionnaireVersion questionnaireVersion = questionnaireService.editSubQuestion(action);
         QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);

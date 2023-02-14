@@ -509,17 +509,19 @@ public class QuestionNode implements Comparable<QuestionNode> {
                 .orElseThrow(() -> new NotFoundException("Not found the question."));
 
         Long subQuestionVid = idSupplier.get();
-        QuestionVersion q = new QuestionVersion();
-        q.setVid(subQuestionVid);
-        q.setQuestionId(this.getQuestionId());
-        q.setMainQuestionId(this.getMainQuestionId());
-        q.setContent(newContent);
-        q.setContentEditable(true);
-        q.setContentEditUserId(operator.getId());
-        q.setContentEditTime(now);
+        QuestionVersion question = new QuestionVersion();
+        question.setVid(subQuestionVid);
+        question.setQuestionId(this.getQuestionId());
+        question.setMainQuestionId(this.getMainQuestionId());
+        question.setContent(newContent);
+        question.setContentEditable(true);
+        question.setContentEditUserId(operator.getId());
+        question.setContentEditTime(now);
 
+        subNode.setQuestionVersion(question);
         QuestionMeta subMeta = subNode.getMeta();
         subMeta.setCurrentVid(subQuestionVid);
+
 
         return subNode;
     }
