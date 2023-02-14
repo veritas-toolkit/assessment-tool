@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,11 +49,14 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.IllegalRequestException;
+import org.veritas.assessment.common.exception.InternalException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -84,9 +88,17 @@ public class ProjectQuestionnaireEditController {
         AddMainQuestionAction action = dto.toAction();
         action.setCreator(operator);
         QuestionnaireVersion questionnaire = questionnaireService.addMainQuestion(operator, action);
-        QuestionnaireTocDto questionnaireTocDto = new QuestionnaireTocDto(questionnaire, project, operator);
 
-        return null;
+        QuestionNode added = questionnaire.find(dto.getPrinciple(), dto.getStep()).stream()
+                .filter(q -> StringUtils.equals(q.questionContent(), dto.getQuestion()))
+                .findFirst()
+                .orElse(null);
+        if (added == null) {
+            throw new InternalException("Create question failed.");
+        }
+        QuestionnaireTocDto questionnaireTocDto = new QuestionnaireTocDto(questionnaire, project, operator);
+        QuestionDto questionDto = new QuestionDto(added);
+        return new QuestionnaireTocWithMainQuestionDto(questionnaireTocDto, questionDto);
     }
 
     @Operation(summary = "Delete a main question with subs from the project's questionnaire.")
