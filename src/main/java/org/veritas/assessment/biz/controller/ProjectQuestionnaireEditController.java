@@ -195,7 +195,7 @@ public class ProjectQuestionnaireEditController {
         return new QuestionDto(main);
     }
 
-    @Operation(summary = "Edit a sub question.")
+    @Operation(summary = "Reorder sub question.")
     @PostMapping("/question/{questionId}/sub")
     public QuestionDto reorderSubQuestion(@Parameter(hidden = true) User operator,
                                           @PathVariable("projectId") Integer projectId,

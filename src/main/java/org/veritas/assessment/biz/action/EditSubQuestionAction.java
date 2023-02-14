@@ -16,7 +16,7 @@ public class EditSubQuestionAction {
     @NotNull
     private Long subQuestionId;
     @NotNull
-    private Long basedQuestionVid;
+    private Long basedSubQuestionVid;
 
     private String subQuestion;
     @NotNull

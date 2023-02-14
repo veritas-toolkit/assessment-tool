@@ -526,7 +526,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return subNode;
     }
 
-    public List<QuestionNode> reorderSub(List<Long> subQuestionIdList) {
+    public void reorderSub(List<Long> subQuestionIdList) {
         if (this.isSub()) {
             throw new IllegalStateException();
         }
@@ -549,7 +549,6 @@ public class QuestionNode implements Comparable<QuestionNode> {
             ++_subSerial;
         }
         this.setSubList(newSubList);
-        return newSubList;
     }
 
 }
