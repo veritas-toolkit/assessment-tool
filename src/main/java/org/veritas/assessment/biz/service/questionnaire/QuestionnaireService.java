@@ -49,8 +49,6 @@ public interface QuestionnaireService {
 
     QuestionnaireVersion deleteMainQuestion(User operator, Project project, Long questionId);
 
-    QuestionnaireVersion editMainQuestion(User operator, Project project, EditMainQuestionAction action);
-
     QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle, AssessmentStep step, List<Long> questionIdList);
 
     QuestionnaireVersion addSubQuestion(AddSubQuestionAction action);

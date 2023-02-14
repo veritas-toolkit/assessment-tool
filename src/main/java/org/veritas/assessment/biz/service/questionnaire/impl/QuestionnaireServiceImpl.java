@@ -207,56 +207,6 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
-    public QuestionnaireVersion editMainQuestion(User operator, Project project, EditMainQuestionAction action) {
-        Objects.requireNonNull(operator);
-        Objects.requireNonNull(project);
-        Objects.requireNonNull(action);
-        // load latest
-        Date now = new Date();
-        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
-        // create new version
-        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
-        Long questionnaireVid = current.getVid();
-        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
-        // lock
-        if (!locked) {
-            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
-        }
-
-        Long mainQuestionId = action.getMainQuestionId();
-        QuestionNode mainNode = current.findMainQuestionById(action.getMainQuestionId());
-        if (mainNode == null) {
-            throw new HasBeenModifiedException("The questionnaire has been modify by others. " +
-                    "The main question has been deleted.");
-        }
-
-        // delete
-        //      update meta
-        //      delete node from new questionnaire
-        questionnaireDao.deleteSubQuestion(current, mainNode.getQuestionId(), action.getDeletedSubList());
-        current.deleteSubQuestions(mainNode.getMainQuestionId(), action.getDeletedSubList());
-
-
-        // add new questions
-            // insert meta
-            // insert question-version
-            // create new node into new questionnaire
-
-//        List<QuestionNode> newNodeList = current.addSub(mainQuestionId, action.getAddSubQuestionList());
-
-        // creat new version for edited question
-            // update meta
-            // insert question-version
-        List<QuestionNode> editedNodeList = current.edite(mainQuestionId, action.toEditQuestionMap(),
-                idGenerateService::nextId);
-
-        // resort the node
-        // insert new question node list.
-
-        return null;
-    }
-
-    @Override
     @Transactional
     public QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle,
                                                 AssessmentStep step, List<Long> questionIdReorderList) {

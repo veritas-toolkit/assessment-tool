@@ -8,6 +8,6 @@ import javax.validation.constraints.NotNull;
 public class SubQuestionAddDto {
     @NotNull
     private String question;
-
-//    private Long beforeQuestionId;
+    // if null, then append as last sub.
+    private Long beforeQuestionId;
 }

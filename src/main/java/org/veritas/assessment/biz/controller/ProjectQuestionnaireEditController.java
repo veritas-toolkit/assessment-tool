@@ -31,15 +31,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditSubQuestionAction;
+import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditContentDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionReorderDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocWithMainQuestionDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.SubQuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.SubQuestionEditDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.SubQuestionReorderDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -87,7 +89,7 @@ public class ProjectQuestionnaireEditController {
         return null;
     }
 
-    @Operation(summary = "Add a main question with subs into the project's questionnaire.")
+    @Operation(summary = "Delete a main question with subs from the project's questionnaire.")
     @DeleteMapping("/question/{questionId}")
     public QuestionnaireTocDto deleteMainQuestion(@Parameter(hidden = true) User operator,
                                                   @PathVariable("projectId") Integer projectId,
@@ -99,81 +101,6 @@ public class ProjectQuestionnaireEditController {
         QuestionnaireVersion questionnaire = questionnaireService.deleteMainQuestion(operator, project, questionId);
         return new QuestionnaireTocDto(questionnaire, project, operator);
     }
-
-
-    // edit main question, including:
-    //  edit main's question
-    //  delete sub questions
-    //  edit sub's question
-    //  add new sub questions
-    //  reorder sub questions
-    @Operation(summary = "Add a main question with subs into the project's questionnaire.")
-    @PostMapping("/question/{questionId}")
-    public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
-                                        @PathVariable("projectId") Integer projectId,
-                                        @PathVariable("questionId") Long questionId,
-                                        @Valid @RequestBody QuestionEditContentDto dto) {
-
-        return null;
-    }
-
-    @PostMapping("/question/{questionId}/sub/new")
-    public QuestionDto addSubQuestion(@Parameter(hidden = true) User operator,
-                                      @PathVariable("projectId") Integer projectId,
-                                      @PathVariable("questionId") Long questionId,
-                                      @Valid @RequestBody SubQuestionAddDto dto) {
-        Project project = projectService.findProjectById(projectId);
-        if (project == null) {
-            throw new NotFoundException("The project not found.");
-        }
-        AddSubQuestionAction action = new AddSubQuestionAction();
-        action.setProjectId(projectId);
-        action.setMainQuestionId(questionId);
-        action.setSubQuestion(dto.getQuestion());
-        action.setOperator(operator);
-        QuestionnaireVersion questionnaireVersion = questionnaireService.addSubQuestion(action);
-        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
-        return new QuestionDto(main);
-    }
-
-    @DeleteMapping("/question/{questionId}/sub/{subQuestionId}")
-    public QuestionDto deleteSubQuestion(@Parameter(hidden = true) User operator,
-                                         @PathVariable("projectId") Integer projectId,
-                                         @PathVariable("questionId") Long questionId,
-                                         @PathVariable("subQuestionId") Long subQuestionId) {
-        Project project = projectService.findProjectById(projectId);
-        if (project == null) {
-            throw new NotFoundException("The project not found.");
-        }
-        DeleteSubQuestionAction action = new DeleteSubQuestionAction();
-        action.setProjectId(projectId);
-        action.setMainQuestionId(questionId);
-        action.setSubQuestionId(subQuestionId);
-        action.setOperator(operator);
-        QuestionnaireVersion questionnaireVersion = questionnaireService.deleteSubQuestion(action);
-        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
-        return new QuestionDto(main);
-    }
-    @PostMapping("/question/{questionId}/sub/{subQuestionId}")
-    public QuestionDto addSubQuestion(@Parameter(hidden = true) User operator,
-                                      @PathVariable("projectId") Integer projectId,
-                                      @PathVariable("questionId") Long questionId,
-                                      @PathVariable("subQuestionId") Long subQuestionId,
-                                      @Valid @RequestBody SubQuestionEditDto dto) {
-        Project project = projectService.findProjectById(projectId);
-        if (project == null) {
-            throw new NotFoundException("The project not found.");
-        }
-        AddSubQuestionAction action = new AddSubQuestionAction();
-        action.setProjectId(projectId);
-        action.setMainQuestionId(questionId);
-        action.setSubQuestion(dto.getQuestion());
-        action.setOperator(operator);
-        QuestionnaireVersion questionnaireVersion = questionnaireService.addSubQuestion(action);
-        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
-        return new QuestionDto(main);
-    }
-
 
 
     @Operation(summary = "Reorder the sequence of the main questions.")
@@ -194,5 +121,87 @@ public class ProjectQuestionnaireEditController {
     }
 
 
+    @Operation(summary = "Add a sub question into the main question")
+    @PostMapping("/question/{questionId}/sub/new")
+    public QuestionDto addSubQuestion(@Parameter(hidden = true) User operator,
+                                      @PathVariable("projectId") Integer projectId,
+                                      @PathVariable("questionId") Long questionId,
+                                      @Valid @RequestBody SubQuestionAddDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        AddSubQuestionAction action = new AddSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestion(dto.getQuestion());
+        action.setBeforeQuestionId(dto.getBeforeQuestionId());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.addSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+
+    @Operation(summary = "Add a sub question into the main question")
+    @DeleteMapping("/question/{questionId}/sub/{subQuestionId}")
+    public QuestionDto deleteSubQuestion(@Parameter(hidden = true) User operator,
+                                         @PathVariable("projectId") Integer projectId,
+                                         @PathVariable("questionId") Long questionId,
+                                         @PathVariable("subQuestionId") Long subQuestionId) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        DeleteSubQuestionAction action = new DeleteSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestionId(subQuestionId);
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.deleteSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+
+    @Operation(summary = "Edit a sub question.")
+    @PostMapping("/question/{questionId}/sub/{subQuestionId}")
+    public QuestionDto editSubQuestion(@Parameter(hidden = true) User operator,
+                                       @PathVariable("projectId") Integer projectId,
+                                       @PathVariable("questionId") Long questionId,
+                                       @PathVariable("subQuestionId") Long subQuestionId,
+                                       @Valid @RequestBody SubQuestionEditDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        EditSubQuestionAction action = new EditSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setSubQuestion(dto.getQuestion());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.editSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
+
+    @Operation(summary = "Edit a sub question.")
+    @PostMapping("/question/{questionId}/sub")
+    public QuestionDto reorderSubQuestion(@Parameter(hidden = true) User operator,
+                                          @PathVariable("projectId") Integer projectId,
+                                          @PathVariable("questionId") Long questionId,
+                                          @Valid @RequestBody SubQuestionReorderDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        ReorderSubQuestionAction action = new ReorderSubQuestionAction();
+        action.setProjectId(projectId);
+        action.setMainQuestionId(questionId);
+        action.setBasedQuestionnaireVid(dto.getBasedQuestionnaireVid());
+        action.setOrderedSubQuestionIdList(dto.getOrderedSubQuestionIdList());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.reorderSubQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
+    }
 
 }
