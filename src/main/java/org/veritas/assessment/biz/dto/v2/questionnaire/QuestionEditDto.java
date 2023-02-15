@@ -12,14 +12,12 @@ import java.util.List;
 
 @Data
 public class QuestionEditDto {
-
     @NotNull
     private Long questionId;
-    @NotNull
-    private Long basedQuestionnaireVid;
+
     @NotNull
     private Long basedQuestionVid;
+
     @NotNull
     private String question;
-
 }
