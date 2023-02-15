@@ -20,8 +20,8 @@
                       {{item2.serial}}
                     </div>
                     <div class="ques-img">
-                      <img src="../../assets/adminPic/upPage.png" alt="">
-                      <img src="../../assets/adminPic/downPage.png" alt="">
+                      <img src="../../assets/adminPic/upPage.png" @click="upRecordMainQues(index2,item1.serialNo)" alt="">
+                      <img src="../../assets/adminPic/downPage.png" @click="downRecordMainQues(index2,item1.serialNo)" alt="">
                       <img src="../../assets/adminPic/writeProblem.png" @click="editMainQuesFlag[item2.id] = true" alt="">
                       <img src="../../assets/adminPic/deleteProblem.png" @click="deleteMainQues(item2.id)" alt="">
                     </div>
@@ -29,7 +29,7 @@
                   </div>
                   <div v-show="!editMainQuesFlag[item2.id]" class="ques-content">{{item2.question}}</div>
                   <el-input v-show="editMainQuesFlag[item2.id]" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
-                    <i slot="suffix" class="el-input__icon el-icon-check" @click=""></i>
+                    <i slot="suffix" class="el-input__icon el-icon-check" @click="editMainQuestion(item2.id)"></i>
                     <i slot="suffix" class="el-input__icon el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
                   </el-input>
                 </div>
@@ -154,6 +154,53 @@ export default {
         if (res.status == 200) {
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
 
+        }
+      })
+    },
+    editMainQuestion(id) {
+      console.log(id)
+    },
+    upRecordMainQues(index,step) {
+      let mainQuesRecorder = {}
+      mainQuesRecorder.projectId = this.projectId
+      mainQuesRecorder.principle = this.principleMap[this.principle]
+      mainQuesRecorder.step = step
+      let mainQuesList = this.menuList[step].mainQuestionList.map(item => {
+        return item.id
+      })
+      if(index > 0) {
+        let temp = mainQuesList[index - 1]
+        mainQuesList[index - 1] = mainQuesList[index]
+        mainQuesList[index] = temp
+      } else {
+        mainQuesList.push(mainQuesList.shift())
+      }
+      mainQuesRecorder.questionIdList = mainQuesList
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/reorder`,mainQuesRecorder).then(res => {
+        if (res.status == 200) {
+          this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+        }
+      })
+    },
+    downRecordMainQues(index,step) {
+      let mainQuesRecorder = {}
+      mainQuesRecorder.projectId = this.projectId
+      mainQuesRecorder.principle = this.principleMap[this.principle]
+      mainQuesRecorder.step = step
+      let mainQuesList = this.menuList[step].mainQuestionList.map(item => {
+        return item.id
+      })
+      if(index < mainQuesList.length-1) {
+        let temp = mainQuesList[index + 1]
+        mainQuesList[index + 1] = mainQuesList[index]
+        mainQuesList[index] = temp
+      } else {
+        mainQuesList.unshift(mainQuesList.pop())
+      }
+      mainQuesRecorder.questionIdList = mainQuesList
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/reorder`,mainQuesRecorder).then(res => {
+        if (res.status == 200) {
+          this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
     }
