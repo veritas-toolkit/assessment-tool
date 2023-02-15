@@ -3,19 +3,23 @@
     <div class="main-ques">
       {{questionData.serial}}. {{questionData.question}}
     </div>
-    <div v-for="item in [1,2,3]" class="sub-ques">
-      <span>zheshiyige sub -question</span>
+    <div v-for="(item,index) in subQuestionList" class="sub-ques">
+      <span v-show="!editSubQuesFlag[item.id]" >{{item.question}}</span>
+      <el-input v-show="editSubQuesFlag[item.id]" v-model="editSubQues[item.id]" placeholder="Please input a new subquestion">
+        <i slot="suffix" class="el-input__icon el-icon-check" @click="writeSubQues(item.id,item.vid)"></i>
+        <i slot="suffix" class="el-input__icon el-icon-close" @click="editSubQuesFlag[item.id] = false"></i>
+      </el-input>
       <div>
-        <div class="ques-img">
-          <img src="../../assets/adminPic/upPage.png" alt="">
-          <img src="../../assets/adminPic/downPage.png" alt="">
-          <img src="../../assets/adminPic/writeProblem.png" alt="">
-          <img src="../../assets/adminPic/deleteProblem.png" alt="">
+        <div class="ques-img" v-show="!editSubQuesFlag[item.id]">
+          <img src="../../assets/adminPic/upPage.png" @click="upRecordSubQues(index)" alt="">
+          <img src="../../assets/adminPic/downPage.png" @click="downRecordSubQues(index)" alt="">
+          <img src="../../assets/adminPic/writeProblem.png" @click="editSubQuesFlag[item.id] = true" alt="">
+          <img src="../../assets/adminPic/deleteProblem.png" @click="deleteSubQues(item.id)" alt="">
         </div>
       </div>
     </div>
     <el-input v-show="addSubQuesFlag" style="margin-top: 24px" v-model="addSubQues" placeholder="Please input a new subquestion">
-      <i slot="suffix" class="el-input__icon el-icon-check"></i>
+      <i slot="suffix" class="el-input__icon el-icon-check" @click="addSubQuestion"></i>
       <i slot="suffix" class="el-input__icon el-icon-close" @click="handleAddSubQues"></i>
     </el-input>
   </div>
@@ -40,13 +44,16 @@ export default {
   data() {
     return {
       questionData: {},
-      addSubQues: ''
+      addSubQues: '',
+      subQuestionList: [],
+      editSubQuesFlag: {},
+      editSubQues: {},
     }
   },
   watch: {
     'questionId': function () {
       this.getSubQuestion()
-      console.log(this.projectId,this.questionId)
+      this.$emit('updateFlag', false)
     },
   },
   created() {
@@ -57,12 +64,89 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${this.questionId}`).then(res => {
         if (res.status == 200) {
           this.questionData = res.data
-
+          this.subQuestionList = res.data.subQuestionList
+          for (let i=0 ; i<res.data.subQuestionList.length; i++) {
+            this.$set(this.editSubQuesFlag,res.data.subQuestionList[i].id,false)
+            this.$set(this.editSubQues,res.data.subQuestionList[i].id,res.data.subQuestionList[i].question)
+          }
         }
       })
     },
     handleAddSubQues() {
       this.$emit('updateFlag', false)
+    },
+    addSubQuestion() {
+      let newSubQues = {}
+      newSubQues.beforeQuestionId = null;
+      newSubQues.question = this.addSubQues
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/new`,newSubQues).then(res => {
+        if (res.status == 200) {
+          this.subQuestionList = res.data.subQuestionList
+          this.addSubQues = ''
+          this.$emit('updateFlag', false)
+        }
+      })
+    },
+    deleteSubQues(id) {
+      this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/${id}`).then(res => {
+        if (res.status == 200) {
+          this.subQuestionList = res.data.subQuestionList
+        }
+      })
+    },
+    writeSubQues(id,vid) {
+      let editSubQues = {}
+      editSubQues.questionId = id
+      editSubQues.basedQuestionVid = vid
+      editSubQues.question = this.editSubQues[id]
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/${id}`,editSubQues).then(res => {
+        if (res.status == 200) {
+          this.subQuestionList = res.data.subQuestionList
+          this.editSubQuesFlag[id] = false
+        }
+      })
+    },
+    upRecordSubQues(index) {
+      let subQuestionReorder = {}
+      subQuestionReorder.basedQuestionnaireVid = this.questionData.vid
+      subQuestionReorder.mainQuestionId = this.questionData.id
+      let subQuesList = this.subQuestionList.map(item => {
+        return item.id
+      })
+      if(index > 0) {
+        let temp = subQuesList[index - 1]
+        subQuesList[index - 1] = subQuesList[index]
+        subQuesList[index] = temp
+      } else {
+        subQuesList.push(subQuesList.shift())
+      }
+      subQuestionReorder.orderedSubQuestionIdList = subQuesList
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub`,subQuestionReorder).then(res => {
+        if (res.status == 200) {
+          this.subQuestionList = res.data.subQuestionList
+        }
+      })
+    },
+    downRecordSubQues(index) {
+      let subQuestionReorder = {}
+      subQuestionReorder.basedQuestionnaireVid = this.questionData.vid
+      subQuestionReorder.mainQuestionId = this.questionData.id
+      let subQuesList = this.subQuestionList.map(item => {
+        return item.id
+      })
+      if(index < subQuesList.length-1) {
+        let temp = subQuesList[index + 1]
+        subQuesList[index + 1] = subQuesList[index]
+        subQuesList[index] = temp
+      } else if (index == subQuesList.length-1) {
+        subQuesList.unshift(subQuesList.pop())
+      }
+      subQuestionReorder.orderedSubQuestionIdList = subQuesList
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub`,subQuestionReorder).then(res => {
+        if (res.status == 200) {
+          this.subQuestionList = res.data.subQuestionList
+        }
+      })
     }
   },
 }
