@@ -178,6 +178,11 @@ export default {
       mainQuesRecorder.questionIdList = mainQuesList
       this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/reorder`,mainQuesRecorder).then(res => {
         if (res.status == 200) {
+          if(index > 0) {
+            this.$emit("getId",mainQuesList[index-1])
+          } else {
+            this.$emit("getId",mainQuesList[mainQuesList.length-1])
+          }
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
@@ -200,6 +205,12 @@ export default {
       mainQuesRecorder.questionIdList = mainQuesList
       this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/reorder`,mainQuesRecorder).then(res => {
         if (res.status == 200) {
+          if(index < mainQuesList.length-1) {
+            this.$emit("getId",mainQuesList[index+1])
+          } else {
+            this.$emit("getId",mainQuesList[0])
+          }
+
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
