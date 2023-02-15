@@ -3,13 +3,15 @@ package org.veritas.assessment.biz.dto.v2.questionnaire;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.constant.Principle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PrincipleAssessmentProgressDto {
     private String principle;
 

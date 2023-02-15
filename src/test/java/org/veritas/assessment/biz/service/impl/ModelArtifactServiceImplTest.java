@@ -30,8 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.system.config.VeritasProperties;
@@ -61,7 +61,7 @@ class ModelArtifactServiceImplTest {
     @Test
     void testUpload_success() throws IOException {
         int projectId = 101;
-        String filePath = JsonModelTest.creditScoringUrl;
+        String filePath = JsonModelTestUtils.creditScoringUrl;
         String jsonFilename = FilenameUtils.getName(filePath);
         String content = IOUtils.toString(new ClassPathResource(filePath).getURL(), StandardCharsets.UTF_8);
         String sha256 = DigestUtils.sha256Hex(content);

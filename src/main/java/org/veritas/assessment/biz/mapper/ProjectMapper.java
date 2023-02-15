@@ -74,7 +74,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
                     @CacheEvict(key = "'id_'+#project.id", condition = "#project != null && #project.id != null"),
             }
     )
-    default int updateNameAndDescription(Project old, Project project) {
+    default int updateBasicInfo(Project old, Project project) {
         Objects.requireNonNull(old);
         Objects.requireNonNull(project);
         if (!Objects.equals(old.getId(), project.getId())) {
@@ -92,9 +92,11 @@ public interface ProjectMapper extends BaseMapper<Project> {
         if (StringUtils.isNotEmpty(project.getDescription())) {
             wrapper.set(Project::getDescription, project.getDescription());
         }
-        if (Objects.nonNull(project.getBusinessScenario())) {
-            wrapper.set(Project::getBusinessScenario, project.getBusinessScenario());
-        }
+        wrapper.set(Project::isPrincipleGeneric, project.isPrincipleGeneric());
+        wrapper.set(Project::isPrincipleFairness, project.isPrincipleFairness());
+        wrapper.set(Project::isPrincipleEA, project.isPrincipleEA());
+        wrapper.set(Project::isPrincipleTransparency, project.isPrincipleTransparency());
+
         wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(project.getLastEditedTime()));
         return update(null, wrapper);
     }

@@ -35,7 +35,7 @@ import org.veritas.assessment.biz.dto.ModelArtifactDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.SuggestionVersionDto;
-import org.veritas.assessment.biz.entity.JsonModelTest;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
@@ -93,7 +93,7 @@ class ProjectReportControllerTest {
 
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
-                JsonModelTest.loadJson(JsonModelTest.creditScoringUrl).getBytes(StandardCharsets.UTF_8));
+                JsonModelTestUtils.loadJson(JsonModelTestUtils.creditScoringUrl).getBytes(StandardCharsets.UTF_8));
         MvcResult mvcResult2 = mockMvc.perform(
                         MockMvcRequestBuilders.multipart(
                                         "/api/project/{projectId}/modelArtifact", projectDto.getId())

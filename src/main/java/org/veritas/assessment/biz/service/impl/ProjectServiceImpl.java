@@ -219,7 +219,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project old = projectMapper.findById(project.getId());
         project.setLastEditedTime(new Date());
         try {
-            projectMapper.updateNameAndDescription(old, project);
+            projectMapper.updateBasicInfo(old, project);
         } catch (PersistenceException exception) {
             exceptionHandler(exception, project);
         }

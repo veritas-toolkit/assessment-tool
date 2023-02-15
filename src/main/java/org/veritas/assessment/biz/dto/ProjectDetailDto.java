@@ -38,8 +38,4 @@ public class ProjectDetailDto {
 
     // user's role for project's group
     private RoleDto groupRole;
-
-    // history version ?
-    @Deprecated
-    private List<ReportHistoryDto> reportHistoryList;
 }

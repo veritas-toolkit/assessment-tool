@@ -17,7 +17,8 @@
 package org.veritas.assessment.biz.model;
 
 import lombok.Getter;
-import org.veritas.assessment.biz.entity.JsonModel;
+import org.veritas.assessment.biz.entity.jsonmodel.Fairness;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class SpecialParameterContainer {
         if (jsonModel == null) {
             return;
         }
-        JsonModel.FairnessInit fairnessInit = jsonModel.getFairnessInit();
+        Fairness.FairnessInit fairnessInit = jsonModel.getFairness().getFairnessInit();
         if (fairnessInit != null) {
             applicantMap = Applicant.parseFromSpecialParams(fairnessInit.getSpecialParameters());
         }

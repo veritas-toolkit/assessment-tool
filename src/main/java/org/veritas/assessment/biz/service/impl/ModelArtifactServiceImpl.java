@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.JsonModel;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;

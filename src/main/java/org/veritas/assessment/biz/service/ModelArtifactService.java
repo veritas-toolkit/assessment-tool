@@ -16,10 +16,10 @@
 
 package org.veritas.assessment.biz.service;
 
-import org.veritas.assessment.biz.entity.JsonModel;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.common.exception.FileSystemException;
 
 import java.io.IOException;

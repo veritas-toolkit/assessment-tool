@@ -42,6 +42,10 @@ public class GraphContainer {
 
     private Map<String, String> featureTradeoffContourMap = new LinkedHashMap<>();
 
+    private Map<String, String> partial_dependence_plot = new LinkedHashMap<>();
+
+    private String summary_plot;
+
     public Map<String, String> getFeatureDistributionPieChartMap() {
         return Collections.unmodifiableMap(featureDistributionPieChartMap);
     }

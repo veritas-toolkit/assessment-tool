@@ -182,11 +182,7 @@ public class ProjectController {
                                              @PathVariable("projectId") int projectId) {
         Project project = projectService.findProjectById(projectId);
         ProjectDto projectDto = projectDtoConverter.convertFrom(project);
-//        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
 
-//        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
-
-        List<ReportHistoryDto> list = ReportHistoryDto.copyFrom(reportService.findReportHistoryList(projectId));
 
         ProjectDetailDto projectDetailDto = new ProjectDetailDto();
         projectDetailDto.setProject(projectDto);
@@ -194,11 +190,6 @@ public class ProjectController {
         projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.testData());
 
 
-//        if (modelArtifact != null) {
-//            projectDetailDto.setModelArtifact(new ModelArtifactDto(modelArtifact));
-//        }
-
-        projectDetailDto.setReportHistoryList(list);
         UserRole userRole = roleService.findUserRole(operator.getId(), ResourceType.PROJECT, projectId);
         if (userRole != null) {
             RoleDto roleDto = new RoleDto(userRole.getRole());

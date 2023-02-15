@@ -28,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -42,8 +43,8 @@ import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -77,10 +78,13 @@ class ProjectControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    @Lazy
     private ProjectService projectService;
     @Autowired
+    @Lazy
     private UserService userService;
     @Autowired
+    @Lazy
     private CacheManager cacheManager;
 
     @BeforeEach
@@ -106,6 +110,8 @@ class ProjectControllerTest {
         project.setDescription("description");
         project.setUserOwnerId(admin.getId());
         project.setBusinessScenario(1);
+        project.setPrincipleGeneric(true);
+        project.setPrincipleFairness(true);
 
         projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
@@ -133,7 +139,7 @@ class ProjectControllerTest {
         dto.setBusinessScenario(1);
         dto.setQuestionnaireTemplateId(1);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -158,7 +164,7 @@ class ProjectControllerTest {
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -175,7 +181,6 @@ class ProjectControllerTest {
         basicDto.setId(projectDto.getId());
         basicDto.setName("xxxxxxxxxx");
         basicDto.setDescription("description_");
-        basicDto.setBusinessScenario(2);
 
         mvcResult = mockMvc.perform(post("/api/project/{projectId}", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
@@ -190,7 +195,6 @@ class ProjectControllerTest {
         assertEquals(basicDto.getId(), projectDto.getId());
         assertEquals(basicDto.getName(), projectDto.getName());
         assertEquals(basicDto.getDescription(), projectDto.getDescription());
-        assertEquals(basicDto.getBusinessScenario(), projectDto.getBusinessScenario());
     }
 
     @Test
@@ -259,8 +263,12 @@ class ProjectControllerTest {
         createDto.setDescription("Description");
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
+        createDto.setPrincipleGeneric(true);
+        createDto.setPrincipleFairness(true);
+        createDto.setPrincipleEA(true);
+        createDto.setPrincipleTransparency(true);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -278,7 +286,7 @@ class ProjectControllerTest {
         ProjectDto projectDto = createProject();
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
-                JsonModelTest.loadJson(JsonModelTest.creditScoringUrl).getBytes(StandardCharsets.UTF_8));
+                JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_CS).getBytes(StandardCharsets.UTF_8));
         MvcResult mvcResult = mockMvc.perform(
                         MockMvcRequestBuilders.multipart(
                                         "/api/project/{projectId}/modelArtifact", projectDto.getId())
@@ -322,17 +330,17 @@ class ProjectControllerTest {
         ProjectDto projectDto = createProject();
 
         byte[] imageContent;
-        try(InputStream inputStream = new ClassPathResource("").getInputStream()) {
+        try (InputStream inputStream = new ClassPathResource("").getInputStream()) {
             imageContent = IOUtils.toByteArray(inputStream);
         }
 
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "xxx.png", "", imageContent);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(
-                         "/api/project/{projectId}/image", projectDto.getId())
-                                .file(imageFile)
-                                .with(user("1").roles("ADMIN", "USER"))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                "/api/project/{projectId}/image", projectDto.getId())
+                        .file(imageFile)
+                        .with(user("1").roles("ADMIN", "USER"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().is2xxSuccessful())
                 .andReturn();
         String url = mvcResult.getResponse().getContentAsString();

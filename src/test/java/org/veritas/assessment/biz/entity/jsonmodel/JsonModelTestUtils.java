@@ -3,15 +3,15 @@ package org.veritas.assessment.biz.entity.jsonmodel;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class JsonModelTest {
+public class JsonModelTestUtils {
 
     public static final String EXAMPLE_URL = "json/veritas_model_artifact_final_V1.1.json";
     public static final String rejectionUrl = "json/model_artifact_cm_rejection_20210903_1629.pretty.json";
@@ -41,18 +41,12 @@ class JsonModelTest {
         return objectMapper.readValue(url, JsonModel.class);
     }
 
-
-    @Test
-    void testLoad_successCreditScore() throws IOException {
-        JsonModel jsonModel = load(EXAMPLE_CS);
-        Transparency transparency = jsonModel.getTransparency();
-        assertNotNull(transparency);
+    public static String loadJson(String jsonUrl) throws IOException {
+        try (InputStream inputStream = new ClassPathResource(jsonUrl).getInputStream()) {
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        } catch (IOException exception) {
+            throw new RuntimeException("", exception);
+        }
     }
 
-    @Test
-    void testLoad_successCustomerMarketing() throws IOException {
-        JsonModel jsonModel = load(EXAMPLE_CM);
-        Transparency transparency = jsonModel.getTransparency();
-        assertNotNull(transparency);
-    }
 }

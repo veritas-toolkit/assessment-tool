@@ -28,9 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
@@ -75,9 +75,9 @@ class ModelInsightServiceImplTest {
         project.setBusinessScenario(1);
 
         project = projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
-        String jsonUrl = JsonModelTest.creditScoringUrl;
+        String jsonUrl = JsonModelTestUtils.creditScoringUrl;
         String filename = FilenameUtils.getName(jsonUrl);
-        String json = JsonModelTest.loadJson(jsonUrl);
+        String json = JsonModelTestUtils.loadJson(jsonUrl);
 
         ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, filename);
         modelArtifactService.saveJsonFile(modelArtifact);

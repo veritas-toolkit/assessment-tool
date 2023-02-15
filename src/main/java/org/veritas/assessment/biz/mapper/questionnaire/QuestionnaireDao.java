@@ -19,24 +19,15 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class QuestionnaireDao {
-    private final QuestionMetaMapper questionMetaMapper;
-    private final QuestionnaireVersionMapper questionnaireMapper;
-    private final QuestionVersionMapper questionVersionMapper;
-
-    private final QuestionNodeMapper questionNodeMapper;
-
-
+    @Autowired
+    private QuestionMetaMapper questionMetaMapper;
+    @Autowired
+    private QuestionnaireVersionMapper questionnaireMapper;
+    @Autowired
+    private QuestionVersionMapper questionVersionMapper;
 
     @Autowired
-    public QuestionnaireDao(QuestionMetaMapper questionMetaMapper,
-                            QuestionnaireVersionMapper questionnaireVersionMapper,
-                            QuestionVersionMapper questionVersionMapper,
-                            QuestionNodeMapper questionNodeMapper) {
-        this.questionMetaMapper = questionMetaMapper;
-        this.questionnaireMapper = questionnaireVersionMapper;
-        this.questionVersionMapper = questionVersionMapper;
-        this.questionNodeMapper = questionNodeMapper;
-    }
+    private QuestionNodeMapper questionNodeMapper;
 
     public void saveNewQuestionnaire(QuestionnaireVersion questionnaireVersion) {
         int result = questionnaireMapper.insert(questionnaireVersion);
