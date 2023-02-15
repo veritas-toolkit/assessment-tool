@@ -27,7 +27,7 @@
                     </div>
 
                   </div>
-                  <div class="ques-content">{{item2.question}}</div>
+                  <div v-show="!editMainQuesFlag[item2.id]" class="ques-content">{{item2.question}}</div>
                   <el-input v-show="editMainQuesFlag[item2.id]" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
                     <i slot="suffix" class="el-input__icon el-icon-check" @click=""></i>
                     <i slot="suffix" class="el-input__icon el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
@@ -35,7 +35,7 @@
                 </div>
               </template>
             </el-menu-item>
-            <el-input v-show="addMainQuesFlag" v-model="addMainQues" placeholder="Please input a new subquestion">
+            <el-input v-show="addMainQuesFlag" v-model="addMainQues" placeholder="Please input a new main question">
               <i slot="suffix" class="el-input__icon el-icon-check" @click="addMainQuestion(item1.serialNo)"></i>
               <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag = false"></i>
             </el-input>
@@ -107,6 +107,7 @@ export default {
       menuList: this.menuData,
       editMainQuesFlag: {},
       editMainQues: {},
+      deleteFlag: false
     }
   },
   created() {
@@ -114,7 +115,10 @@ export default {
   },
   methods: {
     handleSelect(questionId) {
-      this.$emit("getId",questionId)
+      if (!this.deleteFlag) {
+        this.$emit("getId",questionId)
+      }
+      this.deleteFlag = false
     },
     addMainQuestion(stepNo) {
       let newMainQues = {}
@@ -127,15 +131,19 @@ export default {
         if (res.status == 200) {
           this.$emit("getId",res.data.question.id.toString())
           this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
-          console.log(this.menuList)
           this.addMainQues = ''
           this.addMainQuesFlag = false
         }
       })
     },
     deleteMainQues(id) {
+      this.deleteFlag = true
       this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
+        if (res.status == 200) {
+          this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          let qId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
 
+        }
       })
     }
   }
