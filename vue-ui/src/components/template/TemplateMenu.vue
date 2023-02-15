@@ -2,7 +2,7 @@
   <div style="height: 100%;background-color: #F2F2F2">
     <el-collapse class="BarlowBold" v-model="activeName" accordion>
       <el-menu :default-active="defaultId" class="myMenu" unique-opened active-text-color="#78BED3" @select="handleSelect">
-        <div class="main-question" v-for="(item1,index1) in menuData" :key="index1">
+        <div class="main-question" v-for="(item1,index1) in menuList" :key="index1">
           <el-collapse-item :name="item1.step" :style="index1 == 0? 'margin-top: 6px;':''">
             <!--main question-->
             <template slot="title" class="BarlowBold">
@@ -22,18 +22,24 @@
                     <div class="ques-img">
                       <img src="../../assets/adminPic/upPage.png" alt="">
                       <img src="../../assets/adminPic/downPage.png" alt="">
-                      <img src="../../assets/adminPic/writeProblem.png" alt="">
-                      <img src="../../assets/adminPic/deleteProblem.png" alt="">
+                      <img src="../../assets/adminPic/writeProblem.png" @click="editMainQuesFlag[item2.id] = true" alt="">
+                      <img src="../../assets/adminPic/deleteProblem.png" @click="deleteMainQues(item2.id)" alt="">
                     </div>
 
                   </div>
-                  <div class="ques-content">{{item2.question}}
-                    <span>{{ item2.editType }} </span>
-                  </div>
+                  <div class="ques-content">{{item2.question}}</div>
+                  <el-input v-show="editMainQuesFlag[item2.id]" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
+                    <i slot="suffix" class="el-input__icon el-icon-check" @click=""></i>
+                    <i slot="suffix" class="el-input__icon el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
+                  </el-input>
                 </div>
               </template>
             </el-menu-item>
-            <div class="add-main">
+            <el-input v-show="addMainQuesFlag" v-model="addMainQues" placeholder="Please input a new subquestion">
+              <i slot="suffix" class="el-input__icon el-icon-check" @click="addMainQuestion(item1.serialNo)"></i>
+              <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag = false"></i>
+            </el-input>
+            <div class="add-main" @click="addMainQuesFlag = true" v-show="!addMainQuesFlag">
               <img class="add-main-pic" src="../../assets/questionnairePic/add.svg" alt="">
             </div>
           </el-collapse-item>
@@ -64,6 +70,22 @@ export default {
       required: true
     }
   },
+  watch: {
+    'menuData': function () {
+      this.menuList = this.menuData
+      if (this.menuData.length > 0) {
+        for (let i = 0 ; i < this.menuData.length; i++) {
+          if (this.menuData[i].mainQuestionList && this.menuData[i].mainQuestionList.length > 0) {
+            for (let j = 0 ; j < this.menuData[i].mainQuestionList.length; j++) {
+              this.$set(this.editMainQuesFlag,this.menuData[i].mainQuestionList[j].id,false)
+              this.$set(this.editMainQues,this.menuData[i].mainQuestionList[j].id,this.menuData[i].mainQuestionList[j].question)
+            }
+          }
+        }
+      }
+      // console.log('this.menuList',this.menuList)
+    }
+  },
   data() {
     return {
       activeName: 'Principles to Practice',
@@ -74,6 +96,17 @@ export default {
         '3': require('../../assets/questionnairePic/issues.svg'),
         '4': require('../../assets/questionnairePic/screen.svg')
       },
+      principleMap: {
+        "Generic" : "G",
+        "Fairness" : "F",
+        "Ethics & Accountability" : "EA",
+        "Transparency" : "T"
+      },
+      addMainQuesFlag: false,
+      addMainQues: '',
+      menuList: this.menuData,
+      editMainQuesFlag: {},
+      editMainQues: {},
     }
   },
   created() {
@@ -82,6 +115,28 @@ export default {
   methods: {
     handleSelect(questionId) {
       this.$emit("getId",questionId)
+    },
+    addMainQuestion(stepNo) {
+      let newMainQues = {}
+      newMainQues.projectId = this.projectId
+      newMainQues.principle = this.principleMap[this.principle]
+      newMainQues.step = stepNo
+      newMainQues.question = this.addMainQues
+      newMainQues.subQuestionList = []
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/new`,newMainQues).then(res => {
+        if (res.status == 200) {
+          this.$emit("getId",res.data.question.id.toString())
+          this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
+          console.log(this.menuList)
+          this.addMainQues = ''
+          this.addMainQuesFlag = false
+        }
+      })
+    },
+    deleteMainQues(id) {
+      this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
+
+      })
     }
   }
 }
@@ -164,6 +219,7 @@ export default {
   background: #EDF2F6;
   border-radius: 4px;
   margin: 8px 16px;
+  cursor: pointer;
 }
 .add-main-pic {
   margin: auto;
