@@ -125,7 +125,7 @@ public class ProjectQuestionnaireEditController {
         if (project == null) {
             throw new NotFoundException("The project not found.");
         }
-        if (Objects.equals(questionId, dto.getQuestionId())) {
+        if (!Objects.equals(questionId, dto.getQuestionId())) {
             throw new IllegalRequestException("The question IDs are different.");
         }
         EditMainQuestionAction action = new EditMainQuestionAction();
