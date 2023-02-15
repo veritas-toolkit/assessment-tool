@@ -36,6 +36,7 @@ import java.util.Optional;
 @Data
 //@JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
+@Deprecated
 public class JsonModel {
     private final int CLASS_DISTRIBUTION_MAX_MIN_TIMES = 2;
     @JsonProperty(value = "fairness_init")
