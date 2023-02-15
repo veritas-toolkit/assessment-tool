@@ -3,6 +3,7 @@ package org.veritas.assessment.biz.service.questionnaire;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -48,6 +49,8 @@ public interface QuestionnaireService {
     QuestionnaireVersion addMainQuestion(AddMainQuestionAction action);
 
     QuestionnaireVersion deleteMainQuestion(User operator, Project project, Long questionId);
+
+    QuestionnaireVersion editMainQuestion(EditMainQuestionAction action);
 
     QuestionnaireVersion reorderQuestion(User operator, Integer projectId, Principle principle, AssessmentStep step, List<Long> questionIdList);
 

@@ -12,6 +12,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -294,6 +295,15 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         main.initAddStartQuestionnaireVid(this.getVid());
 
         this.setMainQuestionNodeList(list);
+    }
+    public void editMainQuestion(@Valid EditMainQuestionAction action, Supplier<Long> idSupplier) {
+        QuestionNode mainNode = this.findNodeByQuestionId(action.getQuestionId());
+        if (mainNode == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        QuestionNode node = mainNode.editQuestionContent(action.getQuestion(), action.getOperator(),
+                this.createdTime, idSupplier);
+        this.modifyActionNodeList.add(node);
     }
 
     public void addSubQuestion(AddSubQuestionAction action, Supplier<Long> idSupplier) {

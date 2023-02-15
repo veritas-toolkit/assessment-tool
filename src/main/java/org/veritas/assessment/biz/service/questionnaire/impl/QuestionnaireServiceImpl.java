@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
@@ -204,6 +205,22 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         }
         current.deleteMainQuestion(questionId);
         questionnaireDao.saveStructure(current);
+        return current;
+    }
+
+    @Override
+    public QuestionnaireVersion editMainQuestion(EditMainQuestionAction action) {
+        Date now = new Date();
+        int projectId = action.getProjectId();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        current.editMainQuestion(action, idGenerateService::nextId);
+        questionnaireDao.save(current);
         return current;
     }
 

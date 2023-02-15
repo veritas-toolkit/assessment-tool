@@ -32,11 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionEditDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionReorderDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocWithMainQuestionDto;
@@ -55,6 +57,7 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * Edit the questions of project's questionnaire.
@@ -110,6 +113,31 @@ public class ProjectQuestionnaireEditController {
         }
         QuestionnaireVersion questionnaire = questionnaireService.deleteMainQuestion(operator, project, questionId);
         return new QuestionnaireTocDto(questionnaire, project, operator);
+    }
+
+    @Operation(summary = "Edit a main question.")
+    @PostMapping("/question/{questionId}")
+    public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
+                                        @PathVariable("projectId") Integer projectId,
+                                        @PathVariable("questionId") Long questionId,
+                                        @Valid @RequestBody QuestionEditDto dto) {
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("The project not found.");
+        }
+        if (Objects.equals(questionId, dto.getQuestionId())) {
+            throw new IllegalRequestException("The question IDs are different.");
+        }
+        EditMainQuestionAction action = new EditMainQuestionAction();
+        action.setProjectId(projectId);
+        action.setQuestionId(questionId);
+        action.setQuestion(dto.getQuestion());
+        action.setBasedQuestionVid(dto.getBasedQuestionVid());
+        action.setBasedQuestionnaireVid(dto.getBasedQuestionnaireVid());
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.editMainQuestion(action);
+        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
+        return new QuestionDto(main);
     }
 
 
