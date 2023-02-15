@@ -27,7 +27,7 @@ public class AddMainQuestionAction {
 
     private List<String> subQuestionList;
 
-    private User creator;
+    private User operator;
 
     public QuestionNode toNode(Supplier<Long> idSupplier) {
         List<String> allQuestions = new ArrayList<>();
@@ -59,7 +59,7 @@ public class AddMainQuestionAction {
             questionVersion.setProjectId(projectId);
             questionVersion.setContentEditable(true);
             questionVersion.setAnswerRequired(false);
-            questionVersion.setContentEditUserId(creator.getId());
+            questionVersion.setContentEditUserId(operator.getId());
             questionVersion.setMainQuestionId(mainQuestionId);
 
             node.setQuestionVid(questionVid);

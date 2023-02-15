@@ -84,8 +84,8 @@ public class ProjectQuestionnaireEditController {
         Project project = projectService.findProjectById(projectId);
         dto.setProjectId(projectId);
         AddMainQuestionAction action = dto.toAction();
-        action.setCreator(operator);
-        QuestionnaireVersion questionnaire = questionnaireService.addMainQuestion(operator, action);
+        action.setOperator(operator);
+        QuestionnaireVersion questionnaire = questionnaireService.addMainQuestion(action);
 
         QuestionNode added = questionnaire.find(dto.getPrinciple(), dto.getStep()).stream()
                 .filter(q -> StringUtils.equals(q.questionContent(), dto.getQuestion()))

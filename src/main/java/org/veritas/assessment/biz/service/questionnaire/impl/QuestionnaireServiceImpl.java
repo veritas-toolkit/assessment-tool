@@ -158,11 +158,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     @Transactional
-    public QuestionnaireVersion addMainQuestion(User operator, AddMainQuestionAction action) {
+    public QuestionnaireVersion addMainQuestion(AddMainQuestionAction action) {
         Integer projectId = action.getProjectId();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
 
         Date now = new Date();
+        User operator = action.getOperator();
         // lock questionnaire
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
         Long questionnaireVid = current.getVid();
