@@ -1,0 +1,122 @@
+{
+    "name": "default",
+    "businessScenario": 0,
+    "type": 1,
+    "description": "Default questionnaire for Generic business scenario.",
+    "question": {
+        "G": [
+            {
+                "serial": "G0",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - \"YOUR CONTENT",
+                        "answer_template_name": "G0_S1.ftl"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT",
+                        "answer_template_name": "G0_S2.ftl"
+                    }
+                ]
+            },
+            {
+                "serial": "G1",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            }
+        ],
+        "F": [
+            {
+                "serial": "F0",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            },
+            {
+                "serial": "F1",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            }
+        ],
+        "EA": [
+            {
+                "serial": "EA0",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            },
+            {
+                "serial": "EA1",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            }
+        ],
+        "T": [
+            {
+                "serial": "T0",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            },
+            {
+                "serial": "T1",
+                "step": 0,
+                "question": "main question - YOUR CONTENT",
+                "subQuestionList": [
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    },
+                    {
+                        "question": "sub question - YOUR CONTENT"
+                    }
+                ]
+            }
+        ]
+    }
+}
