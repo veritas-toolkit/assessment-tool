@@ -35,11 +35,11 @@
                 </div>
               </template>
             </el-menu-item>
-            <el-input v-show="addMainQuesFlag" v-model="addMainQues" placeholder="Please input a new main question">
+            <el-input v-show="addMainQuesFlag[item1.serialNo]" v-model="addMainQues[item1.serialNo]" placeholder="Please input a new main question">
               <i slot="suffix" class="el-input__icon el-icon-check" @click="addMainQuestion(item1.serialNo)"></i>
-              <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag = false"></i>
+              <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag[item1.serialNo] = false"></i>
             </el-input>
-            <div class="add-main" @click="addMainQuesFlag = true" v-show="!addMainQuesFlag">
+            <div class="add-main" @click="addMainQuesFlag[item1.serialNo] = true" v-show="!addMainQuesFlag[item1.serialNo]">
               <img class="add-main-pic" src="../../assets/questionnairePic/add.svg" alt="">
             </div>
           </el-collapse-item>
@@ -102,8 +102,20 @@ export default {
         "Ethics & Accountability" : "EA",
         "Transparency" : "T"
       },
-      addMainQuesFlag: false,
-      addMainQues: '',
+      addMainQuesFlag: {
+        0: false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+      },
+      addMainQues: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+      },
       menuList: this.menuData,
       editMainQuesFlag: {},
       editMainQues: {},
@@ -125,14 +137,14 @@ export default {
       newMainQues.projectId = this.projectId
       newMainQues.principle = this.principleMap[this.principle]
       newMainQues.step = stepNo
-      newMainQues.question = this.addMainQues
+      newMainQues.question = this.addMainQues[stepNo]
       newMainQues.subQuestionList = []
       this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/new`,newMainQues).then(res => {
         if (res.status == 200) {
           this.$emit("getId",res.data.question.id.toString())
           this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
-          this.addMainQues = ''
-          this.addMainQuesFlag = false
+          this.addMainQues[stepNo] = ''
+          this.addMainQuesFlag[stepNo] = false
         }
       })
     },
@@ -141,7 +153,6 @@ export default {
       this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
         if (res.status == 200) {
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          let qId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
 
         }
       })
