@@ -209,6 +209,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
+    @Transactional
     public QuestionnaireVersion editMainQuestion(EditMainQuestionAction action) {
         Date now = new Date();
         int projectId = action.getProjectId();

@@ -509,6 +509,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         question.setContentEditUserId(operator.getId());
         question.setContentEditTime(now);
         this.setQuestionVersion(question);
+        this.setQuestionVid(questionVid);
         QuestionMeta subMeta = this.getMeta();
         subMeta.setCurrentVid(questionVid);
         return this;
@@ -519,7 +520,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
                                 String newContent,
                                 @NotNull Date now,
                                 @NotNull Supplier<Long> idSupplier) {
-        if (this.isSub()) {
+        if (!this.isMain()) {
             throw new IllegalStateException();
         }
         QuestionNode subNode = this.getSubList().stream()
@@ -538,6 +539,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
         question.setContentEditTime(now);
 
         subNode.setQuestionVersion(question);
+        subNode.setQuestionVid(subQuestionVid);
         QuestionMeta subMeta = subNode.getMeta();
         subMeta.setCurrentVid(subQuestionVid);
 

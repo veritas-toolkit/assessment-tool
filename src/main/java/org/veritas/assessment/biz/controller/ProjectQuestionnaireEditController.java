@@ -117,10 +117,10 @@ public class ProjectQuestionnaireEditController {
 
     @Operation(summary = "Edit a main question.")
     @PostMapping("/question/{questionId}")
-    public QuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
-                                        @PathVariable("projectId") Integer projectId,
-                                        @PathVariable("questionId") Long questionId,
-                                        @Valid @RequestBody QuestionEditDto dto) {
+    public QuestionnaireTocWithMainQuestionDto editMainQuestion(@Parameter(hidden = true) User operator,
+                                                                @PathVariable("projectId") Integer projectId,
+                                                                @PathVariable("questionId") Long questionId,
+                                                                @Valid @RequestBody QuestionEditDto dto) {
         Project project = projectService.findProjectById(projectId);
         if (project == null) {
             throw new NotFoundException("The project not found.");
@@ -134,9 +134,11 @@ public class ProjectQuestionnaireEditController {
         action.setQuestion(dto.getQuestion());
         action.setBasedQuestionVid(dto.getBasedQuestionVid());
         action.setOperator(operator);
-        QuestionnaireVersion questionnaireVersion = questionnaireService.editMainQuestion(action);
-        QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);
-        return new QuestionDto(main);
+        QuestionnaireVersion questionnaire = questionnaireService.editMainQuestion(action);
+        QuestionNode main = questionnaire.findNodeByQuestionId(questionId);
+        QuestionnaireTocDto questionnaireTocDto = new QuestionnaireTocDto(questionnaire, project, operator);
+        QuestionDto questionDto = new QuestionDto(main);
+        return new QuestionnaireTocWithMainQuestionDto(questionnaireTocDto, questionDto);
     }
 
 

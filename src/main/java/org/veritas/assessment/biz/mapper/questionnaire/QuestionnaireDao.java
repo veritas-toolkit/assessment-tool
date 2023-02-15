@@ -196,6 +196,7 @@ public class QuestionnaireDao {
         // update meta
         questionnaire.getModifyActionNodeList().forEach(node -> {
             questionMetaMapper.updateCurrentVersionId(node.getQuestionId(), node.getQuestionVid());
+            questionVersionMapper.insert(node.getQuestionVersion());
         });
 
         // insert all node
