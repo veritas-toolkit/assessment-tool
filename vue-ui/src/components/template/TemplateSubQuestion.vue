@@ -3,14 +3,14 @@
     <div class="main-ques">
       {{questionData.serial}}. {{questionData.question}}
     </div>
-    <div v-for="(item,index) in subQuestionList" class="sub-ques">
+    <div v-for="(item,index) in subQuestionList" class="sub-ques "> <!--hover-visible-->
       <span v-show="!editSubQuesFlag[item.id]" >{{item.question}}</span>
       <el-input v-show="editSubQuesFlag[item.id]" v-model="editSubQues[item.id]" placeholder="Please input a new subquestion">
         <i slot="suffix" class="el-input__icon el-icon-check" @click="writeSubQues(item.id,item.vid)"></i>
         <i slot="suffix" class="el-input__icon el-icon-close" @click="editSubQuesFlag[item.id] = false"></i>
       </el-input>
       <div>
-        <div class="ques-img" v-show="!editSubQuesFlag[item.id]">
+        <div class="ques-img " v-show="!editSubQuesFlag[item.id]"> <!--target-->
           <img src="../../assets/adminPic/upPage.png" @click="upRecordSubQues(index)" alt="">
           <img src="../../assets/adminPic/downPage.png" @click="downRecordSubQues(index)" alt="">
           <img src="../../assets/adminPic/writeProblem.png" @click="editSubQuesFlag[item.id] = true" alt="">
@@ -65,9 +65,11 @@ export default {
         if (res.status == 200) {
           this.questionData = res.data
           this.subQuestionList = res.data.subQuestionList
-          for (let i=0 ; i<res.data.subQuestionList.length; i++) {
-            this.$set(this.editSubQuesFlag,res.data.subQuestionList[i].id,false)
-            this.$set(this.editSubQues,res.data.subQuestionList[i].id,res.data.subQuestionList[i].question)
+          if (res.data.subQuestionList && res.data.subQuestionList.length) {
+            for (let i=0 ; i<res.data.subQuestionList.length; i++) {
+              this.$set(this.editSubQuesFlag,res.data.subQuestionList[i].id,false)
+              this.$set(this.editSubQues,res.data.subQuestionList[i].id,res.data.subQuestionList[i].question)
+            }
           }
         }
       })
@@ -174,5 +176,11 @@ export default {
     height: 24px;
     margin-left: 8px;
   }
+}
+.target {
+  display: none;
+}
+.hover-visible:hover .target{
+  display: block;
 }
 </style>
