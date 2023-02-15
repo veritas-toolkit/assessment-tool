@@ -133,7 +133,6 @@ public class ProjectQuestionnaireEditController {
         action.setQuestionId(questionId);
         action.setQuestion(dto.getQuestion());
         action.setBasedQuestionVid(dto.getBasedQuestionVid());
-        action.setBasedQuestionnaireVid(dto.getBasedQuestionnaireVid());
         action.setOperator(operator);
         QuestionnaireVersion questionnaireVersion = questionnaireService.editMainQuestion(action);
         QuestionNode main = questionnaireVersion.findNodeByQuestionId(questionId);

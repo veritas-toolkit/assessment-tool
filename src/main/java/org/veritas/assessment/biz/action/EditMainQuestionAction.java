@@ -11,9 +11,6 @@ public class EditMainQuestionAction {
     private Integer projectId;
 
     @NotNull
-    private Long basedQuestionnaireVid;
-
-    @NotNull
     private Long questionId;
 
     @NotNull
