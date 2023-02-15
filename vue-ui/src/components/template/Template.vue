@@ -91,9 +91,9 @@ export default {
     this.getQuestionnaireMenu()
   },
   watch: {
-    'addSubQuesFlag': function () {
-      console.log(this.addSubQuesFlag)
-    },
+    'principle': function () {
+      this.getQuestionnaireMenu()
+    }
   },
   methods: {
     updateValue(data) {
