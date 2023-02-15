@@ -12,8 +12,8 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonModelTest {
-    public static final String EXAMPLE_CS = "json2/credit_score.json";
-    public static final String EXAMPLE_CM = "json2/customer_marketing.json";
+    public static final String EXAMPLE_CS = "json2/model_artifact_credit_scoring_20230117_1251.json";
+    public static final String EXAMPLE_CM = "json2/model_artifact_customer_marketing_20230117_1143.json";
 
 
     public static JsonModel load(String urlString) throws IOException {
