@@ -6,9 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.javassist.Loader;
+import org.springframework.http.HttpEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -29,7 +32,20 @@ public class PlotController {
     }
 
     @Operation(summary = "Fetch simple bar data")
-    @GetMapping()
+    @GetMapping(path = "/plot")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public HttpEntity<?> plot(@PathVariable("projectId") int projectId,
+                              @RequestParam("plot-id") String plotId) {
+        switch (plotId) {
+            case "plot-bar":
+                return new HttpEntity<>(this.simpleBarDto(projectId));
+            default:
+                return null;
+        }
+    }
+
+    @Operation(summary = "Fetch simple bar data")
+    @GetMapping(path = "/plot-bar/", params = {"plot-type=test"})
     public SimpleBarDto simpleBarDto(@PathVariable("projectId") int projectId) {
         Map<String, BigDecimal> data = new LinkedHashMap<>();
         data.put("Mon", new BigDecimal(120));
@@ -41,6 +57,16 @@ public class PlotController {
         data.put("Sun", new BigDecimal(130));
         SimpleBarDto dto = new SimpleBarDto("bar", data);
         return dto;
+    }
+
+    @Operation(summary = "Fetch simple bar data")
+    @GetMapping(path = "/confusionmatrix/", params = {"plot-type=confusion-matrix"})
+    public HeatmapDto heatmapDto() {
+        return null;
+    }
+
+    public static class HeatmapDto {
+
     }
 
 }
