@@ -29,7 +29,7 @@
                   </div>
                   <div v-show="!editMainQuesFlag[item2.id]" class="ques-content">{{item2.question}}</div>
                   <el-input v-show="editMainQuesFlag[item2.id]" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
-                    <i slot="suffix" class="el-input__icon el-icon-check" @click="editMainQuestion(item2.id)"></i>
+                    <i slot="suffix" class="el-input__icon el-icon-check" @click="editMainQuestion(item2.id,item2.vid)"></i>
                     <i slot="suffix" class="el-input__icon el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
                   </el-input>
                 </div>
@@ -157,8 +157,16 @@ export default {
         }
       })
     },
-    editMainQuestion(id) {
-      console.log(id)
+    editMainQuestion(id,vid) {
+      let editQues = {}
+      editQues.questionId = id
+      editQues.basedQuestionVid = vid
+      editQues.question = this.editMainQues[id]
+      this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`,editQues).then(res => {
+        if (res.status == 200) {
+          this.$emit("getId",res.data.id)
+        }
+      })
     },
     upRecordMainQues(index,step) {
       let mainQuesRecorder = {}
