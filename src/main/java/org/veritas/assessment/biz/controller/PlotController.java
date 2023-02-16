@@ -35,6 +35,7 @@ public class PlotController {
     @GetMapping(path = "/plot")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public HttpEntity<?> plot(@PathVariable("projectId") int projectId,
+                              @RequestParam(name = "jsonId", required = false) Integer jsonId,
                               @RequestParam("plot-id") String plotId) {
         switch (plotId) {
             case "plot-bar":
