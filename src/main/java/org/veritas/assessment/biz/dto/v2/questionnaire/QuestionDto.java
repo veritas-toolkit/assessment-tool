@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.dto.v2.questionnaire;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -64,6 +65,12 @@ public class QuestionDto {
         this.answer = questionVersion.getAnswer();
         this.answerEditTime = questionVersion.getAnswerEditTime();
 //        this.answerEditUser = answerEditUser;
+
+        if (StringUtils.isEmpty(this.answer)) {
+            this.answer = "<div>hello</div>\n" +
+                    "<img src=\"api/project/2/image/1.png\"/>\n" +
+                    "<div>hello</div>";
+        }
 
         List<QuestionNode> subList = questionNode.getSubList();
         if (subList != null) {
