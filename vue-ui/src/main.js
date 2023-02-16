@@ -9,11 +9,13 @@ import '../src/assets/css/global.css'
 import Print from './plugins/print.js'
 import { Message } from 'element-ui';
 import { format } from 'timeago.js';
+import echarts from 'echarts'
 
 Vue.use(Print) // 注册
 Vue.use(VueCookies)
 Vue.config.productionTip = false
 Vue.prototype.$message = Message;
+Vue.prototype.$echarts = echarts;
 
 axios.interceptors.response.use(
   function(response) {
