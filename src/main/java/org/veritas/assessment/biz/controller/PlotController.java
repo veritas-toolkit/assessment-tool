@@ -35,8 +35,11 @@ public class PlotController {
     @GetMapping(path = "/plot")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public HttpEntity<?> plot(@PathVariable("projectId") int projectId,
-                              @RequestParam(name = "jsonId", required = false) Integer jsonId,
+                              @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid,
                               @RequestParam("plot-id") String plotId) {
+        if (questionnaireVid == null) {
+            // fetch the latest questionnaire
+        }
         switch (plotId) {
             case "plot-bar":
                 return new HttpEntity<>(this.simpleBarDto(projectId));
