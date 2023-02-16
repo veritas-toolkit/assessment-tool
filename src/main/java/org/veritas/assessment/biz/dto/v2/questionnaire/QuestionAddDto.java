@@ -35,7 +35,11 @@ public class QuestionAddDto {
         action.setPrinciple(this.principle);
         action.setStep(this.step);
         action.setQuestion(this.getQuestion());
-        action.setSubQuestionList(Collections.unmodifiableList(this.subQuestionList));
+        if (this.subQuestionList == null) {
+            action.setSubQuestionList(Collections.emptyList());
+        } else {
+            action.setSubQuestionList(Collections.unmodifiableList(this.subQuestionList));
+        }
         return action;
     }
 }

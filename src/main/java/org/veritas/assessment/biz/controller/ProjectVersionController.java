@@ -28,15 +28,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
-import org.veritas.assessment.biz.dto.v1.questionnaire.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.common.exception.NotFoundException;
 
 import java.io.IOException;
@@ -56,8 +53,6 @@ public class ProjectVersionController {
     @Autowired
     private ProjectReportService reportService;
 
-    @Autowired
-    private ProjectVersionQuestionnaireService1 questionnaireService;
 
     // {versionId}/report
     @Operation(summary = "Download the report.")
@@ -126,18 +121,18 @@ public class ProjectVersionController {
 
     @Operation(summary = "Find the questionnaire of the report.")
     @GetMapping("/questionnaire")
-    public QuestionnaireDto<ProjectVersionQuestion, ProjectVersionQuestionnaire> findQuestionnaire(
+    public QuestionnaireTocDto findQuestionnaire(
             @PathVariable("projectId") Integer projectId,
             @PathVariable("versionIdOfProject") Integer projectVersionId) {
         ProjectReport report = reportService.findReport(projectId, projectVersionId);
         if (report == null) {
             throw new NotFoundException("Not found report of the project.");
         }
-        ProjectVersionQuestionnaire questionnaire =
-                questionnaireService.findByVersionId(report.getQuestionnaireVersionId());
-        if (questionnaire == null) {
-            throw new NotFoundException("Not the questionnaire.");
-        }
-        return new QuestionnaireDto<>(questionnaire);
+        // TODO: 2023/2/16 fetch questionnaire by vid; 
+//        QuestionnaireVersion questionnaire = null;
+//        if (questionnaire == null) {
+//            throw new NotFoundException("Not the questionnaire.");
+//        }
+        return null;
     }
 }

@@ -84,6 +84,7 @@ public class QuestionnaireTocDto {
     }
 
     @Data
+    @NoArgsConstructor
     public static class PrincipleAssessment {
         // Generic
         private String principle;
@@ -108,6 +109,7 @@ public class QuestionnaireTocDto {
     }
 
     @Data
+    @NoArgsConstructor
     public static class Step {
         // 2
         private int serialNo;
@@ -129,6 +131,7 @@ public class QuestionnaireTocDto {
     }
 
     @Data
+    @NoArgsConstructor
     public static class MainQuestion {
         private Long id;
         private Long vid;

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
+@Deprecated
 public class QuestionnaireDto<T extends QuestionValue<T>, Q extends QuestionnaireValue<T>> {
 
     List<QuestionnairePart<T>> partList;
