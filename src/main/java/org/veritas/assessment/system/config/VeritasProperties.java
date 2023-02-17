@@ -55,6 +55,8 @@ public class VeritasProperties {
 
     private String pythonCommand;
 
+    private boolean lazyLoadPython = false;
+
     @PostConstruct
     public void init() throws Exception {
         File dir = new File(filePath);
@@ -70,11 +72,20 @@ public class VeritasProperties {
             }
         }
 
-
-        pythonCommandTest();
+        if (!lazyLoadPython) {
+            loadPythonCommand();
+        }
     }
 
-    private void pythonCommandTest() throws Exception {
+    public String getPythonCommand() {
+        if (!StringUtils.isEmpty(pythonCommand)) {
+            loadPythonCommand();
+        }
+        return pythonCommand;
+    }
+
+
+    private void loadPythonCommand() {
         if (StringUtils.isEmpty(this.pythonCommand)) {
             String defaultPython3 = this.getDefaultPython3();
             if (StringUtils.isEmpty(defaultPython3)) {

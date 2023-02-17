@@ -11,6 +11,7 @@ spring:
 veritas:
   auto-generate-answer-strict: true
   file-path: 'target/file/project'
+  lazy-load-python: true
 
 logging:
   config: classpath:log4j2-test.xml
