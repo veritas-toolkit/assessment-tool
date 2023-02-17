@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
@@ -570,6 +571,27 @@ public class QuestionNode implements Comparable<QuestionNode> {
             ++_subSerial;
         }
         this.setSubList(newSubList);
+    }
+
+    public boolean hasAnswer() {
+        boolean currentAnswerHasFilled = false;
+        if (this.getQuestionVersion() != null) {
+            currentAnswerHasFilled = !StringUtils.isEmpty(this.getQuestionVersion().getAnswer());
+        }
+        if (currentAnswerHasFilled) {
+            return true;
+        }
+        if (this.isSub()) {
+            return false;
+        } else {
+            for (QuestionNode sub : this.getSubList()) {
+                if (sub.hasAnswer()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 
 }

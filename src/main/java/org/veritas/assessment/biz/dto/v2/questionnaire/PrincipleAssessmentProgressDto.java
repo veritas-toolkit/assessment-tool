@@ -5,9 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -19,15 +26,25 @@ public class PrincipleAssessmentProgressDto {
 
     private int completed;
 
-    @Deprecated
-    public static List<PrincipleAssessmentProgressDto> testData() {
-
+    public static List<PrincipleAssessmentProgressDto> from(Project project,
+                                                            QuestionnaireVersion questionnaireVersion) {
+        if (project == null || questionnaireVersion == null) {
+            return Collections.emptyList();
+        }
+        List<Principle> principleList = project.principles();
+        if (principleList.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<PrincipleAssessmentProgressDto> progressDtoList = new ArrayList<>();
-
-        progressDtoList.add(new PrincipleAssessmentProgressDto(Principle.G.getDescription(), 0, 13));
-        progressDtoList.add(new PrincipleAssessmentProgressDto(Principle.F.getDescription(), 2, 12));
-        progressDtoList.add(new PrincipleAssessmentProgressDto(Principle.EA.getDescription(), 6, 8));
-        progressDtoList.add(new PrincipleAssessmentProgressDto(Principle.T.getDescription(), 8, 17));
-        return progressDtoList;
+        for (Principle principle : principleList) {
+            PrincipleAssessmentProgressDto dto = new PrincipleAssessmentProgressDto();
+            dto.setPrinciple(principle.getShortName());
+            List<QuestionNode> mainList = questionnaireVersion.findMainQuestion(principle);
+            dto.setCount(mainList.size());
+            int completedCount = mainList.stream().mapToInt(main -> main.hasAnswer() ? 1 : 0).sum();
+            dto.setCompleted(completedCount);
+            progressDtoList.add(dto);
+        }
+        return Collections.unmodifiableList(progressDtoList);
     }
 }

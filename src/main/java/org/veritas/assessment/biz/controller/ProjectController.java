@@ -52,11 +52,13 @@ import org.veritas.assessment.biz.dto.RoleDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -175,6 +177,8 @@ public class ProjectController {
         return projectDtoConverter.convertFrom(project);
     }
 
+    private QuestionnaireService questionnaireService;
+
     @Operation(summary = "Get the project information.")
     @GetMapping("/{projectId}/detail")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
@@ -187,7 +191,8 @@ public class ProjectController {
         ProjectDetailDto projectDetailDto = new ProjectDetailDto();
         projectDetailDto.setProject(projectDto);
         // FIXME: 2023/1/31 query from the database.
-        projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.testData());
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.from(project, questionnaireVersion));
 
 
         UserRole userRole = roleService.findUserRole(operator.getId(), ResourceType.PROJECT, projectId);
