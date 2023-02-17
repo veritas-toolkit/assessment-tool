@@ -116,6 +116,21 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return update(null, wrapper);
     }
 
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#project.id", condition = "#project != null && #project.id != null"),
+            }
+    )
+    default int updateModelArtifactVid(Project project) {
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(project.getId());
+        Objects.requireNonNull(project.getCurrentModelArtifactVid());
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, project.getId());
+        wrapper.set(Project::getCurrentModelArtifactVid, project.getCurrentModelArtifactVid());
+        return update(null, wrapper);
+    }
+
     /**
      * Number of projects created by {#uid}. The result can be used to limit user create too many project.
      *

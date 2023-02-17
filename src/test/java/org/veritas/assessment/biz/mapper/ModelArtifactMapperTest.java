@@ -17,7 +17,6 @@
 package org.veritas.assessment.biz.mapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,48 +26,27 @@ import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-public class ModelArtifactMapperTest {
+class ModelArtifactMapperTest {
     @Autowired
-    private ModelArtifactMapper mapper;
+    private ModelArtifactMapper modelArtifactMapper;
 
-    private ModelArtifact modelArtifact;
-
-    @BeforeEach
-    void setUp() {
-        modelArtifact = new ModelArtifact();
+    @Test
+    void name() {
+        assertNotNull(modelArtifactMapper);
+        ModelArtifact modelArtifact = new ModelArtifact();
         modelArtifact.setProjectId(8);
         modelArtifact.setFilename("filename");
         modelArtifact.setUploadUserId(9);
         modelArtifact.setUploadTime(new Date());
         String jsonContent = "fake json content";
         modelArtifact.setJsonContent(jsonContent);
-    }
+        modelArtifactMapper.add(modelArtifact);
 
-    @Test
-    void testUpdateOrInsert_success() {
-        assertNotNull(mapper);
-        int result = mapper.updateOrInsert(modelArtifact);
-        assertEquals(1, result);
-    }
-
-    @Test
-    void testUpdateOrInsert_againSuccess() throws Exception {
-        int result = mapper.updateOrInsert(modelArtifact);
-        assertEquals(1, result);
-
-        String jsonContent = "new fake json content";
-        Thread.sleep(1000);
-        Date now = new Date();
-        modelArtifact.setJsonContent(jsonContent);
-        modelArtifact.setUploadTime(now);
-        result = mapper.updateOrInsert(modelArtifact);
-        assertEquals(1, result);
     }
 }

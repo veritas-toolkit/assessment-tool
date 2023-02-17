@@ -18,9 +18,9 @@ create table vat2_model_artifact (
     project_id integer not null,
     upload_user_id integer not null,
     upload_time varchar(100) not null,
-    filename varchar(1000),
-    json_zip_path varchar(1000),
-    json_content_sha256 varchar(1000)
+    filename varchar(1000) not null,
+    json_zip_path varchar(1000) not null,
+    json_content_sha256 varchar(1000) not null
 );
 
 create index vat2_ix_model_v_pid on vat2_model_artifact(project_id);

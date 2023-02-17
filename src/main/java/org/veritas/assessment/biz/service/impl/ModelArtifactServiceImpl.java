@@ -28,12 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.mapper.ModelArtifactMapper;
-import org.veritas.assessment.biz.mapper.ModelArtifactVersionMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -58,9 +55,8 @@ import java.util.zip.ZipOutputStream;
 public class ModelArtifactServiceImpl implements ModelArtifactService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
-    private ModelArtifactVersionMapper modelArtifactVersionMapper;
-    @Autowired
     private ModelArtifactMapper modelArtifactMapper;
+
     @Autowired
     private VeritasProperties veritasProperties;
 
@@ -102,8 +98,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
     @Override
     @Transactional
     public ModelArtifact findCurrent(Integer projectId) {
-        ModelArtifact artifact = modelArtifactMapper.findByProjectId(projectId);
-        return artifact;
+        return modelArtifactMapper.findByProjectId(projectId);
     }
 
     @Override
@@ -116,7 +111,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         ModelArtifact current = modelArtifactMapper.findByProjectId(modelArtifact.getProjectId());
         if (current == null || !StringUtils.equals(modelArtifact.getJsonContentSha256(), current.getJsonContentSha256())) {
             saveJsonFile(modelArtifact);
-            modelArtifactMapper.updateOrInsert(modelArtifact);
+            modelArtifactMapper.add(modelArtifact);
         } else {
             log.info("The json file is same as before.");
         }
@@ -124,38 +119,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
 
     @Override
     @Transactional
-    public ModelArtifactVersion createNewVersionIfUpdated(Integer projectId) {
-        Objects.requireNonNull(projectId);
-        ModelArtifact current = findCurrent(projectId);
-        if (current == null) {
-            throw new ErrorParamException(String.format("The project[%d] does not have any model artifact file.",
-                    projectId));
-        }
-        ModelArtifactVersion version = null;
-        ModelArtifactVersion last = modelArtifactVersionMapper.findLatest(projectId);
-        if (last != null && StringUtils.equals(current.getJsonContent(), last.getJsonContent())) {
-            version = last;
-        } else {
-            version = ModelArtifactVersion.copyFrom(current);
-            modelArtifactVersionMapper.add(version);
-        }
-        return version;
-    }
-
-    @Override
-    @Transactional
-    public ModelArtifactVersion findLatestVersion(Integer projectId) {
-        ModelArtifactVersion version = modelArtifactVersionMapper.findLatest(projectId);
-        if (version == null) {
-            log.warn("There is model artifact of projectId: {}", projectId);
-        }
-        return version;
-    }
-
-    @Override
-    @Transactional
-    public ModelArtifactVersion findByVersionId(Integer versionId) {
-        ModelArtifactVersion version = modelArtifactVersionMapper.findByVersionId(versionId);
+    public ModelArtifact findByVersionId(Integer versionId) {
+        ModelArtifact version = modelArtifactMapper.findByVersionId(versionId);
         if (version == null) {
             log.warn("There is model artifact of version: {}", versionId);
         }
@@ -163,7 +128,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
     }
 
     @Override
-    public <T extends ModelArtifactValue> void loadContent(T modelArtifact) throws IOException {
+    public void loadContent(ModelArtifact modelArtifact) throws IOException {
         try {
             this.loadFile(modelArtifact);
         } catch (IOException exception) {
@@ -221,7 +186,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         artifact.setJsonZipPath(FilenameUtils.getName(zip.getPath()));
     }
 
-    private void loadFile(ModelArtifactValue artifact) throws IOException {
+    private void loadFile(ModelArtifact artifact) throws IOException {
         Objects.requireNonNull(artifact);
         Objects.requireNonNull(artifact.getProjectId());
         StringUtils.isEmpty(artifact.getFilename());

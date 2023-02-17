@@ -48,7 +48,6 @@ import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.RoleDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
@@ -109,6 +108,7 @@ public class ProjectController {
 
     @Autowired
     TemplateQuestionnaireService templateQuestionnaireService;
+
     @Operation(summary = "Get pageable project list which current user can access.")
     @GetMapping("")
     public Pageable<ProjectDto> listProject(

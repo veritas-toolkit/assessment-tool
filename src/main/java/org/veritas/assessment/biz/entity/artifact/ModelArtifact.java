@@ -16,17 +16,45 @@
 
 package org.veritas.assessment.biz.entity.artifact;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.type.JdbcType;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
+import org.veritas.assessment.common.handler.TimestampHandler;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.Date;
+
 @Data
-@TableName(autoResultMap = true)
+@TableName(value = "vat_model_artifact", autoResultMap = true)
 @Slf4j
-public class ModelArtifact extends ModelArtifactValue {
-    @TableId
+public class ModelArtifact {
+    @TableId(type = IdType.AUTO)
+    private Integer versionId;
+
     private Integer projectId;
+
+    private Integer uploadUserId;
+
+    @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
+    private Date uploadTime;
+
+    private String filename;
+
+    @JsonIgnoreProperties
+    private String jsonZipPath;
+
+    private String jsonContentSha256;
+
+    @TableField(exist = false)
+    @JsonIgnoreProperties
+    private String jsonContent;
+
+    @TableField(exist = false)
+    @JsonIgnoreProperties
+    private JsonModel jsonModel;
 }

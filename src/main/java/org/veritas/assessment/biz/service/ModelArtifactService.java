@@ -17,8 +17,6 @@
 package org.veritas.assessment.biz.service;
 
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.common.exception.FileSystemException;
 
@@ -36,12 +34,8 @@ public interface ModelArtifactService {
 
     ModelArtifact findCurrent(Integer projectId);
 
-    ModelArtifactVersion createNewVersionIfUpdated(Integer projectId);
+    ModelArtifact findByVersionId(Integer versionId);
 
-    ModelArtifactVersion findLatestVersion(Integer projectId);
-
-    ModelArtifactVersion findByVersionId(Integer versionId);
-
-    <T extends ModelArtifactValue> void loadContent(T modelArtifact) throws IOException;
+    void loadContent(ModelArtifact modelArtifact) throws IOException;
 
 }

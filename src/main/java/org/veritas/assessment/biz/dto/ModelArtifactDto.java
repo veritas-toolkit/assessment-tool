@@ -18,7 +18,7 @@ package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 
 import java.util.Date;
 
@@ -35,7 +35,7 @@ public class ModelArtifactDto {
 
     String jsonContentSha256;
 
-    public ModelArtifactDto(ModelArtifactValue modelArtifact) {
+    public ModelArtifactDto(ModelArtifact modelArtifact) {
         this.projectId = modelArtifact.getProjectId();
         this.filename = modelArtifact.getFilename();
         this.uploadUserId = modelArtifact.getUploadUserId();

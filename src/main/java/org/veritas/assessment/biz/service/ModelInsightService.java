@@ -27,6 +27,6 @@ public interface ModelInsightService {
      * @param project       questionnaire's project
      * @param modelArtifact artifact
      */
-    void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
 
+    void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
 }

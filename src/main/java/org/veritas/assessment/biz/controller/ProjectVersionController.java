@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.ProjectReport;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
@@ -86,7 +86,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifactVersion artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }
@@ -102,7 +102,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifactVersion artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }

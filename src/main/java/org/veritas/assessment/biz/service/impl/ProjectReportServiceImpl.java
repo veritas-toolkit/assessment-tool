@@ -45,7 +45,7 @@ import org.springframework.ui.ModelMap;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
@@ -155,14 +155,14 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         }
 
 
-        ModelArtifactVersion modelArtifactVersion = modelArtifactService.createNewVersionIfUpdated(projectId);
+        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
         ProjectVersionQuestionnaire questionnaire = projectVersionQuestionnaireService.create(projectId);
 
         ProjectReport report = new ProjectReport();
         report.setProjectId(projectId);
         report.setCreatorUserId(operator.getId());
         report.setQuestionnaireVersionId(questionnaire.getVersionId());
-        report.setModelArtifactVersionId(modelArtifactVersion.getVersionId());
+        report.setModelArtifactVersionId(modelArtifact.getVersionId());
         report.setVersion(versionString);
         report.setMessage(message);
         report.setCreatedTime(new Date());

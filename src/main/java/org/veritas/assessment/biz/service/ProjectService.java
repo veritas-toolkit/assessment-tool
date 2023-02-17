@@ -30,6 +30,7 @@ import java.util.List;
 
 public interface ProjectService {
     Project createProject(User operator, Project project, TemplateQuestionnaire templateQuestionnaire);
+
     Project createProject(User operator, Project project, Project copyFromProject);
 
     int delete(Integer projectId);
