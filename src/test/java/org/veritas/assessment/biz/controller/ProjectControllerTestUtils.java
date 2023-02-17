@@ -69,13 +69,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Component
 class ProjectControllerTestUtils {
     ObjectMapper objectMapper = new ObjectMapper();
-    @Autowired
+
+    @Autowired(required = false)
     private MockMvc mockMvc;
-
-
 
     public ProjectDto createProject() throws Exception {
         ProjectCreateDto createDto = new ProjectCreateDto();

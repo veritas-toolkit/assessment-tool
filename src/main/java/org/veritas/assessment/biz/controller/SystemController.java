@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter2;
+import org.veritas.assessment.biz.dto.BusinessScenarioDto;
 import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -51,8 +52,8 @@ public class SystemController {
     private SystemConfigService systemConfigService;
 
     @GetMapping("/business_scenario")
-    public List<BusinessScenario> getBizScenarioList() {
-        return systemService.findAllBusinessScenarioList();
+    public List<BusinessScenarioDto> getBizScenarioList() {
+        return BusinessScenarioDto.fromList(systemService.findAllBusinessScenarioList());
     }
 
     @GetMapping("/questionnaire_template")

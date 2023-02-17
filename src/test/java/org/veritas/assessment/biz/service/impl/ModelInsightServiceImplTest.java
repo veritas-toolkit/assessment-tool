@@ -34,7 +34,6 @@ import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
-import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
@@ -59,7 +58,7 @@ class ModelInsightServiceImplTest {
     @Autowired
     ModelArtifactService modelArtifactService;
     @Autowired
-    private ModelInsightService modelInsightService;
+    private ModelInsightServiceImpl modelInsightService;
 
     @Autowired
     private TemplateQuestionnaireService templateQuestionnaireService;
@@ -107,7 +106,6 @@ class ModelInsightServiceImplTest {
                 }
             }
         }
-
     }
 
 

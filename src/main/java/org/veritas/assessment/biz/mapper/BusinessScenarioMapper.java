@@ -20,10 +20,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 
 import java.util.List;
 
+@Repository
 @CacheConfig(cacheNames = "business_scenario_list")
 public interface BusinessScenarioMapper extends BaseMapper<BusinessScenario> {
 

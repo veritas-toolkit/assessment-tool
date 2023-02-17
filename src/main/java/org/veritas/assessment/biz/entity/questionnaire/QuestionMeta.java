@@ -1,6 +1,7 @@
 package org.veritas.assessment.biz.entity.questionnaire;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -31,6 +32,9 @@ public class QuestionMeta implements Cloneable {
     private boolean contentEditable = DEFAULT_EDITABLE;
 
     private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
+
+    @TableField(exist = false)
+    private String answerTemplateFilename;
 
     /**
      * Add this question the questionnaire from this questionnaire version.

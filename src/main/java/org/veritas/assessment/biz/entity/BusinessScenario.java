@@ -16,11 +16,17 @@
 
 package org.veritas.assessment.biz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class BusinessScenario {
     private Integer code;
+
     private String name;
+
     private String description;
+
+    @JsonIgnore
+    private String answerTemplatePath;
 }

@@ -119,8 +119,6 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             modelArtifactMapper.updateOrInsert(modelArtifact);
         } else {
             log.info("The json file is same as before.");
-            // do nothing.
-//            throw new ErrorParamException("The model artifact file is same as before.");
         }
     }
 
