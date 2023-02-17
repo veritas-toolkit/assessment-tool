@@ -66,10 +66,38 @@ public class QuestionDto {
         this.answerEditTime = questionVersion.getAnswerEditTime();
 //        this.answerEditUser = answerEditUser;
 
+        // FIXME: 2023/2/17 
         if (StringUtils.isEmpty(this.answer)) {
-            this.answer = "<div>hello</div>\n" +
-                    "<img src=\"api/project/2/image/1.png\"/>\n" +
-                    "<div>hello</div>";
+            this.answer = "<div>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_calibrationCurveLineChart.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"two\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_classDistributionPieChart.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_correlationHeatMapChart.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_MARRIAGE.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_SEX.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_MARRIAGE.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "\n" +
+                    "\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_SEX.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_SEX.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_performanceLineChart.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "\n" +
+                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_weightedConfusionHeatMapChart.png\"/>\n" +
+                    "    <div> 1111111111111111111111111 </div>\n" +
+                    "\n" +
+                    "\n" +
+                    "</div>";
         }
 
         List<QuestionNode> subList = questionNode.getSubList();
@@ -77,4 +105,6 @@ public class QuestionDto {
             this.subQuestionList = subList.stream().map(QuestionDto::new).collect(Collectors.toList());
         }
     }
+    // TODO: 2023/2/17
+    // map<img_id, plot_data>
 }

@@ -18,6 +18,11 @@ package org.veritas.assessment.biz.service;
 
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+
+import java.util.Map;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 public interface ModelInsightService {
 
@@ -29,4 +34,6 @@ public interface ModelInsightService {
      */
 
     void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
+
+    Map<Long, String> generateAnswer(Project project, QuestionnaireVersion questionnaireVersion, ModelArtifact modelArtifact);
 }

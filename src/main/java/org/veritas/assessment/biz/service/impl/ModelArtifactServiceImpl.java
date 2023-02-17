@@ -26,9 +26,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.jsonmodel.Fairness;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.mapper.ModelArtifactMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
@@ -42,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
@@ -134,6 +137,28 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         } catch (IOException exception) {
             log.warn("Load json file failed", exception);
             throw exception;
+        }
+    }
+
+    // FIXME: 2023/2/17 to delete
+    @Override
+    public Object findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
+        /*
+        JsonModel jsonModel = modelArtifact.getJsonModel();
+        if (jsonModel == null) {
+            return null;
+        }
+        Fairness fairness = jsonModel.getFairness();
+        return fairness.getClassDistribution();
+         */
+        final String  cs_json = "json_test/model_artifact_credit_scoring_20230117_1251.json";
+        try (InputStream is = new ClassPathResource(cs_json).getInputStream()) {
+            String jsonString = IOUtils.toString(is, StandardCharsets.UTF_8);
+            JsonModel jsonModel = objectMapper.readValue(jsonString, JsonModel.class);
+            return jsonModel.getFairness().getClassDistribution();
+        } catch (IOException e) {
+            log.error("load json failed.", e);
+            return null;
         }
     }
 

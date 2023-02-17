@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.service.impl;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,8 @@ import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.model.SpecialParameterContainer;
@@ -37,13 +40,18 @@ import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.SystemService;
+import org.veritas.assessment.biz.service.questionnaire.FreemarkerTemplateService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.system.config.VeritasProperties;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -65,9 +73,39 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     private SystemService systemService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FreemarkerTemplateService freemarkerTemplateService;
+
+    @Override
+    public Map<Long, String> generateAnswer(Project project,
+                                            QuestionnaireVersion questionnaireVersion,
+                                            ModelArtifact modelArtifact) {
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(questionnaireVersion);
+        Objects.requireNonNull(modelArtifact);
+        ModelMap modelMap = genModelMap(project, modelArtifact);
+        List<QuestionNode> allQuestionList = questionnaireVersion.finAllQuestionNodeList();
+        Map<Long, String> map = new LinkedHashMap<>();
+        for (QuestionNode questionNode : allQuestionList) {
+            QuestionMeta meta = questionNode.getMeta();
+            Template template = freemarkerTemplateService.findTemplate(project.getBusinessScenario(), questionNode);
+            // write the freemarker output to a StringWriter
+            StringWriter stringWriter = new StringWriter();
+            try {
+                template.process(modelMap, stringWriter);
+                String answer = stringWriter.toString();
+                map.put(questionNode.getQuestionId(), answer);
+            } catch (TemplateException | IOException e) {
+                log.error("freemarker template process filed.", e);
+            }
+        }
+        return Collections.unmodifiableMap(map);
+
+    }
 
     @Override
     @Transactional
+    @Deprecated
     public void autoGenerateAnswer(Project project, ModelArtifact modelArtifact) {
         ModelMap modelMap = genModelMap(project, modelArtifact);
 
@@ -100,6 +138,13 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         }
         modelMap.addAttribute("businessScenario", businessScenario);
         return modelMap;
+    }
+
+    private String autoAnswer(ModelMap modelMap, Integer businessScenario, QuestionNode questionNode) {
+        QuestionMeta meta = questionNode.getMeta();
+//        if (meta.getAnswerTemplateFilename())
+
+        return null;
     }
 
 

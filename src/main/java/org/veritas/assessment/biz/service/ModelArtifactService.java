@@ -38,4 +38,7 @@ public interface ModelArtifactService {
 
     void loadContent(ModelArtifact modelArtifact) throws IOException;
 
+    Object findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc);
+
+
 }

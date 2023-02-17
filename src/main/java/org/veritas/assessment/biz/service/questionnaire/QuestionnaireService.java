@@ -3,6 +3,7 @@ package org.veritas.assessment.biz.service.questionnaire;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
@@ -42,6 +43,8 @@ public interface QuestionnaireService {
 
     // edit answer
 
+    QuestionnaireVersion editAnswer(List<EditAnswerAction> editAnswerActionList);
+    @Deprecated
     QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
 
     Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize);

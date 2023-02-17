@@ -30,7 +30,7 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 import java.util.Date;
 
 @Data
-@TableName(value = "vat_model_artifact", autoResultMap = true)
+@TableName(autoResultMap = true)
 @Slf4j
 public class ModelArtifact {
     @TableId(type = IdType.AUTO)

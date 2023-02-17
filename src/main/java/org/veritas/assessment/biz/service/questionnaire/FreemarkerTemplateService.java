@@ -37,10 +37,10 @@ public class FreemarkerTemplateService {
     }
 
 
-    public Template findTemplate(Integer businessScenarioNo, QuestionNode questionNode) throws IOException  {
-        Objects.requireNonNull(businessScenarioNo);
-        Objects.requireNonNull(questionNode);
-        Objects.requireNonNull(questionNode.getMeta());
+    public Template findTemplate(Integer businessScenarioNo, QuestionNode questionNode) {
+        if (businessScenarioNo == null || questionNode == null || questionNode.getMeta() == null) {
+            return null;
+        }
 
         BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(businessScenarioNo);
         Principle principle = questionNode.getPrinciple();
@@ -62,7 +62,9 @@ public class FreemarkerTemplateService {
         try {
             template = configuration.getTemplate(answerTemplate);
         } catch (TemplateNotFoundException exception) {
-            log.warn("Not found the template: {}", answerTemplate);
+            log.warn("Not found the template.", exception);
+        } catch (IOException exception) {
+            log.warn("load template failed.", exception);
         }
         return template;
     }

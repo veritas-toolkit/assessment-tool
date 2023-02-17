@@ -200,6 +200,14 @@ public class QuestionNode implements Comparable<QuestionNode> {
         }
     }
 
+    public String questionAnswer() {
+        if (questionVersion == null) {
+            return "";
+        } else {
+            return questionVersion.getAnswer();
+        }
+    }
+
     public static QuestionNode createFromTemplate(TemplateQuestion templateQuestion) {
         QuestionNode node = new QuestionNode();
         node.setPrinciple(templateQuestion.getPrinciple());
@@ -574,10 +582,7 @@ public class QuestionNode implements Comparable<QuestionNode> {
     }
 
     public boolean hasAnswer() {
-        boolean currentAnswerHasFilled = false;
-        if (this.getQuestionVersion() != null) {
-            currentAnswerHasFilled = !StringUtils.isEmpty(this.getQuestionVersion().getAnswer());
-        }
+        boolean currentAnswerHasFilled = !StringUtils.isEmpty(this.questionAnswer());
         if (currentAnswerHasFilled) {
             return true;
         }

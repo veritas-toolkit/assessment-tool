@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.AddMainQuestionAction;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
@@ -98,6 +99,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     @Transactional
     public void saveNewQuestionnaire(QuestionnaireVersion questionnaireVersion) {
         questionnaireDao.saveNewQuestionnaire(questionnaireVersion);
+    }
+
+
+    @Override
+    public QuestionnaireVersion editAnswer(List<EditAnswerAction> editAnswerActionList) {
+        return null;
     }
 
     @Override
