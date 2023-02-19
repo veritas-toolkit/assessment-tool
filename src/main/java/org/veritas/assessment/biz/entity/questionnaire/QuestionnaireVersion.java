@@ -12,6 +12,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.action.EditMainQuestionAction;
 import org.veritas.assessment.biz.action.EditSubQuestionAction;
 import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
@@ -24,6 +25,8 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.system.entity.User;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -305,6 +308,20 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
                 this.createdTime, idSupplier);
         this.modifyActionNodeList.add(node);
     }
+
+
+    public void editAnswer(@Valid @NotEmpty List<EditAnswerAction> actionList, Supplier<Long> idSupplier) {
+        actionList.forEach(action -> this.editAnswer(action, idSupplier));
+    }
+    public void editAnswer(@Valid @NotNull EditAnswerAction action, Supplier<Long> idSupplier) {
+        QuestionNode node = this.findNodeByQuestionId(action.getQuestionId());
+        if (node == null) {
+            throw new NotFoundException("Not found the main question.");
+        }
+        node.editAnswer(action.getAnswer(), action.getOperator(), action.getActionTime(), idSupplier);
+        this.modifyActionNodeList.add(node);
+    }
+
 
     public void addSubQuestion(AddSubQuestionAction action, Supplier<Long> idSupplier) {
         QuestionNode mainNode = this.findNodeByQuestionId(action.getMainQuestionId());

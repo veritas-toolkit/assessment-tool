@@ -43,7 +43,7 @@ public interface QuestionnaireService {
 
     // edit answer
 
-    QuestionnaireVersion editAnswer(List<EditAnswerAction> editAnswerActionList);
+    QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> editAnswerActionList);
     @Deprecated
     QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
 

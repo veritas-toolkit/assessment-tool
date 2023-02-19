@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -373,7 +374,9 @@ public class ProjectServiceImpl implements ProjectService {
         modelArtifact.setProjectId(projectId);
         Project project = projectMapper.findById(projectId);
         modelArtifactService.upload(modelArtifact);
-        modelInsightService.autoGenerateAnswer(project, modelArtifact);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        List<EditAnswerAction> actionList = modelInsightService.insight(project, questionnaireVersion, modelArtifact);
+        questionnaireService.editAnswer(operator,project, actionList);
     }
 
     private void exceptionHandler(PersistenceException exception, Project project) {

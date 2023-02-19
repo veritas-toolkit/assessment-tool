@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.Project;
@@ -47,6 +48,7 @@ import org.veritas.assessment.system.config.VeritasProperties;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -75,32 +77,36 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     private ImageService imageService;
     @Autowired
     private FreemarkerTemplateService freemarkerTemplateService;
-
     @Override
-    public Map<Long, String> generateAnswer(Project project,
-                                            QuestionnaireVersion questionnaireVersion,
-                                            ModelArtifact modelArtifact) {
+    public List<EditAnswerAction> insight(Project project,
+                                          QuestionnaireVersion questionnaireVersion,
+                                          ModelArtifact modelArtifact) {
         Objects.requireNonNull(project);
         Objects.requireNonNull(questionnaireVersion);
         Objects.requireNonNull(modelArtifact);
         ModelMap modelMap = genModelMap(project, modelArtifact);
         List<QuestionNode> allQuestionList = questionnaireVersion.finAllQuestionNodeList();
-        Map<Long, String> map = new LinkedHashMap<>();
+        List<EditAnswerAction> actionList = new ArrayList<>();
         for (QuestionNode questionNode : allQuestionList) {
-            QuestionMeta meta = questionNode.getMeta();
             Template template = freemarkerTemplateService.findTemplate(project.getBusinessScenario(), questionNode);
-            // write the freemarker output to a StringWriter
-            StringWriter stringWriter = new StringWriter();
-            try {
-                template.process(modelMap, stringWriter);
-                String answer = stringWriter.toString();
-                map.put(questionNode.getQuestionId(), answer);
-            } catch (TemplateException | IOException e) {
-                log.error("freemarker template process filed.", e);
+            if (template != null) {
+                // write the freemarker output to a StringWriter
+                StringWriter stringWriter = new StringWriter();
+                try {
+                    template.process(modelMap, stringWriter);
+                    String answer = stringWriter.toString();
+                    EditAnswerAction action = new EditAnswerAction();
+                    action.setProjectId(project.getId());
+                    action.setQuestionId(questionNode.getQuestionId());
+                    action.setBasedQuestionVid(questionNode.getQuestionVid());
+                    action.setAnswer(answer);
+                    actionList.add(action);
+                } catch (TemplateException | IOException e) {
+                    log.error("freemarker template process filed.", e);
+                }
             }
         }
-        return Collections.unmodifiableMap(map);
-
+        return Collections.unmodifiableList(actionList);
     }
 
     @Override
@@ -117,6 +123,8 @@ public class ModelInsightServiceImpl implements ModelInsightService {
 
         // update the answer to the questionnaire. -- create new version.
     }
+
+
 
     private ModelMap genModelMap(Project project, ModelArtifact modelArtifact) {
         JsonModel jsonModel = modelArtifact.getJsonModel();

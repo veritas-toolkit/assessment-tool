@@ -103,8 +103,22 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 
     @Override
-    public QuestionnaireVersion editAnswer(List<EditAnswerAction> editAnswerActionList) {
-        return null;
+    public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList) {
+        Date now = new Date();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        actionList.forEach(action -> {
+            action.setOperator(operator);
+            action.setActionTime(now);
+        });
+        current.editAnswer(actionList, idGenerateService::nextId);
+        questionnaireDao.save(current);
+        return current;
     }
 
     @Override
@@ -121,7 +135,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         }
 
 
-        long questionnaireNewVid = idGenerateService.nextId();
+        Long questionnaireNewVid = idGenerateService.nextId();
         QuestionnaireVersion questionnaire = questionnaireDao.findLatestQuestionnaire(projectId);
         // lock
         // update project table.

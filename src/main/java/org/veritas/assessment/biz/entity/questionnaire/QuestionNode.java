@@ -504,6 +504,24 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return deleted;
     }
 
+    public void editAnswer(String newAnswer,
+                           @NotNull User operator,
+                           @NotNull Date now,
+                           @NotNull Supplier<Long> idSupplier) {
+        Long questionVid = idSupplier.get();
+        QuestionVersion question = this.getQuestionVersion().clone();
+        question.setVid(questionVid);
+//        question.setQuestionId(this.getQuestionId());
+//        question.setMainQuestionId(this.getMainQuestionId());
+        question.setAnswer(newAnswer);
+        question.setAnswerEditUserId(operator.getId());
+        question.setAnswerEditTime(now);
+        this.setQuestionVersion(question);
+        this.setQuestionVid(questionVid);
+        QuestionMeta subMeta = this.getMeta();
+        subMeta.setCurrentVid(questionVid);
+    }
+
     public QuestionNode editQuestionContent(String newContent,
                                             @NotNull User operator,
                                             @NotNull Date now,

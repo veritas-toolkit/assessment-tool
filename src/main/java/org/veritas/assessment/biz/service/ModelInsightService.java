@@ -16,13 +16,12 @@
 
 package org.veritas.assessment.biz.service;
 
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 
-import java.util.Map;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
+import java.util.List;
 
 public interface ModelInsightService {
 
@@ -33,7 +32,8 @@ public interface ModelInsightService {
      * @param modelArtifact artifact
      */
 
+    @Deprecated
     void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
 
-    Map<Long, String> generateAnswer(Project project, QuestionnaireVersion questionnaireVersion, ModelArtifact modelArtifact);
+    List<EditAnswerAction> insight(Project project, QuestionnaireVersion questionnaireVersion, ModelArtifact modelArtifact);
 }

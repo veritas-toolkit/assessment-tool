@@ -9,14 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.service.SystemService;
 import org.veritas.assessment.system.config.VeritasProperties;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -33,18 +34,21 @@ public class FreemarkerTemplateService {
 
     @PostConstruct
     public void loadAllTemplates() {
-        configuration.setEncoding(Locale.ENGLISH, "UTF-8");
+        configuration.setEncoding(Locale.ENGLISH, StandardCharsets.UTF_8.name());
     }
 
 
     public Template findTemplate(Integer businessScenarioNo, QuestionNode questionNode) {
-        if (businessScenarioNo == null || questionNode == null || questionNode.getMeta() == null) {
+        if (businessScenarioNo == null || questionNode == null) {
             return null;
         }
-
+        QuestionMeta meta = questionNode.getMeta();
+        if (meta == null) {
+            return null;
+        }
         BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(businessScenarioNo);
         Principle principle = questionNode.getPrinciple();
-        String templateFilename = questionNode.getMeta().getAnswerTemplateFilename();
+        String templateFilename = meta.getAnswerTemplateFilename();
         if (businessScenario == null || StringUtils.isEmpty(businessScenario.getAnswerTemplatePath())) {
             log.warn("Business Scenario[NO:{}]: {}", businessScenarioNo, businessScenario);
             return null;
