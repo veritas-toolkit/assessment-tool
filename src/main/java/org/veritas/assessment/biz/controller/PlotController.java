@@ -67,7 +67,12 @@ public class PlotController {
 //        }
         Object data = modelArtifactService.findPlotData(null, plotFetchDto.getImgId(), null, null);
         if (data == null) {
-            throw new NotFoundException("not found");
+            PlotDataDto dto = new PlotDataDto();
+            dto.setType(PlotTypeEnum.NONE);
+            dto.setData(null);
+            dto.setName("not found");
+            dto.setCaption("Not found data.");
+            return dto;
         }
         PlotDataDto dto = new PlotDataDto();
         dto.setData(data);
