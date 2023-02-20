@@ -47,17 +47,11 @@ import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
-import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
-import org.veritas.assessment.biz.entity.questionnaire1.QuestionnaireValue;
 import org.veritas.assessment.biz.mapper.ProjectReportMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.SystemService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
-import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.biz.util.Version;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -66,7 +60,17 @@ import org.veritas.assessment.system.config.VeritasProperties;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -248,6 +252,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     public List<ProjectReport> findReportHistoryList(Integer projectId) {
         return reportMapper.findAllByProjectId(projectId);
     }
+
     private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
@@ -260,7 +265,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     }
 
     private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire,
-                                                           ProjectReport current) {
+                              ProjectReport current) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
         modelMap.put("questionnaire", questionnaire);

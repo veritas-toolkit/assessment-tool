@@ -11,7 +11,7 @@ import org.veritas.assessment.common.metadata.Pageable;
 import java.util.Collections;
 import java.util.List;
 
-@Repository(value = "TemplateQuestionnaireMapper2")
+@Repository
 public interface TemplateQuestionnaireMapper extends BaseMapper<TemplateQuestionnaire> {
 
     default List<TemplateQuestionnaire> findAll() {

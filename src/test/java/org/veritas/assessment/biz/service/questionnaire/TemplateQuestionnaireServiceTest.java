@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,8 +27,8 @@ class TemplateQuestionnaireServiceTest {
 
     @Test
     void testLoad() {
-        TemplateQuestionnaireJson templateQuestionnaireJson = service.load();
-        log.info("object:\n{}", templateQuestionnaireJson);
+        TemplateQuestionnaire templateQuestionnaire = service.load();
+        log.info("object:\n{}", templateQuestionnaire);
 
     }
 }

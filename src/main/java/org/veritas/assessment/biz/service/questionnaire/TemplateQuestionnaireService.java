@@ -15,6 +15,7 @@ import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson
 import org.veritas.assessment.biz.mapper.questionnaire.TemplateQuestionnaireDao;
 import org.veritas.assessment.common.metadata.Pageable;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -82,7 +83,12 @@ public class TemplateQuestionnaireService {
     // delete question(main or sub)
 
 
-    public TemplateQuestionnaireJson load() {
+    @PostConstruct
+    public TemplateQuestionnaire load() {
+        TemplateQuestionnaire t = templateQuestionnaireDao.findById(1);
+        if (t != null) {
+            return t;
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         String urlString = "questionnaire_template/default.json";
@@ -92,8 +98,7 @@ public class TemplateQuestionnaireService {
             TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
             templateQuestionnaire.setCreatorUserId(1);
             templateQuestionnaireDao.save(templateQuestionnaire);
-
-            return questionnaireJson;
+            return templateQuestionnaire;
         } catch (IOException exception) {
             throw new RuntimeException("load json failed", exception);
         }

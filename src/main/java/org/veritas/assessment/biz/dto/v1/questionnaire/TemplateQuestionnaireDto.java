@@ -19,14 +19,13 @@ package org.veritas.assessment.biz.dto.v1.questionnaire;
 import lombok.Getter;
 import lombok.Setter;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
-import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
 import java.util.Date;
 
 @Getter
 @Setter
-public class TemplateQuestionnaireDto extends QuestionnaireDto<TemplateQuestion, TemplateQuestionnaire> {
+public class TemplateQuestionnaireDto {
     private Integer templateId;
 
     private String name;
@@ -38,8 +37,7 @@ public class TemplateQuestionnaireDto extends QuestionnaireDto<TemplateQuestion,
     private Date createdTime;
 
     public TemplateQuestionnaireDto(TemplateQuestionnaire questionnaire) {
-        super(questionnaire);
-        this.setTemplateId(questionnaire.getTemplateId());
+        this.setTemplateId(questionnaire.getId());
         this.setName(questionnaire.getName());
         this.setType(questionnaire.getType());
         this.setDescription(questionnaire.getDescription());

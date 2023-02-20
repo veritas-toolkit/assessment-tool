@@ -35,9 +35,9 @@ import org.veritas.assessment.biz.dto.QuestionDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireCreateDto;
 import org.veritas.assessment.biz.dto.v1.questionnaire.TemplateQuestionnaireDto;
-import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.TemplateQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire1.TemplateQuestionnaireService1;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.metadata.Pageable;
 
@@ -48,109 +48,110 @@ import java.util.Objects;
 @RequestMapping("/admin/questionnaire")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminQuestionnaireController {
-    @Autowired
-    private TemplateQuestionnaireService1 service;
 
-    @Autowired
-    private TemplateQuestionnaireDtoConverter dtoConverter;
-
-    @Autowired
-    private TemplateQuestionnaireBasicDtoConverter basicDtoConverter;
-
-    @Operation(summary = "Admin: list questionnaire template pageable.")
-    @GetMapping("")
-    public Pageable<TemplateQuestionnaireBasicDto> listQuestionnaireTemplate(
-            @RequestParam(name = "prefix", required = false) String prefix,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
-        Pageable<TemplateQuestionnaire> pageable = service.findTemplatePageable(prefix, keyword, page, pageSize);
-        return basicDtoConverter.convertFrom(pageable);
-    }
-
-    // create
-    @Operation(summary = "Admin: create a new questionnaire template.")
-    @PutMapping("")
-    public TemplateQuestionnaireDto create(
-            @RequestBody TemplateQuestionnaireCreateDto dto) {
-        TemplateQuestionnaire questionnaire =
-                service.create(dto.getBasicTemplateId(), dto.getName(), dto.getDescription());
-        return dtoConverter.convertFrom(questionnaire);
-    }
-
-    @Operation(summary = "Admin: delete questionnaire template")
-    @DeleteMapping("/{templateId}")
-    public void deleteQuestionnaireById(@PathVariable("templateId") Integer templateId) {
-        service.delete(templateId);
-    }
-
-    @Operation(summary = "Admin: get questionnaire")
-    @GetMapping("/{templateId}")
-    public TemplateQuestionnaireDto findQuestionnaireById(
-            @PathVariable("templateId") Integer templateId) {
-        TemplateQuestionnaire questionnaire = service.findQuestionnaireById(templateId);
-        return dtoConverter.convertFrom(questionnaire);
-    }
-
-    // edit basic info
-    @Operation(summary = "Admin: update questionnaire template name and description.")
-    @PostMapping("/{templateId}/basic")
-    public TemplateQuestionnaireDto editBasicInfo(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody TemplateQuestionnaireBasicDto dto) {
-        if (Objects.isNull(dto.getName())) {
-            throw new ErrorParamException("There is no name property");
-        }
-        TemplateQuestionnaire questionnaire = service.updateBasicInfo(templateId, dto.getName(), dto.getDescription());
-        return dtoConverter.convertFrom(questionnaire);
-    }
+//    @Autowired
+//    private TemplateQuestionnaireService service;
+//
+//    @Autowired
+//    private TemplateQuestionnaireDtoConverter dtoConverter;
+//
+//    @Autowired
+//    private TemplateQuestionnaireBasicDtoConverter basicDtoConverter;
+//
+//    @Operation(summary = "Admin: list questionnaire template pageable.")
+//    @GetMapping("")
+//    public Pageable<TemplateQuestionnaireBasicDto> listQuestionnaireTemplate(
+//            @RequestParam(name = "prefix", required = false) String prefix,
+//            @RequestParam(name = "keyword", required = false) String keyword,
+//            @RequestParam(name = "page", defaultValue = "1") Integer page,
+//            @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
+//        Pageable<TemplateQuestionnaire> pageable = service.findTemplatePageable(prefix, keyword, page, pageSize);
+//        return basicDtoConverter.convertFrom(pageable);
+//    }
+//
+//     create
+//    @Operation(summary = "Admin: create a new questionnaire template.")
+//    @PutMapping("")
+//    public TemplateQuestionnaireDto create(
+//            @RequestBody TemplateQuestionnaireCreateDto dto) {
+//        TemplateQuestionnaire questionnaire =
+//                service.create(dto.getBasicTemplateId(), dto.getName(), dto.getDescription());
+//        return dtoConverter.convertFrom(questionnaire);
+//    }
+//
+//    @Operation(summary = "Admin: delete questionnaire template")
+//    @DeleteMapping("/{templateId}")
+//    public void deleteQuestionnaireById(@PathVariable("templateId") Integer templateId) {
+//        service.delete(templateId);
+//    }
+//
+//    @Operation(summary = "Admin: get questionnaire")
+//    @GetMapping("/{templateId}")
+//    public TemplateQuestionnaireDto findQuestionnaireById(
+//            @PathVariable("templateId") Integer templateId) {
+//        TemplateQuestionnaire questionnaire = service.findQuestionnaireById(templateId);
+//        return dtoConverter.convertFrom(questionnaire);
+//    }
+//
+//     edit basic info
+//    @Operation(summary = "Admin: update questionnaire template name and description.")
+//    @PostMapping("/{templateId}/basic")
+//    public TemplateQuestionnaireDto editBasicInfo(
+//            @PathVariable("templateId") Integer templateId,
+//            @RequestBody TemplateQuestionnaireBasicDto dto) {
+//        if (Objects.isNull(dto.getName())) {
+//            throw new ErrorParamException("There is no name property");
+//        }
+//        TemplateQuestionnaire questionnaire = service.updateBasicInfo(templateId, dto.getName(), dto.getDescription());
+//        return dtoConverter.convertFrom(questionnaire);
+//    }
 
     // add main question
-    @Operation(summary = "Admin: add a question with subs into questionnaire template.")
-    @PutMapping("/{templateId}/question")
-    public TemplateQuestion addMainQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody QuestionDto dto) {
-        TemplateQuestion question = new TemplateQuestion();
-        question.copyFrom(dto, TemplateQuestion::new);
-        question.setTemplateId(templateId);
-        question.setSubSerial(0);
-        return service.addMainQuestion(templateId, question);
-    }
+//    @Operation(summary = "Admin: add a question with subs into questionnaire template.")
+//    @PutMapping("/{templateId}/question")
+//    public TemplateQuestion addMainQuestion(
+//            @PathVariable("templateId") Integer templateId,
+//            @RequestBody QuestionDto dto) {
+//        TemplateQuestion question = new TemplateQuestion();
+//        question.copyFrom(dto, TemplateQuestion::new);
+//        question.setTemplateId(templateId);
+//        question.setSubSerial(0);
+//        return service.addMainQuestion(templateId, question);
+//    }
 
-    @Operation(summary = "Admin: delete question(main/sub) from questionnaire template.")
-    @DeleteMapping("/{templateId}/question")
-    public TemplateQuestionnaireDto deleteQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestParam(name = "questionId", required = false) Integer questionId,
-            @RequestParam(name = "subQuestionId", required = false) Integer subQuestionId) {
-        if (subQuestionId != null) {
-            service.deleteSubQuestion(templateId, subQuestionId);
-        } else if (questionId != null) {
-            service.deleteMainQuestion(templateId, questionId);
-        } else {
-            throw new ErrorParamException(
-                    "Error param: At least one value exists for [questionId] and [subQuestionId]");
-        }
-        TemplateQuestionnaire questionnaire = service.findQuestionnaireById(templateId);
-        return dtoConverter.convertFrom(questionnaire);
-    }
-
-    @Operation(summary = "Admin: edit a question with of questionnaire template.")
-    @PostMapping("/{templateId}/question")
-    public TemplateQuestion updateQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody QuestionDto dto) {
-        TemplateQuestion question = new TemplateQuestion();
-        question.copyFrom(dto, TemplateQuestion::new);
-        question.setTemplateId(templateId);
-
-        int subSerial = 1;
-        for (TemplateQuestion subQuestion : question.getSubQuestions()) {
-            subQuestion.setTemplateId(templateId);
-            subQuestion.setSubSerial(subSerial);
-            ++subSerial;
-        }
-        return service.updateMainQuestionWithSub(templateId, question);
-    }
+//    @Operation(summary = "Admin: delete question(main/sub) from questionnaire template.")
+//    @DeleteMapping("/{templateId}/question")
+//    public TemplateQuestionnaireDto deleteQuestion(
+//            @PathVariable("templateId") Integer templateId,
+//            @RequestParam(name = "questionId", required = false) Integer questionId,
+//            @RequestParam(name = "subQuestionId", required = false) Integer subQuestionId) {
+//        if (subQuestionId != null) {
+//            service.deleteSubQuestion(templateId, subQuestionId);
+//        } else if (questionId != null) {
+//            service.deleteMainQuestion(templateId, questionId);
+//        } else {
+//            throw new ErrorParamException(
+//                    "Error param: At least one value exists for [questionId] and [subQuestionId]");
+//        }
+//        TemplateQuestionnaire questionnaire = service.findQuestionnaireById(templateId);
+//        return dtoConverter.convertFrom(questionnaire);
+//    }
+//
+//    @Operation(summary = "Admin: edit a question with of questionnaire template.")
+//    @PostMapping("/{templateId}/question")
+//    public TemplateQuestion updateQuestion(
+//            @PathVariable("templateId") Integer templateId,
+//            @RequestBody QuestionDto dto) {
+//        TemplateQuestion question = new TemplateQuestion();
+//        question.copyFrom(dto, TemplateQuestion::new);
+//        question.setTemplateId(templateId);
+//
+//        int subSerial = 1;
+//        for (TemplateQuestion subQuestion : question.getSubQuestions()) {
+//            subQuestion.setTemplateId(templateId);
+//            subQuestion.setSubSerial(subSerial);
+//            ++subSerial;
+//        }
+//        return service.updateMainQuestionWithSub(templateId, question);
+//    }
 }
