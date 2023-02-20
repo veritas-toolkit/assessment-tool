@@ -10,7 +10,7 @@ public enum PlotTypeEnum {
     TWO_LINE("two_line", "Two line"),
     ;
 
-//    @JsonValue
+    @JsonValue
     private final String name;
     private final String description;
 
