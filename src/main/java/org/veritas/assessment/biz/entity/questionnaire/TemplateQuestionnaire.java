@@ -41,6 +41,14 @@ public class TemplateQuestionnaire {
     @TableField(exist = false)
     private List<TemplateQuestion> mainQuestionList;
 
+    public List<TemplateQuestion> getMainQuestionList() {
+        if (mainQuestionList == null || mainQuestionList.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(mainQuestionList);
+        }
+    }
+
     public void addAllQuestionList(List<TemplateQuestion> questionList) {
         if (questionList == null || questionList.isEmpty()) {
             this.mainQuestionList = Collections.emptyList();

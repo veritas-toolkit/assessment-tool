@@ -84,6 +84,7 @@ public class TemplateQuestionnaireService {
 
 
     @PostConstruct
+    @Transactional
     public TemplateQuestionnaire load() {
         TemplateQuestionnaire t = templateQuestionnaireDao.findById(1);
         if (t != null) {

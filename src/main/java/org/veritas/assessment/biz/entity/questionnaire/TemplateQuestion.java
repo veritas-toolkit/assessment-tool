@@ -49,6 +49,14 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
     @TableLogic
     private boolean deleted = false;
 
+    public List<TemplateQuestion> getSubList() {
+        if (this.subList == null || this.subList.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return Collections.unmodifiableList(subList);
+        }
+    }
+
     public void addSub(TemplateQuestion sub) {
         if (!this.contain(sub)) {
             throw new IllegalArgumentException();
