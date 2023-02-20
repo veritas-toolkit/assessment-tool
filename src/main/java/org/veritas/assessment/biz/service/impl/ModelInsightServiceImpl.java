@@ -19,9 +19,7 @@ package org.veritas.assessment.biz.service.impl;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +33,6 @@ import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.model.SpecialParameterContainer;
 import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ImageService;
@@ -51,7 +48,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 @Service
@@ -154,98 +150,5 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         return null;
     }
 
-
-    // generate the answer
-    private boolean answerContent(ModelMap modelMap, Integer businessScenario, ProjectQuestion question) {
-        Objects.requireNonNull(modelMap);
-        Objects.requireNonNull(question);
-
-        String ftlName = templateName(question);
-        try (StringWriter writer = new StringWriter()) {
-            Template template = template(businessScenario, question);
-            template.process(modelMap, writer);
-            String answer = writer.toString();
-            if (StringUtils.isBlank(answer)) {
-                answer = null;
-            }
-            question.setAnswer(answer);
-            return true;
-        } catch (TemplateNotFoundException templateNotFoundException) {
-            log.warn("Template not found for name: {}", ftlName);
-        } catch (Exception exception) {
-            if (question.isMainQuestion()) {
-                log.warn("Create answer content fail: question[{}]", question, exception);
-            } else {
-                log.warn("Create answer content fail: question[{}], sub[{}]",
-                        question, question.getSubSerial(), exception);
-            }
-            if (veritasProperties.isAutoGenerateAnswerStrict()) {
-                if (question.isMainQuestion()) {
-                    throw new IllegalStateException(
-                            String.format("create question[%s] failed.", question.title()),
-                            exception);
-                } else {
-                    throw new IllegalStateException(
-                            String.format("create question[%s_S%d] failed.", question.title(), question.getSubSerial()),
-                            exception);
-                }
-            }
-        }
-        return false;
-    }
-
-    private Template template(Integer businessScenario, ProjectQuestion question) throws IOException {
-        Objects.requireNonNull(businessScenario);
-        Objects.requireNonNull(question);
-
-        final String DEFAULT_FORMATTER = "answer/default/%s%d/%s%d.ftl";
-        final String DEFAULT_SUB_FORMATTER = "answer/default/%s%d/%s%d_S%d.ftl";
-
-        final String S_FORMATTER = "answer/S_%02d/%s%d/%s%d.ftl";
-        final String S_SUB_FORMATTER = "answer/S_%02d/%s%d/%s%d_S%d.ftl";
-
-        String specialTemplateName = null;
-        if (question.isMainQuestion()) {
-            specialTemplateName = String.format(S_FORMATTER, businessScenario, question.getPart(),
-                    question.getPartSerial(), question.getPart(), question.getPartSerial());
-        } else {
-            specialTemplateName = String.format(S_SUB_FORMATTER, businessScenario, question.getPart(),
-                    question.getPartSerial(), question.getPart(), question.getPartSerial(), question.getSubSerial());
-        }
-        Template template = null;
-        try {
-            configuration.setEncoding(Locale.ENGLISH, "UTF-8");
-            template = configuration.getTemplate(specialTemplateName);
-        } catch (TemplateNotFoundException ignored) {
-            // Yes do nothing!
-        }
-        if (template != null) {
-            log.debug("Using template: {}", specialTemplateName);
-            return template;
-        } else {
-            String defaultTemplateName = null;
-            if (question.isMainQuestion()) {
-                defaultTemplateName = String.format(DEFAULT_FORMATTER, question.getPart(), question.getPartSerial(),
-                        question.getPart(), question.getPartSerial());
-            } else {
-                defaultTemplateName = String.format(DEFAULT_SUB_FORMATTER, question.getPart(), question.getPartSerial(),
-                        question.getPart(), question.getPartSerial(), question.getSubSerial());
-            }
-            log.debug("Using template: {}", defaultTemplateName);
-            return configuration.getTemplate(defaultTemplateName);
-        }
-    }
-
-    private String templateName(ProjectQuestion question) {
-        final String FORMATTER = "answer/%s%d/%s%d.ftl";
-        final String SUB_FORMATTER = "answer/%s%d/%s%d_S%d.ftl";
-        if (question.isMainQuestion()) {
-            return String.format(FORMATTER, question.getPart(), question.getPartSerial(),
-                    question.getPart(), question.getPartSerial());
-        } else {
-            return String.format(SUB_FORMATTER, question.getPart(), question.getPartSerial(),
-                    question.getPart(), question.getPartSerial(), question.getSubSerial());
-        }
-    }
 
 }

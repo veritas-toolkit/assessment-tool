@@ -82,7 +82,7 @@
 
     <cache alias="project_questionnaire" uses-template="entity-cache-template">
         <key-type>java.lang.Integer</key-type>
-        <value-type>org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire</value-type>
+        <value-type>org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion</value-type>
 
     </cache>
 
