@@ -37,7 +37,7 @@ class ModelArtifactMapperTest {
     private ModelArtifactMapper modelArtifactMapper;
 
     @Test
-    void name() {
+    void testAdd_success() {
         assertNotNull(modelArtifactMapper);
         ModelArtifact modelArtifact = new ModelArtifact();
         modelArtifact.setProjectId(8);
@@ -46,6 +46,8 @@ class ModelArtifactMapperTest {
         modelArtifact.setUploadTime(new Date());
         String jsonContent = "fake json content";
         modelArtifact.setJsonContent(jsonContent);
+        modelArtifact.setJsonContentSha256("fake_json_content_sha256");
+        modelArtifact.setJsonZipPath("fake_json_zip_path");
         modelArtifactMapper.add(modelArtifact);
 
     }
