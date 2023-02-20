@@ -82,6 +82,12 @@ public class PlotController {
                 dto.setName("class distribution");
                 dto.setCaption("Class Distribution");
                 break;
+            case "performanceLineChart":
+                dto.setType(PlotTypeEnum.TWO_LINE);
+                dto.setName("TWO_LINE");
+                dto.setCaption("TWO_LINE");
+                break;
+
             default:
                 throw new NotFoundException();
         }

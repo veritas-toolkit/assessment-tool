@@ -163,6 +163,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     return csJsonModel.getFairness().getCalibrationCurve();
                 case "classDistributionPieChart":
                     return csJsonModel.getFairness().getClassDistribution();
+                case "performanceLineChart":
+                    return csJsonModel.getFairness().getPerfDynamic();
                 default:
                     return null;
             }
