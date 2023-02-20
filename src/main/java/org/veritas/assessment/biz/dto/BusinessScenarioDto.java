@@ -19,12 +19,9 @@ package org.veritas.assessment.biz.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -35,17 +32,10 @@ public class BusinessScenarioDto {
     private String description;
 
 
-    public BusinessScenarioDto(BusinessScenario businessScenario) {
+    public BusinessScenarioDto(BusinessScenarioEnum businessScenario) {
         Objects.requireNonNull(businessScenario);
         this.code = businessScenario.getCode();
         this.name = businessScenario.getName();
         this.description = businessScenario.getDescription();
-    }
-
-    public static List<BusinessScenarioDto> fromList(List<BusinessScenario> list) {
-        if (list == null || list.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return list.stream().map(BusinessScenarioDto::new).collect(Collectors.toList());
     }
 }

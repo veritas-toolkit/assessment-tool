@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.veritas.assessment.biz.action.EditAnswerAction;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
@@ -50,10 +50,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -73,10 +71,12 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     private VeritasProperties veritasProperties;
     @Autowired
     private SystemService systemService;
+
     @Autowired
     private ImageService imageService;
     @Autowired
     private FreemarkerTemplateService freemarkerTemplateService;
+
     @Override
     public List<EditAnswerAction> insight(Project project,
                                           QuestionnaireVersion questionnaireVersion,
@@ -125,7 +125,6 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     }
 
 
-
     private ModelMap genModelMap(Project project, ModelArtifact modelArtifact) {
         JsonModel jsonModel = modelArtifact.getJsonModel();
         ModelMap modelMap = new ModelMap();
@@ -140,7 +139,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         GraphContainer container = graphService.createAllGraph(modelArtifact);
         modelMap.addAttribute("graphContainer", container);
 
-        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(project.getBusinessScenario());
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
         if (businessScenario == null) {
             throw new ErrorParamException("The business scenario of the project is not legal.");
         }

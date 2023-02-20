@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 public enum BusinessScenarioEnum {
     BASE_CLASSIFICATION(1, "Base Classification", "Base Classification", "base_regression"),
@@ -29,8 +31,9 @@ public enum BusinessScenarioEnum {
     PUW(30, "PUW", "PUW", "PUW"),
     ;
     @EnumValue
-    private final Integer code;
+    private final int code;
 
+    @NotNull
     private final String name;
 
     private final String description;
@@ -38,10 +41,19 @@ public enum BusinessScenarioEnum {
     @JsonIgnore
     private final String answerTemplatePath;
 
-    BusinessScenarioEnum(Integer code, String name, String description, String answerTemplatePath) {
+    BusinessScenarioEnum(int code, String name, String description, String answerTemplatePath) {
         this.code = code;
         this.name = name;
         this.description = description;
         this.answerTemplatePath = answerTemplatePath;
+    }
+
+    public static BusinessScenarioEnum ofCode(int code) {
+        for (BusinessScenarioEnum e : BusinessScenarioEnum.values()) {
+            if (e.getCode() == code) {
+                return e;
+            }
+        }
+        return null;
     }
 }

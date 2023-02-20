@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.Principle;
-import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.service.SystemService;
@@ -46,7 +46,7 @@ public class FreemarkerTemplateService {
         if (meta == null) {
             return null;
         }
-        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(businessScenarioNo);
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(businessScenarioNo);
         Principle principle = questionNode.getPrinciple();
         String templateFilename = meta.getAnswerTemplateFilename();
         if (businessScenario == null || StringUtils.isEmpty(businessScenario.getAnswerTemplatePath())) {

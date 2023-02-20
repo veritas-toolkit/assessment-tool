@@ -16,21 +16,6 @@
 
 package org.veritas.assessment.biz.service;
 
-import org.veritas.assessment.biz.entity.BusinessScenario;
-
-import java.util.List;
-import java.util.Optional;
-
 public interface SystemService {
 
-    List<BusinessScenario> findAllBusinessScenarioList();
-
-    default BusinessScenario findBusinessScenarioByCode(Integer code) {
-        if (code == null) {
-            return null;
-        }
-        List<BusinessScenario> list = findAllBusinessScenarioList();
-        Optional<BusinessScenario> optional = list.stream().filter(e -> code.equals(e.getCode())).findFirst();
-        return optional.orElse(null);
-    }
 }

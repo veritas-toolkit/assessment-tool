@@ -42,7 +42,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
@@ -259,7 +259,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         modelMap.put("questionnaire", questionnaire);
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), null));
 
-        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(project.getBusinessScenario());
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
         modelMap.put("businessScenario", businessScenario.getName());
         return modelMap;
     }
@@ -271,7 +271,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         modelMap.put("questionnaire", questionnaire);
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), current));
 
-        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(project.getBusinessScenario());
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
         modelMap.put("businessScenario", businessScenario.getName());
         return modelMap;
     }
