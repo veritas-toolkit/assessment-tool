@@ -106,6 +106,8 @@ public class ProjectController {
     @Autowired
     private ProjectReportService reportService;
     @Autowired
+    private QuestionnaireService questionnaireService;
+    @Autowired
     private RoleService roleService;
 
     @Autowired
@@ -177,7 +179,7 @@ public class ProjectController {
         return projectDtoConverter.convertFrom(project);
     }
 
-    private QuestionnaireService questionnaireService;
+
 
     @Operation(summary = "Get the project information.")
     @GetMapping("/{projectId}/detail")
