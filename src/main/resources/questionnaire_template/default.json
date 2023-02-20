@@ -6,116 +6,430 @@
     "question": {
         "G": [
             {
-                "serial": "G0",
+                "serial": "G1",
                 "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "question": "Is AIDA defined in the FSI?"
+
+            },
+            {
+                "serial": "G2",
+                "step": 0,
+                "question": "Is there a framework in place to define roles and responsibilities for AIDA projects/use cases?"
+            },
+            {
+                "serial": "G3",
+                "step": 0,
+                "question": "Is there a materiality framework in place? If so, do you have a clear definition to determine the different level of materiality?"
+
+            },
+            {
+                "serial": "G5",
+                "step": 1,
+                "question": "Have you documented the commercial objectives of the system and the quantitative measures to meet those commercial objectives? Is it documented how is AIDA used to achieve them?",
                 "subQuestionList": [
                     {
-                        "question": "sub question - \"YOUR CONTENT",
-                        "answer_template_name": "G0_S1.ftl"
+                        "question": "What are the primary (and secondary) commercial objectives of the system?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT",
-                        "answer_template_name": "G0_S2.ftl"
+                        "question": "How do you quantify those commercial objectives?"
+                    },
+                    {
+                        "question": "Are there internal or external constraints that affect the ability of the system to achieve these objectives?"
                     }
                 ]
             },
             {
-                "serial": "G1",
-                "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "serial": "G6",
+                "step": 1,
+                "question": "Are there scope boundaries of the proposed system? For example, specific geographies/ segments?"
+
+            },
+            {
+                "serial": "G7",
+                "step": 1,
+                "question": "Is AIDA use justified for this particular objective/use case (based on limitations of alternatives, proof of AIDA being used successfully elsewhere, availability of adequate data to train the AIDA system, valid legal basis, etc.)?"
+
+            },
+            {
+                "serial": "G8",
+                "step": 1,
+                "question": "Has the materiality of the use case been determined using the framework defined in Step 0?"
+
+            },
+            {
+                "serial": "G9",
+                "step": 2,
+                "question": "Have you documented the data used by the system including types of data available, the provenance (source), attributes, dictionary (meaning), vintage (time period), data (quality) profile, representativeness and informed consent? For any personal data used by the system, has a DPIA been conducted?"
+
+            },
+            {
+                "serial": "G10",
+                "step": 2,
+                "question": "Have you documented the data pre-processing and engineering done by the system?"
+
+            },
+            {
+                "serial": "G11",
+                "step": 3,
+                "question": "Is the composition of the AIDA System defined? Is it clear how each component of the system AIDA models, as well as business rules and human judgement if relevant, are used to achieve its commercial objectives? Are the performance estimates and the uncertainties of those estimates documented?",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What are the components of the AIDA system?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "How is each component of the system - including AIDA models, business rules and human judgement if relevant - used to achieve the FSI‘s commercial objectives?"
+                    },
+                    {
+                        "question": "What the performance estimates and the uncertainties of those estimates?"
                     }
                 ]
+            },
+            {
+                "serial": "G12",
+                "step": 4,
+                "question": "Is the system’s monitoring and review regime designed to detect abnormal operation (e.g., significant model and/or data drift)? "
+
+            },
+            {
+                "serial": "G13",
+                "step": 4,
+                "question": "Have you documented the commercial objectives of the system and the quantitative measures to meet those commercial objectives? Is it documented how is AIDA used to achieve them? "
+
             }
         ],
         "F": [
             {
                 "serial": "F0",
                 "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "question": "F0 - Has the FSI defined standard, robust process for (a) identifying at risk groups? (b) identifying personal attributes and potential proxies?  (c) identifying explicit fairness objectives and associated measures and thresholds?  and (d) algorithmic methods to identify and reduce unfairness?"
+
+            },
+            {
+                "serial": "F1",
+                "step": 1,
+                "question": "Have you identified and documented who are the individuals and groups that are considered to be at risk of being systematically disadvantaged by the system? ",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "Who are the individuals and groups that are considered to be at risk of being systematically disadvantaged by the system?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "When identifying, have you considered people who are excluded from the product or service offered through the AIDA system because of eligibility criteria, restrictions or design factors, who are already disadvantaged before using the AIDA system?"
                     }
                 ]
             },
             {
-                "serial": "F1",
-                "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "serial": "F2",
+                "step": 1,
+                "question": "Have you identified and documented who are the individuals and groups that are considered to be at risk of being systematically disadvantaged by the system? ",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What are the correct and wrong decisions that the system can make?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What are the most important harms and benefits to consider for the groups as at risk of disadvantages in F1?"
+                    }
+                ]
+            },
+            {
+                "serial": "F3",
+                "step": 1,
+                "question": "Have you identified and documented the fairness objectives of the system and associated fairness metrics, with respect to the individuals and groups in F1 and the harms and benefits in F2?",
+                "subQuestionList": [
+                    {
+                        "question": "After a consistent and reasonable identification process, what are the fairness objectives that fit the commercial objectives and decision outcomes of the system?"
+                    },
+                    {
+                        "question": "What are the associated fairness metrics?"
+                    },
+                    {
+                        "question": "How, do you select fairness metrics, with respect to the overall commercial and fairness objectives? The fairness decision tree may help."
+                    }
+                ]
+            },
+            {
+                "serial": "F4",
+                "step": 2,
+                "question": "Have you documented key errors, biases or properties present in the data used by the system that may impact the system’s fairness?",
+                "subQuestionList": [
+                    {
+                        "question": "Are there representation bias, measurement bias on labelling and data pre-processing bias in the groups identified as at risk of disadvantage in F1?"
+                    },
+                    {
+                        "question": "Is there measurable proxy bias?"
+                    },
+                    {
+                        "question": "Are there potential sources of historic decision bias reflected in the data?"
+                    }
+                ]
+            },
+            {
+                "serial": "F5",
+                "step": 2,
+                "question": "Have you documented how are these impacts being mitigated?"
+
+            },
+            {
+                "serial": "F6",
+                "step": 2,
+                "question": "Have you determined and documented personal attributes are used as part of the operation or fairness assessment of the system?"
+
+            },
+            {
+                "serial": "F7",
+                "step": 2,
+                "question": "Does the process of identifying personal attributes take into account ethical objectives of the system, and the people identified as being at risk of disadvantage?"
+
+            },
+            {
+                "serial": "F8",
+                "step": 2,
+                "question": "Have you identified and documented the fairness objectives of the system and associated fairness metrics, with respect to the individuals and groups in F1 and the harms and benefits in F2?",
+                "subQuestionList": [
+                    {
+                        "question": "How personal attributes correlate with non-personal attributes? Are they highly correlated so that non-personal attributes can act as material proxies for personal attributes?"
+                    },
+                    {
+                        "question": "What method is used to measure the importance of personal attributes?"
+                    },
+                    {
+                        "question": "What is the feature importance of the personal attributes?"
+                    }
+                ]
+            },
+            {
+                "serial": "F9",
+                "step": 3,
+                "question": "Have you assessed and documented the quantitative estimates of the system’s performance against its fairness objectives and the uncertainties in those estimates, assessed over the individuals and groups in F1 and the potential harms and benefits in F2?",
+                "subQuestionList": [
+                    {
+                        "question": "What is the primary fairness metric for this use case?"
+                    },
+                    {
+                        "question": "What are the values of the fairness metrics and the uncertainties in those metrics?"
+                    }
+                ]
+            },
+            {
+                "serial": "F10",
+                "step": 3,
+                "question": "Have you assessed and documented the achievable trade-offs between the system’s fairness objectives and its commercial objectives?",
+                "subQuestionList": [
+                    {
+                        "question": "What bias mitigation techniques are applied?"
+                    },
+                    {
+                        "question": "How is performance-fairness trade-off analysis carried out?"
+                    }
+                ]
+            },
+            {
+                "serial": "F11",
+                "step": 3,
+                "question": "Have you justified (vs alternative tradeoffs) and documented the final fairness outcome for the AIDA System?",
+
+            },
+            {
+                "serial": "F12",
+                "step": 4,
+                "question": "Does the system’s monitoring and review regime ensure that the system’s impacts are aligned with its commercial and fairness objectives?",
+                "subQuestionList": [
+                    {
+                        "question": "What model performance metrics and model metrics will be monitored?"
+                    },
+                    {
+                        "question": "Dose the system’s commercial objectives, fairness objectives and choice of personal attributes change over time?"
+                    },
+                    {
+                        "question": "What other review strategies are applied?"
                     }
                 ]
             }
         ],
         "EA": [
             {
-                "serial": "EA0",
+                "serial": "EA1",
                 "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "question": "Are organizational values defined and described?"
+            },
+            {
+                "serial": "EA2",
+                "step": 0,
+                "question": "Are organizational, or group-specific, principles for the ethical use of AI defined and described?"
+            },
+            {
+                "serial": "EA3",
+                "step": 0,
+                "question": "Are context-relevant core concepts identified and described?"
+            },
+            {
+                "serial": "EA4",
+                "step": 0,
+                "question": "Is the workforce trained on values-based decision making or is there a pilot planned?"
+            },
+            {
+                "serial": "EA5",
+                "step": 1,
+                "question": "Is there a statement of relevant values, core concepts, principles, commitments, and specifications, along with a written description, for each use case? Part of this should include identifying commitment owners and the stakeholders with interest in holding the commitment owners accountable.",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "List the values and core concepts that are relevant to the use case."
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What are the principles，commitments and specifications for your use case? Refer to the following key concepts explanation and table."
+                    },
+                    {
+                        "question": "Who are the owners and stakeholders for the commitments? Refer to the following key concepts explanation and the table."
                     }
                 ]
             },
             {
-                "serial": "EA1",
-                "step": 0,
-                "question": "main question - YOUR CONTENT",
-                "subQuestionList": [
-                    {
-                        "question": "sub question - YOUR CONTENT"
-                    },
-                    {
-                        "question": "sub question - YOUR CONTENT"
-                    }
-                ]
+                "serial": "EA6",
+                "step": 3,
+                "question": "Are recourse mechanisms available to data subjects being used? Is there an explanation if the use of recourse is too high or too low?"
+            },
+            {
+                "serial": "EA8",
+                "step": 4,
+                "question": "Are controls in place to revisit and recalibrate the commitments and their specifications to ensure they’re properly incentivizing the right decisions and accurately measuring progress toward the commitments?"
             }
         ],
         "T": [
             {
-                "serial": "T0",
+                "serial": "T1",
                 "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "question": "Has the FSI defined the factors it will use to determine whether external (customer facing) transparency is essential for a particular AIDA use case?"
+
+            },
+            {
+                "serial": "T2",
+                "step": 0,
+                "question": "(Where an FSI has chosen to provide external transparency) At each stage of the FSI’s customer lifecycle, has the FSI determined what proactive or reactive communication may be needed, and the standard templates/interfaces for the same?",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What customer facing explanations are required at each stage of the customer lifecycle?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What are the communication channels available?"
                     }
                 ]
             },
             {
-                "serial": "T1",
+                "serial": "T3",
                 "step": 0,
-                "question": "main question - YOUR CONTENT",
+                "question": "Has the FSI defined the factors it will use to determine the extent of, and audience for internal transparency for individual AIDA use cases?",
                 "subQuestionList": [
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "Who is the audience for internal transparency for individual AIDA use cases?"
                     },
                     {
-                        "question": "sub question - YOUR CONTENT"
+                        "question": "What is the extent of internal transparency for individual AIDA use cases?"
                     }
                 ]
+            },
+            {
+                "serial": "T4",
+                "step": 0,
+                "question": "Has the FSI defined an acceptable set of AIDA ML explanation method(s) for use within the FSI?"
+
+            },
+            {
+                "serial": "T5",
+                "step": 0,
+                "question": "Has the FSI set minimum accuracy standards for such explanation methods?"
+
+            },
+            {
+                "serial": "T6",
+                "step": 1,
+                "question": "Has the AIDA use case team determined whether there is a need for external (customer facing) transparency? Apply standards from T1 to help answer the question."
+
+            },
+            {
+                "serial": "T7",
+                "step": 1,
+                "question": "If yes, has the team identified the proactive and reactive communication needed at each stage of the customer lifecycle, and the form of such customer facing communication? Apply standards from T2 to help answer the question.",
+                "subQuestionList": [
+                    {
+                        "question": "Has the team identified the proactive and reactive communication needed at each stage of the customer lifecycle?"
+                    },
+                    {
+                        "question": "What are the communication channels available?"
+                    }
+                ]
+            },
+            {
+                "serial": "T8",
+                "step": 1,
+                "question": "Has the team determined the level of internal transparency needed, and the audiences for the same? Apply standards from T3 to help answer the question.",
+                "subQuestionList": [
+                    {
+                        "question": "Who is the audience for internal transparency for individual AIDA use cases?"
+                    },
+                    {
+                        "question": "What is the extent of internal transparency for individual AIDA use cases?"
+                    }
+                ]
+            },
+            {
+                "serial": "T9",
+                "step": 1,
+                "question": "Has the team selected a suitable explanation method for this specific use case from the approved list in T4?",
+                "subQuestionList": [
+                    {
+                        "question": "What are the selected explanation methods?"
+                    },
+                    {
+                        "question": "What are the advantages for the selected explanation methods?"
+                    }
+                ]
+            },
+            {
+                "serial": "T10",
+                "step": 1,
+                "question": "Has the team ascertained that the chosen explanation method/implementation meets the minimum accuracy requirement for this specific use case (based on T5)?"
+
+            },
+            {
+                "serial": "T11",
+                "step": 3,
+                "question": "Have internal transparency dashboards/reports been implemented in line with the requirements agreed in T8-T10?"
+
+            },
+            {
+                "serial": "T12",
+                "step": 3,
+                "question": "Have relevant first and second line control teams – including model validation where relevant – reviewed and approved these outputs (e.g., local and global explanations, conceptual soundness)?"
+
+            },
+            {
+                "serial": "T13",
+                "step": 3,
+                "question": "Where the explanations have not met first/second line expectations, have appropriate mitigation actions been taken (e.g., switching to a simpler model despite a reduction in predictive accuracy, dropping difficult to explain features, introducing more human oversight)?"
+
+            },
+            {
+                "serial": "T14",
+                "step": 3,
+                "question": "In line with the external transparency requirements agreed in T6-T7, has appropriate system functionality been developed and tested as part of the AIDA system’s implementation plan?"
+
+            },
+            {
+                "serial": "T15",
+                "step": 3,
+                "question": "Have operational processes such as customer service and complaint handling been modified appropriately to incorporate AIDA customer transparency? Have relevant staff been provided appropriate training to address customer queries?"
+
+            },
+            {
+                "serial": "T16",
+                "step": 3,
+                "question": "Have customer/website Terms and Conditions been appropriately updated?"
+
+            },
+            {
+                "serial": "T17",
+                "step": 3,
+                "question": "Does the AIDA system implementation support the agreed internal and external explanations even after go-live (i.e., not just as a one-off before approval but throughout the lifetime of the AIDA system)?"
+
             }
         ]
     }
