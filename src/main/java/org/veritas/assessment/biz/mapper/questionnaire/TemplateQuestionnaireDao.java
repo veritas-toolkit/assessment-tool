@@ -2,6 +2,7 @@ package org.veritas.assessment.biz.mapper.questionnaire;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -46,6 +47,10 @@ public class TemplateQuestionnaireDao {
         List<TemplateQuestion> questionList = questionMapper.findByTemplateId(q.getId());
         q.addAllQuestionList(questionList);
         return q;
+    }
+
+    public List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
+        return questionnaireMapper.findByBusinessScenario(businessScenarioEnum);
     }
 
     // update basic info

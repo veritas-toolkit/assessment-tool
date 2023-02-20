@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
 
@@ -16,6 +17,15 @@ public interface TemplateQuestionnaireMapper extends BaseMapper<TemplateQuestion
 
     default List<TemplateQuestionnaire> findAll() {
         LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(TemplateQuestionnaire::getType);
+        wrapper.orderByAsc(TemplateQuestionnaire::getCreatedTime);
+        return selectList(wrapper);
+    }
+
+    default List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
+        LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getBusinessScenario, businessScenarioEnum.getCode());
+        wrapper.orderByDesc(TemplateQuestionnaire::getId);
         wrapper.orderByAsc(TemplateQuestionnaire::getType);
         wrapper.orderByAsc(TemplateQuestionnaire::getCreatedTime);
         return selectList(wrapper);

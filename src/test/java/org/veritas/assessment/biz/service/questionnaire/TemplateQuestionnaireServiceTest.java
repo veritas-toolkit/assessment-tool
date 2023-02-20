@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -27,8 +29,8 @@ class TemplateQuestionnaireServiceTest {
 
     @Test
     void testLoad() {
-        TemplateQuestionnaire templateQuestionnaire = service.load();
-        log.info("object:\n{}", templateQuestionnaire);
+        List<TemplateQuestionnaire> list = service.load();
+        log.info("list:\n{}", list);
 
     }
 }

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
+@Deprecated
 public class BusinessScenario {
     private Integer code;
 
