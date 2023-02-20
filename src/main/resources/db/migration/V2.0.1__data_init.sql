@@ -1,16 +1,4 @@
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
--- vat2_business_scenario
-insert into vat2_business_scenario(code, name, description, answer_template_path)
-values(1, 'Base Classification', 'Base Classification', 'base_regression');
-insert into vat2_business_scenario(code, name, description, answer_template_path)
-values(2, 'Base Regression', 'Base Regression', 'base_regression');
-insert into vat2_business_scenario(code, name, description, answer_template_path)
-values(10, 'Credit Scoring', 'Credit Scoring', 'credit_scoring');
-insert into vat2_business_scenario(code, name, description, answer_template_path)
-values(20, 'Customer Marketing', 'Customer Marketing', 'customer_marketing');
-insert into vat2_business_scenario(code, name, description, answer_template_path)
-values(30, 'Insurance', 'Insurance', 'puw');
-
 -- vat2_user
 insert into vat2_user(username, full_name, email, password,
 admin,

@@ -36,15 +36,6 @@ create table vat2_group (
 CREATE UNIQUE INDEX vat2_ix_group_name ON vat2_group (name, delete_time);
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-create table vat2_business_scenario (
-    code integer primary key,
-    name varchar(255) not null,
-    description varchar(2000),
-    answer_template_path varchar(2000)
-);
-
-
------ ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_project (
     id integer primary key autoincrement,
     name varchar(255) not null,
