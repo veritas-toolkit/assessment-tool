@@ -101,8 +101,8 @@ public class TemplateQuestionnaireService {
         List<TemplateQuestionnaire> list = new ArrayList<>();
 
         for (BusinessScenarioEnum businessScenarioEnum : BusinessScenarioEnum.values()) {
-            List<TemplateQuestionnaire> exsit = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
-            if (exsit != null && !exsit.isEmpty()) {
+            List<TemplateQuestionnaire> exist = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
+            if ( exist != null && ! exist.isEmpty()) {
                 continue;
             }
             TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
