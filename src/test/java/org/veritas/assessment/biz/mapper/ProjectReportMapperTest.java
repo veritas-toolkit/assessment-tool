@@ -48,7 +48,7 @@ class ProjectReportMapperTest {
             ProjectReport projectReport = new ProjectReport();
             projectReport.setProjectId(projectId);
             projectReport.setModelArtifactVersionId(2);
-            projectReport.setQuestionnaireVersionId(3);
+            projectReport.setQuestionnaireVersionId(3L);
             projectReport.setCreatorUserId(4);
             projectReport.setTag("V1.0");
             projectReport.setMessage("First version.");
@@ -64,7 +64,7 @@ class ProjectReportMapperTest {
         ProjectReport projectReport = new ProjectReport();
         projectReport.setProjectId(1);
         projectReport.setModelArtifactVersionId(2);
-        projectReport.setQuestionnaireVersionId(3);
+        projectReport.setQuestionnaireVersionId(3L);
         projectReport.setCreatorUserId(4);
         projectReport.setTag("V1.0");
         projectReport.setMessage("First version.");

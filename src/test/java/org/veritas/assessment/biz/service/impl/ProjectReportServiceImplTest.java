@@ -28,17 +28,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
@@ -46,7 +50,9 @@ import org.veritas.assessment.system.service.UserService;
 
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -64,7 +70,10 @@ class ProjectReportServiceImplTest {
     @Autowired
     ProjectService projectService;
     @Autowired
-    private ProjectQuestionnaireService1 questionnaireService;
+    @Deprecated
+    private ProjectQuestionnaireService1 questionnaireService1;
+    @Autowired
+    private QuestionnaireService questionnaireService;
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
@@ -74,17 +83,26 @@ class ProjectReportServiceImplTest {
     TemplateQuestionnaireService templateQuestionnaireService;
 
     private void fillAnswer(Project project) {
-        ProjectQuestionnaire questionnaire = questionnaireService.findQuestionnaireById(project.getId());
-        for (ProjectQuestion main : questionnaire.getQuestions()) {
-            if (main.completed()) {
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
+        List<EditAnswerAction> actionList = new ArrayList<>();
+        User user = userService.findUserById(1);
+        Date now = new Date();
+        for (QuestionNode main : questionnaire.getMainQuestionNodeList()) {
+            if (main.hasAnswer()) {
                 continue;
             }
-            for (ProjectQuestion projectQuestion : main.toList()) {
-                projectQuestion.setAnswer("answer_" + RandomStringUtils.randomAlphanumeric(40));
-                projectQuestion.setAnswerEditTime(new Date());
+            for (QuestionNode node : main.toPlaneNodeList()) {
+                EditAnswerAction action = new EditAnswerAction();
+                action.setProjectId(project.getId());
+                action.setQuestionId(node.getQuestionId());
+                action.setBasedQuestionVid(node.getQuestionVid());
+                action.setOperator(user);
+                action.setAnswer("answer_" + RandomStringUtils.randomAlphanumeric(40));
+                action.setActionTime(now);
+                actionList.add(action);
             }
-            questionnaireService.editAnswer(project.getId(), main);
         }
+        questionnaireService.editAnswer(user, project, actionList);
         log.info("All answers filled.");
     }
 
@@ -155,17 +173,17 @@ class ProjectReportServiceImplTest {
 
 
         JsonModel jsonModel = JsonModelTestUtils.load(JsonModelTestUtils.creditScoringUrl);
-        String jsonUrl = JsonModelTestUtils.creditScoringUrl;
+        String jsonUrl = JsonModelTestUtils.EXAMPLE_CS;
         String jsonFilename = FilenameUtils.getName(jsonUrl);
         String json = JsonModelTestUtils.loadJson(jsonUrl);
 
         ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, jsonFilename);
         modelArtifactService.saveJsonFile(modelArtifact);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(project.getId());
 
-        modelInsightService.autoGenerateAnswer(project, modelArtifact);
-
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(project.getId());
-
+        List<EditAnswerAction> actionList = modelInsightService.insight(project, questionnaireVersion, modelArtifact);
+        questionnaireService.editAnswer(admin, project, actionList);
+        this.fillAnswer(project);
 
         byte[] content = reportService.previewReportPdf(project);
         assertNotNull(content);

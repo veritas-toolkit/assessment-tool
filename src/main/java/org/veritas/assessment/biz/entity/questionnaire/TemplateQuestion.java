@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 @NoArgsConstructor
-public class TemplateQuestion implements Comparable<TemplateQuestion>{
+public class TemplateQuestion implements Comparable<TemplateQuestion> {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private int templateId;
-//    private Integer mainQuestionId;
+    //    private Integer mainQuestionId;
     private Principle principle;
 
     private AssessmentStep step;
@@ -41,7 +41,6 @@ public class TemplateQuestion implements Comparable<TemplateQuestion>{
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date editTime;
     private boolean answerRequired;
-
 
 
     @TableField(exist = false)
@@ -113,7 +112,8 @@ public class TemplateQuestion implements Comparable<TemplateQuestion>{
                 mainList.add(q);
             }
         }
-        mainList = mainList.stream().sorted().collect(Collectors.toList());;
+        mainList = mainList.stream().sorted().collect(Collectors.toList());
+        ;
         for (TemplateQuestion main : mainList) {
             for (TemplateQuestion sub : templateQuestionList) {
                 if (sub.isSub() && main.contain(sub)) {

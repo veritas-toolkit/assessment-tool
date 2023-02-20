@@ -14,6 +14,7 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -33,8 +34,9 @@ public class TemplateQuestionnaire {
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date createdTime;
 
+    private Integer creatorUserId;
+
     @TableField(exist = false)
-    @Setter(AccessLevel.NONE)
     private List<TemplateQuestion> mainQuestionList;
 
     public void addAllQuestionList(List<TemplateQuestion> questionList) {
@@ -44,4 +46,12 @@ public class TemplateQuestionnaire {
         this.mainQuestionList = TemplateQuestion.toStructure(questionList);
     }
 
+    public void setId(Integer id) {
+        Objects.requireNonNull(id);
+        this.id = id;
+        this.getMainQuestionList().forEach(q -> {
+            q.setTemplateId(id);
+            q.getSubList().forEach(sub -> sub.setTemplateId(id));
+        });
+    }
 }

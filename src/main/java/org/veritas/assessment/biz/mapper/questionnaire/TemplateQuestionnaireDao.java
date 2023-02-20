@@ -16,6 +16,10 @@ public class TemplateQuestionnaireDao {
     @Autowired
     private TemplateQuestionnaireMapper questionnaireMapper;
 
+    public void save(TemplateQuestionnaire templateQuestionnaire) {
+        questionnaireMapper.insert(templateQuestionnaire);
+        questionMapper.saveAll(templateQuestionnaire.getMainQuestionList());
+    }
     public List<TemplateQuestionnaire> findAll() {
         List<TemplateQuestionnaire> list = questionnaireMapper.findAll();
         for (TemplateQuestionnaire questionnaire : list) {

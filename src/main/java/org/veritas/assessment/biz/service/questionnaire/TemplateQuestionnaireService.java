@@ -1,15 +1,22 @@
 package org.veritas.assessment.biz.service.questionnaire;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson;
 import org.veritas.assessment.biz.mapper.questionnaire.TemplateQuestionnaireDao;
 import org.veritas.assessment.common.metadata.Pageable;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,4 +81,21 @@ public class TemplateQuestionnaireService {
 
     // delete question(main or sub)
 
+
+    public TemplateQuestionnaireJson load() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        String urlString = "questionnaire_template/default.json";
+        try {
+            URL url = new ClassPathResource(urlString).getURL();
+            TemplateQuestionnaireJson questionnaireJson = objectMapper.readValue(url, TemplateQuestionnaireJson.class);
+            TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
+            templateQuestionnaire.setCreatorUserId(1);
+            templateQuestionnaireDao.save(templateQuestionnaire);
+
+            return questionnaireJson;
+        } catch (IOException exception) {
+            throw new RuntimeException("load json failed", exception);
+        }
+    }
 }

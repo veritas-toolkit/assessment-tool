@@ -28,17 +28,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,7 +58,9 @@ class ModelInsightServiceImplTest {
     @Autowired
     UserService userService;
     @Autowired
-    ProjectQuestionnaireService1 questionnaireService;
+    ProjectQuestionnaireService1 questionnaireService1;
+    @Autowired
+    QuestionnaireService questionnaireService;
     @Autowired
     ModelArtifactService modelArtifactService;
     @Autowired
@@ -74,36 +80,34 @@ class ModelInsightServiceImplTest {
         project.setBusinessScenario(1);
 
         project = projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
-        String jsonUrl = JsonModelTestUtils.creditScoringUrl;
+        String jsonUrl = JsonModelTestUtils.EXAMPLE_CS;
         String filename = FilenameUtils.getName(jsonUrl);
         String json = JsonModelTestUtils.loadJson(jsonUrl);
 
         ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, filename);
         modelArtifactService.saveJsonFile(modelArtifact);
 
-        modelInsightService.autoGenerateAnswer(project, modelArtifact);
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
+        List<EditAnswerAction> actionList = modelInsightService.insight(project, questionnaire, modelArtifact);
+        questionnaireService.editAnswer(admin, project, actionList);
 
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(project.getId());
+        questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
 
-        long count = questionnaire.allQuestionsWithSub().stream()
-                .filter(question -> StringUtils.isNotEmpty(question.getAnswer()))
+        long count = questionnaire.finAllQuestionNodeList().stream()
+                .filter(question -> StringUtils.isNotEmpty(question.getQuestionVersion().getAnswer()))
                 .count();
         assertTrue(count > 5);
 
-        String target = "B4";
+        String target = "G3";
         int sub = 1;
-        for (ProjectQuestion question : questionnaire.getQuestions()) {
-            String title = question.title();
-            if (!StringUtils.equalsIgnoreCase(title, target)) {
+        for (QuestionNode question : questionnaire.getMainQuestionNodeList()) {
+            String serial = question.serial();
+            if (!StringUtils.equalsIgnoreCase(serial, target)) {
                 continue;
             }
-            if (sub == 0) {
-                log.info("{} answer:\n{}", title, question.getAnswer());
-            }
-            for (ProjectQuestion subQuestion : question.getSubQuestions()) {
-                if (subQuestion.getSubSerial() == sub) {
-                    log.info("{}.{} answer:\n{}", title, subQuestion.getSubSerial(), subQuestion.getAnswer());
-                }
+            log.info("{} answer:\n{}", serial, question.questionAnswer());
+            for (QuestionNode subQuestion : question.getSubList()) {
+                log.info("{}.{} answer:\n{}", serial, subQuestion.getSubSerial(), subQuestion.questionAnswer());
             }
         }
     }

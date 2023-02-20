@@ -49,7 +49,7 @@ public class ProjectReport {
 
     private Integer modelArtifactVersionId;
 
-    private Integer questionnaireVersionId;
+    private Long questionnaireVersionId;
 
     private String pdfPath;
 }

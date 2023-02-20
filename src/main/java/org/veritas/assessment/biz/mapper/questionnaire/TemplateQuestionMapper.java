@@ -19,4 +19,18 @@ public interface TemplateQuestionMapper extends BaseMapper<TemplateQuestion> {
         wrapper.orderByAsc(TemplateQuestion::getSubSerial);
         return selectList(wrapper);
     }
+
+    default int saveAll(List<TemplateQuestion> templateQuestionList) {
+        if (templateQuestionList == null || templateQuestionList.isEmpty()) {
+            return 0;
+        }
+        int result = 0;
+        for (TemplateQuestion templateQuestion : templateQuestionList) {
+            result += this.insert(templateQuestion);
+            for (TemplateQuestion sub : templateQuestion.getSubList()) {
+                result += this.insert(sub);
+            }
+        }
+        return result;
+    }
 }

@@ -46,6 +46,7 @@ import org.veritas.assessment.biz.entity.BusinessScenario;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.ProjectVersionQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire1.QuestionValue;
@@ -54,6 +55,7 @@ import org.veritas.assessment.biz.mapper.ProjectReportMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.SystemService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectQuestionnaireService1;
 import org.veritas.assessment.biz.service.questionnaire1.ProjectVersionQuestionnaireService1;
 import org.veritas.assessment.biz.util.Version;
@@ -91,9 +93,8 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Autowired
     private ProjectReportMapper reportMapper;
     @Autowired
-    private ProjectQuestionnaireService1 questionnaireService1;
-    @Autowired
-    private ProjectVersionQuestionnaireService1 projectVersionQuestionnaireService;
+    private QuestionnaireService questionnaireService;
+
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
@@ -106,7 +107,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Override
     @Transactional
     public String previewReport(Project project) throws IOException {
-        ProjectQuestionnaire questionnaire = questionnaireService1.findByProject(project.getId());
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
         ModelMap modelMap = modelMap(project, questionnaire);
         return generateReportHtml(modelMap);
     }
@@ -156,12 +157,12 @@ public class ProjectReportServiceImpl implements ProjectReportService {
 
 
         ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
-        ProjectVersionQuestionnaire questionnaire = projectVersionQuestionnaireService.create(projectId);
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(projectId);
 
         ProjectReport report = new ProjectReport();
         report.setProjectId(projectId);
         report.setCreatorUserId(operator.getId());
-        report.setQuestionnaireVersionId(questionnaire.getVersionId());
+        report.setQuestionnaireVersionId(questionnaire.getVid());
         report.setModelArtifactVersionId(modelArtifact.getVersionId());
         report.setVersion(versionString);
         report.setMessage(message);
@@ -247,14 +248,18 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     public List<ProjectReport> findReportHistoryList(Integer projectId) {
         return reportMapper.findAllByProjectId(projectId);
     }
+    private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire) {
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("project", project);
+        modelMap.put("questionnaire", questionnaire);
+        modelMap.put("versionHistoryList", versionHistoryList(project.getId(), null));
 
-
-    private <T extends QuestionValue<T>> ModelMap modelMap(Project project, QuestionnaireValue<T> questionnaire) {
-        return modelMap(project, questionnaire, null);
-
+        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(project.getBusinessScenario());
+        modelMap.put("businessScenario", businessScenario.getName());
+        return modelMap;
     }
 
-    private <T extends QuestionValue<T>> ModelMap modelMap(Project project, QuestionnaireValue<T> questionnaire,
+    private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire,
                                                            ProjectReport current) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
