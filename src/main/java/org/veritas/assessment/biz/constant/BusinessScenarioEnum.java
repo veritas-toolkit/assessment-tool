@@ -24,9 +24,9 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 public enum BusinessScenarioEnum {
-    BASE_CLASSIFICATION(1, "Base Classification", "Base Classification", "base_regression"),
+    BASE_CLASSIFICATION(1, "Base Classification", "Base Classification", "base_classification"),
     BASE_REGRESSION(2, "Base Regression", "Base Regression", "base_regression"),
-    CREDIT_SCORING(10, "Credit Scoring", "Credit Scoring", "credit_scoring"),
+    CREDIT_SCORING(10, "Credit Score", "Credit Score", "credit_score"),
     CUSTOMER_MARKETING(20, "Customer Marketing", "Customer Marketing", "customer_marketing"),
     PUW(30, "PUW", "PUW", "PUW"),
     ;
