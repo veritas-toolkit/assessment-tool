@@ -16,10 +16,10 @@ public enum Principle {
     @JsonValue
     private final String shortName;
     @Getter
-    private final String description;
+    private final String fullname;
 
-    Principle(String name, String description) {
+    Principle(String name, String fullname) {
         this.shortName = name;
-        this.description = description;
+        this.fullname = fullname;
     }
 }

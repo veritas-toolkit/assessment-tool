@@ -94,12 +94,12 @@ public class TemplateQuestionnaireTocDto {
         this.name = questionnaire.getName();
         this.description = questionnaire.getDescription();
         this.principles = new LinkedHashMap<>();
-        Arrays.stream(Principle.values()).forEach(e -> this.principles.put(e.getShortName(), e.getDescription()));
+        Arrays.stream(Principle.values()).forEach(e -> this.principles.put(e.getShortName(), e.getFullname()));
 
         List<PrinciplePart> partList = new ArrayList<>();
         for (Principle principle : Principle.values()) {
             PrinciplePart part = new PrinciplePart();
-            part.setPrinciple(principle.getDescription());
+            part.setPrinciple(principle.getFullname());
             part.setPrincipleShortName(principle.getShortName());
             List<TemplateQuestion> questionList = questionnaire.getMainQuestionList().stream()
                     .filter(q -> q.getPrinciple() == principle)

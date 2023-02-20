@@ -58,7 +58,7 @@ public class QuestionnaireTocDto {
         supportPrincipleList = project.principles();
         principles = supportPrincipleList.stream().collect(Collectors.toMap(
                 Principle::getShortName,
-                Principle::getDescription,
+                Principle::getFullname,
                 (value1, value2) -> value1,
                 LinkedHashMap::new));
         this.fillQuestions(q.getMainQuestionNodeList());
@@ -97,7 +97,7 @@ public class QuestionnaireTocDto {
         public PrincipleAssessment(Principle p, List<QuestionNode> questionNodeList) {
             Objects.requireNonNull(p);
             Objects.requireNonNull(questionNodeList);
-            this.principle = p.getDescription();
+            this.principle = p.getFullname();
             this.principleShortName = p.getShortName();
 
             List<QuestionNode> list = questionNodeList.stream()

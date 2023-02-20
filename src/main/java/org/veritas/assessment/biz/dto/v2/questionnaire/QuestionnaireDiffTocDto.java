@@ -55,7 +55,7 @@ public class QuestionnaireDiffTocDto {
         this.principles = supportPrincipleList.stream()
                 .collect(Collectors.toMap(
                         Principle::getShortName,
-                        Principle::getDescription,
+                        Principle::getFullname,
                         (a, b) -> a,
                         LinkedHashMap::new));
 
@@ -90,7 +90,7 @@ public class QuestionnaireDiffTocDto {
 
         public PrincipleAssessment(Principle p, List<QuestionNode> basedList, List<QuestionNode> newList) {
             Objects.requireNonNull(p);
-            this.principle = p.getDescription();
+            this.principle = p.getFullname();
             this.principleShortName = p.getShortName();
 
             basedList = basedList == null ? Collections.emptyList() : basedList;
