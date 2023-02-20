@@ -17,7 +17,7 @@
 package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
-import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
+import org.veritas.assessment.biz.dto.questionnaire.PrincipleAssessmentProgressDto;
 
 import java.util.List;
 

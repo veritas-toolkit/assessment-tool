@@ -49,7 +49,7 @@ import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.RoleDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.PrincipleAssessmentProgressDto;
+import org.veritas.assessment.biz.dto.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;

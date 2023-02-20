@@ -17,7 +17,7 @@
 package org.veritas.assessment.biz.converter;
 
 import org.springframework.stereotype.Component;
-import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
 @Component

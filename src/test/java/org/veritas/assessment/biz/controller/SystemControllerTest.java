@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.dto.BusinessScenarioDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 
 import java.util.List;
 

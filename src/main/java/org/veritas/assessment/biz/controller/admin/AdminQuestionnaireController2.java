@@ -29,8 +29,8 @@ import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConvert
 
 
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter2;
-import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.metadata.Pageable;

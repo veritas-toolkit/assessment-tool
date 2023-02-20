@@ -17,14 +17,9 @@
 package org.veritas.assessment.biz.converter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import org.veritas.assessment.biz.dto.GroupDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireRecordDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireRecordDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
-import org.veritas.assessment.system.entity.Group;
-
-import java.util.Objects;
 
 @Component
 @Slf4j

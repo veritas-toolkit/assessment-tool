@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter2;
 import org.veritas.assessment.biz.dto.BusinessScenarioDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.SystemService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;

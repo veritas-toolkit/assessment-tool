@@ -1,4 +1,4 @@
-package org.veritas.assessment.biz.dto.v2.questionnaire;
+package org.veritas.assessment.biz.dto.questionnaire;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionAddDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocWithMainQuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionAddDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocWithMainQuestionDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
-import org.veritas.assessment.biz.dto.v2.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
