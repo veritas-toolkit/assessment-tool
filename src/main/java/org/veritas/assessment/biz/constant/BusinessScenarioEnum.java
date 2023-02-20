@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.constant;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ public enum BusinessScenarioEnum {
     PUW(30, "PUW", "PUW", "PUW"),
     ;
     @EnumValue
+    @JsonValue
     private final int code;
 
     @NotNull
