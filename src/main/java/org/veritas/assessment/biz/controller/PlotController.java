@@ -30,7 +30,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("/project/{projectId}/plot")
+@RequestMapping("/project/{projectId}/")
 public class PlotController {
 
     @Data
