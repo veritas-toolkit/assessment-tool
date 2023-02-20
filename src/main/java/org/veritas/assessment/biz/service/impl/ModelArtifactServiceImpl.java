@@ -165,6 +165,13 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     return csJsonModel.getFairness().getClassDistribution();
                 case "performanceLineChart":
                     return csJsonModel.getFairness().getPerfDynamic();
+                case "featureDistributionPieChartMap_MARRIAGE":
+                    Fairness.Feature feature = csJsonModel.getFairness().getFeatureMap().values().stream().findFirst().orElse(null);
+                    if (feature == null) {
+                        return null;
+                    } else {
+                        return feature.getFeatureDistributionMap();
+                    }
                 default:
                     return null;
             }

@@ -92,7 +92,11 @@ public class PlotController {
                 dto.setName("TWO_LINE");
                 dto.setCaption("TWO_LINE");
                 break;
-
+            case "featureDistributionPieChartMap_MARRIAGE":
+                dto.setType(PlotTypeEnum.PIE);
+                dto.setName("feature");
+                dto.setCaption("TWO_LINE");
+                break;
             default:
                 throw new NotFoundException();
         }
