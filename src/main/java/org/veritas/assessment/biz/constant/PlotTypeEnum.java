@@ -4,6 +4,7 @@ public enum PlotTypeEnum {
     NONE("none", "Not need to transform as plot."),
     PIE("pie", "Pie"),
     BAR("bar", "Bar"),
+    CURVE("curve", "Curve"),
     ;
 
     private final String name;

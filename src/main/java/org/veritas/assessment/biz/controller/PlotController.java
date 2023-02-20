@@ -1,5 +1,8 @@
 package org.veritas.assessment.biz.controller;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -7,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.constant.PlotTypeEnum;
 import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.dto.PlotFetchDto;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -58,15 +65,26 @@ public class PlotController {
 //            log.warn("load model artifact");
 //            throw new InternalException();
 //        }
-        Object data = modelArtifactService.findPlotData(null, null, null, null);
+        Object data = modelArtifactService.findPlotData(null, plotFetchDto.getImgId(), null, null);
         if (data == null) {
             throw new NotFoundException("not found");
         }
         PlotDataDto dto = new PlotDataDto();
-        dto.setType(PlotTypeEnum.PIE);
-        dto.setName("class distribution");
         dto.setData(data);
-        dto.setCaption("Class Distribution");
+        switch (plotFetchDto.getImgId()) {
+            case "calibrationCurveLineChart":
+                dto.setType(PlotTypeEnum.CURVE);
+                dto.setName("CURVE");
+                dto.setCaption("CURVE");
+                break;
+            case "classDistributionPieChart":
+                dto.setType(PlotTypeEnum.PIE);
+                dto.setName("class distribution");
+                dto.setCaption("Class Distribution");
+                break;
+            default:
+                throw new NotFoundException();
+        }
         return dto;
     }
 
@@ -77,7 +95,7 @@ public class PlotController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public HttpEntity<?> plot(@PathVariable("projectId") int projectId,
                               @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid,
-                              @RequestParam("plot-id") String plotId) {
+                              @RequestParam("plot-id") String plotId) throws IOException {
         if (questionnaireVid == null) {
             // fetch the latest questionnaire
         }
@@ -115,5 +133,12 @@ public class PlotController {
     public static class HeatmapDto {
 
     }
+
+
+
+
+
+
+
 
 }

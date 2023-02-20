@@ -44,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -151,15 +152,37 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         Fairness fairness = jsonModel.getFairness();
         return fairness.getClassDistribution();
          */
-        final String  cs_json = "json_test/model_artifact_credit_scoring_20230117_1251.json";
-        try (InputStream is = new ClassPathResource(cs_json).getInputStream()) {
-            String jsonString = IOUtils.toString(is, StandardCharsets.UTF_8);
-            JsonModel jsonModel = objectMapper.readValue(jsonString, JsonModel.class);
-            return jsonModel.getFairness().getClassDistribution();
-        } catch (IOException e) {
-            log.error("load json failed.", e);
-            return null;
+        final String EXAMPLE_CS = "json_test/model_artifact_credit_scoring_20230117_1251.json";
+        final String EXAMPLE_CM = "json_test/model_artifact_customer_marketing_20230117_1143.json";
+
+        try {
+            JsonModel csJsonModel = load(EXAMPLE_CS);
+            JsonModel cmJsonModel = load(EXAMPLE_CM);
+            switch (imgId) {
+                case "calibrationCurveLineChart":
+                    return csJsonModel.getFairness().getCalibrationCurve();
+                case "classDistributionPieChart":
+                    return csJsonModel.getFairness().getClassDistribution();
+                default:
+                    return null;
+            }
+
+        } catch (IOException exception) {
+            log.error("load json failed.");
         }
+        return null;
+    }
+
+    public static JsonModel load(String urlString) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
+        objectMapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
+        objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        URL url = new ClassPathResource(urlString).getURL();
+        return objectMapper.readValue(url, JsonModel.class);
     }
 
     @Override

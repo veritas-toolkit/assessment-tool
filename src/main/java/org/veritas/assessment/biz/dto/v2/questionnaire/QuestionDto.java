@@ -70,13 +70,13 @@ public class QuestionDto {
         if (StringUtils.isEmpty(this.answer)) {
             this.answer = "<div>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_calibrationCurveLineChart.png\"/>\n" +
+                    "    <img id=\"calibrationCurveLineChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_calibrationCurveLineChart.png\"/>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"two\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_classDistributionPieChart.png\"/>\n" +
+                    "    <img id=\"classDistributionPieChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_classDistributionPieChart.png\"/>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_correlationHeatMapChart.png\"/>\n" +
+                    "    <img id=\"correlationHeatMapChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_correlationHeatMapChart.png\"/>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_MARRIAGE.png\"/>\n" +
+                    "    <img id=\"featureDistributionPieChartMap_MARRIAGE\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_MARRIAGE.png\"/>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +
                     "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_SEX.png\"/>\n" +
                     "    <div> 1111111111111111111111111 </div>\n" +

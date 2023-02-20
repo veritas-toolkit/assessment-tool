@@ -15,8 +15,9 @@ public class PlotFetchDto {
      */
     @NotEmpty
     private String imgId;
-    @NotEmpty
+
     private String imgClass;
+
     @NotEmpty
     private String imgSrc;
 }
