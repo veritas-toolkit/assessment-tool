@@ -1,6 +1,7 @@
 package org.veritas.assessment.biz.constant;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 
 public enum PlotTypeEnum {
     NONE("none", "Not need to transform as plot."),
@@ -11,7 +12,9 @@ public enum PlotTypeEnum {
     ;
 
     @JsonValue
+    @Getter
     private final String name;
+    @Getter
     private final String description;
 
     PlotTypeEnum(String name, String description) {
