@@ -1,6 +1,7 @@
 create table vat2_project_report (
     version_id integer primary key autoincrement,
     project_id integer not null,
+    version_id_of_project integer not null,
     creator_user_id integer not null,
     created_time varchar(100) not null,
     tag varchar(255),
