@@ -174,7 +174,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     } else {
                         return feature.getFeatureDistributionMap();
                     }
-                case "heat":
+                case "confusion_matrix":
                     Fairness.WeightedConfusionMatrix matrix = cmJsonModel.getFairness().getWeightedConfusionMatrix();
                     if (matrix.getTp() == null) {
                         matrix.setTp(new BigDecimal("100"));
@@ -189,6 +189,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                         matrix.setFn(new BigDecimal("400"));
                     }
                     return matrix;
+                case "correlation_matrix":
+                    return cmJsonModel.getFairness().getCorrelationMatrix();
 
                 default:
                     return null;
