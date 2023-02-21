@@ -29,7 +29,7 @@ public enum BusinessScenarioEnum {
     BASE_REGRESSION(2, "Base Regression", "Base Regression", "base_regression"),
     CREDIT_SCORING(10, "Credit Score", "Credit Score", "credit_score"),
     CUSTOMER_MARKETING(20, "Customer Marketing", "Customer Marketing", "customer_marketing"),
-    PUW(30, "PUW", "PUW", "PUW"),
+    PUW(30, "Predictive Underwriting", "Predictive underwriting", "puw"),
     ;
     @EnumValue
     @JsonValue
