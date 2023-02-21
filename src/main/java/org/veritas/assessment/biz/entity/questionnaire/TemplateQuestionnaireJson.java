@@ -3,6 +3,7 @@ package org.veritas.assessment.biz.entity.questionnaire;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 
@@ -16,8 +17,6 @@ import java.util.Map;
 @NoArgsConstructor
 public class TemplateQuestionnaireJson {
     private String name;
-
-    private int businessScenario;
 
     private QuestionnaireTemplateType type;
 
@@ -85,7 +84,6 @@ public class TemplateQuestionnaireJson {
         TemplateQuestionnaire templateQuestionnaire = new TemplateQuestionnaire();
         templateQuestionnaire.setName(this.getName());
         templateQuestionnaire.setDescription(this.getDescription());
-        templateQuestionnaire.setBusinessScenario(this.getBusinessScenario());
         templateQuestionnaire.setType(this.getType());
         templateQuestionnaire.setCreatedTime(now);
 

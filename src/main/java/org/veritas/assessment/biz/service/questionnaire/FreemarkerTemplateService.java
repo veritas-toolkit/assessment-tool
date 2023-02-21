@@ -26,17 +26,35 @@ public class FreemarkerTemplateService {
     @Autowired
     private VeritasProperties veritasProperties;
 
+
+
     @Autowired
     private Configuration configuration;
 
     @Autowired
     private SystemService systemService;
-
+    final String ANSWER_PREFIX = "answer/";
     @PostConstruct
     public void loadAllTemplates() {
         configuration.setEncoding(Locale.ENGLISH, StandardCharsets.UTF_8.name());
     }
 
+    public Template findTemplate(BusinessScenarioEnum businessScenarioEnum, String templateFilename) {
+        if (businessScenarioEnum == null || StringUtils.isEmpty(templateFilename)) {
+            return null;
+        }
+        String fullname = ANSWER_PREFIX + businessScenarioEnum.getAnswerTemplatePath() + "/" + templateFilename;
+
+        Template template = null;
+        try {
+            template = configuration.getTemplate(fullname);
+        } catch (TemplateNotFoundException exception) {
+            log.warn("Not found the template.", exception);
+        } catch (IOException exception) {
+            log.warn("load template failed.", exception);
+        }
+        return template;
+    }
 
     public Template findTemplate(Integer businessScenarioNo, QuestionNode questionNode) {
         if (businessScenarioNo == null || questionNode == null) {
@@ -59,7 +77,7 @@ public class FreemarkerTemplateService {
         if (StringUtils.isEmpty(templateFilename)) {
             return null;
         }
-        final String ANSWER_PREFIX = "answer/";
+
         String answerTemplate = String.format(ANSWER_PREFIX + "%s/%s/%s",
                 businessScenario.getAnswerTemplatePath(), principle.getShortName(), templateFilename);
         Template template = null;

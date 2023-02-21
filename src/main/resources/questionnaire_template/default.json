@@ -1,6 +1,5 @@
 {
     "name": "default",
-    "businessScenario": 0,
     "type": 1,
     "description": "Default questionnaire for Generic business scenario.",
     "questions": {

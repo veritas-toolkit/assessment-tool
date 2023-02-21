@@ -33,7 +33,6 @@ public class QuestionMeta implements Cloneable {
 
     private boolean answerRequired = DEFAULT_ANSWER_REQUIRED;
 
-    @TableField(exist = false)
     private String answerTemplateFilename;
 
     /**

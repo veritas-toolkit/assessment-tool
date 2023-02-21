@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
@@ -39,4 +40,10 @@ class FreemarkerTemplateServiceTest {
         log.debug("template: {}", template);
     }
 
+    @Test
+    void testFindTemplate_byEnumSuccess() {
+
+        Template template = service.findTemplate(BusinessScenarioEnum.BASE_CLASSIFICATION, "EA/EA1.ftl");
+        assertNotNull(template);
+    }
 }

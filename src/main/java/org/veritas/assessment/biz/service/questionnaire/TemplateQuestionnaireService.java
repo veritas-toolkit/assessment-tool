@@ -2,6 +2,7 @@ package org.veritas.assessment.biz.service.questionnaire;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.template.Template;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson;
 import org.veritas.assessment.biz.mapper.questionnaire.TemplateQuestionnaireDao;
@@ -29,6 +31,45 @@ public class TemplateQuestionnaireService {
     @Setter
     @Autowired
     private TemplateQuestionnaireDao templateQuestionnaireDao;
+
+    @Autowired
+    FreemarkerTemplateService freemarkerTemplateService;
+    @PostConstruct
+    @Transactional
+    public List<TemplateQuestionnaire> load() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        final String urlString = "questionnaire_template/default.json";
+        TemplateQuestionnaireJson questionnaireJson;
+        try {
+            URL url = new ClassPathResource(urlString).getURL();
+            questionnaireJson = objectMapper.readValue(url, TemplateQuestionnaireJson.class);
+        } catch (IOException exception) {
+            throw new RuntimeException("load json failed", exception);
+        }
+        List<TemplateQuestionnaire> list = new ArrayList<>();
+
+        for (BusinessScenarioEnum businessScenarioEnum : BusinessScenarioEnum.values()) {
+            List<TemplateQuestionnaire> exist = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
+            if ( exist != null && ! exist.isEmpty()) {
+                continue;
+            }
+            TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
+            templateQuestionnaire.setCreatorUserId(1);
+            templateQuestionnaire.setBusinessScenario(businessScenarioEnum);
+            for (TemplateQuestion templateQuestion : templateQuestionnaire.allQuestionList()) {
+                String defaultFilename = templateQuestion.defaultFreeMarkTemplate();
+                Template template = freemarkerTemplateService.findTemplate(businessScenarioEnum, defaultFilename);
+                if (template != null) {
+                    templateQuestion.setAnswerTemplateFilename(defaultFilename);
+                }
+            }
+            templateQuestionnaireDao.save(templateQuestionnaire);
+            list.add(templateQuestionnaire);
+
+        }
+        return Collections.unmodifiableList(list);
+    }
 
     // all list
     @Transactional(readOnly = true)
@@ -56,7 +97,7 @@ public class TemplateQuestionnaireService {
                     .collect(Collectors.toList());
         }
         if (businessScenario != null) {
-            list = list.stream().filter(q -> q.getBusinessScenario() == businessScenario)
+            list = list.stream().filter(q -> q.getBusinessScenario().getCode() == businessScenario)
                     .collect(Collectors.toList());
         }
         return list;
@@ -85,33 +126,4 @@ public class TemplateQuestionnaireService {
     // delete question(main or sub)
 
 
-    @PostConstruct
-    @Transactional
-    public List<TemplateQuestionnaire> load() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        final String urlString = "questionnaire_template/default.json";
-        TemplateQuestionnaireJson questionnaireJson;
-        try {
-            URL url = new ClassPathResource(urlString).getURL();
-            questionnaireJson = objectMapper.readValue(url, TemplateQuestionnaireJson.class);
-        } catch (IOException exception) {
-            throw new RuntimeException("load json failed", exception);
-        }
-        List<TemplateQuestionnaire> list = new ArrayList<>();
-
-        for (BusinessScenarioEnum businessScenarioEnum : BusinessScenarioEnum.values()) {
-            List<TemplateQuestionnaire> exist = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
-            if ( exist != null && ! exist.isEmpty()) {
-                continue;
-            }
-            TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
-            templateQuestionnaire.setCreatorUserId(1);
-            templateQuestionnaire.setBusinessScenario(businessScenarioEnum.getCode());
-            templateQuestionnaireDao.save(templateQuestionnaire);
-            list.add(templateQuestionnaire);
-
-        }
-        return Collections.unmodifiableList(list);
-    }
 }

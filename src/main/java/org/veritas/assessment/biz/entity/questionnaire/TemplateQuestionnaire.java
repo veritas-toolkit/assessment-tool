@@ -9,9 +9,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.ibatis.type.JdbcType;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +28,7 @@ public class TemplateQuestionnaire {
 
     private String name;
 
-    private int businessScenario;
+    private BusinessScenarioEnum businessScenario;
 
     private QuestionnaireTemplateType type;
 
@@ -54,6 +56,15 @@ public class TemplateQuestionnaire {
             this.mainQuestionList = Collections.emptyList();
         }
         this.mainQuestionList = TemplateQuestion.toStructure(questionList);
+    }
+
+    public List<TemplateQuestion> allQuestionList() {
+        List<TemplateQuestion> list = new ArrayList<>();
+        for (TemplateQuestion templateQuestion : this.mainQuestionList) {
+            list.add(templateQuestion);
+            list.addAll(templateQuestion.getSubList());
+        }
+        return Collections.unmodifiableList(list);
     }
 
     public void setId(Integer id) {

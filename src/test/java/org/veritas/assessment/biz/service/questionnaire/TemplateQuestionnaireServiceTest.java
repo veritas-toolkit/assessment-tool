@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson;
 
@@ -28,9 +29,8 @@ class TemplateQuestionnaireServiceTest {
     }
 
     @Test
-    void testLoad() {
-        List<TemplateQuestionnaire> list = service.load();
-        log.info("list:\n{}", list);
-
+    void findAllTemplateBasic() {
+        List<TemplateQuestionnaire> list = service.findAllTemplateBasic();
+        assertEquals(BusinessScenarioEnum.values().length , list.size());
     }
 }

@@ -40,8 +40,10 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date editTime;
+
     private boolean answerRequired;
 
+    private String answerTemplateFilename;
 
     @TableField(exist = false)
     private List<TemplateQuestion> subList = Collections.emptyList();
@@ -75,6 +77,9 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         return !this.isMain();
     }
 
+    public String serial() {
+        return this.principle.getShortName() + this.serialOfPrinciple;
+    }
     public boolean contain(TemplateQuestion sub) {
         Objects.requireNonNull(sub);
         if (!this.isMain()) {
@@ -91,6 +96,14 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
 
     }
 
+    public String defaultFreeMarkTemplate() {
+        if (this.isMain()) {
+            return String.format("%s/%s.ftl", this.principle.getShortName(), this.serial());
+        } else {
+            return String.format("%s/%s_S%d.ftl",
+                    this.principle.getShortName(), this.serial(), this.subSerial);
+        }
+    }
 
     @Override
     public int compareTo(TemplateQuestion o) {
@@ -121,7 +134,6 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
             }
         }
         mainList = mainList.stream().sorted().collect(Collectors.toList());
-        ;
         for (TemplateQuestion main : mainList) {
             for (TemplateQuestion sub : templateQuestionList) {
                 if (sub.isSub() && main.contain(sub)) {

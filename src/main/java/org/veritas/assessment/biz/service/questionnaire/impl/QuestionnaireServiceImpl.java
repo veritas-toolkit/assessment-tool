@@ -84,7 +84,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
                 "Arg[project] businessScenario should not be null.");
         Objects.requireNonNull(template);
 
-        boolean sameBiz = project.getBusinessScenario() == template.getBusinessScenario();
+        boolean sameBiz = project.getBusinessScenario() == template.getBusinessScenario().getCode();
         if (!sameBiz) {
             throw new IllegalArgumentException();
         }

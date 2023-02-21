@@ -50,7 +50,7 @@ class QuestionnaireServiceImplTest {
         TemplateQuestionnaire templateQuestionnaire = templateQuestionnaireService.findByTemplateId(templateId);
         Date now = new Date();
         Project project = new Project();
-        project.setBusinessScenario(templateQuestionnaire.getBusinessScenario());
+        project.setBusinessScenario(templateQuestionnaire.getBusinessScenario().getCode());
         project.setCreatorUserId(userId);
         project.setId(projectId);
         project.setName("project-for-test-" + userId + "-" + projectId);
@@ -78,7 +78,7 @@ class QuestionnaireServiceImplTest {
         int projectId = 10;
         Date now = new Date();
         Project project = new Project();
-        project.setBusinessScenario(templateQuestionnaire.getBusinessScenario());
+        project.setBusinessScenario(templateQuestionnaire.getBusinessScenario().getCode());
         project.setCreatorUserId(userId);
         project.setId(projectId);
         project.setCreatedTime(now);

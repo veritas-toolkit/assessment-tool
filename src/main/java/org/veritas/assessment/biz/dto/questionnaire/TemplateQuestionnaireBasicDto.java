@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.dto.questionnaire;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 
 import java.util.Date;
@@ -28,7 +29,7 @@ public class TemplateQuestionnaireBasicDto {
 
     private String name;
 
-    private int businessScenario;
+    private BusinessScenarioEnum businessScenario;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private QuestionnaireTemplateType type;

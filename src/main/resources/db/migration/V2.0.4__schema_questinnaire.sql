@@ -32,6 +32,7 @@ create table vat2_question_meta (
     current_vid bigint not null,
     content_editable boolean not null default false, -- whether the question can be edited.
     answer_required boolean not null default false,
+    answer_template_filename varchar(1000),
     add_start_questionnaire_vid bigint not null,
     delete_start_questionnaire_vid bigint
 );
@@ -80,6 +81,7 @@ create table vat2_template_question (
     editor_user_id integer not null,
     edit_time varchar(100) not null,
     answer_required number(1) not null default false,
+    answer_template_filename varchar(1000),
     deleted number(1) not null default false
 );
 
