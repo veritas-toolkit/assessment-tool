@@ -135,7 +135,7 @@ body {
     margin-top: -10pt;
     padding-top: 0pt;
     padding-left: 20pt;
-    font-size: 35pt;
+    font-size: 32pt;
     color: rgb(2, 18, 77);
 }
 #cover_sub_title {
@@ -359,11 +359,11 @@ h1 {
     text-indent: 1.5rem;
 }
 
-#part_A {
+#principle_G {
     margin-top: 2.0em;
     page-break-before: avoid;
 }
-.part_title {
+.principle_title {
     font: 35px bold;
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -432,11 +432,10 @@ h1 {
     border-radius: 5pt;
 }
 .main_question_title_box_t {
-
     width: 5%;
     font-size: 18px;
-
 }
+
 .main_question_title_t {
     color: white;
     background-color: rgb(161, 131, 68);
@@ -514,7 +513,7 @@ img.pie {
 
 
 </style>
-<title>FEAT Fairness Assessment Report</title>
+<title>FEAT Assessment Report</title>
 
 <bookmarks>
     <bookmark name="Cover" href="#cover"></bookmark>
@@ -523,9 +522,13 @@ img.pie {
     <bookmark name="Introduction" href="#introduction"/>
 
     <#list project.principles() as principle>
-    <bookmark name="Principle ${principle.shortName}" href="#principle_${principle.fullname}">
-        <#list part.questionList as question>
-        <bookmark name="${question.serial()} ${question.content}" href="#${question.title()}">
+    <bookmark name="${principle.fullname} Principle" href="#principle_${principle.shortName}">
+        <#list questionnaire.steps(principle) as step>
+        <bookmark name="Step ${step.stepSerial}: ${step.description}" href="#principle_${principle.shortName}_step_${step.stepSerial}">
+            <#list questionnaire.findQuestionList(principle, step) as question>
+            <bookmark name="${question.serial()} ${question.content}" href="#${question.serial()}">
+            </bookmark>
+            </#list>
         </bookmark>
         </#list>
     </bookmark>
@@ -548,13 +551,9 @@ img.pie {
 <div id="cover" class="page_only">
     <div id="cover_title">
         <div id="cover_logo_box">
-
-            <#--
-            <img id="cover_logo" align="left" src="ftl/image/favicon.png">
-            -->
         </div>
         <div id="cover_main_title">
-            FEAT Fairness Assessment Report
+            FEAT Assessment Report
         </div>
         <div id="cover_sub_title">
             ${project.name} | ${businessScenario}
@@ -601,8 +600,8 @@ img.pie {
             <#list questionnaire.steps(principle) as step>
                 <#list questionnaire.findQuestionList(principle, step) as question>
                     <div class="toc_second_level">
-                        <a href="#${question.title()}">
-                            ${question.serial()}. ${question.question}
+                        <a href="#${question.serial()}">
+                            ${question.serial()}. ${question.content}
                         </a>
                     </div>
                 </#list>
@@ -629,26 +628,28 @@ img.pie {
 
 <#list questionnaire.principles() as principle>
     <div class="question_principle chapter" id="principle_${principle.shortName}">
-        <div class="principle_title">
+        <div class="principle_title" id="${principle.shortName}">
             ${principle.fullname} Principle
         </div>
         <#list questionnaire.steps(principle) as step>
-            <div class="step_title">
-                Step: ${step.description}
+            <div id="principle_${principle.shortName}_step_${step.stepSerial}" class="step_title">
+                Step ${step.stepSerial}: ${step.description}
+            </div>
+            <div>
                 <#list questionnaire.findQuestionList(principle, step) as question>
-                    <div class="main_question_t">
-                        <a href="#${question.title()}">
-                            ${question.serial()}. ${question.question}
-                        </a>
-                    </div>
-                    <div class="question" id="${question.title()}">
+<#--                    <div class="main_question_t">-->
+<#--                        <a href="#${question.serial()}">-->
+<#--                            ${question.serial()}. ${question.content}-->
+<#--                        </a>-->
+<#--                    </div>-->
+                    <div class="question" id="${question.serial()}">
 
                         <table class="main_question_t" width="100%">
                             <head>
                                 <th class="main_question_title_box_t">
                                     <div class="main_question_title_t">${question.serial()}</div>
                                 </th>
-                                <th class="main_question_content_t">${question.question}</th>
+                                <th class="main_question_content_t">${question.content}</th>
                             </head>
                         </table>
 
@@ -660,7 +661,7 @@ img.pie {
 
                         <#list question.subQuestionList as sub_question>
                             <div class="sub_question">
-                                ${sub_question.question}
+                                ${sub_question.content}
                             </div>
 
                             <#if (sub_question.answer)??>
