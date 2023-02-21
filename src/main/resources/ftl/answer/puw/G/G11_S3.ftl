@@ -16,8 +16,8 @@
         </tr>
     </thead>
     <tbody>
-    <#list fairness.perfMetricValues as metricName, valueList>
-        <tr <#if fairness.isPerfMetric(metricName) == true> class="perf_metric_row"</#if>>
+    <#list jsonModel.perfMetricValues as metricName, valueList>
+        <tr <#if jsonModel.isPerfMetric(metricName) == true> class="perf_metric_row"</#if>>
             <td>${metricName}</td>
             <td>${valueList[0]} +/- ${valueList[1]}</td>
         </tr>
@@ -58,7 +58,7 @@
     <img src="${graphContainer.getCalibrationCurveLineChart()}" />
 </div>
     <div>
-        The brier loss score is ${fairness.calibrationCurve.score}.
+        The brier loss score is ${jsonModel.calibrationCurve.score}.
     </div>
 <#else>
    Calibration curve does not apply to this project.
