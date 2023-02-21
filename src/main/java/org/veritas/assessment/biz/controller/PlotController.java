@@ -91,10 +91,10 @@ public class PlotController {
                 dto.setName("feature");
                 dto.setCaption("TWO_LINE");
                 break;
-            case "heat":
+            case "confusion_matrix":
                 dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
-                dto.setName("heat");
-                dto.setCaption("heat");
+                dto.setName("confusion_matrix");
+                dto.setCaption("confusion_matrix");
                 break;
             case "correlation_matrix":
                 dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
