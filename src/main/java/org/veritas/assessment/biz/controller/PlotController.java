@@ -92,7 +92,7 @@ public class PlotController {
                 dto.setCaption("TWO_LINE");
                 break;
             case "heat":
-                dto.setType(PlotTypeEnum.HEATING_MAP);
+                dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
                 dto.setName("heat");
                 dto.setCaption("heat");
                 break;
