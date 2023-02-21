@@ -78,8 +78,8 @@ public class FreemarkerTemplateService {
             return null;
         }
 
-        String answerTemplate = String.format(ANSWER_PREFIX + "%s/%s/%s",
-                businessScenario.getAnswerTemplatePath(), principle.getShortName(), templateFilename);
+        String answerTemplate = String.format(ANSWER_PREFIX + "%s/%s",
+                businessScenario.getAnswerTemplatePath(), templateFilename);
         Template template = null;
         try {
             template = configuration.getTemplate(answerTemplate);

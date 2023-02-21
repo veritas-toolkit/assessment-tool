@@ -23,6 +23,7 @@ import org.veritas.assessment.biz.mapper.questionnaire.QuestionnaireDao;
 import org.veritas.assessment.biz.service.IdGenerateService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
@@ -86,7 +87,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
         boolean sameBiz = project.getBusinessScenario() == template.getBusinessScenario().getCode();
         if (!sameBiz) {
-            throw new IllegalArgumentException();
+            throw new IllegalRequestException(String.format(
+                    "Template business scenario[%d] is diff from the project's[%d].",
+                    template.getBusinessScenario().getCode(), project.getBusinessScenario()));
         }
         QuestionnaireVersion questionnaire =
                 new QuestionnaireVersion(creatorUserId, project.getId(), createdTime, template, idGenerateService::nextId);

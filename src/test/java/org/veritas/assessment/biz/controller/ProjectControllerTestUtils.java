@@ -69,7 +69,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ProjectControllerTestUtils {
+@Component
+public class ProjectControllerTestUtils {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired(required = false)
@@ -86,6 +87,22 @@ class ProjectControllerTestUtils {
         createDto.setPrincipleFairness(true);
         createDto.setPrincipleEA(true);
         createDto.setPrincipleTransparency(true);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
+                        .with(user("1").roles("ADMIN", "USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDto)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        ProjectDto projectDto = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProjectDto.class);
+        assertNotNull(projectDto);
+        assertNotNull(projectDto.getId());
+        assertEquals(createDto.getDescription(), projectDto.getDescription());
+        return projectDto;
+    }
+
+    public ProjectDto createProject(ProjectCreateDto createDto) throws Exception {
+
 
         MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))

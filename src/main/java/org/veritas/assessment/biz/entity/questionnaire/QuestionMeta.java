@@ -68,11 +68,13 @@ public class QuestionMeta implements Cloneable {
     public QuestionMeta(TemplateQuestion templateQuestion) {
         this.contentEditable = templateQuestion.isEditable();
         this.setAnswerRequired(templateQuestion.isAnswerRequired());
+        this.setAnswerTemplateFilename(templateQuestion.getAnswerTemplateFilename());
     }
 
     public QuestionMeta(QuestionMeta questionMeta) {
         this.contentEditable = questionMeta.isContentEditable();
         this.setAnswerRequired(questionMeta.isAnswerRequired());
+        this.setAnswerTemplateFilename(questionMeta.getAnswerTemplateFilename());
     }
 
     @Override
