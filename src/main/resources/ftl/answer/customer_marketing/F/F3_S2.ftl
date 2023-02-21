@@ -2,7 +2,7 @@
 
 
 
-<#assign fairnessInit=jsonModel.fairnessInit>
+<#assign fairnessInit=fairness.fairnessInit>
 <#if fair_metric_name_input == 'auto'>
 <div>
     To assess the fairness of ${businessScenario.name} model,our priority is to measure ${fairnessInit.fairImpact} ${fairnessInit.fairPriority!""} to the ${fairnessInit.fairConcernDisplay()}group,

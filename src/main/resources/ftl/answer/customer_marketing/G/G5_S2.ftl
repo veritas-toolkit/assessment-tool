@@ -3,7 +3,7 @@
 
 <#--special parameter, 营销场景涉及revenue和treatment cost，以下内容当revenue和treatment cost不为null的时候输出-->
 
-<#assign fairnessInit=jsonModel.fairnessInit>
+<#assign fairnessInit=fairness.fairnessInit>
 <#if fairnessInit.special_params.revenue??>
 
 <div>

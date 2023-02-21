@@ -31,7 +31,7 @@
     On a relative basis, less than 50 percent imbalance between classes is generally considered a relatively low level of imbalance.
 </div>
 
-<#list jsonModel.featureMap as feature_name, feature>
+<#list fairness.featureMap as feature_name, feature>
     <#if graphContainer.getFeatureDistributionPieChart(feature_name)??>
     <div class="image_box">
         <div class="image_title">Feature Distribution for ${feature_name}</div>

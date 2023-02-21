@@ -20,9 +20,9 @@ The pie chart for target label distribution is shown.
 </#if>
 
 <div>
-<#if jsonModel.minClassDistributionName()??>
-    <#assign minDistribution = jsonModel.minClassDistributionName()>
-    <#if jsonModel.classDistributionIsAverage()>
+<#if fairness.minClassDistributionName()??>
+    <#assign minDistribution = fairness.minClassDistributionName()>
+    <#if fairness.classDistributionIsAverage()>
         The proportion of <b>${minDistribution.getKey()}</b> is approximately ${minDistribution.getValue()}, so the imbalance in distribution of labels is small.
     <#else>
         The proportion of <b>${minDistribution.getKey()}</b> is approximately ${minDistribution.getValue()}, which indicates an large imbalance in distribution of labels.
@@ -41,7 +41,7 @@ The pie chart for target label distribution is shown.
     On a relative basis, less than 50 percent imbalance between classes is generally considered a relatively low level of imbalance.
 </div>
 
-<#list jsonModel.featureMap as feature_name, feature>
+<#list fairness.featureMap as feature_name, feature>
     <#if graphContainer.getFeatureDistributionPieChart(feature_name)??>
     <div class="image_box">
         <div class="image_title">Feature Distribution for ${feature_name}</div>

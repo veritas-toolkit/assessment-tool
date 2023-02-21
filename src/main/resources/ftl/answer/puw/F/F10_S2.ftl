@@ -16,7 +16,7 @@
 
 
 
-<#if jsonModel.hasTradeoff() == true>
+<#if fairness.hasTradeoff() == true>
 
 <#list graphContainer.getFeatureTradeoffContourMap() as feature_name, chart>
     <#if chart??>

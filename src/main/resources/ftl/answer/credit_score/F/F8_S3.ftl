@@ -7,7 +7,7 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
 
 </div>
 
-<#list jsonModel.featureMap as feature_name, feature>
+<#list fairness.featureMap as feature_name, feature>
     <div>
         Feature: <b>${feature_name}</b>
         <div class="table_box">
@@ -15,8 +15,8 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
             <thead>
                 <tr>
                     <th>Personal attribute</th>
-                    <th>Impact on ${jsonModel.fairnessInit.perfMetricName}</th>
-                    <th>Impact on ${jsonModel.fairnessInit.fairMetricName}</th>
+                    <th>Impact on ${fairness.fairnessInit.perfMetricName}</th>
+                    <th>Impact on ${fairness.fairnessInit.fairMetricName}</th>
                     <th>Fairness conclusion</th>
                     <th>Suggestion</th>
                 </tr>
@@ -35,11 +35,11 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
         </div>
     </div>
     <div>
-        <#assign fair_metric_name=jsonModel.fairnessInit.fairMetricName>
+        <#assign fair_metric_name=fairness.fairnessInit.fairMetricName>
         <#assign fair_threshold=feature.fairThreshold>
         <#assign fairness_conclusion=feature.fairnessConclusion>
-        <#assign fair_metric_value_optional=feature.findFairMetricValue(jsonModel)>
-        <#assign importance_info_optional=feature.findImportanceInfo(jsonModel)>
+        <#assign fair_metric_value_optional=feature.findFairMetricValue(fairness)>
+        <#assign importance_info_optional=feature.findImportanceInfo(fairness)>
         <#if fair_metric_value_optional.isPresent() && importance_info_optional.isPresent()>
             <b>${feature_name}</b>: The fairness threshold is ${fair_threshold},
              and the <b>${fair_metric_name}</b> for ${feature_name} in the baseline model is ${fair_metric_value_optional.get()}
