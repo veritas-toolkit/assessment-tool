@@ -44,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -173,6 +174,22 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     } else {
                         return feature.getFeatureDistributionMap();
                     }
+                case "heat":
+                    Fairness.WeightedConfusionMatrix matrix = cmJsonModel.getFairness().getWeightedConfusionMatrix();
+                    if (matrix.getTp() == null) {
+                        matrix.setTp(new BigDecimal("100"));
+                    }
+                    if (matrix.getFp() == null) {
+                        matrix.setFp(new BigDecimal("200"));
+                    }
+                    if (matrix.getTn() == null) {
+                        matrix.setTn(new BigDecimal("300"));
+                    }
+                    if (matrix.getFn() == null) {
+                        matrix.setFn(new BigDecimal("400"));
+                    }
+                    return matrix;
+
                 default:
                     return null;
             }

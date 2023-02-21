@@ -1,8 +1,5 @@
 package org.veritas.assessment.biz.controller;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -10,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.constant.PlotTypeEnum;
 import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.dto.PlotFetchDto;
-import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
@@ -31,7 +26,6 @@ import org.veritas.assessment.system.entity.User;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -96,6 +90,16 @@ public class PlotController {
                 dto.setType(PlotTypeEnum.PIE);
                 dto.setName("feature");
                 dto.setCaption("TWO_LINE");
+                break;
+            case "heat":
+                dto.setType(PlotTypeEnum.HEATING_MAP);
+                dto.setName("heat");
+                dto.setCaption("heat");
+                break;
+            case "correlation_matrix":
+                dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
+                dto.setName("correlation_matrix");
+                dto.setCaption("correlation_matrix");
                 break;
             default:
                 throw new NotFoundException();

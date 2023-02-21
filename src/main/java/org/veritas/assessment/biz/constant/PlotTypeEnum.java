@@ -9,6 +9,8 @@ public enum PlotTypeEnum {
     BAR("bar", "Bar"),
     CURVE("curve", "Curve"),
     TWO_LINE("two_line", "Two line"),
+    HEATING_MAP("heating_map", "Heating map"),
+    CORRELATION_MATRIX("correlation_matrix", "Correlation Matrix")
     ;
 
     @JsonValue
