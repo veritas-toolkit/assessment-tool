@@ -3,14 +3,17 @@ package org.veritas.assessment.biz.entity.jsonmodel;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.veritas.assessment.TestUtils;
 
 import java.io.IOException;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 class JsonModelTest {
 
     public static final String EXAMPLE_URL = "json/veritas_model_artifact_final_V1.1.json";
@@ -25,8 +28,9 @@ class JsonModelTest {
             creditScoringUrl,
             DEFAULT_JSON_URL
     };
+    @Deprecated
     public static final String EXAMPLE_CS = "json2/model_artifact_credit_scoring_20230117_1251.json";
-    public static final String EXAMPLE_CM = "json2/model_artifact_customer_marketing_20230117_1143.json";
+    public static final String EXAMPLE_CM = "json2/model_artifact_customer_marketing_20230220_1849.json";
 
 
     public static JsonModel load(String urlString) throws IOException {
@@ -42,7 +46,7 @@ class JsonModelTest {
     }
 
 
-    @Test
+//    @Test
     void testLoad_successCreditScore() throws IOException {
         JsonModel jsonModel = load(EXAMPLE_CS);
         Transparency transparency = jsonModel.getTransparency();
@@ -54,5 +58,6 @@ class JsonModelTest {
         JsonModel jsonModel = load(EXAMPLE_CM);
         Transparency transparency = jsonModel.getTransparency();
         assertNotNull(transparency);
+        log.info("transparency:\n{}", TestUtils.toJson(transparency));
     }
 }

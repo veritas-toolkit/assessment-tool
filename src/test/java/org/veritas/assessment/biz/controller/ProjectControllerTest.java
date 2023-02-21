@@ -286,7 +286,7 @@ class ProjectControllerTest {
         ProjectDto projectDto = createProject();
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
-                JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_CS).getBytes(StandardCharsets.UTF_8));
+                JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_CM).getBytes(StandardCharsets.UTF_8));
         MvcResult mvcResult = mockMvc.perform(
                         MockMvcRequestBuilders.multipart(
                                         "/api/project/{projectId}/modelArtifact", projectDto.getId())

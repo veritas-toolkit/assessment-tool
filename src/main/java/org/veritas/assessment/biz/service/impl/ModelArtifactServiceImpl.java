@@ -152,21 +152,22 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         Fairness fairness = jsonModel.getFairness();
         return fairness.getClassDistribution();
          */
+        @Deprecated
         final String EXAMPLE_CS = "json_test/model_artifact_credit_scoring_20230117_1251.json";
-        final String EXAMPLE_CM = "json_test/model_artifact_customer_marketing_20230117_1143.json";
+        final String EXAMPLE_CM = "json_test/model_artifact_customer_marketing_20230220_1849.json";
 
         try {
-            JsonModel csJsonModel = load(EXAMPLE_CS);
+//            JsonModel csJsonModel = load(EXAMPLE_CS);
             JsonModel cmJsonModel = load(EXAMPLE_CM);
             switch (imgId) {
                 case "calibrationCurveLineChart":
-                    return csJsonModel.getFairness().getCalibrationCurve();
+                    return cmJsonModel.getFairness().getCalibrationCurve();
                 case "classDistributionPieChart":
-                    return csJsonModel.getFairness().getClassDistribution();
+                    return cmJsonModel.getFairness().getClassDistribution();
                 case "performanceLineChart":
-                    return csJsonModel.getFairness().getPerfDynamic();
+                    return cmJsonModel.getFairness().getPerfDynamic();
                 case "featureDistributionPieChartMap_MARRIAGE":
-                    Fairness.Feature feature = csJsonModel.getFairness().getFeatureMap().values().stream().findFirst().orElse(null);
+                    Fairness.Feature feature = cmJsonModel.getFairness().getFeatureMap().values().stream().findFirst().orElse(null);
                     if (feature == null) {
                         return null;
                     } else {
