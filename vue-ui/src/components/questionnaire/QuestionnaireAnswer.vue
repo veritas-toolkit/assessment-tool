@@ -12,7 +12,9 @@
           <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
         </div>
       </div>
-      <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="answerDict.answer" class="sub-ques-ans BarlowMedium"></div>
+<!--      <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="answerDict.answer" class="sub-ques-ans BarlowMedium"></div>-->
+      <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="transformAnswer(answerDict.answer,answerDict.vid)" class="sub-ques-ans BarlowMedium"></div>
+
       <editor v-if="editorShow[answerDictId]" :key="answerDictId.toString()" :id='answerDictId.toString()' v-model="textarea[answerDictId]" :init="init"></editor>
       <div v-if="editorShow[answerDictId]" style="display: flex;justify-content: right;margin-top: 16px">
         <div class="editor-cancel" @click="editorShow[answerDictId]=false">Cancel</div>
@@ -31,7 +33,9 @@
             <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
           </div>
         </div>
-        <div v-show="item.answer && !editorShow[item.id]" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>
+<!--        <div v-show="item.answer && !editorShow[item.id]" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>-->
+        <div v-show="item.answer && !editorShow[item.id]" v-html="transformAnswer(item.answer,item.vid)" class="sub-ques-ans BarlowMedium"></div>
+
         <editor v-if="editorShow[item.id]" :key="item.id.toString()" :id='item.id.toString()' v-model="textarea[item.id]" :init="init"></editor>
         <div v-if="editorShow[item.id]" style="display: flex;justify-content: right;margin-top: 16px">
           <div class="editor-cancel" @click="editorShow[item.id]=false">Cancel</div>
@@ -59,6 +63,8 @@ import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
 import axios from "axios";
+import * as echarts from 'echarts';
+import {curveOptionData,twoLineOptionData,pieOptionData,confusionMatrixOptionData,correlationMatrixOptionData} from "@/util/echartsOption";
 
 export default {
   name: "QuestionnaireAnswer",
@@ -121,6 +127,59 @@ export default {
     }
   },
   methods: {
+    transformAnswer(answer,vid) {
+      const el = document.createElement('div');
+      el.innerHTML = answer
+      const allImages =  el.getElementsByTagName('img')
+      for (let i = 0; i < allImages.length; i++) {
+        let plotImg = allImages[i];
+        let divChart = document.createElement("div");
+        divChart.style.width = '80%'
+        divChart.style.margin = 'auto'
+        divChart.style.height = '500px'
+        divChart.id = plotImg.id + '_plot'
+        // get echarts option data
+        this.getPlotData(vid,plotImg)
+        if (plotImg.nextSibling) {
+          plotImg.parentNode.insertBefore(divChart, plotImg.nextSibling);
+        } else {
+          plotImg.parentNode.appendChild(divChart);
+        }
+        // plotImg.remove();
+      }
+
+      return el.innerHTML
+    },
+    getPlotData(vid,plotImg) {
+      let plotFetch = {}
+      plotFetch.modelArtifactVid = vid
+      plotFetch.imgId = plotImg.id
+      plotFetch.imgSrc = plotImg.src
+      this.$http.post(`/api/project/${this.projectId}/plot`,plotFetch).then(res => {
+        if (res.status == 200) {
+          let optionData = {}
+          if (res.data.type == 'curve') {
+            optionData = curveOptionData(res.data.data)
+          } else if (res.data.type == 'two_line') {
+            optionData = twoLineOptionData(res.data.data)
+          } else if (res.data.type == 'pie') {
+            optionData = pieOptionData(res.data.data)
+          } else if (res.data.type == 'confusion_matrix') {
+            optionData = confusionMatrixOptionData(res.data.data)
+          } else if (res.data.type == 'correlation_matrix') {
+            optionData = correlationMatrixOptionData(res.data.data)
+          }
+          this.$nextTick(() => {
+            let img = document.getElementById(plotImg.id)
+            echarts.dispose(document.getElementById(plotImg.id+'_plot'))
+            let myChart = echarts.init(document.getElementById(plotImg.id+'_plot'));
+            myChart.setOption(optionData);
+            img.remove();
+            return true;
+          })
+        }
+      })
+    },
     getQuestionnaireAnswer() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${this.questionId}`).then(res => {
         if (res.status == 200) {
