@@ -297,7 +297,7 @@ h1 {
     page-break-inside: avoid;
     border-spacing: 0px;
 }
-kk
+
 .answer table thead {
     color: white;
     background: rgb(2, 18, 77);
