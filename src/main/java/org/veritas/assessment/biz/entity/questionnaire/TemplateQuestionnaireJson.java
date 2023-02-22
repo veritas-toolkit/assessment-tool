@@ -92,7 +92,7 @@ public class TemplateQuestionnaireJson {
         for (Map.Entry<Principle, List<TemplateQuestionJson>> entry : this.getQuestions().entrySet()) {
             Principle principle = entry.getKey();
             List<TemplateQuestionJson> questionJsonList = entry.getValue();
-            int serialOfPrinciple = 0;
+            int serialOfPrinciple = 1;
             if (questionJsonList != null && !questionJsonList.isEmpty()) {
                 // main
                 for (TemplateQuestionJson questionJson : questionJsonList) {

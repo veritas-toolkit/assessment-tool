@@ -388,7 +388,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
 
         List<QuestionNode> newOrderedList = new ArrayList<>(currentMainList.size());
 
-        int seq = 0;
+        int serialOfPrinciple = 1;
         for (Long questionId : newOrderQuestionIdList) {
             Optional<QuestionNode> optional = currentMainList.stream()
                     .filter(q -> Objects.equals(q.getQuestionId(), questionId))
@@ -396,8 +396,8 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
             if (optional.isPresent()) {
                 QuestionNode questionNode = optional.get();
                 newOrderedList.add(questionNode);
-                questionNode.configureSerialOfPrinciple(seq);
-                ++seq;
+                questionNode.configureSerialOfPrinciple(serialOfPrinciple);
+                ++serialOfPrinciple;
             } else {
                 log.warn("Not found the question[{}]. It may be deleted.", questionId);
             }
