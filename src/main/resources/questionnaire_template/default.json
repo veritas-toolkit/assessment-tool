@@ -22,6 +22,12 @@
 
             },
             {
+                "serial": "G4",
+                "step": 0,
+                "question": "Does the FSI have an up-to-date inventory that tracks all material AIDA use cases in use?"
+
+            },
+            {
                 "serial": "G5",
                 "step": 1,
                 "question": "Have you documented the commercial objectives of the system and the quantitative measures to meet those commercial objectives? Is it documented how is AIDA used to achieve them?",
