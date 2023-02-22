@@ -215,10 +215,12 @@ plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Pos
 plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
 
 # plot calibration
-plot_calibration(calibration_curve['prob_true'], calibration_curve['prob_pred'], zf_name)
+if calibration_curve:
+    plot_calibration(calibration_curve['prob_true'], calibration_curve['prob_pred'], zf_name)
 
 # plot corr_values heatmap
-plot_heatmap(correlation_matrix['corr_values'], correlation_matrix['feature_names'], zf_name)
+if correlation_matrix:
+    plot_heatmap(correlation_matrix['corr_values'], correlation_matrix['feature_names'], zf_name)
 
 # plot perf dynamic
 plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
