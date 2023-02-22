@@ -71,6 +71,7 @@ public class TemplateQuestionnaireJson {
                 subTemplateQuestion.setContent(sub);
                 subTemplateQuestion.setSerialOfPrinciple(serialOfPrinciple);
                 subTemplateQuestion.setSubSerial(subSerial);
+                ++subSerial;
                 subTemplateQuestion.setEditable(true);
                 subTemplateQuestion.setEditTime(editTime);
                 templateQuestionList.add(subTemplateQuestion);
