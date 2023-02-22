@@ -14,7 +14,6 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,25 +54,35 @@ public class ReportQuestionnaire {
         return questionNodeList != null && !questionNodeList.isEmpty();
     }
 
+    public List<MainQuestion> findQuestionList(Principle principle) {
+        List<QuestionNode> questionNodeList = questionnaire.findMainQuestion(principle);
+        if(questionNodeList == null || questionNodeList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return questionNodeList.stream().map(MainQuestion::new).collect(Collectors.toList());
+    }
+
     public List<MainQuestion> findQuestionList(Principle principle, AssessmentStep step) {
         List<QuestionNode> questionNodeList = questionnaire.find(principle, step);
         if(questionNodeList == null || questionNodeList.isEmpty()) {
             return Collections.emptyList();
         }
         return questionNodeList.stream().map(MainQuestion::new).collect(Collectors.toList());
-
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MainQuestion {
-        private String question;
+        private QuestionNode questionNode;
+
+        private String content;
         private String answer;
         private List<SubQuestion> subQuestionList;
 
         public MainQuestion(QuestionNode questionNode) {
-            this.question = questionNode.getQuestionVersion().getContent();
+            this.questionNode = questionNode;
+            this.content = questionNode.getQuestionVersion().getContent();
             this.answer = questionNode.getQuestionVersion().getAnswer();
             this.subQuestionList = questionNode.getSubList().stream()
                     .map(SubQuestion::new)
@@ -87,17 +96,21 @@ public class ReportQuestionnaire {
         public boolean hasAnswer() {
             return !StringUtils.isEmpty(answer);
         }
+
+        public String serial() {
+            return questionNode.serial();
+        }
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SubQuestion {
-        private String question;
+        private String content;
         private String answer;
 
         public SubQuestion(QuestionNode questionNode) {
-            this.question = questionNode.getQuestionVersion().getContent();
+            this.content = questionNode.getQuestionVersion().getContent();
             this.answer = questionNode.getQuestionVersion().getAnswer();
         }
 

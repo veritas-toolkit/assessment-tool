@@ -83,4 +83,14 @@ public class GraphContainer {
     public void putFeatureTradeoffContour(String feature, String imageBase64) {
         featureTradeoffContourMap.put(feature, imageBase64);
     }
+
+    // FIXME: 2023/2/21 just for test
+    public String getPersonalAttributesClassification() {
+//        return "xxxxxxx.jpg";
+        return null;
+    }
+    public String getPersonalAttributesIdentificationTree() {
+//        return "yyyy.jpg";
+        return null;
+    }
 }

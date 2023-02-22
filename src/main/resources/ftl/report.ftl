@@ -595,7 +595,7 @@ img.pie {
     <#list questionnaire.principles() as principle>
         <div class="toc_first_level">
             <a href="#principle_${principle.shortName}">
-                <span class="toc_principle">${principle.fullname} Principle. </span>
+                <span class="toc_principle">${principle.fullname} Principle</span>
             </a>
             <#list questionnaire.steps(principle) as step>
                 <#list questionnaire.findQuestionList(principle, step) as question>

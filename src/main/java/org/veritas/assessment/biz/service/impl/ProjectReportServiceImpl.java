@@ -48,6 +48,7 @@ import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.mapper.ProjectReportMapper;
+import org.veritas.assessment.biz.model.ReportQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.SystemService;
@@ -268,7 +269,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
                               ProjectReport current) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
-        modelMap.put("questionnaire", questionnaire);
+        modelMap.put("questionnaire", new ReportQuestionnaire(project, questionnaire));
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), current));
 
         BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
