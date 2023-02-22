@@ -61,7 +61,7 @@ class ProjectReportServiceImplTest {
         QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
         assertNotNull(projectReportService);
 
-        String json = JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_CM);
+        String json = JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_PUW);
 
         ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, "cm.json");
         // save file out of transaction.

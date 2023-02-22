@@ -29,7 +29,8 @@ public class ProjectServiceTestUtils {
         Project project = new Project();
         project.setName("test");
         project.setDescription("test_description");
-        project.setBusinessScenario(BusinessScenarioEnum.CUSTOMER_MARKETING.getCode());
+//        project.setBusinessScenario(BusinessScenarioEnum.CUSTOMER_MARKETING.getCode());
+        project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
         project.setCreatorUserId(admin.getId());
         project.setUserOwnerId(admin.getId());
         project.setPrincipleGeneric(true);
@@ -37,6 +38,7 @@ public class ProjectServiceTestUtils {
         project.setPrincipleEA(true);
         project.setPrincipleTransparency(true);
 
-        return projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(4));
+        return projectService.createProject(admin, project,
+                templateQuestionnaireService.findByTemplateId(5));
     }
 }

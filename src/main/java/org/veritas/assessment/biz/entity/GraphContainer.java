@@ -86,11 +86,11 @@ public class GraphContainer {
 
     // FIXME: 2023/2/21 just for test
     public String getPersonalAttributesClassification() {
-//        return "xxxxxxx.jpg";
-        return null;
+        return "xxxxxxx.jpg";
+//        return null;
     }
     public String getPersonalAttributesIdentificationTree() {
-//        return "yyyy.jpg";
-        return null;
+        return "yyyy.jpg";
+//        return null;
     }
 }

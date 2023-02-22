@@ -33,6 +33,7 @@ public class JsonModelTestUtils {
     @Deprecated
     public static final String EXAMPLE_CS = "json2/model_artifact_credit_scoring_20230117_1251.json";
     public static final String EXAMPLE_CM = "json2/model_artifact_customer_marketing_20230220_1849.json";
+    public static final String EXAMPLE_PUW = "json2/model_artifact_pred_underwriting_v2.json";
 
 
     public static JsonModel load(String urlString) throws IOException {
