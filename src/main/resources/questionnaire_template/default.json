@@ -231,7 +231,12 @@
             },
             {
                 "serial": "EA6",
-                "step": 3,
+                "step": 1,
+                "question": "Are recourse mechanisms available to data subjects being used? Is there an explanation if the use of recourse is too high or too low?"
+            },
+            {
+                "serial": "EA7",
+                "step": 4,
                 "question": "Are recourse mechanisms available to data subjects being used? Is there an explanation if the use of recourse is too high or too low?"
             },
             {
