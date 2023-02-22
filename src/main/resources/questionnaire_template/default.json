@@ -109,7 +109,7 @@
             {
                 "serial": "F2",
                 "step": 1,
-                "question": "Have you identified and documented who are the individuals and groups that are considered to be at risk of being systematically disadvantaged by the system? ",
+                "question": "Have you identified and documented the potential harms and benefits created by the system’s operation that are relevant to the risk of systematically disadvantaging the individuals and groups in F1?",
                 "subQuestionList": [
                     "What are the correct and wrong decisions that the system can make?",
                     "What are the most important harms and benefits to consider for the groups as at risk of disadvantages in F1?"
@@ -144,7 +144,7 @@
             {
                 "serial": "F6",
                 "step": 2,
-                "question": "Have you determined and documented personal attributes are used as part of the operation or fairness assessment of the system?"
+                "question": "Have you determined and documented personal attributes that are used as part of the operation or fairness assessment of the system?"
 
             },
             {
@@ -156,7 +156,7 @@
             {
                 "serial": "F8",
                 "step": 2,
-                "question": "Have you identified and documented the fairness objectives of the system and associated fairness metrics, with respect to the individuals and groups in F1 and the harms and benefits in F2?",
+                "question": "Have you assessed and documented for every personal attribute and potential proxy for a personal attribute, why is its inclusion justified given the system objectives, the data, and the quantified performance and fairness measures?",
                 "subQuestionList": [
                     "How personal attributes correlate with non-personal attributes? Are they highly correlated so that non-personal attributes can act as material proxies for personal attributes?",
                     "What method is used to measure the importance of personal attributes?",
