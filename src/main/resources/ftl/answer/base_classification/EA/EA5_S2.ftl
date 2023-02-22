@@ -8,7 +8,7 @@ Commitments are individual-, societal-, and system-level promises an organisatio
 There may be more than one specification per commitment. This avoids unintentional overfitting to a metric that doesn’t represent the whole outcome.
 Additionally, it is most relevant to measure the effects of commitments over time, so binary specifications, such as yes/no measurements,
 should be avoided as they don’t allow for trendlines. Commitments, with meaningful specifications are the foundation of accountability.</li>
-
+    </ul>
 The following table is an example. Remember to add a priority – low(L), medium(M), or high(H) – to each commitment.
 Prioritisation scores serve to prioritise resources and optimise for higher priority commitments when outcomes might be in conflict.
 
@@ -43,7 +43,7 @@ Prioritisation scores serve to prioritise resources and optimise for higher prio
         <tr>
 
             <td rowspan="2">No discrimination based on personal attributes e.g.,race, gender,nationality.</td>
-            <t rowspan="2"> </t>d
+            <td rowspan="2"> </td>
             <td>Percentage of personal attributes used in the model that are justified</td>
         </tr>
 
