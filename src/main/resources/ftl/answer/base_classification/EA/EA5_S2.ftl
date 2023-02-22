@@ -1,4 +1,4 @@
-<--What are the principles，commitments and specifications for your use case? Refer to the following key concepts explanation and the table.-->
+<#--What are the principles，commitments and specifications for your use case? Refer to the following key concepts explanation and the table.-->
 
 <ul>
 <li><b>Commitments: </b>A professed obligation that explains how a principle will be implemented in a specific context.
@@ -13,48 +13,46 @@ The following table is an example. Remember to add a priority – low(L), medium
 Prioritisation scores serve to prioritise resources and optimise for higher priority commitments when outcomes might be in conflict.
 
 
-<div>
-    <div class="table_box">
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Principles</th>
-                <th>Commitment</th>
-                <th>Priority</th>
-                <th>How to measure(Specifications)</th>
-            </tr>
-            <tr>
-                <td rowspan="2">Inclusive culture</td>
-                <td rowspan="2">People or groups of people should have their voice heard and opinion considered</td>
-                <td rowspan="2"> </td>
-                <td>Percentage of customer feedback to which the bank responded</td>
-            </tr>
-            <tr>
-                <td>Number of implemented initiatives arising from the customers’ feedback</td>
-            </tr>
 
-            <tr>
+<div class="table_box">
+<table border="1">
+        <tr>
+            <th>Principles</th>
+            <th>Commitment</th>
+            <th>Priority</th>
+            <th>How to measure(Specifications)</th>
+        </tr>
+        <tr>
+            <td rowspan="2">Inclusive culture</td>
+            <td rowspan="2">People or groups of people should have their voice heard and opinion considered</td>
+            <td rowspan="2"> </td>
+            <td>Percentage of customer feedback to which the bank responded</td>
+        </tr>
+        <tr>
+            <td>Number of implemented initiatives arising from the customers’ feedback</td>
+        </tr>
 
-                <td rowspan="3">Non-discrimination</td>
-                <td>Minimal or no unintended bias for different groups</td>
-                <td> </td>
-                <td>Number of documented incidents of unintended bias</td>
-            </tr>
+        <tr>
 
-            <tr>
+            <td rowspan="3">Non-discrimination</td>
+            <td>Minimal or no unintended bias for different groups</td>
+            <td> </td>
+            <td>Number of documented incidents of unintended bias</td>
+        </tr>
 
-                <td rowspan="2">No discrimination based on personal attributes e.g.,race, gender,nationality.</td>
-                <td rowspan="2"> </th>
-                <td>Percentage of personal attributes used in the model that are justified</td>
-            </tr>
+        <tr>
+
+            <td rowspan="2">No discrimination based on personal attributes e.g.,race, gender,nationality.</td>
+            <t rowspan="2"> </t>d
+            <td>Percentage of personal attributes used in the model that are justified</td>
+        </tr>
 
 
-            <tr>
-                <td>Percentage of personal attributes that have a fairness value above the acceptable threshold</td>
+        <tr>
+            <td>Percentage of personal attributes that have a fairness value above the acceptable threshold</td>
 
-            </tr>
+        </tr>
 
-        </thead>
 
-    </table>
+</table>
 </div>

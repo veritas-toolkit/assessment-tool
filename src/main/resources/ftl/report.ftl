@@ -306,6 +306,7 @@ h1 {
     padding: 5px 15px;
     border-top: 2pt solid rgb(2, 18, 77);
     border-bottom: 1pt solid rgb(2, 18, 77);
+    background: rgb(2, 18, 77);
 }
 .answer td {
     border-bottom: 0.2pt dashed rgb(2, 18, 77);

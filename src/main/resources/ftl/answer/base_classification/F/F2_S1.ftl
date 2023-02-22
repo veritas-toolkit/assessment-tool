@@ -10,7 +10,7 @@ The following confusion matrix applies to binary classification.
             Fairness metrics for <b>Confusion Matrix</b>
         </big>
     </div>
-    <table>
+    <table border="1">
 
         <tr>
             <td> </td>
