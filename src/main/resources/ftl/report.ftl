@@ -312,10 +312,12 @@ h1 {
     padding: 5px 15px;
     text-align: center;
 }
-.answer table tr td:first-child {
+/*
+.answer table tbody tr td:first-child {
     color: white;
     background: grey;
 }
+*/
 
 .answer table tbody tr.perf_metric_row {
     color: red;
