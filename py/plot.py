@@ -239,7 +239,8 @@ if correlation_matrix:
     plot_heatmap(correlation_matrix['corr_values'], correlation_matrix['feature_names'], zf_name)
 
 # plot perf dynamic
-plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
+if perf_dynamic is not None:
+    plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
 for key in features_dict:
     fair_metric_name = features_dict[key]['tradeoff']['fair_metric_name']
     perf_metric_name = features_dict[key]['tradeoff']['perf_metric_name']
