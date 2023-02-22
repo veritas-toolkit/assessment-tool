@@ -99,7 +99,6 @@
 
 
 body {
-    #font-family: 'Times New Roman', Times, serif;
     font-family: 'Graphik', 'Times New Roman', serif;
     font-size: 10.5pt;
     margin: 0;
@@ -300,8 +299,6 @@ h1 {
 }
 
 .answer table thead {
-    #color: black;
-    #background: rgb(215, 229, 237);
     color: white;
     background: rgb(2, 18, 77);
 }
@@ -314,6 +311,10 @@ h1 {
     border-bottom: 0.2pt dashed rgb(2, 18, 77);
     padding: 5px 15px;
     text-align: center;
+}
+.answer table tr td:first-child {
+    color: white;
+    background: grey;
 }
 
 .answer table tbody tr.perf_metric_row {
@@ -403,10 +404,10 @@ h1 {
     float: left;
 }
 .main_question_title {
-    #position: absolute;
-    #top: 50%;
-    #left: 50%;
-    #transform: translate(-50%, -50%);
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
     line-height: 1em;
     text-align: center;
 }
@@ -442,12 +443,12 @@ h1 {
     padding: 0.25em;
     padding-left: 0.5em;
     margin-left: 0.75em;
-    #margin-right: 0.75em;
-    #margin-top: 1.0em;
+    /*#margin-right: 0.75em;*/
+    /*#margin-top: 1.0em;*/
     width: 1.5em;
     height: 1.5em;
     border-radius: 50%;
-    font-size: 18pt;
+    font-size: 12pt;
 }
 
 
@@ -456,7 +457,7 @@ h1 {
     margin-left: 16pt;
     padding: 1.25em 0.25em 1.25em 0.25em;
     color: rgb(27, 69, 122);
-    font-size: 16pt;
+    font-size: 12pt;
 }
 
 .main_answer {
@@ -466,7 +467,7 @@ h1 {
 }
 
 .sub_question {
-    #color: goldenrod;
+    /*color: goldenrod;*/
     color: rgb(27, 69, 122);
     margin-top: 10px;
 }
