@@ -36,9 +36,11 @@ def plot_piechart(data1, label, zf_name, key):
     plt.figure(figsize=(6, 6))
     plt.pie(data1,
             textprops={'fontsize': 14, 'color': 'black'},
-            explode=[0.02, 0.02],
+            # explode=[0.02, 0.02],
+            explode=None,
             labels=label,
-            colors=['#437694', '#D7E5ED'],
+            # colors=['#437694', '#D7E5ED'],
+            colors=None,
             autopct='%.2f%%',
             pctdistance=0.6,
             labeldistance=1.05,
@@ -102,9 +104,28 @@ def plot_heatmap(corr_values, feature_names, zf_name):
 
 
 # plot heatmap
-def plot_weighted_confusion_matrix(values, name1, name2, zf_name):
+def plot_weighted_confusion_matrix(matrix, name1, name2, zf_name):
+    if matrix is None:
+        return
+    else:
+        if matrix['tn'] is None or matrix['fp'] or matrix['fn'] is None or matrix['tp'] is None:
+            return
+
+    sub_list1 = []
+    sub_list2 = []
+    weighted_confusion_matrix_list = []
+    sub_list1.append(matrix['tn'])
+    sub_list1.append(matrix['fp'])
+    sub_list2.append(matrix['fn'])
+    sub_list2.append(matrix['tp'])
+    weighted_confusion_matrix_list.append(sub_list1)
+    weighted_confusion_matrix_list.append(sub_list2)
+
+    # plot weighted_confusion_matrix
+    print(str(matrix))
+    print("values: ---------- ", str(weighted_confusion_matrix_list))
     ax = sns.heatmap(
-        values,
+        weighted_confusion_matrix_list,
         fmt='.20g',
         cmap=sns.diverging_palette(20, 220, n=5000),
         square=True, annot=True
@@ -175,41 +196,35 @@ image_file_list = []
 filename = sys.argv[1]
 #with zipfile.ZipFile('../file/project/1/json/1e2fc6190d50a4e8a9ab56500ebbf77827985983dd3fb92cba39888fd7bf1340.json.zip', 'r') as zf:
 with zipfile.ZipFile(filename, 'r') as zf:
-    data = json.load(zf.open(zf.namelist()[0]))
+    jsonObject = json.load(zf.open(zf.namelist()[0]))
     image_dir = os.path.dirname(os.path.dirname(zf.filename)) + "/image/"
     basename = os.path.basename(zf.filename).split('.')[0]
     image_prefix=image_dir + basename
     zf_name = image_prefix
-features_dict = data['features']
 
-fairness_init = data['fairness_init']
+fairness = jsonObject['fairness']
+transparency = jsonObject['transparency']
+features_dict = fairness['features']
+
+fairness_init = fairness['fairness_init']
 fair_metric_name = fairness_init['fair_metric_name']
 perf_metric_name = fairness_init['perf_metric_name']
 fair_metric_name = re.sub('_',' ',fair_metric_name)
 perf_metric_name = re.sub('_',' ',perf_metric_name)
 
-calibration_curve = data['calibration_curve']
-correlation_matrix = data['correlation_matrix']
-class_distribution = data['class_distribution']
+calibration_curve = fairness['calibration_curve']
+correlation_matrix = fairness['correlation_matrix']
+class_distribution = fairness['class_distribution']
 class_distribution_list = []
 class_distribution_label = []
 for key in class_distribution:
     class_distribution_list.append(class_distribution[key])
     class_distribution_label.append(key)
-weighted_confusion_matrix = data['weighted_confusion_matrix']
-sub_list1 = []
-sub_list2 = []
-weighted_confusion_matrix_list = []
-sub_list1.append(weighted_confusion_matrix['tn'])
-sub_list1.append(weighted_confusion_matrix['fp'])
-sub_list2.append(weighted_confusion_matrix['fn'])
-sub_list2.append(weighted_confusion_matrix['tp'])
-weighted_confusion_matrix_list.append(sub_list1)
-weighted_confusion_matrix_list.append(sub_list2)
-perf_dynamic = data['perf_dynamic']
+weighted_confusion_matrix = fairness['weighted_confusion_matrix']
 
-# plot weighted_confusion_matrix
-plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
+plot_weighted_confusion_matrix(weighted_confusion_matrix, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
+perf_dynamic = fairness['perf_dynamic']
+# plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
 
 # plot class distribution
 plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
