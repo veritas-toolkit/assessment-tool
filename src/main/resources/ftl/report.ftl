@@ -17,7 +17,10 @@
 
 @page toc {
     margin-left: 0;
-    margin-top: 0;
+    margin-top: 130pt;
+    @top-left {
+        content: element(toc_title);
+    }
 }
 
 @page report_content {
@@ -236,41 +239,39 @@ h1 {
     text-decoration: none;
 }
 #toc_title {
+    position: running(toc_title);
     left: 0;
     top: 0;
-    font: 40px 'Courier New' bold;
+    font-family: 'Courier New', serif;
+    font-size: 40px;
     width: 50%;
     padding: 60px 60px 50px 80px;
-    padding-left: 80px;
     text-align: left;
-    /*
-    margin-bottom: 1em;
-    */
     margin-bottom: 30px;
     background: rgb(215, 229,237);
     color: rgb(2, 18, 77);
     border-bottom-right-radius: 32px;
 }
+
 .toc_first_level {
     font-size: 1em;
     font-weight: bold;
     margin-top: 1.25em;
     margin-left: 80px;
 }
-.toc_first_level .toc_principle {
+.toc_first_level a {
     color: rgb(161, 131, 68);
 }
-.toc_first_level a {
-    color: rgb(2, 18, 77);
-}
+
 .toc_first_level a::after {
     content: leader(' .') target-counter(attr(href), page, decimal)
 }
 .toc_second_level {
     font-size: 0.75em;
+    font-weight: lighter;
     margin-top: 0.75em;
     margin-bottom: 0.75em;
-    padding-left: 2.5em;
+    padding-left: 1.5em;
 }
 .toc_second_level a {
     color: black;
@@ -595,26 +596,27 @@ img.pie {
 <div id="toc">
     <div id="toc_title">Table of Contents</div>
 
-    <div class="toc_first_level"><a href="#introduction">Introduction</a></div>
+    <div id="toc_content">
 
-    <#list questionnaire.principles() as principle>
-        <div class="toc_first_level">
-            <a href="#principle_${principle.shortName}">
-                <span class="toc_principle">${principle.fullname} Principle</span>
-            </a>
-            <#list questionnaire.steps(principle) as step>
-                <#list questionnaire.findQuestionList(principle, step) as question>
-                    <div class="toc_second_level">
-                        <a href="#${question.serial()}">
-                            ${question.serial()}. ${question.content}
-                        </a>
-                    </div>
+        <div class="toc_first_level"><a href="#introduction">Introduction</a></div>
+
+        <#list questionnaire.principles() as principle>
+            <div class="toc_first_level">
+                <a href="#principle_${principle.shortName}">
+                    <span class="toc_principle">${principle.fullname} Principle</span>
+                </a>
+                <#list questionnaire.steps(principle) as step>
+                    <#list questionnaire.findQuestionList(principle, step) as question>
+                        <div class="toc_second_level">
+                            <a href="#${question.serial()}">
+                                ${question.serial()}. ${question.content}
+                            </a>
+                        </div>
+                    </#list>
                 </#list>
-
-            </#list>
-        </div>
-
-    </#list>
+            </div>
+        </#list>
+    </div>
 
 </div>
 
@@ -650,12 +652,14 @@ img.pie {
                     <div class="question" id="${question.serial()}">
 
                         <table class="main_question_t" width="100%">
-                            <head>
-                                <th class="main_question_title_box_t">
+                            <thead>
+                            <tr>
+                                <td class="main_question_title_box_t">
                                     <div class="main_question_title_t">${question.serial()}</div>
-                                </th>
-                                <th class="main_question_content_t">${question.content}</th>
-                            </head>
+                                </td>
+                                <td class="main_question_content_t">${question.content}</td>
+                            </tr>
+                            </thead>
                         </table>
 
                         <#if (question.answer)??>
