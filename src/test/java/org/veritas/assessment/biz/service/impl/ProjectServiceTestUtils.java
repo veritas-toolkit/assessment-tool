@@ -32,6 +32,10 @@ public class ProjectServiceTestUtils {
         project.setBusinessScenario(BusinessScenarioEnum.CUSTOMER_MARKETING.getCode());
         project.setCreatorUserId(admin.getId());
         project.setUserOwnerId(admin.getId());
+        project.setPrincipleGeneric(true);
+        project.setPrincipleFairness(true);
+        project.setPrincipleEA(true);
+        project.setPrincipleTransparency(true);
 
         return projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(4));
     }

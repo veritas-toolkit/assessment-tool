@@ -28,6 +28,7 @@
         <br/>
     </#if>
 </#list>
+</#if>
 
 There are three points of interests on the heatmap:
 <ul>

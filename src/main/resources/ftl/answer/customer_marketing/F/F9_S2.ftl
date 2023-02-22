@@ -51,7 +51,8 @@
 </#list>
 
 
-<#if fairness.individual_fairness.consistency_score??>
+
+<#if fairness.individualFairness?consistencyScore??>
 <h3>Individual Fairness</h3>
-For individual fairness, the consistency score is ${fairness.individual_fairness.consistency_score}.
+For individual fairness, the consistency score is ${fairness.individualFairness.consistencyScore}.
 </#if>
