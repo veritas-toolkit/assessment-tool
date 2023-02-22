@@ -20,6 +20,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +91,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                 StringWriter stringWriter = new StringWriter();
                 try {
                     template.process(modelMap, stringWriter);
-                    String answer = stringWriter.toString();
+                    String answer = StringUtils.trimToNull(stringWriter.toString());
                     EditAnswerAction action = new EditAnswerAction();
                     action.setProjectId(project.getId());
                     action.setQuestionId(questionNode.getQuestionId());
