@@ -430,7 +430,7 @@ h1 {
     border-width: thin;
     */
 }
-<#-- -------------------------------------------------------------------------- -->
+<#--215, 229, 237 -------------------------------------------------------------------------- -->
 .main_question_t {
     margin-top: 20pt;
     background-color: rgb(215, 229, 237);
@@ -450,10 +450,11 @@ h1 {
     margin-left: 0.75em;
     /*#margin-right: 0.75em;*/
     /*#margin-top: 1.0em;*/
-    width: 1.5em;
+    width: 1.8em;
     height: 1.5em;
     border-radius: 50%;
     font-size: 12pt;
+    text-align: center;
 }
 
 
