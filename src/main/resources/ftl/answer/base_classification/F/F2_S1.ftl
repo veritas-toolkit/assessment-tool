@@ -11,21 +11,21 @@ The following confusion matrix applies to binary classification.
         </big>
     </div>
     <table>
-        <thead>
+
         <tr>
             <td> </td>
-            <td>Positive(Actual)</td>
-            <td>Negative(Actual)</td>
+            <th>Positive(Actual)</th>
+            <th>Negative(Actual)</th>
         </tr>
         <tr>
-            <td>Positive(Predicted)</td>
+            <th>Positive(Predicted)</th>
             <td> </td>
         </tr>
         <tr>
-            <td>Negative(Predicted)</td>
+            <th>Negative(Predicted)</th>
             <td> </td>
         </tr>
-        </thead>
+
 
     </table>
 </div>
