@@ -12,11 +12,9 @@ service.interceptors.request.use(config => {
     if (!config.data) {
         config.data = {};
     }
-    console.log(qs.stringify(config.data));
     return config;
 }, error => {
     // 处理请求错误
-    console.log(error); // 用于调试
     return Promise.reject(error);
 })
 
@@ -25,7 +23,6 @@ service.interceptors.response.use(response => {
     // let res = respone.data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res
     return response;
 }, error => {
-    console.log('error：' + error); // 用于调试
     return Promise.reject(error);
 })
 

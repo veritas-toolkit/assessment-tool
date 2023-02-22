@@ -103,11 +103,11 @@
             <div class="artifacts">Assessment questionnaire</div>
             <div style="display: flex;align-items: center;margin-top: 12px;">
               <el-card v-for="(item,index) in progressList" class="box-card" :style="index == 0? '':'margin-left:12px'">
-                <div class="artifacts" style="margin-bottom: 12px">{{ item.principle }}</div>
+                <div class="artifacts" style="margin-bottom: 12px">{{ principleMap[item.principle] }}</div>
                 <div class="progressLabel">
-                  {{ item.count }}/{{ item.completed }}
+                  {{ item.completed }}/{{ item.count }}
                 </div>
-                <el-progress :percentage="item.count/item.completed*100" color="#78BED3" :show-text="false"></el-progress>
+                <el-progress :percentage="item.completed/item.count*100" color="#78BED3" :show-text="false"></el-progress>
               </el-card>
             </div>
             <div style="display: flex;align-items: center;">
@@ -125,12 +125,15 @@
                 <span>Export report</span>
               </div>
               -->
-              <div class="fairnessButton" @click="openExportDialog" v-show="fairnessAssessmentVisible">
+              <div class="fairnessButton" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
                 <img src="../../assets/projectPic/new_export.png" alt="">
                 <span>Export</span>
               </div>
-              <export-report-dialog ref="exportDialog" :projectId="projectId"
-                                    @exported="createdReport"></export-report-dialog>
+              <export-report-dialog
+                  ref="exportDialog"
+                  :projectId="projectId"
+                  @exported="createdReport">
+              </export-report-dialog>
             </div>
           </div>
           <div class="dividingLine"></div>
@@ -244,6 +247,12 @@ export default {
   },
   data() {
     return {
+      principleMap: {
+        "G" : "Generic",
+        "F" : "Fairness",
+        "EA" : "Ethics & Accountability",
+        "T" : "Transparency"
+  },
       projectId: this.$route.query.id,
       businessScenarioList: [],
       projectInfo: null,
