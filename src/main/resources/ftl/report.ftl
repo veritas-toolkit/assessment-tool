@@ -178,6 +178,12 @@ h1 {
     margin-bottom: 1em;
 }
 
+ul li {
+    /*list-style-position: outside;*/
+    /*margin-left: 10pt;*/
+    /*padding-left:50pt;*/
+}
+
 <#-- ******************************************* revision history ****************************** -->
 #revision_history {
     page-break-before: always;
@@ -469,25 +475,26 @@ h1 {
 .main_answer {
     color: black;
     margin: 10px;
-    text-indent: 1.5em;
+    /*text-indent: 1.5em;*/
 }
 
 .sub_question {
     /*color: goldenrod;*/
     color: rgb(27, 69, 122);
-    margin-top: 10px;
+    margin-top: 15pt;
+    margin-bottom: 5pt;
 }
 
 .sub_answer {
     color: black;
-    margin: 10px;
-    text-indent: 20px;
+    margin-top: 5pt;
+    /*text-indent: 20px;*/
 }
 .none_answer {
     font-style: italic;
     color: gray;
     margin: 10px;
-    text-indent: 20px;
+    /*text-indent: 20px;*/
 }
 
 .image_box {
