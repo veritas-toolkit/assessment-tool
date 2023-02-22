@@ -1,5 +1,5 @@
 export function correlationMatrixOptionData(data) {
-    let dataValue = data.corr_values.reverse()
+    let dataValue = data.corr_values.slice().reverse()
     let nameList = data.feature_names
     let nameListRe = nameList.slice().reverse()
     let temp = []
