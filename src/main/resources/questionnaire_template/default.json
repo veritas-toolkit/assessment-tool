@@ -92,11 +92,6 @@
         ],
         "F": [
             {
-                "serial": "F0",
-                "step": 0,
-                "question": "Has the FSI defined standard, robust process for (a) identifying at risk groups? (b) identifying personal attributes and potential proxies?  (c) identifying explicit fairness objectives and associated measures and thresholds?  and (d) algorithmic methods to identify and reduce unfairness?"
-            },
-            {
                 "serial": "F1",
                 "step": 1,
                 "question": "Have you identified and documented who are the individuals and groups that are considered to be at risk of being systematically disadvantaged by the system? ",
