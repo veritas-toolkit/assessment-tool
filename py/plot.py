@@ -34,13 +34,14 @@ def plot_perf_dynamic(threshold, perf, selection_rate, zf_name):
 # plot piechart
 def plot_piechart(data1, label, zf_name, key):
     plt.figure(figsize=(6, 6))
+    cmap = sns.diverging_palette(220,10,as_cmap=True)
     plt.pie(data1,
             textprops={'fontsize': 14, 'color': 'black'},
             # explode=[0.02, 0.02],
             explode=None,
             labels=label,
             # colors=['#437694', '#D7E5ED'],
-            colors=None,
+            colors=cmap(np.linspace(0, 1, len(data1))),
             autopct='%.2f%%',
             pctdistance=0.6,
             labeldistance=1.05,
