@@ -78,7 +78,7 @@ public class VeritasProperties {
     }
 
     public String getPythonCommand() {
-        if (!StringUtils.isEmpty(pythonCommand)) {
+        if (StringUtils.isEmpty(pythonCommand)) {
             loadPythonCommand();
         }
         return pythonCommand;
