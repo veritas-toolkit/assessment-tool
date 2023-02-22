@@ -17,16 +17,19 @@ The following confusion matrix applies to binary classification.
             <td>Positive(Actual)</td>
             <td>Negative(Actual)</td>
         </tr>
+        </thead>
+        <tbody>
         <tr>
             <td>Positive(Predicted)</td>
-            <td> </td>
+            <td></td>
+            <td></td>
         </tr>
         <tr>
             <td>Negative(Predicted)</td>
-            <td> </td>
+            <td></td>
+            <td></td>
         </tr>
-        </thead>
-
+        </tbody>
     </table>
 </div>
 
