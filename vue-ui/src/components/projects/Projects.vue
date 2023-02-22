@@ -127,29 +127,28 @@
           <el-autocomplete
               class="inline-input"
               clearable
-              v-model="state1"
+              v-model="selectExistingProject"
               :fetch-suggestions="querySearch"
               placeholder="Please input a existing project name"
               @select="handleSelect">
               <i class="el-icon-search el-input__icon" slot="suffix"></i>
-            <template slot-scope="{ item }">
-              <div class="name">{{ item.value }}</div>
-<!--              <span class="addr">{{ item.address }}</span>-->
-            </template>
           </el-autocomplete>
-          <el-form :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
+          <el-form v-show="createExistFlag" class="createProject" :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
             <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-              <el-select v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
+              <el-select disabled v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
                 <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="existingProjectForm.businessScenario || existingProjectForm.businessScenario===0">
+              <el-select clearable v-model="existingProjectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
+                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
-              <div style="display: flex">
-                <div class="generic">Generic</div>
-                <div>Fairness</div>
-                <div>Ethics & Accountability</div>
-                <div>Transparency</div>
-              </div>
+              <el-checkbox disabled v-model="existingProjectForm.principleGeneric">Generic</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleFairness">Fairness</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleEA">Ethics & Accountability</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleTransparency">Transparency</el-checkbox>
             </el-form-item>
             <el-form-item class="BarlowMedium" label="Project name" prop="name">
               <el-input placeholder="Please input a project name" v-model="existingProjectForm.name"></el-input>
@@ -189,7 +188,7 @@
     name: "Projects",
     data() {
       return {
-        state1: '',
+        selectExistingProject: '',
         activeName: 'first',
         activeNewProjectName: 'create',
         createProjectVisible: false,
@@ -211,6 +210,7 @@
           principleFairness: false,
           principleEA: false,
           principleTransparency: false,
+          questionnaireTemplateId: '',
           name: '',
           description: '',
           ownerType: '',
@@ -226,6 +226,7 @@
         existingProjectFormRules: {
           businessScenario: [{ required: true, trigger: 'blur' },],
           principleGeneric: [{ required: true, trigger: 'blur' },],
+          questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
@@ -241,6 +242,7 @@
         page: 1,
         pageSize: 12,
         total: 0,
+        createExistFlag: false,
       }
     },
     watch: {
@@ -251,27 +253,48 @@
       },
       'projectForm.businessScenario':function () {
         this.getCreateTemplateList()
-      }
+      },
+      'selectExistingProject': function() {
+        if (!this.selectExistingProject) {
+          this.createExistFlag = false
+        }
+      },
     },
     created() {
       this.getProjectList()
     },
     methods: {
       querySearch(queryString, cb) {
-        let restaurants =
-            [
-              { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
-              { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" }];
-        let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-        // 调用 callback 返回建议列表的数据
-        cb(results);
-      },
-      createFilter(queryString) {
-        return (restaurant) => {
-          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
+        let projects = []
+        this.projectList.map(item => {
+          item.value = item.name
+          projects.push(item)
+        })
+        cb(projects);
       },
       handleSelect(item) {
+        if (item) {
+          this.createExistFlag = true
+        }
+        this.$http.get(`/api/project/${item.id}`).then(res => {
+          if (res.status == 200) {
+            let projectInfo = res.data
+            console.log(projectInfo.businessScenario)
+            this.existingProjectForm.businessScenario = projectInfo.businessScenario
+            this.existingProjectForm.principleGeneric = projectInfo.principleGeneric
+            this.existingProjectForm.principleFairness = projectInfo.principleFairness
+            this.existingProjectForm.principleEA = projectInfo.principleEA
+            this.existingProjectForm.principleTransparency = projectInfo.principleTransparency
+            this.existingProjectForm.name = projectInfo.name
+            this.existingProjectForm.description = projectInfo.description
+            this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':projectInfo.businessScenario}}).then(res => {
+              if(res.status == 200) {
+                this.createTemplateList = res.data
+              }
+            })
+          }
+        })
+        // this.selectExistingProject = item.id
         console.log(item);
       },
       handleSizeChange(val) {
@@ -347,33 +370,64 @@
         })
       },
       createProject() {
-        this.$refs.projectFormRefs.validate(val => {
-          if (val) {
-            let ownerType = this.projectForm.ownerType + ''
-            if (ownerType.indexOf('+') === -1) {
-              this.projectForm.userOwnerId = ''
-              this.projectForm.groupOwnerId = ownerType
-              this.$http.post('/api/project/new',this.projectForm).then(res => {
-                if(res.status == 201) {
-                  this.$message.success('Create successfully')
-                  this.$refs.projectFormRefs.resetFields()
-                  this.getProjectList()
-                }
-              })
-            } else {
-              this.projectForm.groupOwnerId = ''
-              this.projectForm.userOwnerId = ownerType.split('+')[0]
-              this.$http.post('/api/project/new',this.projectForm).then(res => {
-                if(res.status == 201) {
-                  this.$message.success('Create successfully')
-                  this.$refs.projectFormRefs.resetFields()
-                  this.getProjectList()
-                }
-              })
+        if (this.activeNewProjectName == 'create') {
+          this.$refs.projectFormRefs.validate(val => {
+            if (val) {
+              let ownerType = this.projectForm.ownerType + ''
+              if (ownerType.indexOf('+') === -1) {
+                this.projectForm.userOwnerId = ''
+                this.projectForm.groupOwnerId = ownerType
+                this.$http.post('/api/project/new',this.projectForm).then(res => {
+                  if(res.status == 201) {
+                    this.$message.success('Create successfully')
+                    this.$refs.projectFormRefs.resetFields()
+                    this.getProjectList()
+                  }
+                })
+              } else {
+                this.projectForm.groupOwnerId = ''
+                this.projectForm.userOwnerId = ownerType.split('+')[0]
+                this.$http.post('/api/project/new',this.projectForm).then(res => {
+                  if(res.status == 201) {
+                    this.$message.success('Create successfully')
+                    this.$refs.projectFormRefs.resetFields()
+                    this.getProjectList()
+                  }
+                })
+              }
+              this.createProjectVisible = false
             }
-            this.createProjectVisible = false
-          }
-        })
+          })
+        } else if (this.activeNewProjectName == 'copy') {
+          this.$refs.existingProjectFormRefs.validate(val => {
+            if (val) {
+              let ownerType = this.existingProjectForm.ownerType + ''
+              if (ownerType.indexOf('+') === -1) {
+                this.existingProjectForm.userOwnerId = ''
+                this.existingProjectForm.groupOwnerId = ownerType
+                this.$http.post('/api/project/new',this.existingProjectForm).then(res => {
+                  if(res.status == 201) {
+                    this.$message.success('Create successfully')
+                    this.$refs.existingProjectFormRefs.resetFields()
+                    this.getProjectList()
+                  }
+                })
+              } else {
+                this.existingProjectForm.groupOwnerId = ''
+                this.existingProjectForm.userOwnerId = ownerType.split('+')[0]
+                this.$http.post('/api/project/new',this.existingProjectForm).then(res => {
+                  if(res.status == 201) {
+                    this.$message.success('Create successfully')
+                    this.$refs.existingProjectFormRefs.resetFields()
+                    this.getProjectList()
+                  }
+                })
+              }
+              this.createProjectVisible = false
+            }
+          })
+        }
+
       },
       getProjectList() {
         if (this.activeName == 'first') {

@@ -119,8 +119,6 @@ export default {
     }
   },
   created() {
-    console.log(html2string('data'))
-    console.log(compareDiff('it is a dog 1','it is a cat 1'))
     this.showCompareDiff()
     // console.log(this.compareDiff('','1212'))
   },
