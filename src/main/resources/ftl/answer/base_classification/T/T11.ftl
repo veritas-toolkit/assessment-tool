@@ -12,14 +12,12 @@
 
 <h4>Partial Dependence Plot</h4>
 <div>
-  Partial dependence plot shows the how the predicted outcome changes with the selected feature.
+  Partial dependence plot shows how the predicted outcome changes with the selected feature.
 </div>
 
-<#--补充图-->
+<#--补充PDP图-->
 
 
-
-<#--补充permutation importance图-->
 
 <h4>Global Interpretability Based on SHAP</h4>
 
