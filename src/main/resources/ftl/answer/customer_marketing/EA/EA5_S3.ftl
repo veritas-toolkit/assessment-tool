@@ -14,37 +14,34 @@ The following table is an example. You can refer to the table and edit the conte
 </div>
 
 
-<div>
-    <div class="table_box">
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Commitment</th>
-                <th>Specifications</th>
-                <th>Owners</th>
-                <th>Stakeholders</th>
-            </tr>
-            <tr>
-                <td>Minimal or no unintended bias for different groups</td>
-                <td>Number of documented incidents of unintended bias</td>
-                <td>Retail Business Analytics</td>
-                <td>Internal stakeholders are our management committees and business teams. External stakeholders are our retail customers.</td>
-            </tr>
+<div class="table_box">
+<table border="1">
+        <tr>
+            <th>Commitment</th>
+            <th>Specifications</th>
+            <th>Owners</th>
+            <th>Stakeholders</th>
+        </tr>
+        <tr>
+            <td>Minimal or no unintended bias for different groups</td>
+            <td>Number of documented incidents of unintended bias</td>
+            <td>Retail Business Analytics</td>
+            <td>Internal stakeholders are our management committees and business teams. External stakeholders are our retail customers.</td>
+        </tr>
 
-            <tr>
-                <td rowspan='2'>Use of AIDA in AIDA driven decision making is approved by an appropriate internal authority</td>
-                <td>Number of issues raised during management review</td>
-                <td>Retail Business Analytics</td>
-                <td>Stakeholders are our management committees and business teams.</td>
-            </tr>
+        <tr>
+            <td rowspan='2'>Use of AIDA in AIDA driven decision making is approved by an appropriate internal authority</td>
+            <td>Number of issues raised during management review</td>
+            <td>Retail Business Analytics</td>
+            <td>Stakeholders are our management committees and business teams.</td>
+        </tr>
 
-            <tr>
-                <td>Percentage of issues resolved</td>
-                <td>Retail Business Analytics</td>
-                <td>Stakeholders are our management committees and business teams.</td>
-            </tr>
+        <tr>
+            <td>Percentage of issues resolved</td>
+            <td>Retail Business Analytics</td>
+            <td>Stakeholders are our management committees and business teams.</td>
+        </tr>
 
-        </thead>
 
     </table>
 </div>

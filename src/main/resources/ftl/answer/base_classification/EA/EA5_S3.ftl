@@ -14,10 +14,9 @@ The following table is an example. You can refer to the table and edit the conte
 </div>
 
 
-<div>
-    <div class="table_box">
+
+<div class="table_box">
     <table border="1">
-        <thead>
             <tr>
                 <th>Commitment</th>
                 <th>Specifications</th>
@@ -44,7 +43,7 @@ The following table is an example. You can refer to the table and edit the conte
                 <td>Stakeholders are our management committees and business teams.</td>
             </tr>
 
-        </thead>
+
 
     </table>
 </div>
