@@ -3,7 +3,7 @@
     <el-container style="height: calc(100% - 1px);display: flex;flex-direction: column">
       <el-header height="64px">
         <div class="title BarlowBold">
-          <img class="backPic" src="../../assets/groupPic/back.png" alt="">
+          <img class="backPic" src="../../assets/groupPic/back.png" @click="$router.back()" alt="" style="cursor: pointer">
           <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
           <span>Template</span>
         </div>
