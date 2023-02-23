@@ -66,44 +66,6 @@ public class QuestionDto {
         this.answerEditTime = questionVersion.getAnswerEditTime();
 //        this.answerEditUser = answerEditUser;
 
-        // FIXME: 2023/2/17 
-        if (StringUtils.isEmpty(this.answer) && StringUtils.equals(this.serial, "G1")) {
-//            String test = "<div>\n" +
-            this.answer = "<div>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"calibrationCurveLineChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_calibrationCurveLineChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"classDistributionPieChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_classDistributionPieChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"correlationHeatMapChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_correlationHeatMapChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"featureDistributionPieChartMap_MARRIAGE\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_MARRIAGE.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureDistributionPieChartMap_SEX.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"performanceLineChart\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_performanceLineChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "\n" +
-                    "\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "\n" +
-
-                    "    <img id=\"confusion_matrix\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_SEX.png\"/>\n" +
-                    "    <div> 2222222222222222222222222 </div>\n" +
-                    "    <img id=\"correlation_matrix\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_SEX.png\"/>\n" +
-
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_featureTradeoffContourMap_SEX.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_performanceLineChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "\n" +
-                    "    <img id=\"pie\" class=\"dynamic\" src=\"api/project/2/image/14b48a23d5ecfcd2d711adf6d703bb353ba941bad1fe150709924986157aa4c0_weightedConfusionHeatMapChart.png\"/>\n" +
-                    "    <div> 1111111111111111111111111 </div>\n" +
-                    "\n" +
-                    "\n" +
-                    "</div>";
-        }
-
         List<QuestionNode> subList = questionNode.getSubList();
         if (subList != null) {
             this.subQuestionList = subList.stream().map(QuestionDto::new).collect(Collectors.toList());
