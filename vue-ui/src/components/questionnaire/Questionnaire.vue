@@ -166,7 +166,11 @@ export default {
         if (res.status == 200) {
           this.principleList = Object.keys(res.data.principles)
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          if (this.principle == 'Fairness') {
+            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[1].mainQuestionList[0].id.toString()
+          } else {
+            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          }
           this.defaultId = this.questionId.toString()
         }
       })
@@ -194,7 +198,11 @@ export default {
       this.questionnaireVid = questionnaireVid.toString()
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
-          this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          if (this.principle == 'Fairness') {
+            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[1].mainQuestionList[0].id.toString()
+          } else {
+            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          }
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
