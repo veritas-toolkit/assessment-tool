@@ -51,6 +51,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -183,6 +184,20 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     dto.setName("correlationHeatMapChart");
                     dto.setCaption("correlationHeatMapChart");
                     return dto;
+                }
+                final String featureDistributionPieChartMap = "featureDistributionPieChartMap";
+                if (StringUtils.contains(imgSrc, featureDistributionPieChartMap)) {
+                    Map<String, Fairness.Feature> featureMap = jsonModel.getFairness().getFeatureMap();
+                    for (String name : featureMap.keySet()) {
+                        if (StringUtils.contains(imgSrc, featureDistributionPieChartMap + "_" + name + ".")) {
+                            data = featureMap.get(name);
+                            dto.setData(data);
+                            dto.setType(PlotTypeEnum.PIE);
+                            dto.setName("featureDistributionPieChartMap");
+                            dto.setCaption("featureDistributionPieChartMap");
+                            return dto;
+                        }
+                    }
                 }
 
 //            featureDistributionPieChartMap_gender-race-nationality
