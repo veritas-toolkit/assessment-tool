@@ -12,4 +12,13 @@ public class PlotDataDto {
     private String caption;
 
     private Object data;
+
+    public static PlotDataDto none() {
+        PlotDataDto plotDataDto = new PlotDataDto();
+        plotDataDto.setType(PlotTypeEnum.NONE);
+        plotDataDto.setName("none");
+        plotDataDto.setData(null);
+        plotDataDto.setCaption("None");
+        return plotDataDto;
+    }
 }

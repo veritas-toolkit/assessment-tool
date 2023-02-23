@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.PlotTypeEnum;
+import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.Fairness;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
@@ -46,7 +48,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
@@ -144,28 +145,44 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
 
     // FIXME: 2023/2/17 to delete
     @Override
-    public Object findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
-
+    public PlotDataDto findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
+        PlotDataDto dto = new PlotDataDto();
+        Object data = null;
         try {
             JsonModel jsonModel = modelArtifact.getJsonModel();
             if (jsonModel == null) {
                 this.loadContent(modelArtifact);
             }
             if (jsonModel == null) {
-                return null;
+                return PlotDataDto.none();
             }
             if (jsonModel.getFairness() != null) {
                 final String calibrationCurveLineChart = "calibrationCurveLineChart";
                 if (StringUtils.contains(imgSrc, calibrationCurveLineChart)) {
-                    return jsonModel.getFairness().getCalibrationCurve();
+                    data = jsonModel.getFairness().getCalibrationCurve();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.CURVE);
+                    dto.setName("CURVE");
+                    dto.setCaption("CURVE");
+                    return dto;
                 }
                 final String classDistributionPieChart = "classDistributionPieChart";
                 if (StringUtils.contains(imgSrc, classDistributionPieChart)) {
-                    return jsonModel.getFairness().getClassDistribution();
+                    data = jsonModel.getFairness().getClassDistribution();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.PIE);
+                    dto.setName("classDistributionPieChart");
+                    dto.setCaption("classDistributionPieChart");
+                    return dto;
                 }
                 final String correlationHeatMapChart = "correlationHeatMapChart";
                 if (StringUtils.contains(imgSrc, correlationHeatMapChart)) {
-                    return jsonModel.getFairness().getCorrelationMatrix();
+                    data = jsonModel.getFairness().getCorrelationMatrix();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.HEAT_MAP);
+                    dto.setName("correlationHeatMapChart");
+                    dto.setCaption("correlationHeatMapChart");
+                    return dto;
                 }
 
 //            featureDistributionPieChartMap_gender-race-nationality
@@ -176,70 +193,29 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
 //            featureTradeoffContourMap_race
                 final String performanceLineChart = "performanceLineChart";
                 if (StringUtils.contains(imgSrc, performanceLineChart)) {
-                    return jsonModel.getFairness().getPerfDynamic();
+                    data = jsonModel.getFairness().getPerfDynamic();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.TWO_LINE);
+                    dto.setName("performanceLineChart");
+                    dto.setCaption("performanceLineChart");
+                    return dto;
                 }
             }
             if (jsonModel.getTransparency() != null) {
                 final String permutationImportance = "permutationImportance";
                 if (StringUtils.contains(imgSrc, permutationImportance)) {
-                    return jsonModel.getTransparency().getPermutationScoreList();
+                    data = jsonModel.getTransparency().getPermutationScoreList();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.TWO_LINE);
+                    dto.setName("CURVE");
+                    dto.setCaption("CURVE");
+                    return dto;
                 }
             }
-
-
-
         } catch (IOException | NullPointerException exception) {
-            return null;
+            return PlotDataDto.none();
         }
-
-
-        @Deprecated
-        final String EXAMPLE_CS = "json_test/model_artifact_credit_scoring_20230117_1251.json";
-        final String EXAMPLE_CM = "json_test/model_artifact_customer_marketing_20230220_1849.json";
-
-        try {
-//            JsonModel csJsonModel = load(EXAMPLE_CS);
-            JsonModel cmJsonModel = load(EXAMPLE_CM);
-            switch (imgId) {
-                case "calibrationCurveLineChart":
-                    return cmJsonModel.getFairness().getCalibrationCurve();
-                case "classDistributionPieChart":
-                    return cmJsonModel.getFairness().getClassDistribution();
-                case "performanceLineChart":
-                    return cmJsonModel.getFairness().getPerfDynamic();
-                case "featureDistributionPieChartMap_MARRIAGE":
-                    Fairness.Feature feature = cmJsonModel.getFairness().getFeatureMap().values().stream().findFirst().orElse(null);
-                    if (feature == null) {
-                        return null;
-                    } else {
-                        return feature.getFeatureDistributionMap();
-                    }
-                case "confusion_matrix":
-                    Fairness.WeightedConfusionMatrix matrix = cmJsonModel.getFairness().getWeightedConfusionMatrix();
-                    if (matrix.getTp() == null) {
-                        matrix.setTp(new BigDecimal("100"));
-                    }
-                    if (matrix.getFp() == null) {
-                        matrix.setFp(new BigDecimal("200"));
-                    }
-                    if (matrix.getTn() == null) {
-                        matrix.setTn(new BigDecimal("300"));
-                    }
-                    if (matrix.getFn() == null) {
-                        matrix.setFn(new BigDecimal("400"));
-                    }
-                    return matrix;
-                case "correlation_matrix":
-                    return cmJsonModel.getFairness().getCorrelationMatrix();
-
-                default:
-                    return null;
-            }
-
-        } catch (IOException exception) {
-            log.error("load json failed.");
-        }
-        return null;
+        return PlotDataDto.none();
     }
 
     public static JsonModel load(String urlString) throws IOException {

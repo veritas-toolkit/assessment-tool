@@ -10,7 +10,11 @@ public enum PlotTypeEnum {
     CURVE("curve", "Curve"),
     TWO_LINE("two_line", "Two line"),
     CONFUSION_MATRIX("confusion_matrix", "Confusion Matrix"),
-    CORRELATION_MATRIX("correlation_matrix", "Correlation Matrix")
+    CORRELATION_MATRIX("correlation_matrix", "Correlation Matrix"),
+    HEAT_MAP("heat_map", "Heat Map"),
+
+    H_BAR("permutation_importance", "Permutation Importance")
+
     ;
 
     @JsonValue

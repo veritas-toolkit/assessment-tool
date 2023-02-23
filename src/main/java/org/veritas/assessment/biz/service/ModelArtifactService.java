@@ -16,6 +16,7 @@
 
 package org.veritas.assessment.biz.service;
 
+import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -38,7 +39,7 @@ public interface ModelArtifactService {
 
     void loadContent(ModelArtifact modelArtifact) throws IOException;
 
-    Object findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc);
+    PlotDataDto findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc);
 
 
 }

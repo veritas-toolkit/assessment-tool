@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class PlotFetchDto {
     @NotNull
-    private Long modelArtifactVid;
+    private Integer modelArtifactVid;
 
     /**
      * <img id="" class="" src="">

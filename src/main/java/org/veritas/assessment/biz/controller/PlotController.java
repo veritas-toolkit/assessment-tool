@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.constant.PlotTypeEnum;
 import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.dto.PlotFetchDto;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.system.entity.User;
@@ -52,24 +53,16 @@ public class PlotController {
     public PlotDataDto fetchPlotData(@Parameter(hidden = true) User operator,
                                      @PathVariable("projectId") Integer projectId,
                                      @Valid @RequestBody PlotFetchDto plotFetchDto) {
-//        ModelArtifact modelArtifact = modelArtifactService.findByVersionId(plotFetchDto.getModelArtifactVid());
-//        try {
-//            modelArtifactService.loadContent(modelArtifact);
-//        } catch (IOException e) {
-//            log.warn("load model artifact");
-//            throw new InternalException();
-//        }
-        Object data = modelArtifactService.findPlotData(null, plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
-        if (data == null) {
-            PlotDataDto dto = new PlotDataDto();
-            dto.setType(PlotTypeEnum.NONE);
-            dto.setData(null);
-            dto.setName("not found");
-            dto.setCaption("Not found data.");
-            return dto;
+        ModelArtifact modelArtifact = modelArtifactService.findByVersionId(plotFetchDto.getModelArtifactVid());
+        try {
+            modelArtifactService.loadContent(modelArtifact);
+        } catch (IOException e) {
+            log.warn("load model artifact failed", e);
+            return PlotDataDto.none();
         }
-        PlotDataDto dto = new PlotDataDto();
-        dto.setData(data);
+        return modelArtifactService.findPlotData(modelArtifact,
+                plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
+        /*
         switch (plotFetchDto.getImgId()) {
             case "calibrationCurveLineChart":
                 dto.setType(PlotTypeEnum.CURVE);
@@ -105,6 +98,7 @@ public class PlotController {
                 throw new NotFoundException();
         }
         return dto;
+         */
     }
 
     ////////////////////////////////
