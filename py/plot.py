@@ -9,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+#import waterfall
+
 
 # plot perf_dynamic
 def plot_perf_dynamic(threshold, perf, selection_rate, zf_name):
@@ -25,7 +27,7 @@ def plot_perf_dynamic(threshold, perf, selection_rate, zf_name):
     ax2.plot(threshold, selection_rate, color=color)
     ax2.tick_params(axis='y', labelcolor=color)
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    filename = zf_name+'_'+'performanceLineChart'+'.png'
+    filename = zf_name + '_' + 'performanceLineChart' + '.png'
     plt.savefig(filename)
     image_file_list.append(filename)
     plt.close()
@@ -34,7 +36,7 @@ def plot_perf_dynamic(threshold, perf, selection_rate, zf_name):
 # plot piechart
 def plot_piechart(data1, label, zf_name, key):
     plt.figure(figsize=(6, 6))
-    cmap = sns.diverging_palette(220,10,as_cmap=True)
+    cmap = sns.diverging_palette(220, 10, as_cmap=True)
     plt.pie(data1,
             textprops={'fontsize': 14, 'color': 'black'},
             # explode=[0.02, 0.02],
@@ -50,9 +52,9 @@ def plot_piechart(data1, label, zf_name, key):
             radius=1.2,
             frame=False)
     if key is not None:
-        filename = zf_name+'_'+'featureDistributionPieChartMap'+'_'+key+'.png'
+        filename = zf_name + '_' + 'featureDistributionPieChartMap' + '_' + key + '.png'
     else:
-        filename = zf_name+'_'+'classDistributionPieChart'+'.png'
+        filename = zf_name + '_' + 'classDistributionPieChart' + '.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
@@ -73,7 +75,7 @@ def plot_calibration(bin_true_prob, bin_pred_prob, zf_name):
     ax1.set_title('Model Calibration (reliability curve)', fontsize=16)
 
     plt.tight_layout()
-    filename = zf_name+'_'+'calibrationCurveLineChart'+'.png'
+    filename = zf_name + '_' + 'calibrationCurveLineChart' + '.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
@@ -98,7 +100,7 @@ def plot_heatmap(corr_values, feature_names, zf_name):
         rotation=0,
         horizontalalignment='right'
     )
-    filename = zf_name+'_'+'correlationHeatMapChart'+'.png'
+    filename = zf_name + '_' + 'correlationHeatMapChart' + '.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
@@ -143,7 +145,7 @@ def plot_weighted_confusion_matrix(matrix, name1, name2, zf_name):
     )
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
-    filename = zf_name+'_'+'weightedConfusionHeatMapChart'+'.png'
+    filename = zf_name + '_' + 'weightedConfusionHeatMapChart' + '.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
@@ -152,9 +154,9 @@ def plot_weighted_confusion_matrix(matrix, name1, name2, zf_name):
 # Plot contour
 def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     plt.figure(figsize=(9, 8))
-#     plt.title('Fairness vs. Performance Tradeoffs', fontsize=18)
-    plt.xlabel(key+' Threshold Privileged', fontsize=16)
-    plt.ylabel(key+' Threshold Unprivileged', fontsize=16)
+    #     plt.title('Fairness vs. Performance Tradeoffs', fontsize=18)
+    plt.xlabel(key + ' Threshold Privileged', fontsize=16)
+    plt.ylabel(key + ' Threshold Unprivileged', fontsize=16)
     plt.xlim(np.min(th_a), np.max(th_a))
     plt.ylim(np.min(th_b), np.max(th_b))
 
@@ -164,7 +166,7 @@ def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     eo_lns.collections[-1].set_label(fair_metric_name)
 
     cbar = plt.colorbar(bal_acc_lns)
-    cbar.set_label('Model Performance ('+perf_metric_name+')', fontsize=14)
+    cbar.set_label('Model Performance (' + perf_metric_name + ')', fontsize=14)
     plt.clabel(eo_lns, inline=1, fmt='%1.2f', fontsize=14)
 
     idx1 = np.unravel_index(perf.argmax(), perf.shape)
@@ -177,30 +179,75 @@ def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     best_con_th_a, best_con_th_b = th_a[idx2[1]], th_b[idx2[0]]
     # Mark maximums
     # plt.plot([0, 1], [0, 1], c='gray', ls=':', label='single threshold')
-    plt.scatter(best_th_a, best_th_b, c='b', marker='d', s=100, label='max'+' '+perf_metric_name, zorder=2)
-    plt.scatter(best_th, best_th, c='r', marker='x', s=100, label='single TH'+' '+perf_metric_name, zorder=2)
-    plt.scatter(best_con_th_a, best_con_th_b, c='purple', marker='*', s=100, label=fair_metric_name+' '+perf_metric_name, zorder=2)
+    plt.scatter(best_th_a, best_th_b, c='b', marker='d', s=100, label='max' + ' ' + perf_metric_name, zorder=2)
+    plt.scatter(best_th, best_th, c='r', marker='x', s=100, label='single TH' + ' ' + perf_metric_name, zorder=2)
+    plt.scatter(best_con_th_a, best_con_th_b, c='purple', marker='*', s=100,
+                label=fair_metric_name + ' ' + perf_metric_name, zorder=2)
     lgnd = plt.legend(framealpha=0.3, facecolor='black', fontsize=12, loc='upper right')
     for text in lgnd.get_texts():
         text.set_color("white")
-    filename = zf_name+'_'+'featureTradeoffContourMap'+'_'+key+'.png'
+    filename = zf_name + '_' + 'featureTradeoffContourMap' + '_' + key + '.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
 
 
-image_file_list = []
+def plot_permutation_importance(zf_name, feature_score_list):
+    features = []
+    importance = []
+    for feature_score in feature_score_list:
+        features.append(feature_score['feature'])
+        importance.append(feature_score['score'])
+    plt.figure(figsize=(15, 10))
+    plt.barh(features, importance, color='#437694')
+    filename = zf_name + '_permutationImportance.png'
+    plt.savefig(filename)
+    plt.close()
+    image_file_list.append(filename)
 
+
+# def plot_watherfall(zf_name, seq, local_interpretability):
+
+    # base_values = local_interpretability_data[p][0][1] #efx
+    # loc = local_interpretability_data[p][1][1] # fx
+    # values = np.array([i[2] for i in local_interpretability_data[p][2:]]) #shap
+    # features = np.array([i[1] for i in local_interpretability_data[p][2:]])  # value
+    # feature_names = np.array([i[0] for i in local_interpretability_data[p][2:]]) #name
+    #
+    # plt.title('Local Interpretabiity Water Plot for Data Point: ' + p, fontsize=18)
+    #
+    # waterfall(base_values, loc, values, features, feature_names,max_display=10, show=True)
+
+
+    #########
+    # efx = local_interpretability['efx']
+    # fx = local_interpretability['fx']
+    # feature_info_list = local_interpretability['feature_info']
+    # shap_list = []
+    # name_list = []
+    # value_list = []
+    # for feature_info in feature_info_list:
+    #     shap_list.append(feature_info['shap'])
+    #     name_list.append(feature_info['name'])
+    #     value_list.append(feature_info['value'])
+    # plt.title('Local Interpretabiity Water Plot for Data Point: ' + seq, fontsize=18)
+    #
+    # waterfall.waterfall(efx, fx, array("i", shap_list), value_list, name_list, max_display=10, show=True)
+
+
+############################ begin ############################
+
+image_file_list = []
 
 # load JSON file
 # prepare data
 filename = sys.argv[1]
-#with zipfile.ZipFile('../file/project/1/json/1e2fc6190d50a4e8a9ab56500ebbf77827985983dd3fb92cba39888fd7bf1340.json.zip', 'r') as zf:
+# with zipfile.ZipFile('../file/project/1/json/1e2fc6190d50a4e8a9ab56500ebbf77827985983dd3fb92cba39888fd7bf1340.json.zip', 'r') as zf:
 with zipfile.ZipFile(filename, 'r') as zf:
     jsonObject = json.load(zf.open(zf.namelist()[0]))
     image_dir = os.path.dirname(os.path.dirname(zf.filename)) + "/image/"
     basename = os.path.basename(zf.filename).split('.')[0]
-    image_prefix=image_dir + basename
+    image_prefix = image_dir + basename
     zf_name = image_prefix
 
 fairness = jsonObject['fairness']
@@ -210,8 +257,8 @@ features_dict = fairness['features']
 fairness_init = fairness['fairness_init']
 fair_metric_name = fairness_init['fair_metric_name']
 perf_metric_name = fairness_init['perf_metric_name']
-fair_metric_name = re.sub('_',' ',fair_metric_name)
-perf_metric_name = re.sub('_',' ',perf_metric_name)
+fair_metric_name = re.sub('_', ' ', fair_metric_name)
+perf_metric_name = re.sub('_', ' ', perf_metric_name)
 
 calibration_curve = fairness['calibration_curve']
 correlation_matrix = fairness['correlation_matrix']
@@ -260,5 +307,8 @@ for key in features_dict:
     plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
     # plot contour
     plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
+
+# transparency
+plot_permutation_importance(zf_name, transparency['permutation_score'])
 
 print(json.dumps(image_file_list))
