@@ -55,6 +55,9 @@ public class ProjectBasicDto implements BasicDtoInterface<Project> {
         project.setDescription(description);
         Date now = new Date();
         project.setLastEditedTime(now);
+        project.setPrincipleFairness(this.principleFairness);
+        project.setPrincipleEA(this.principleEA);
+        project.setPrincipleTransparency(this.principleTransparency);
         return project;
     }
 }
