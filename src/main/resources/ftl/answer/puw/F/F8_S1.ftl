@@ -10,7 +10,7 @@
 <#if graphContainer.getCorrelationHeatMapChart()??>
 <div class="image_box">
     <div class="image_title">Correlation Heatmap</div>
-    <img src="${graphContainer.getCorrelationHeatMapChart()}" />
+    <img id="CorrelationHeatMapChart" src="${graphContainer.getCorrelationHeatMapChart()}" />
 </div>
 <#else>
    <div>Correlation matrix heatmap does not apply to this project.</div>
