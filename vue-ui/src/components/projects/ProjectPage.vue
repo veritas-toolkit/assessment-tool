@@ -179,6 +179,7 @@
                @close="editProjectClosed" width="548px" append-to-body>
       <template slot="title"><span class="dialogTitle">Edit project</span></template>
       <el-form :rules="editProjectFormRules" ref="editProjectFormRefs" label-position="top" label="450px"
+               class="createProject"
                :model="editProjectForm">
         <el-form-item class="login" label="Project name" prop="name">
           <el-input placeholder="Please input a project name" v-model="editProjectForm.name"></el-input>
@@ -187,11 +188,17 @@
           <el-input :rows="3" type="textarea" placeholder="Please input project description here"
                     v-model="editProjectForm.description"></el-input>
         </el-form-item>
-        <el-form-item class="login" label="Business scenario" prop="businessScenario">
+        <el-form-item class="login" disabled label="Business scenario" prop="businessScenario">
           <el-select v-model="editProjectForm.businessScenario" placeholder="Please choose a business scenario">
             <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name"
                        :value="item.code"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item class="login" label="Assess Principle" prop="principleGeneric">
+          <el-checkbox disabled v-model="editProjectForm.principleGeneric">Generic</el-checkbox>
+          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleFairness">Fairness</el-checkbox>
+          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleEA">Ethics & Accountability</el-checkbox>
+          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleTransparency">Transparency</el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -266,6 +273,10 @@ export default {
         name: '',
         description: '',
         businessScenario: '',
+        principleGeneric: true,
+        principleFairness: false,
+        principleEA: false,
+        principleTransparency: false
       },
       editProjectFormRules: {
         name: [{required: true, trigger: 'blur'},],
@@ -448,7 +459,7 @@ export default {
           this.$http.post(`/api/project/${this.projectId}`, this.editProjectForm).then(res => {
             if (res.status == 200) {
               this.$message.success('Edit successfully')
-              this.getProjectInfo()
+              this.getProjectDetail()
             }
             this.editProjectVisible = false
           })
@@ -484,6 +495,10 @@ export default {
           this.projectInfo = res.data
           this.editProjectForm.name = res.data.name
           this.editProjectForm.description = res.data.description
+          this.editProjectForm.principleGeneric = res.data.principleGeneric
+          this.editProjectForm.principleFairness = res.data.principleFairness
+          this.editProjectForm.principleEA = res.data.principleEA
+          this.editProjectForm.principleTransparency = res.data.principleTransparency
           if (res.data.userOwnerId) {
             this.userOwnerId = res.data.userOwnerId
           }
