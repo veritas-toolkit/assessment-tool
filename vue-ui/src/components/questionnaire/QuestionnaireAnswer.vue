@@ -34,7 +34,7 @@
           </div>
         </div>
 <!--        <div v-show="item.answer && !editorShow[item.id]" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>-->
-        <div v-show="item.answer && !editorShow[item.id]" v-html="transformAnswer(item.answer,item.vid)" class="sub-ques-ans BarlowMedium"></div>
+        <div v-show="item.answer && !editorShow[item.id]" v-html="transformAnswer(item.answer)" class="sub-ques-ans BarlowMedium"></div>
 
         <editor v-if="editorShow[item.id]" :key="item.id.toString()" :id='item.id.toString()' v-model="textarea[item.id]" :init="init"></editor>
         <div v-if="editorShow[item.id]" style="display: flex;justify-content: right;margin-top: 16px">
@@ -78,6 +78,9 @@ export default {
       type: String,
       required: true
     },
+    modelArtifactVersionId: {
+      type: Number,
+    }
   },
   created() {
     this.init = {
@@ -127,7 +130,7 @@ export default {
     }
   },
   methods: {
-    transformAnswer(answer,vid) {
+    transformAnswer(answer) {
       const el = document.createElement('div');
       el.innerHTML = answer
       const allImages =  el.getElementsByTagName('img')
@@ -137,9 +140,14 @@ export default {
         divChart.style.width = '80%'
         divChart.style.margin = 'auto'
         divChart.style.height = '500px'
+        if (!plotImg.id) {
+          plotImg.id = Math.ceil(Math.random()*999999999).toString()+'_plot';
+        }
         divChart.id = plotImg.id + '_plot'
+
+
         // get echarts option data
-        this.getPlotData(vid,plotImg)
+        this.getPlotData(plotImg)
         if (plotImg.nextSibling) {
           plotImg.parentNode.insertBefore(divChart, plotImg.nextSibling);
         } else {
@@ -150,15 +158,18 @@ export default {
 
       return el.innerHTML
     },
-    getPlotData(vid,plotImg) {
+    getPlotData(plotImg) {
       let plotFetch = {}
-      plotFetch.modelArtifactVid = vid
+      plotFetch.modelArtifactVid = this.modelArtifactVersionId
       plotFetch.imgId = plotImg.id
       plotFetch.imgSrc = plotImg.src
+
       this.$http.post(`/api/project/${this.projectId}/plot`,plotFetch).then(res => {
         if (res.status == 200) {
           let optionData = {}
-          if (res.data.type == 'curve') {
+          if (res.data.type == 'none') {
+            optionData = null
+          } else if (res.data.type == 'curve') {
             optionData = curveOptionData(res.data.data)
           } else if (res.data.type == 'two_line') {
             optionData = twoLineOptionData(res.data.data)
@@ -168,10 +179,17 @@ export default {
             optionData = confusionMatrixOptionData(res.data.data)
           } else if (res.data.type == 'correlation_matrix') {
             optionData = correlationMatrixOptionData(res.data.data)
+          } else {
+            optionData = null;
           }
           this.$nextTick(() => {
             let img = document.getElementById(plotImg.id)
-            echarts.dispose(document.getElementById(plotImg.id+'_plot'))
+            let echartsDiv = document.getElementById(plotImg.id+'_plot')
+            if (optionData == null) {
+              echartsDiv.remove();
+              return false;
+            }
+            echarts.dispose(echartsDiv)
             let myChart = echarts.init(document.getElementById(plotImg.id+'_plot'));
             myChart.setOption(optionData);
             img.remove();

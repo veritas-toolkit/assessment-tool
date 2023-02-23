@@ -28,7 +28,7 @@
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
-            <QuestionnaireAnswer v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
+            <QuestionnaireAnswer :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
             <QuestionnaireCompareAnswer v-show="compareFlag" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
@@ -132,6 +132,7 @@ export default {
       draftList: [],
       compareFlag: false,
       questionnaireVid: '',
+      modelArtifactVersionId: 0,
     }
   },
   created() {
@@ -165,6 +166,11 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
         if (res.status == 200) {
           this.principleList = Object.keys(res.data.principles)
+          if(!res.data.modelArtifactVersionId) {
+            this.modelArtifactVersionId = 0
+          } else {
+            this.modelArtifactVersionId = res.data.modelArtifactVersionId
+          }
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           if (this.principle == 'Fairness') {
             this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[1].mainQuestionList[0].id.toString()
