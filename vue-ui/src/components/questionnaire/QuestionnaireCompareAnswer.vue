@@ -24,6 +24,12 @@
           <span :class="diffItem[0]== -1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.answer).text, html2string(mainNewQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== -1">
             {{diffItem[1]}}
           </span>
+          <div v-for="item in html2string(mainBasedQuestion.answer).imgContents">
+            <div v-html="item"></div>
+          </div>
+          <div v-for="item in html2string(mainBasedQuestion.answer).tableContents">
+            <div v-html="item"></div>
+          </div>
 <!--          {{mainBasedQuestion.answer}}-->
         </div>
       </div>
@@ -48,6 +54,12 @@
           <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(mainBasedQuestion.answer).text, html2string(mainNewQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
+          <div v-for="item in html2string(mainNewQuestion.answer).imgContents">
+            <div v-html="item"></div>
+          </div>
+          <div v-for="item in html2string(mainNewQuestion.answer).tableContents">
+            <div v-html="item"></div>
+          </div>
 <!--          {{ mainNewQuestion.answer }}-->
         </div>
       </div>
@@ -65,6 +77,12 @@
           <span :class="diffItem[0]== -1?'compare-left':''" v-for="(diffItem,index) in compareDiff(html2string(item.basedQuestion.answer).text, html2string(item.newQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== -1">
             {{diffItem[1]}}
           </span>
+          <div v-for="temp in html2string(item.basedQuestion.answer).imgContents">
+            <div v-html="temp"></div>
+          </div>
+          <div v-for="temp in html2string(item.basedQuestion.answer).tableContents">
+            <div v-html="temp"></div>
+          </div>
         </div>
       </div>
       <div class="compare-box-right">
@@ -77,6 +95,12 @@
           <span :class="diffItem[0]== 1?'compare-right':''" v-for="(diffItem,index) in compareDiff(html2string(item.basedQuestion.answer).text, html2string(item.newQuestion.answer).text)" v-show="diffItem[0] == 0 || diffItem[0]== 1">
             {{diffItem[1]}}
           </span>
+          <div v-for="temp in html2string(item.newQuestion.answer).imgContents">
+            <div v-html="temp"></div>
+          </div>
+          <div v-for="temp in html2string(item.newQuestion.answer).tableContents">
+            <div v-html="temp"></div>
+          </div>
         </div>
       </div>
     </div>

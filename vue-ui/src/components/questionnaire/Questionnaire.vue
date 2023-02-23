@@ -62,7 +62,7 @@
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
-                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid,questionId)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
                         <div>{{item.creator.username}}</div>
@@ -131,7 +131,7 @@ export default {
       },
       draftList: [],
       compareFlag: false,
-      questionnaireVid: ''
+      questionnaireVid: '',
     }
   },
   created() {
@@ -141,7 +141,7 @@ export default {
   watch: {
     'principle': function () {
       if (this.compareFlag) {
-        this.compare(this.questionnaireVid)
+        this.switchPrincipleCompare(this.questionnaireVid)
       } else {
         this.getQuestionnaireMenu()
       }
@@ -180,12 +180,21 @@ export default {
         // console.log(compareType)
       })
     },
-    compare(questionnaireVid,questionId) {
+    compare(questionnaireVid) {
       this.compareFlag = true
       this.questionnaireVid = questionnaireVid.toString()
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
-          this.questionId = questionId.toString()
+          this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+        }
+      })
+    },
+    switchPrincipleCompare(questionnaireVid) {
+      this.compareFlag = true
+      this.questionnaireVid = questionnaireVid.toString()
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
+        if (res.status == 200) {
+          this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })

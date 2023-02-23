@@ -144,6 +144,7 @@ export default {
   background-color: #E0E0E0;
 }
 .Edited {
+  white-space: nowrap;
   background: #DBE8FF;
   border-radius: 12px;
   border: 1px solid #4D89FF;
@@ -152,6 +153,7 @@ export default {
   color: #246DFF;
 }
 .New {
+  white-space: nowrap;
   background: #D3F2E3;
   border-radius: 12px;
   border: 1px solid #44BC85;
@@ -160,6 +162,7 @@ export default {
   color: #058F5A;
 }
 .Deleted {
+  white-space: nowrap;
   background: #FBE5E2;
   border-radius: 12px;
   border: 1px solid #ED5234;
