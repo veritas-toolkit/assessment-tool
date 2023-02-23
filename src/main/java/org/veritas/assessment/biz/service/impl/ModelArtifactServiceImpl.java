@@ -185,12 +185,23 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     dto.setCaption("correlationHeatMapChart");
                     return dto;
                 }
+                final String weightedConfusionHeatMapChart = "weightedConfusionHeatMapChart";
+                if (StringUtils.contains(imgSrc, weightedConfusionHeatMapChart)) {
+                    data = jsonModel.getFairness().getCorrelationMatrix();
+                    dto.setData(data);
+                    dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
+                    dto.setName("weightedConfusionHeatMapChart");
+                    dto.setCaption("weightedConfusionHeatMapChart");
+                    return dto;
+                }
+
+
                 final String featureDistributionPieChartMap = "featureDistributionPieChartMap";
                 if (StringUtils.contains(imgSrc, featureDistributionPieChartMap)) {
                     Map<String, Fairness.Feature> featureMap = jsonModel.getFairness().getFeatureMap();
                     for (String name : featureMap.keySet()) {
                         if (StringUtils.contains(imgSrc, featureDistributionPieChartMap + "_" + name + ".")) {
-                            data = featureMap.get(name);
+                            data = featureMap.get(name).getFeatureDistributionMap();
                             dto.setData(data);
                             dto.setType(PlotTypeEnum.PIE);
                             dto.setName("featureDistributionPieChartMap");
