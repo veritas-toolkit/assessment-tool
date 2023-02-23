@@ -10,6 +10,7 @@ import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -44,6 +45,7 @@ public interface QuestionnaireService {
     // edit answer
 
     QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> editAnswerActionList);
+    QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> editAnswerActionList, ModelArtifact modelArtifact);
     @Deprecated
     QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
 

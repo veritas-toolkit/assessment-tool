@@ -145,14 +145,54 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
     // FIXME: 2023/2/17 to delete
     @Override
     public Object findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
-        /*
-        JsonModel jsonModel = modelArtifact.getJsonModel();
-        if (jsonModel == null) {
+
+        try {
+            JsonModel jsonModel = modelArtifact.getJsonModel();
+            if (jsonModel == null) {
+                this.loadContent(modelArtifact);
+            }
+            if (jsonModel == null) {
+                return null;
+            }
+            if (jsonModel.getFairness() != null) {
+                final String calibrationCurveLineChart = "calibrationCurveLineChart";
+                if (StringUtils.contains(imgSrc, calibrationCurveLineChart)) {
+                    return jsonModel.getFairness().getCalibrationCurve();
+                }
+                final String classDistributionPieChart = "classDistributionPieChart";
+                if (StringUtils.contains(imgSrc, classDistributionPieChart)) {
+                    return jsonModel.getFairness().getClassDistribution();
+                }
+                final String correlationHeatMapChart = "correlationHeatMapChart";
+                if (StringUtils.contains(imgSrc, correlationHeatMapChart)) {
+                    return jsonModel.getFairness().getCorrelationMatrix();
+                }
+
+//            featureDistributionPieChartMap_gender-race-nationality
+//            featureDistributionPieChartMap_gender
+//            featureDistributionPieChartMap_race
+//            featureTradeoffContourMap_gender-race-nationality
+//            featureTradeoffContourMap_gender
+//            featureTradeoffContourMap_race
+                final String performanceLineChart = "performanceLineChart";
+                if (StringUtils.contains(imgSrc, performanceLineChart)) {
+                    return jsonModel.getFairness().getPerfDynamic();
+                }
+            }
+            if (jsonModel.getTransparency() != null) {
+                final String permutationImportance = "permutationImportance";
+                if (StringUtils.contains(imgSrc, permutationImportance)) {
+                    return jsonModel.getTransparency().getPermutationScoreList();
+                }
+            }
+
+
+
+        } catch (IOException | NullPointerException exception) {
             return null;
         }
-        Fairness fairness = jsonModel.getFairness();
-        return fairness.getClassDistribution();
-         */
+
+
         @Deprecated
         final String EXAMPLE_CS = "json_test/model_artifact_credit_scoring_20230117_1251.json";
         final String EXAMPLE_CM = "json_test/model_artifact_customer_marketing_20230220_1849.json";

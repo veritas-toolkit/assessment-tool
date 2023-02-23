@@ -37,6 +37,8 @@ public class QuestionnaireTocDto {
 
     private Date createdTime;
 
+    private Integer modelArtifactVersionId;
+
     // entry example: G -> Generic
     private Map<String, String> principles;
 
@@ -54,6 +56,7 @@ public class QuestionnaireTocDto {
         this.questionnaireVid = q.getVid();
         this.creator = userSimpleDto;
         this.createdTime = q.getCreatedTime();
+        this.modelArtifactVersionId = q.getModelArtifactVid();
 
         supportPrincipleList = project.principles();
         principles = supportPrincipleList.stream().collect(Collectors.toMap(

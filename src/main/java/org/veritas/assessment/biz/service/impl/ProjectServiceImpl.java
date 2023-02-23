@@ -376,7 +376,7 @@ public class ProjectServiceImpl implements ProjectService {
         modelArtifactService.upload(modelArtifact);
         QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
         List<EditAnswerAction> actionList = modelInsightService.insight(project, questionnaireVersion, modelArtifact);
-        questionnaireService.editAnswer(operator,project, actionList);
+        questionnaireService.editAnswer(operator, project, actionList, modelArtifact);
     }
 
     private void exceptionHandler(PersistenceException exception, Project project) {

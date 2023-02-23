@@ -14,6 +14,7 @@ import org.veritas.assessment.biz.action.ReorderSubQuestionAction;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -106,11 +107,33 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
 
     @Override
+    @Transactional
     public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList) {
         Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
         Long questionnaireVid = current.getVid();
+        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
+        if (!locked) {
+            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
+        }
+        actionList.forEach(action -> {
+            action.setOperator(operator);
+            action.setActionTime(now);
+        });
+        current.editAnswer(actionList, idGenerateService::nextId);
+        questionnaireDao.save(current);
+        return current;
+    }
+
+    @Override
+    @Transactional
+    public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList, ModelArtifact modelArtifact) {
+        Date now = new Date();
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
+        QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
+        Long questionnaireVid = current.getVid();
+        current.setModelArtifactVid(modelArtifact.getVersionId());
         boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
         if (!locked) {
             throw new HasBeenModifiedException("The questionnaire has been modify by others.");

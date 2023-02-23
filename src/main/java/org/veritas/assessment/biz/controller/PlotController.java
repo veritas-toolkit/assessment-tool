@@ -59,7 +59,7 @@ public class PlotController {
 //            log.warn("load model artifact");
 //            throw new InternalException();
 //        }
-        Object data = modelArtifactService.findPlotData(null, plotFetchDto.getImgId(), null, null);
+        Object data = modelArtifactService.findPlotData(null, plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
         if (data == null) {
             PlotDataDto dto = new PlotDataDto();
             dto.setType(PlotTypeEnum.NONE);

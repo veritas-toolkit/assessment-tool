@@ -147,11 +147,21 @@ public class GraphContainer {
 
     // FIXME: 2023/2/21 just for test
     public String getPersonalAttributesClassification() {
-        return "xxxxxxx.jpg";
-//        return null;
+        List<String> list = new ArrayList<>(featureDistributionPieChartMap.values());
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return classDistributionPieChart;
+        }
+
     }
+    // FIXME: 2023/2/21 just for test
     public String getPersonalAttributesIdentificationTree() {
-        return "yyyy.jpg";
-//        return null;
+        List<String> list = new ArrayList<>(featureDistributionPieChartMap.values());
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return classDistributionPieChart;
+        }
     }
 }
