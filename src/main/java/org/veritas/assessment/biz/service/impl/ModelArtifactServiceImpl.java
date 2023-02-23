@@ -180,7 +180,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 if (StringUtils.contains(imgSrc, correlationHeatMapChart)) {
                     data = jsonModel.getFairness().getCorrelationMatrix();
                     dto.setData(data);
-                    dto.setType(PlotTypeEnum.HEAT_MAP);
+                    dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
                     dto.setName("correlationHeatMapChart");
                     dto.setCaption("correlationHeatMapChart");
                     return dto;
