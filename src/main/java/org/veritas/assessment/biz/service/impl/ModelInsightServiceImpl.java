@@ -100,7 +100,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                     actionList.add(action);
                 } catch (TemplateException | IOException e) {
                     log.error("freemarker template process filed.", e);
-                    throw new RuntimeException("freemarker template process filed. template: " + template.getName(), e);
+//                    throw new RuntimeException("freemarker template process filed. template: " + template.getName(), e);
                 }
             }
         }
