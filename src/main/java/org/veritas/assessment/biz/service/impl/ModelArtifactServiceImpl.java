@@ -275,8 +275,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         if (!zip.exists()) {
             throw new FileNotFoundException(zip.getPath());
         }
-        try (
-                ZipFile zipFile = new ZipFile(zip)) {
+        try (ZipFile zipFile = new ZipFile(zip)) {
             ZipEntry zipEntry = zipFile.getEntry(artifact.getFilename());
             if (zipEntry == null) {
                 Enumeration<?> e = zipFile.entries();
@@ -288,7 +287,6 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 }
             }
             if (zipEntry == null) {
-                // FIXME: 2021/9/9
                 throw new FileNotFoundException("Not found the file.");
             }
             try (InputStream is = zipFile.getInputStream(zipEntry)) {

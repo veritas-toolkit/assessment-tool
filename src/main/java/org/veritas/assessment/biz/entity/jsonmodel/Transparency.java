@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -48,6 +49,8 @@ public class Transparency {
             partialDependencePlot.forEach((k, v) -> map.put(k, Base64.decodeBase64(v)));
             return map;
         }
+
+
     }
 
     @Data

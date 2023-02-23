@@ -20,8 +20,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -42,9 +44,10 @@ public class GraphContainer {
 
     private Map<String, String> featureTradeoffContourMap = new LinkedHashMap<>();
 
-    private Map<String, String> partial_dependence_plot = new LinkedHashMap<>();
+    private Map<String, String> summaryPlotMap = new LinkedHashMap<>();
 
-    private String summary_plot;
+    private Map<String, Map<String, String>> partialDependencePlotMap = new LinkedHashMap<>();
+
 
     public Map<String, String> getFeatureDistributionPieChartMap() {
         return Collections.unmodifiableMap(featureDistributionPieChartMap);
@@ -59,6 +62,64 @@ public class GraphContainer {
             log.info("Feature[{}] update distribution chart.", feature);
         }
     }
+
+    public void putSummaryPlot(String modelId, String plotImagePath) {
+        if (modelId == null) {
+            throw new IllegalArgumentException("Argument 'modelId' should not be empty.");
+        }
+        String old = this.summaryPlotMap.put(modelId, plotImagePath);
+        if (old != null) {
+            log.info("model[{}] summary plot updated from [{}] to [{}].", modelId, old, plotImagePath);
+        }
+    }
+
+    public void putPartialDependencePlot(String modelId, String featureName, String plotImagePath) {
+        if (modelId == null) {
+            throw new IllegalArgumentException("Argument 'modelId' should not be empty.");
+        }
+        Map<String, String> featureMap = this.partialDependencePlotMap.computeIfAbsent(modelId,
+                k -> new LinkedHashMap<>());
+
+        String old = featureMap.put(featureName, plotImagePath);
+        if (old != null) {
+            log.info("model[{}] summary plot updated from [{}] to [{}].", modelId, old, plotImagePath);
+        }
+    }
+
+    public List<String> getModelIdList() {
+        return new ArrayList<>(this.summaryPlotMap.keySet());
+    }
+    public List<String> getSummaryPlotList() {
+        return new ArrayList<>(this.summaryPlotMap.values());
+    }
+    public String getSummaryPlot(String modelId) {
+        return this.summaryPlotMap.get(modelId);
+    }
+
+    public List<String> getPartialDependenceFeatureList(String modelId) {
+        Map<String, String> map = this.partialDependencePlotMap.get(modelId);
+        if (map == null || map.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(map.keySet());
+    }
+
+    public String getPartialDependencePlot(String modelId, String feature) {
+        Map<String, String> map = this.partialDependencePlotMap.get(modelId);
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        return map.get(feature);
+    }
+
+    public List<String> getPartialDependencePlotList() {
+        List<String> list = new ArrayList<>();
+        for (Map<String, String> map : this.getPartialDependencePlotMap().values()) {
+            list.addAll(map.values());
+        }
+        return list;
+    }
+
 
     public String getFeatureDistributionPieChart(String feature) {
         if (StringUtils.isEmpty(feature)) {

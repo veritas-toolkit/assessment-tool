@@ -177,6 +177,9 @@ h1 {
     text-align: center;
     margin-bottom: 1em;
 }
+img {
+    page-break-inside: avoid;
+}
 
 ul li {
     /*list-style-position: outside;*/
