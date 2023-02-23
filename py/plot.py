@@ -49,7 +49,7 @@ def plot_piechart(data1, label, zf_name, key):
             startangle=0,
             radius=1.2,
             frame=False)
-    if(key):
+    if key is not None:
         filename = zf_name+'_'+'featureDistributionPieChartMap'+'_'+key+'.png'
     else:
         filename = zf_name+'_'+'classDistributionPieChart'+'.png'
@@ -228,7 +228,7 @@ perf_dynamic = fairness['perf_dynamic']
 # plot_weighted_confusion_matrix(weighted_confusion_matrix_list, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
 
 # plot class distribution
-plot_piechart(class_distribution_list, class_distribution_label, zf_name, '')
+plot_piechart(class_distribution_list, class_distribution_label, zf_name, None)
 
 # plot calibration
 if calibration_curve:
