@@ -1,49 +1,49 @@
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -- vat2_permission
 insert into vat2_permission(id, resource_type, name, description)
-values(101, "project", "create", "create project.");
+values(101, 'project', 'create', 'create project.');
 insert into vat2_permission(id, resource_type, name, description)
-values(102, "project", "delete", "delete project.");
+values(102, 'project', 'delete', 'delete project.');
 insert into vat2_permission(id, resource_type, name, description)
-values(103, "project", "edit", "edit basic information of the project.");
+values(103, 'project', 'edit', 'edit basic information of the project.');
 insert into vat2_permission(id, resource_type, name, description)
-values(104, "project", "read", "view project detail.");
+values(104, 'project', 'read', 'view project detail.');
 insert into vat2_permission(id, resource_type, name, description)
-values(121, "project", "manage members", "Input the answers of questionnaire to the project.");
+values(121, 'project', 'manage members', 'Input the answers of questionnaire to the project.');
 insert into vat2_permission(id, resource_type, name, description)
-values(122, "project", "edit questionnaire", "Edit the questions of the project's questionnaire.");
+values(122, 'project', 'edit questionnaire', 'Edit the questions of the project questionnaire.');
 insert into vat2_permission(id, resource_type, name, description)
-values(141, "project", "upload json", "Upload artifact json file to the project.");
+values(141, 'project', 'upload json', 'Upload artifact json file to the project.');
 insert into vat2_permission(id, resource_type, name, description)
-values(142, "project", "input answer", "Input the answers of questionnaire to the project.");
+values(142, 'project', 'input answer', 'Input the answers of questionnaire to the project.');
 
 
 insert into vat2_permission(id, resource_type, name, description)
-values(301, "group", "create", "create group.");
+values(301, 'group', 'create', 'create group.');
 insert into vat2_permission(id, resource_type, name, description)
-values(302, "group", "delete", "delete group.");
+values(302, 'group', 'delete', 'delete group.');
 insert into vat2_permission(id, resource_type, name, description)
-values(303, "group", "edit", "edit group detail.");
+values(303, 'group', 'edit', 'edit group detail.');
 insert into vat2_permission(id, resource_type, name, description)
-values(304, "group", "read", "view group detail.");
+values(304, 'group', 'read', 'view group detail.');
 insert into vat2_permission(id, resource_type, name, description)
-values(305, "group", "manage members", "add a member into the group.");
+values(305, 'group', 'manage members', 'add a member into the group.');
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -- vat2_role
 insert into vat2_role(id, type, name, description)
-values(101, "project", "owner", "Owner of the project.");
+values(101, 'project', 'owner', 'Owner of the project.');
 insert into vat2_role(id, type, name, description)
-values(102, "project", "developer", "Developer of the project.");
+values(102, 'project', 'developer', 'Developer of the project.');
 insert into vat2_role(id, type, name, description)
-values(103, "project", "assessor", "Only can view the project, cannot modify artifact model and questionnaire.");
+values(103, 'project', 'assessor', 'Only can view the project, cannot modify artifact model and questionnaire.');
 
 insert into vat2_role(id, type, name, description)
-values(301, "group", "owner", "Owner of the group.");
+values(301, 'group', 'owner', 'Owner of the group.');
 insert into vat2_role(id, type, name, description)
-values(302, "group", "developer", "Developer of the group. Maintainer cannot delete the group.");
+values(302, 'group', 'developer', 'Developer of the group. Maintainer cannot delete the group.');
 insert into vat2_role(id, type, name, description)
-values(303, "group", "assessor", "Only can view the group and related projects, cannot modify artifact model and questionnaire.");
+values(303, 'group', 'assessor', 'Only can view the group and related projects, cannot modify artifact model and questionnaire.');
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 -- vat2_role_permission
