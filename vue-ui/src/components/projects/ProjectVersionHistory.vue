@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="module_title">Version history</div>
+    <div class="module_title" v-show="reportHistoryList.length > 0">Version history</div>
 
     <div v-for="(item,index) in reportHistoryList" v-show="reportHistoryList.length > 0">
       <div class="version-box" :style="index != 0? 'border-top: none':''">
