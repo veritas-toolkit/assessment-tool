@@ -6,10 +6,8 @@
     The following transparency requirements applying to different audiences serve as an example.
 </div>
 
-<div>
-    <div class="table_box">
+<div class="table_box">
     <table border="1">
-        <thead>
             <tr>
                 <th>Transparency</th>
                 <th>Category</th>
@@ -30,21 +28,15 @@
                 <td>AIDA users</td>
                 <td>Transparency reports/ dashboards including various metrics for fairness / explainability /etc.</td>
             </tr>
-
             <tr>
                 <th>Model validation group</th>
                 <td>AIDA validators</td>
                 <td>Fairness/explainability/ performance metrics</td>
             </tr>
-
-
             <tr>
                 <th>Second line and governance</th>
                 <td>AIDA reviewers/approvers</td>
                 <td>AI review checklist/AI controls implementation</td>
             </tr>
-
-        </thead>
-
     </table>
 </div>
