@@ -64,12 +64,6 @@ public class ProjectReportController {
     private ProjectService projectService;
 
     @Autowired
-    private ProjectDtoConverter projectDtoConverter;
-
-    @Autowired
-    private ModelArtifactService modelArtifactService;
-
-    @Autowired
     private ProjectReportService reportService;
 
     @Operation(summary = "List all report version.")
