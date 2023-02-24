@@ -68,6 +68,32 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return update(null, wrapper);
     }
 
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#projectId", condition = "#result == 1"),
+            }
+    )
+    default int archive(int projectId) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+        wrapper.set(Project::isArchived, true);
+        wrapper.set(Project::getLastEditedTime, new Date());
+        return update(null, wrapper);
+    }
+
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#projectId", condition = "#result == 1"),
+            }
+    )
+    default int unarchive(int projectId) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+        wrapper.set(Project::isArchived, false);
+        wrapper.set(Project::getLastEditedTime, new Date());
+        return update(null, wrapper);
+    }
+
 
     @Caching(
             evict = {

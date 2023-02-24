@@ -34,6 +34,8 @@ public interface ProjectService {
     Project createProject(User operator, Project project, Project copyFromProject);
 
     int delete(Integer projectId);
+    int archive(Integer projectId);
+    int unarchive(Integer projectId);
 
     int deleteProjectByUserOwner(Integer ownerId);
 

@@ -183,6 +183,17 @@ public class ProjectServiceImpl implements ProjectService {
         return result;
     }
 
+    @Override
+    @Transactional
+    public int archive(Integer projectId) {
+        return projectMapper.archive(projectId);
+    }
+
+    @Override
+    @Transactional
+    public int unarchive(Integer projectId) {
+        return projectMapper.unarchive(projectId);
+    }
 
     @Override
     @Transactional
