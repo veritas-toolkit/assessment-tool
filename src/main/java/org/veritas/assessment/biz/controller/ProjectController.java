@@ -221,14 +221,14 @@ public class ProjectController {
     }
 
     @Operation(summary = "Archive the project.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'edit')")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'delete')")
     @PostMapping("/{projectId}/archive")
     public void archiveProject(@PathVariable("projectId") int projectId) {
         projectService.archive(projectId);
     }
 
     @Operation(summary = "Unarchive the project.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'edit')")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'delete')")
     @PostMapping("/{projectId}/unarchive")
     public void unarchiveProject(@PathVariable("projectId") int projectId) {
         projectService.unarchive(projectId);
