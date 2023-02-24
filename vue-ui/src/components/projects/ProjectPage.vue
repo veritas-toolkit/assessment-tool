@@ -201,9 +201,12 @@
           <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleTransparency">Transparency</el-checkbox>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button class="BlackBorder" @click="editProjectVisible = false">Cancel</el-button>
-        <el-button class="GreenBC" @click="editProjectInfo">Edit</el-button>
+      <span slot="footer" class="dialog-footer" style="display: flex;justify-content: space-between">
+        <el-button class="GreenBC" @click="archiveProject">Archive</el-button>
+        <div>
+          <el-button class="BlackBorder" @click="editProjectVisible = false">Cancel</el-button>
+          <el-button class="GreenBC" @click="editProjectInfo">Edit</el-button>
+        </div>
       </span>
     </el-dialog>
     <!--exportPDF-->
@@ -229,7 +232,7 @@
           <el-input placeholder="Please input a report message" v-model="exportPdfForm.message"></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" >
         <el-button class="BlackBorder" @click="exportPdfVisible = false">Cancel</el-button>
         <el-button class="GreenBC" @click="exportPdf">Export</el-button>
       </span>
@@ -735,6 +738,9 @@ export default {
             }
           })
     },
+    archiveProject() {
+
+    }
   }
 }
 </script>
