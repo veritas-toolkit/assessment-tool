@@ -77,7 +77,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
         LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Project::getId, projectId);
         wrapper.set(Project::isArchived, true);
-        wrapper.set(Project::getLastEditedTime, new Date());
+        wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(new Date()));
         return update(null, wrapper);
     }
 
@@ -90,7 +90,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
         LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Project::getId, projectId);
         wrapper.set(Project::isArchived, false);
-        wrapper.set(Project::getLastEditedTime, new Date());
+        wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(new Date()));
         return update(null, wrapper);
     }
 
