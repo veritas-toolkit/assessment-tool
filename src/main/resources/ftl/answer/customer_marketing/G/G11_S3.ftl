@@ -37,7 +37,7 @@
 <#if graphContainer.getWeightedConfusionHeatMapChart()??>
 <div class="image_box">
     <div class="image_title">Weighted Confusion Matrix Heatmap</div>
-    <img src="${graphContainer.getWeightedConfusionHeatMapChart()}" />
+    <img id="WeightedConfusionHeatMapChart" src="${graphContainer.getWeightedConfusionHeatMapChart()}" />
 </div>
 <#else>
    Weighted confusion matrix does not apply to this project.
@@ -55,7 +55,7 @@
 <#if graphContainer.getCalibrationCurveLineChart()??>
 <div class="image_box">
     <div class="image_title">Calibration Curve</div>
-    <img src="${graphContainer.getCalibrationCurveLineChart()}" />
+    <img id="CalibrationCurveLineChart" src="${graphContainer.getCalibrationCurveLineChart()}" />
 </div>
     <div>
         The brier loss score is ${fairness.calibrationCurve.score}.
@@ -72,7 +72,7 @@
 <#if graphContainer.getPerformanceLineChart()??>
 <div class="image_box">
     <div class="image_title">Performance</div>
-    <img src="${graphContainer.getPerformanceLineChart()}" />
+    <img id="PerformanceLineChart" src="${graphContainer.getPerformanceLineChart()}" />
 </div>
 <#else>
    Performance dynamics does not apply to this project.

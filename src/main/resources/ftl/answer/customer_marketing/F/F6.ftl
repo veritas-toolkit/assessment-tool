@@ -7,7 +7,7 @@
 
 <div class="image_box">
     <div class="image_title">Personal Attribute Classification</div>
-<#--    <img src="${graphContainer.getPersonalAttributesClassification()}" />-->
+<#--    <img id="PersonalAttributesClassification" src="${graphContainer.getPersonalAttributesClassification()}" />-->
 </div>
 
 <div>

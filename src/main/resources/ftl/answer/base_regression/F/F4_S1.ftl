@@ -31,7 +31,7 @@
     <#if graphContainer.getFeatureDistributionPieChart(feature_name)??>
     <div class="image_box">
         <div class="image_title">Feature Distribution for ${feature_name}</div>
-        <img class="pie" src="${graphContainer.getFeatureDistributionPieChart(feature_name)}" />
+        <img id="FeatureDistributionPieChart_${feature_name}" class="pie" src="${graphContainer.getFeatureDistributionPieChart(feature_name)}" />
     </div>
     </#if>
 

@@ -23,7 +23,7 @@
         <br/>
         <div class="image_box">
             <div class="image_title">Fairness Tradeoff for ${feature_name}</div>
-            <img src="${graphContainer.findFeatureTradeoffContour(feature_name)}" />
+            <img id="FeatureTradeoffContour_${feature_name}" src="${graphContainer.findFeatureTradeoffContour(feature_name)}" />
         </div>
         <br/>
     </#if>

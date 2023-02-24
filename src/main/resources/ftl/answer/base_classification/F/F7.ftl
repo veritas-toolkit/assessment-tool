@@ -10,5 +10,5 @@
 
 <div class="image_box">
     <div class="image_title">Personal Attribute Identification</div>
-    <img src="${graphContainer.getPersonalAttributesIdentificationTree()}" />
+    <img id="PersonalAttributesIdentificationTree" src="${graphContainer.getPersonalAttributesIdentificationTree()}" />
 </div>
