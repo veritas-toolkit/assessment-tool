@@ -13,7 +13,8 @@ export function correlationMatrixOptionData(data) {
             position: 'top'
         },
         grid: {
-            height: '50%',
+            height: '80%',
+            width: '80%',
             top: '10%'
         },
         xAxis: {
@@ -23,26 +24,44 @@ export function correlationMatrixOptionData(data) {
                 show: true
             },
             nameTextStyle: {
-                fontSize: 20,
+                fontSize: 16,
             },
             axisLabel: {
+                interval: 0, //强制文字产生间隔
+                rotate:20, //倾斜多少度
+                //x轴的文字改为竖版显示
+                formatter: function (value) {
+                    if (value.length > 4) {
+                        return `${value.slice(0, 10)}...`;
+                    }
+                    return value;
+                },
                 textStyle: {
-                    fontSize: 18
+                    fontSize: 16
                 }
             }
         },
         yAxis: {
             type: 'category',
             data: nameListRe,
+            align: 'center',
+
             splitArea: {
                 show: true
             },
             nameTextStyle: {
-                fontSize: 20,
+                fontSize: 16,
             },
             axisLabel: {
+                interval: 0, //强制文字产生间隔
                 textStyle: {
-                    fontSize: 18
+                    fontSize: 16
+                },
+                formatter: function (value) {
+                    if (value.length > 4) {
+                        return `${value.slice(0, 10)}...`;
+                    }
+                    return value;
                 }
             }
         },
@@ -52,14 +71,17 @@ export function correlationMatrixOptionData(data) {
             calculable: true,
             orient: 'horizontal',
             left: 'center',
-            bottom: '15%'
+            top: '0%',
+            inRange: {
+                color: ['WhiteSmoke','Brown']
+            }
         },
         series: [
             {
                 type: 'heatmap',
                 data: temp,
                 label: {
-                    show: true,
+                    show: false,
                     textStyle: {
                         fontSize: 16
                     }

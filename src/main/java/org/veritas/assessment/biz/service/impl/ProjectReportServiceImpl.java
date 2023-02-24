@@ -257,7 +257,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
-        modelMap.put("questionnaire", questionnaire);
+        modelMap.put("questionnaire", new ReportQuestionnaire(project, questionnaire));
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), null));
 
         BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
@@ -273,6 +273,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), current));
 
         BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
+        assert businessScenario != null;
         modelMap.put("businessScenario", businessScenario.getName());
         return modelMap;
     }
