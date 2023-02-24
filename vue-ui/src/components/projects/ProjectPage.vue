@@ -22,13 +22,13 @@
         <el-popover placement="left" width="154px" trigger="click"
                     v-show="has_permission(PermissionType.PROJECT_EDIT) || has_permission(PermissionType.PROJECT_DELETE) || has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)">
           <div>
-            <div v-show="has_permission(PermissionType.PROJECT_EDIT)" class="editProject BarlowMedium"
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT)" class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
                  @click="editProjectVisible = true" style="cursor: pointer"><img src="../../assets/groupPic/edit.png"
                                                                                  alt=""><span>Edit project</span></div>
             <div
                 v-show="has_permission(PermissionType.PROJECT_EDIT) && has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)"
                 class="divide_line"></div>
-            <div v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="editProject BarlowMedium"
+            <div v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
                  @click="editTemplate" style="cursor: pointer"><img src="../../assets/projectPic/editQuestionnaire.png"
                                                                     alt=""><span>Edit questionnaire</span></div>
             <div
@@ -61,6 +61,7 @@
               <div style="display: flex;align-items:center;">
                 <div style="width: 40%">
                   <el-upload
+                      :disabled="archived"
                       class="upload-demo"
                       ref="upload"
                       drag
@@ -172,7 +173,7 @@
           <project-version-history :reportHistoryList="reportHistoryList"></project-version-history>
         </el-tab-pane>
         <el-tab-pane label="Member" name="second">
-          <ProjectMember v-if="projectInfo !== null" :project="projectInfo"
+          <ProjectMember v-if="projectInfo !== null" :project="projectInfo" :archived="archived"
                          :has_manage_members_permission="has_permission(PermissionType.PROJECT_MANAGE_MEMBERS)"></ProjectMember>
         </el-tab-pane>
       </el-tabs>

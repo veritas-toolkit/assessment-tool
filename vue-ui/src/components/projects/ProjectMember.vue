@@ -4,12 +4,13 @@
       <div style="margin: 16px 0;">
         <div class="scope_title">Invite members</div>
       </div>
-      <MemberInvite v-if="account!==null" @invite="invite" :account="account"> </MemberInvite>
+      <MemberInvite v-if="account!==null" @invite="invite" :archived="archived" :account="account"> </MemberInvite>
       <div class="dividingLine"></div>
     </div>
     <div class="scope_title">Members</div>
     <div v-if="projectMemberList !== null" style="margin-top: 8px">
       <Member v-for="member in projectMemberList"
+              :archived="archived"
               :member="member" :can-change-role="canChangeRole(member)" :can-delete="canDeleteMember(member)"
               @changeRole="changeRole" @deleteMember="deleteMember">
       </Member>
@@ -32,6 +33,7 @@ export default {
   props: {
     'project': {type: Object, required: true},
     'has_manage_members_permission': {type: Boolean, required: false, default: false},
+    'archived': {type: Boolean, required: false, default: false},
   },
   data() {
     return {

@@ -2,6 +2,7 @@
   <div>
     <div style="display: flex;align-items: center;justify-content: space-between">
       <el-select value-key="id"
+                 :disabled="archived"
                  multiple
                  filterable
                  v-model="selectedUserList"
@@ -9,10 +10,10 @@
         <el-option v-for="user in userList" :key="user.id" :label="user.fullName" :value="user"></el-option>
       </el-select>
       <div style="display: flex;justify-content: space-between;align-items: center;margin-left: 12px;width: 400px">
-        <el-select v-model="userType" placeholder="Choose a role permission">
+        <el-select :disabled="archived" v-model="userType" placeholder="Choose a role permission">
           <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
         </el-select>
-        <div class="addUsers" @click="invite">Invite</div>
+        <div class="addUsers" :style="archived?'pointer-events: none;':''" @click="invite">Invite</div>
       </div>
     </div>
   </div>
@@ -30,7 +31,8 @@ export default {
     account: {
       type: Object,
       required: true
-    }
+    },
+    'archived': {type: Boolean, required: false, default: false},
   },
   data() {
     return {
