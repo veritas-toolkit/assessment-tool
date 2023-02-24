@@ -14,6 +14,9 @@
           <div class="businessScenarioStyle oneLine">
             <div>{{ businessScenario }}</div>
           </div>
+          <div class="archivedStyle oneLine" v-if="archived">
+            <div>Archived</div>
+          </div>
         </div>
         <!--more actions-->
         <el-popover placement="left" width="154px" trigger="click"
@@ -111,7 +114,7 @@
               </el-card>
             </div>
             <div style="display: flex;align-items: center;">
-              <div class="fairnessButton" @click="questionnaire">
+              <div :class="archived?'archivedButton':'fairnessButton'" @click="questionnaire">
                 <img src="../../assets/projectPic/new_edit.png" alt="">
                 <span>Edit</span>
               </div>
@@ -125,7 +128,7 @@
                 <span>Export report</span>
               </div>
               -->
-              <div class="fairnessButton" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
+              <div :class="archived?'archivedButton':'fairnessButton'" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
                 <img src="../../assets/projectPic/new_export.png" alt="">
                 <span>Export</span>
               </div>
@@ -329,6 +332,7 @@ export default {
         message: [{required: true, trigger: 'blur'},],
       },
       PermissionType: PermissionType,
+      archived: false,
     }
   },
   created() {
@@ -338,6 +342,7 @@ export default {
     this.getProjectMember()
     this.getProjectDetail()
     this.suggestVersion()
+    this.fetchReportHistoryList()
   },
   methods: {
     has_permission(target_permission) {
@@ -377,7 +382,6 @@ export default {
         this.projectDetail = res.data
         this.progressCompleted = this.projectDetail.questionnaireProgress.completed
         this.progressCount = this.projectDetail.questionnaireProgress.count
-        this.reportHistoryList = this.projectDetail.reportHistoryList
       }).catch(err => {
         this.fairnessAssessmentVisible = false
         this.projectDetail = {}
@@ -495,6 +499,7 @@ export default {
     getProjectInfo() {
       this.$http.get(`/api/project/${this.projectId}`).then(res => {
         if (res.status == 200) {
+          this.archived = res.data.archived
           this.projectInfo = res.data
           this.editProjectForm.name = res.data.name
           this.editProjectForm.description = res.data.description
@@ -739,7 +744,12 @@ export default {
           })
     },
     archiveProject() {
-
+      this.$http.post(`/api/project/${this.projectId}/archive`).then(res => {
+        if(res.status == 200) {
+          this.$message.success('Archive successfully')
+          this.editProjectVisible = false
+        }
+      })
     }
   }
 }
@@ -889,7 +899,22 @@ export default {
   padding: 0px 8px;
   text-align: center;
   border-radius: 14px;
-
+  > div {
+    color: #FFF;
+    font-size: 14px;
+    line-height: 24px;
+  }
+}
+.archivedStyle {
+  flex-shrink: 0;
+  width: auto;
+  display: flex !important;
+  margin-left: 16px;
+  height: 24px;
+  background-color: #FCB215;
+  padding: 0px 8px;
+  text-align: center;
+  border-radius: 14px;
   > div {
     color: #FFF;
     font-size: 14px;
@@ -1023,7 +1048,24 @@ export default {
     width: 24px;
     height: 24px;
   }
-
+  > span {
+    margin-left: 8px;
+    font-size: 16px;
+  }
+}
+.archivedButton {
+  cursor: not-allowed;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  background: #EDF2F6;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-right: 12px;
+  > img {
+    width: 24px;
+    height: 24px;
+  }
   > span {
     margin-left: 8px;
     font-size: 16px;
