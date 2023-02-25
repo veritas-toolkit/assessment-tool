@@ -342,7 +342,6 @@ export default {
     this.getUserList()
     this.getProjectMember()
     this.getProjectDetail()
-    this.suggestVersion()
     this.fetchReportHistoryList()
   },
   methods: {
@@ -351,6 +350,7 @@ export default {
     },
     openExportDialog() {
       this.$refs.exportDialog.open();
+      this.suggestVersion()
     },
 
     getProjectDetail() {
