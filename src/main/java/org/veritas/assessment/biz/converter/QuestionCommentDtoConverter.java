@@ -41,6 +41,7 @@ public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto
         QuestionCommentDto dto = new QuestionCommentDto();
         dto.setId(comment.getId());
         dto.setQuestionId(comment.getQuestionId());
+        dto.setMainQuestionId(comment.getMainQuestionId());
         dto.setProjectId(comment.getProjectId());
         dto.setUserId(comment.getUserId());
         dto.setComment(comment.getComment());

@@ -11,13 +11,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.CommentService;
+import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.system.entity.User;
@@ -28,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -36,6 +42,9 @@ public class CommentController {
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;
+
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired
     private QuestionnaireService questionnaireService;
@@ -78,6 +87,29 @@ public class CommentController {
         List<QuestionComment> list = commentService.findCommentListByQuestionId(comment.getQuestionId());
         List<QuestionCommentDto> dtoList = commentDtoConverter.convertFrom(list);
         dtoList.forEach(d -> d.setHasRead(true));
+        return dtoList;
+    }
+
+    @Operation(summary = "Find comment by project.")
+    @GetMapping(path = "/project/{projectId}/questionnaire/all_unread_comment_list")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public List<QuestionCommentDto> findUnreadCommentListByProject(@Parameter(hidden = true) User operator,
+                                                                   @PathVariable("projectId") Integer projectId) {
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        List<QuestionComment> list = commentService.findCommentListByProjectId(projectId);
+        Map<Long, QuestionCommentReadLog> commentReadLogMap =
+                commentService.findCommentReadLog(operator.getId(), projectId);
+        List<QuestionCommentDto> dtoList = commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap));
+        dtoList = dtoList.stream()
+                .filter(e -> !e.isHasRead())
+                .sorted((a, b) -> b.getId() - a.getId())
+                .collect(Collectors.toList());
+        dtoList.forEach(e -> {
+            QuestionNode main = questionnaireVersion.findMainQuestionById(e.getMainQuestionId());
+            if (main != null) {
+                e.setMainQuestion(main.questionContent());
+            }
+        });
         return dtoList;
     }
 
