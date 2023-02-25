@@ -167,8 +167,8 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         ProjectReport report = new ProjectReport();
         report.setProjectId(projectId);
         report.setCreatorUserId(operator.getId());
-        report.setQuestionnaireVersionId(questionnaire.getVid());
-        report.setModelArtifactVersionId(modelArtifact.getVersionId());
+        report.setQuestionnaireVid(questionnaire.getVid());
+        report.setModelArtifactVid(modelArtifact.getVersionId());
         report.setVersion(versionString);
         report.setMessage(message);
         report.setCreatedTime(new Date());

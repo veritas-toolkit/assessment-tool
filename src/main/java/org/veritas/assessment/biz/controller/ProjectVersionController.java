@@ -86,7 +86,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVid());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }
@@ -102,7 +102,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVid());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }

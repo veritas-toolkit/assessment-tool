@@ -83,6 +83,7 @@ public class ProjectQuestionnaireController {
     QuestionnaireRecordDtoConverter questionnaireRecordDtoConverter;
 
 
+    // TODO: 2023/2/25 delete this function 
     @Operation(summary = "Get the project's questionnaire.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     @GetMapping("/test")

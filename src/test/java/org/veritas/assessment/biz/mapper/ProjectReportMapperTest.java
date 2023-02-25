@@ -47,8 +47,8 @@ class ProjectReportMapperTest {
         for (int i = 0; i < count; i++) {
             ProjectReport projectReport = new ProjectReport();
             projectReport.setProjectId(projectId);
-            projectReport.setModelArtifactVersionId(2);
-            projectReport.setQuestionnaireVersionId(3L);
+            projectReport.setModelArtifactVid(2);
+            projectReport.setQuestionnaireVid(3L);
             projectReport.setCreatorUserId(4);
             projectReport.setTag("V1.0");
             projectReport.setMessage("First version.");
@@ -63,8 +63,8 @@ class ProjectReportMapperTest {
         assertNotNull(mapper);
         ProjectReport projectReport = new ProjectReport();
         projectReport.setProjectId(1);
-        projectReport.setModelArtifactVersionId(2);
-        projectReport.setQuestionnaireVersionId(3L);
+        projectReport.setModelArtifactVid(2);
+        projectReport.setQuestionnaireVid(3L);
         projectReport.setCreatorUserId(4);
         projectReport.setTag("V1.0");
         projectReport.setMessage("First version.");
