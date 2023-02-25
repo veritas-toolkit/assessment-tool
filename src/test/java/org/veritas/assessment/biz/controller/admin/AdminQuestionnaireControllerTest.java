@@ -49,7 +49,7 @@ class AdminQuestionnaireControllerTest {
 
     @Test
     void testList_success() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire2")
+        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire")
                         .param("keyword", "te")
                         .param("businessScenario", "1")
                         .with(user("admin").roles("ADMIN", "USER")))
@@ -60,7 +60,7 @@ class AdminQuestionnaireControllerTest {
 
     @Test
     void testGetQuestionnaireToc_success() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire2/1/toc")
+        MvcResult mvcResult = mockMvc.perform(get("/api/admin/questionnaire/1/toc")
                         .with(user("admin").roles("ADMIN", "USER")))
                 .andDo(print())
                 .andExpect(status().isOk())

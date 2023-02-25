@@ -16,14 +16,12 @@
 
 package org.veritas.assessment.biz.service.impl;
 
-import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
@@ -31,18 +29,13 @@ import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionMeta;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.model.SpecialParameterContainer;
 import org.veritas.assessment.biz.service.GraphService;
-import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelInsightService;
-import org.veritas.assessment.biz.service.SystemService;
 import org.veritas.assessment.biz.service.questionnaire.FreemarkerTemplateService;
-import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
-import org.veritas.assessment.system.config.VeritasProperties;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -56,21 +49,9 @@ import java.util.Objects;
 public class ModelInsightServiceImpl implements ModelInsightService {
 
     @Autowired
-    private Configuration configuration;
-
-    @Autowired
     private GraphService graphService;
 
-    @Autowired
-    private QuestionnaireService questionnaireService;
 
-    @Autowired
-    private VeritasProperties veritasProperties;
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
-    private ImageService imageService;
     @Autowired
     private FreemarkerTemplateService freemarkerTemplateService;
 
@@ -107,21 +88,6 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         return Collections.unmodifiableList(actionList);
     }
 
-    @Override
-    @Transactional
-    @Deprecated
-    public void autoGenerateAnswer(Project project, ModelArtifact modelArtifact) {
-        ModelMap modelMap = genModelMap(project, modelArtifact);
-
-        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
-
-        // for each question node.
-        // check: need to auto generate answer.
-        // generate the answer
-
-        // update the answer to the questionnaire. -- create new version.
-    }
-
 
     private ModelMap genModelMap(Project project, ModelArtifact modelArtifact) {
         JsonModel jsonModel = modelArtifact.getJsonModel();
@@ -143,13 +109,6 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         }
         modelMap.addAttribute("businessScenario", businessScenario);
         return modelMap;
-    }
-
-    private String autoAnswer(ModelMap modelMap, Integer businessScenario, QuestionNode questionNode) {
-        QuestionMeta meta = questionNode.getMeta();
-//        if (meta.getAnswerTemplateFilename())
-
-        return null;
     }
 
 

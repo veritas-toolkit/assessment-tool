@@ -6,7 +6,7 @@ POSITIONAL=()
 function check_user() {
   local l_user="$1"
   local l_user_count=`sqlite3 $SQLITE_FILE <<EOF
-  select count(id) from vat_user where username = "$l_user";
+  select count(id) from vat2_user where username = "$l_user";
 EOF
 `
   if [[ $l_user_count -eq 0 ]]; then
@@ -23,7 +23,7 @@ function unlock() {
   local l_user="$1"
   check_user l_user
   sqlite3 $SQLITE_FILE <<EOF
-  update vat_user set locked=0 where username = "$l_user";
+  update vat2_user set locked=0 where username = "$l_user";
 EOF
   clear_cache
 }
@@ -37,14 +37,14 @@ function reset_password() {
   check_user l_user
   local l_password='$2a$10$XRz2ew7AX.StHRF.XptumuXSSSHiF4ylTCC5uDBO1l2z51maRnE82'
   sqlite3 $SQLITE_FILE <<EOF
-  update vat_user set should_change_password=1, password="$l_password" where username = "$l_user";
+  update vat2_user set should_change_password=1, password="$l_password" where username = "$l_user";
 EOF
   clear_cache
 }
 
 function user_list() {
   sqlite3 $SQLITE_FILE <<EOF
-  select id, username from vat_user order by id;
+  select id, username from vat2_user order by id;
 EOF
 }
 

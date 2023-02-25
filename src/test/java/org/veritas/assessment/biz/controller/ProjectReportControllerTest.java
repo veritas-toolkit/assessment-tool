@@ -18,6 +18,8 @@ package org.veritas.assessment.biz.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProjectReportControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     User admin;
-    ProjectDto projectDto;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -68,22 +69,26 @@ class ProjectReportControllerTest {
     @Autowired
     private UserService userService;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        this.projectDto = createProject("new project_" + hashCode());
+    ProjectDto createProject() throws Exception {
+        return createProject(null);
     }
-
     ProjectDto createProject(String name) throws Exception {
+        if (StringUtils.isEmpty(name)) {
+            name = "new project_" + RandomStringUtils.randomAlphanumeric(6);
+        }
         admin = userService.findUserById(1);
-
         ProjectCreateDto createDto = new ProjectCreateDto();
         createDto.setName(name);
         createDto.setUserOwnerId(1);
         createDto.setDescription("Description");
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
+        createDto.setPrincipleGeneric(true);
+        createDto.setPrincipleFairness(true);
+        createDto.setPrincipleEA(true);
+        createDto.setPrincipleTransparency(true);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -93,7 +98,7 @@ class ProjectReportControllerTest {
 
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
-                JsonModelTestUtils.loadJson(JsonModelTestUtils.creditScoringUrl).getBytes(StandardCharsets.UTF_8));
+                JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_PUW).getBytes(StandardCharsets.UTF_8));
         MvcResult mvcResult2 = mockMvc.perform(
                         MockMvcRequestBuilders.multipart(
                                         "/api/project/{projectId}/modelArtifact", projectDto.getId())
@@ -111,6 +116,7 @@ class ProjectReportControllerTest {
 
     @Test
     void testPreviewHtml() throws Exception {
+        ProjectDto projectDto = createProject();
         MvcResult mvcResult = mockMvc.perform(get(
                         "/api/project/{projectId}/report/preview", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
@@ -122,6 +128,7 @@ class ProjectReportControllerTest {
 
     @Test
     void testPreviewPdf() throws Exception {
+        ProjectDto projectDto = createProject();
         MvcResult mvcResult = mockMvc.perform(get(
                         "/api/project/{projectId}/report/preview_pdf", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
@@ -132,9 +139,9 @@ class ProjectReportControllerTest {
 
     @Test
     void testSuggestionVersion() throws Exception {
-        ProjectDto pdto = createProject("for_suggestion");
+        ProjectDto projectDto = createProject("for_suggestion_" + RandomStringUtils.randomAlphanumeric(10));
         MvcResult mvcResult = mockMvc.perform(get(
-                        "/api/project/{projectId}/report/suggestion-version", pdto.getId())
+                        "/api/project/{projectId}/report/suggestion-version", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().is2xxSuccessful())
@@ -148,6 +155,7 @@ class ProjectReportControllerTest {
 
     @Test
     void testExportPdf() throws Exception {
+        ProjectDto projectDto = createProject("for_suggestion");
         ExportReportDto dto = new ExportReportDto();
         dto.setMessage("To review");
         dto.setVersion("2.3.5");

@@ -55,7 +55,7 @@ create table vat2_question_version (
     answer_edit_user_id integer,
     answer_edit_time varchar(100)
 );
-create index vat_qv_pid on vat2_question_version(project_id);
+create index vat2_qv_pid on vat2_question_version(project_id);
 
 ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 create table vat2_template_questionnaire (

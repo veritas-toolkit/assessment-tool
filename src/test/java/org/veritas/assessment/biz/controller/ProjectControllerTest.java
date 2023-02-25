@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,11 +134,15 @@ class ProjectControllerTest {
     @Test
     void testCreate_success() throws Exception {
         ProjectCreateDto dto = new ProjectCreateDto();
-        dto.setName("new project");
+        dto.setName("new_project" + RandomStringUtils.randomAlphanumeric(5));
         dto.setUserOwnerId(1);
         dto.setDescription("Description");
         dto.setBusinessScenario(1);
         dto.setQuestionnaireTemplateId(1);
+        dto.setPrincipleGeneric(true);
+        dto.setPrincipleFairness(true);
+        dto.setPrincipleEA(true);
+        dto.setPrincipleTransparency(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
@@ -163,6 +168,10 @@ class ProjectControllerTest {
         createDto.setDescription("Description");
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
+        createDto.setPrincipleGeneric(true);
+        createDto.setPrincipleFairness(true);
+        createDto.setPrincipleEA(true);
+        createDto.setPrincipleTransparency(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
@@ -177,10 +186,15 @@ class ProjectControllerTest {
 
         createDto.setDescription("Description_new");
 
+
         ProjectBasicDto basicDto = new ProjectBasicDto();
         basicDto.setId(projectDto.getId());
         basicDto.setName("xxxxxxxxxx");
         basicDto.setDescription("description_");
+        basicDto.setPrincipleGeneric(true);
+        basicDto.setPrincipleFairness(true);
+        basicDto.setPrincipleEA(true);
+        basicDto.setPrincipleTransparency(true);
 
         mvcResult = mockMvc.perform(post("/api/project/{projectId}", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))

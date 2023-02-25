@@ -60,7 +60,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
 
     private String message;
 
-    private Boolean exported;
+    private Boolean exported = DEFAULT_EXPORTED;
 
     @TableField(exist = false)
     private List<QuestionNode> mainQuestionNodeList;
@@ -72,6 +72,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     @TableField(exist = false)
     private List<QuestionNode> modifyActionNodeList = new ArrayList<>();
 
+    private static boolean DEFAULT_EXPORTED = false;
 
     @Override
     public int compareTo(QuestionnaireVersion o) {

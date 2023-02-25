@@ -25,15 +25,5 @@ import java.util.List;
 
 public interface ModelInsightService {
 
-    /**
-     * Auto generate the answers of the questionnaire;
-     *
-     * @param project       questionnaire's project
-     * @param modelArtifact artifact
-     */
-
-    @Deprecated
-    void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
-
     List<EditAnswerAction> insight(Project project, QuestionnaireVersion questionnaireVersion, ModelArtifact modelArtifact);
 }

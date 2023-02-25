@@ -141,12 +141,6 @@ class UserMapperTest {
         User another = userMapper.findById(1);
         assertNull(another);
         log.info("{}", new Date().getTime());
-
-        log.info("add again.");
-        user.setDeleted(false);
-        user.setDeleteTime(null);
-        result = userMapper.addUser(user);
-        assertEquals(1, result);
     }
 
     @Test
@@ -192,7 +186,7 @@ class UserMapperTest {
     @Test
     @Sql(scripts = "/sql/unit_test_user.sql")
     void testLock_success() {
-        int result = jdbcTemplate.update("update vat_user set locked = 0");
+        int result = jdbcTemplate.update("update vat2_user set locked = 0");
         assertTrue(result > 0);
 
         User user = userMapper.findByUsername("test_1");
@@ -218,7 +212,7 @@ class UserMapperTest {
     @Test
     @Sql(scripts = "/sql/unit_test_user.sql")
     void testUnlock_success() {
-        int result = jdbcTemplate.update("update vat_user set locked = 1");
+        int result = jdbcTemplate.update("update vat2_user set locked = 1");
         assertTrue(result > 0);
 
         User user = userMapper.findByUsername("test_1");

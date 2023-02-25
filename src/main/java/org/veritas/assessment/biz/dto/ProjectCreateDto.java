@@ -57,16 +57,16 @@ public class ProjectCreateDto implements BasicDtoInterface<Project> {
     private Integer copyFromProjectId;
 
     @Schema(description = "Assess generic principle.", required = true, defaultValue = "true")
-    private boolean principleGeneric = true;
+    private Boolean principleGeneric = true;
 
-    @Schema(description = "Assess generic principle.", required = true)
-    private boolean principleFairness;
+    @Schema(description = "Assess fairness principle.", required = true)
+    private Boolean principleFairness;
 
-    @Schema(description = "Assess generic principle.", required = true)
-    private boolean principleEA;
+    @Schema(description = "Assess ethic and accountable principle.", required = true)
+    private Boolean principleEA;
 
-    @Schema(description = "Assess generic principle.", required = true)
-    private boolean principleTransparency;
+    @Schema(description = "Assess transparency principle.", required = true)
+    private Boolean principleTransparency;
 
     public Project toEntity(Integer creator) {
         if (StringUtils.isEmpty(name)) {

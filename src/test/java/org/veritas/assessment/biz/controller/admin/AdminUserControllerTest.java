@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.controller.admin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -114,9 +115,11 @@ class AdminUserControllerTest {
         List<UserCreateDto> dtoList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             UserCreateDto dto = new UserCreateDto();
-            dto.setUsername("username");
-            dto.setFullName("FullName");
-            dto.setEmail("abc@ee.com");
+//            String random = RandomStringUtils.randomAlphanumeric(5);
+            String random = "same";
+            dto.setUsername("username_" + random);
+            dto.setFullName("FullName_" + random);
+            dto.setEmail(random + "_abc@ee.com");
             dto.setPassword("jasdifasdlk");
             dto.setGroupLimited(10);
             dto.setProjectLimited(20);

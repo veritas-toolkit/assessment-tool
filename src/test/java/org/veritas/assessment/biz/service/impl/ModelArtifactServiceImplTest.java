@@ -61,7 +61,7 @@ class ModelArtifactServiceImplTest {
     @Test
     void testUpload_success() throws IOException {
         int projectId = 101;
-        String filePath = JsonModelTestUtils.creditScoringUrl;
+        String filePath = JsonModelTestUtils.EXAMPLE_CS;
         String jsonFilename = FilenameUtils.getName(filePath);
         String content = IOUtils.toString(new ClassPathResource(filePath).getURL(), StandardCharsets.UTF_8);
         String sha256 = DigestUtils.sha256Hex(content);

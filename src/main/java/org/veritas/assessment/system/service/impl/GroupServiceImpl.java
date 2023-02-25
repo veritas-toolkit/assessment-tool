@@ -212,7 +212,6 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @Deprecated
     public Pageable<Group> findGroupPageable(String prefix, String keyword, int page, int pageSize) {
         return groupMapper.findGroupPageable(prefix, keyword, page, pageSize);
     }

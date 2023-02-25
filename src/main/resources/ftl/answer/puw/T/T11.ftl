@@ -45,7 +45,9 @@
 <#list graphContainer.getModelIdList() as modelId>
     <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
     <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
-        <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot" src="${graphContainer.getPartialDependencePlot(modelId, feature)}"/>
+        <div>
+            <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot" src="${graphContainer.getPartialDependencePlot(modelId, feature)}"/>
+        </div>
     </#list>
 </#list>
 

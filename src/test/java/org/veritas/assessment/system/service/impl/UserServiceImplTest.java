@@ -71,7 +71,7 @@ class UserServiceImplTest {
         try {
             userService.register(user);
         } catch (DuplicateException exception) {
-            log.warn("exception", exception);
+            log.warn("exception: {}", exception);
             assertTrue(StringUtils.containsAnyIgnoreCase(exception.getMessage(), "username"));
         }
     }
