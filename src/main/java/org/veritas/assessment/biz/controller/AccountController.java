@@ -18,7 +18,6 @@ package org.veritas.assessment.biz.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.UserDetailDtoConverter;
-import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.dto.UserChangePasswordDto;
 import org.veritas.assessment.biz.dto.UserDetailDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
@@ -40,9 +38,6 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -99,26 +94,5 @@ public class AccountController {
         userService.finishUserGuide(operator);
     }
 
-    @GetMapping("/all_unread_comment")
-    public List<QuestionCommentDto> allUnreadComment(User operator) {
-
-        List<QuestionCommentDto> list = new ArrayList<>();
-        for (int i = 1; i <= 10; ++i) {
-            QuestionCommentDto dto = new QuestionCommentDto();
-            dto.setId(i);
-            dto.setComment("comment: " + i);
-            dto.setUsername("username_" + i);
-            dto.setHasRead(false);
-            dto.setProjectId(i);
-            dto.setProjectName("project_" + i);
-            dto.setProjectName("project_owner_" + i);
-            dto.setUserFullName("user full name " + i);
-            dto.setMainQuestionId((long) i);
-            dto.setQuestionId(2L + i);
-            dto.setCreatedTime(DateUtils.addMinutes(new Date(), -10 * i));
-            list.add(dto);
-        }
-        return list;
-    }
 
 }

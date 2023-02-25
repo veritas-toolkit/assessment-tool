@@ -20,9 +20,13 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 @Data
 @Slf4j
@@ -32,6 +36,9 @@ public class QuestionCommentDto {
     private Long questionId;
 
     private Long mainQuestionId;
+
+    // main question content.
+    private String mainQuestion;
 
     private Integer projectId;
 
@@ -73,5 +80,17 @@ public class QuestionCommentDto {
         } else {
             this.setHasRead(false);
         }
+    }
+
+    public static Map<Long, List<QuestionCommentDto>> toMapList(List<QuestionCommentDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<Long, List<QuestionCommentDto>> map = new TreeMap<>();
+        for (QuestionCommentDto dto : dtoList) {
+            List<QuestionCommentDto> qDtoList = map.computeIfAbsent(dto.getQuestionId(), k -> new ArrayList<>());
+            qDtoList.add(dto);
+        }
+        return map;
     }
 }
