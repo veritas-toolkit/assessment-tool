@@ -105,6 +105,7 @@ public class AccountController {
         List<QuestionCommentDto> list = new ArrayList<>();
         for (int i = 1; i <= 10; ++i) {
             QuestionCommentDto dto = new QuestionCommentDto();
+            dto.setId(i);
             dto.setComment("comment: " + i);
             dto.setUsername("username_" + i);
             dto.setHasRead(false);
@@ -115,6 +116,7 @@ public class AccountController {
             dto.setMainQuestionId((long) i);
             dto.setQuestionId(2L + i);
             dto.setCreatedTime(DateUtils.addMinutes(new Date(), -10 * i));
+            list.add(dto);
         }
         return list;
     }
