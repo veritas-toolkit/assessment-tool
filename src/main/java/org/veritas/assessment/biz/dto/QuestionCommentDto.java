@@ -31,7 +31,14 @@ public class QuestionCommentDto {
 
     private Long questionId;
 
+    private Long mainQuestionId;
+
     private Integer projectId;
+
+    private String projectName;
+
+    // user or group name
+    private String projectOwner;
 
     private Integer userId;
 
@@ -41,8 +48,10 @@ public class QuestionCommentDto {
 
     private Integer referCommentId;
 
+    // comment creator's username
     private String username;
 
+    // comment creator's full name.
     private String userFullName;
 
     private boolean hasRead = false;
