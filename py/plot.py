@@ -205,34 +205,37 @@ def plot_permutation_importance(zf_name, feature_score_list):
     plt.close()
     image_file_list.append(filename)
 
+from waterfall import waterfall
+def plot_waterfall(zf_name, model_id, local_interpretability_id, local_interpretability):
 
-# def plot_watherfall(zf_name, seq, local_interpretability):
+    # local_interpretability = a1['transparency']['model_list'][0]['local_interpretability'][i]
 
-    # base_values = local_interpretability_data[p][0][1] #efx
-    # loc = local_interpretability_data[p][1][1] # fx
-    # values = np.array([i[2] for i in local_interpretability_data[p][2:]]) #shap
-    # features = np.array([i[1] for i in local_interpretability_data[p][2:]])  # value
-    # feature_names = np.array([i[0] for i in local_interpretability_data[p][2:]]) #name
-    #
-    # plt.title('Local Interpretabiity Water Plot for Data Point: ' + p, fontsize=18)
-    #
+    efx = local_interpretability['efx']
+    fx = local_interpretability['fx']
+
+    feature_info = local_interpretability['feature_info']
+    feature_names = np.array([j['name'] for j in local_interpretability['feature_info']])
+    shap_values = np.array([j['shap'] for j in local_interpretability['feature_info']])
+    feature_values = np.array([j['value'] for j in local_interpretability['feature_info']])
+    # feature_names = [] #np.array([j['name'] for j in local_interpretability['feature_info']])
+    # shap_values = [] # np.array([j['shap'] for j in local_interpretability['feature_info']])
+    # feature_values = [] # np.array([j['value'] for j in local_interpretability['feature_info']])
+
+    title = "Local Interpretability Water Plot for Model[{model_id:d}] Data Point[{local_interpretability_id:d}]"\
+        .format(model_id = model_id, local_interpretability_id = local_interpretability_id)
+    # plt.title(title, fontsize=18)
+
+    txt = zf_name + "_waterfall_{model_id:d}_{local_interpretability_id:d}.png"
+    waterfall_filename = txt.format(model_id = model_id, local_interpretability_id = local_interpretability_id)
+
+    # waterfall(efx, fx, shap_values, feature_values, feature_names, max_display=10, show=False)
+    waterfall(efx, fx, shap_values, feature_values, feature_names, title, waterfall_filename, max_display=10, show=False)
+
+    # plt.figure(figsize=(8, 4))
+    # plt.savefig(waterfall_filename)
+    # plt.close()
+    # image_file_list.append(waterfall_filename)
     # waterfall(base_values, loc, values, features, feature_names,max_display=10, show=True)
-
-
-    #########
-    # efx = local_interpretability['efx']
-    # fx = local_interpretability['fx']
-    # feature_info_list = local_interpretability['feature_info']
-    # shap_list = []
-    # name_list = []
-    # value_list = []
-    # for feature_info in feature_info_list:
-    #     shap_list.append(feature_info['shap'])
-    #     name_list.append(feature_info['name'])
-    #     value_list.append(feature_info['value'])
-    # plt.title('Local Interpretabiity Water Plot for Data Point: ' + seq, fontsize=18)
-    #
-    # waterfall.waterfall(efx, fx, array("i", shap_list), value_list, name_list, max_display=10, show=True)
 
 
 ############################ begin ############################
@@ -308,7 +311,16 @@ for key in features_dict:
     # plot contour
     plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
-# transparency
+##### transparency
 plot_permutation_importance(zf_name, transparency['permutation_score'])
+
+model_list = transparency['model_list']
+seq = 0
+for model in model_list:
+    for local_interpretability in model['local_interpretability']:
+        plot_waterfall(zf_name, model['id'], local_interpretability['id'], local_interpretability)
+        seq += 1
+
+
 
 print(json.dumps(image_file_list))
