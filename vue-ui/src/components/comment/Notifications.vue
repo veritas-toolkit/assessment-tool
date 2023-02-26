@@ -5,7 +5,7 @@
       <div class="not-head-right">Mark all as read</div>
     </div>
     <div v-for="(item,index) in unReadCommentList">
-      <div class="body-list-box">
+      <div class="body-list-box" @click="markCommentRead(item.projectId,item.questionId,item.id)">
         <img class="avatar" src="../../assets/groupPic/Avatar.png" alt="">
         <div>
           <div style="font-size: 14px;line-height: 14px">
@@ -18,7 +18,7 @@
           </div>
         </div>
       </div>
-      <div class="body-comment">{{item.comment}}</div>
+      <div class="body-comment" @click="markCommentRead(item.projectId,item.questionId,item.id)">{{item.comment}}</div>
     </div>
   </div>
 </template>
@@ -35,6 +35,13 @@ export default {
     }
   },
   methods: {
+    markCommentRead(pid,qid,cid) {
+      this.$http.post(`/api/project/${pid}/questionnaire/question/${qid}/comment/${cid}/read`).then(res => {
+        if (res.status == 200) {
+          this.getUnreadComment()
+        }
+      })
+    },
     getUnreadComment() {
       this.$http.get('/api/all_unread_comment_list').then(res => {
         if (res.status == 200) {

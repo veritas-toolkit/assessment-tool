@@ -17,8 +17,13 @@
         </div>
         <div id="endComSty" class="BarlowMedium" @click="compareFlag=false" v-if="compareFlag">End comparison</div>
         <div style="display: flex" class="BarlowMedium" v-if="!compareFlag">
-          <div id="preview">Preview</div>
-          <div id="export">Export</div>
+          <div id="preview" @click="previewPdf">Preview</div>
+          <div id="export" @click="openExportDialog">Export</div>
+          <export-report-dialog
+              ref="exportDialog"
+              :projectId="projectId"
+              @exported="createdReport">
+          </export-report-dialog>
         </div>
       </el-header>
       <!--flex-direction: column; overflow-y: auto-->
@@ -79,14 +84,14 @@
             </el-popover>
 <!--            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>-->
             <div style="display: flex">
-              <div class="footer-prev">
-                <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">
-                Prev
-              </div>
-              <div class="footer-next">
-                <img class="arrow" src="../../assets/projectPic/arrow-down.svg" alt="">
-                Next
-              </div>
+<!--              <div class="footer-prev">-->
+<!--                <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">-->
+<!--                Prev-->
+<!--              </div>-->
+<!--              <div class="footer-next">-->
+<!--                <img class="arrow" src="../../assets/projectPic/arrow-down.svg" alt="">-->
+<!--                Next-->
+<!--              </div>-->
             </div>
           </div>
         </div>
@@ -101,6 +106,9 @@ import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer"
 import Notifications from "@/components/comment/Notifications";
 import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
 import ProjectNotifications from "@/components/comment/ProjectNotifications";
+import ExportReportDialog from "@/components/projects/ExportReportDialog";
+import projectApi from "@/api/projectApi";
+import Vue from "vue";
 
 export default {
   name: "Questionnaire",
@@ -110,6 +118,7 @@ export default {
     QuestionnaireCompareAnswer,
     Notifications,
     ProjectNotifications,
+    ExportReportDialog,
   },
   mounted() {
 
@@ -136,6 +145,7 @@ export default {
       questionnaireVid: '',
       modelArtifactVersionId: 0,
       projNotLen: '',
+      suggestVersionDict: {},
     }
   },
   created() {
@@ -160,6 +170,46 @@ export default {
     },
   },
   methods: {
+    createdReport(reportInfo) {
+      this.fetchReportHistoryList();
+      console.log('reportInfo: ', JSON.stringify(reportInfo))
+      this.openReportPdf(reportInfo.versionIdOfProject);
+    },
+    fetchReportHistoryList() {
+      projectApi.fetchReportHistoryList(this.projectId)
+          .then(res => {
+            this.reportHistoryList = res.data;
+          })
+    },
+    openReportPdf(versionId) {
+      projectApi.fetchReportPdf(this.projectId, versionId)
+          .then(res => {
+            const binaryData = []
+            binaryData.push(res.data)
+            let blob = new Blob(binaryData, {type: res.data.type})
+            let pdfUrl = window.URL.createObjectURL(blob)
+            window.open(pdfUrl)
+          }).catch(err => {
+        if (err.response.config.responseType === "blob") {
+          let data = err.response.data
+          let fileReader = new FileReader()
+          fileReader.onload = function () {
+            let jsonData = JSON.parse(this.result)
+            Vue.prototype.$message.error(jsonData.message)
+          };
+          fileReader.readAsText(data)
+        }
+      })
+    },
+    openExportDialog() {
+      this.$refs.exportDialog.open();
+      this.suggestVersion()
+    },
+    suggestVersion() {
+      this.$http.get(`/api/project/${this.projectId}/report/suggestion-version`).then(res => {
+        this.suggestVersionDict = res.data
+      })
+    },
     getProjNotLen(item) {
       this.projNotLen = item
     },
@@ -219,7 +269,21 @@ export default {
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
       })
-    }
+    },
+    previewPdf() {
+      this.$http({
+        url: `/api/project/${this.projectId}/report/preview_pdf`,
+        method: 'get',
+        responseType: "blob",
+        headers: {'Content-Type': 'application/json; charset=UTF-8'}
+      }).then(res => {
+        const binaryData = []
+        binaryData.push(res.data)
+        let blob = new Blob(binaryData, {type: res.data.type})
+        let pdfUrl = window.URL.createObjectURL(blob)
+        window.open(pdfUrl)
+      })
+    },
   }
 }
 </script>
@@ -248,12 +312,14 @@ export default {
   }
 }
 #preview {
+  cursor: pointer;
   padding: 8px 12px;
   background-color: #EDF2F6;
   border-radius: 4px;
   margin-right: 12px;
 }
 #export {
+  cursor: pointer;
   padding: 8px 12px;
   background-color: #78BED3;
   border-radius: 4px;
