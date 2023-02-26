@@ -177,9 +177,6 @@ h1 {
     text-align: center;
     margin-bottom: 1em;
 }
-img {
-    page-break-inside: avoid;
-}
 
 ul li {
     /*list-style-position: outside;*/
@@ -504,12 +501,6 @@ ul li {
     margin-top: 20px;
     margin-bottom: 20px;
     page-break-inside: avoid;
-    /*
-    display: inline-block;
-    -fs-page-break-min-height: 4cm;
-    break-inside: avoid-page;
-    display: flex;
-    */
 }
 .image_title {
     margin-top: auto;
@@ -521,12 +512,20 @@ img {
     margin-top: auto;
     margin-left: auto;
     margin-right: auto;
+    page-break-inside: avoid;
 }
 
 img.pie {
     width: 40%;
 }
+img.partial_dependence_plot {
+    width: 40%;
+    /*width: 240pt;*/
+}
 
+.partial_dependence_plot_box {
+    float: left;
+}
 
 
 </style>

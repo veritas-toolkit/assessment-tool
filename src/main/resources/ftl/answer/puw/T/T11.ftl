@@ -43,12 +43,19 @@
 
 <#--补充Water Fall图-->
 <#list graphContainer.getModelIdList() as modelId>
-    <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
-    <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
-        <div>
+    <div class="image_box">
+        <div class="image_title"> Summary Plot </div>
+        <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
+    </div>
+    <div class="image_box">
+        <div class="image_title"> Partial dependency </div>
+        <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
+        <div class="partial_dependence_plot_box">
             <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot" src="${graphContainer.getPartialDependencePlot(modelId, feature)}"/>
         </div>
-    </#list>
+        </#list>
+    </div>
+    <div style="clear: both"/>
 </#list>
 
 
