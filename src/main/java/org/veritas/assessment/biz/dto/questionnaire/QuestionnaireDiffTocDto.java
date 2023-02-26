@@ -16,6 +16,7 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,6 @@ public class QuestionnaireDiffTocDto {
     // entry example: G -> Generic
     private Map<String, String> principles;
     private Map<String, PrincipleAssessment> principleAssessments;
-
-    @JsonIgnore
 
     public QuestionnaireDiffTocDto(Project project,
                                    QuestionnaireVersion basedQuestionnaire,
@@ -151,7 +150,7 @@ public class QuestionnaireDiffTocDto {
                 });
             }
             List<MainQuestion> sortedList = list.stream()
-                    .sorted((left, right) -> StringUtils.compare(left.serial, right.serial))
+                    .sorted(Comparator.comparingInt(left -> left.getSerialOfPrinciple))
                     .collect(Collectors.toList());;
             this.mainQuestionList = Collections.unmodifiableList(sortedList);
         }
@@ -179,37 +178,43 @@ public class QuestionnaireDiffTocDto {
         private Long newVid;
         // F5
         private String serial;
+
+        @JsonIgnore
+        private int getSerialOfPrinciple;
         private String question;
 
         private EditType editType;
 
-        public MainQuestion(QuestionNode oldQuestionNode, QuestionNode newQuestionNode) {
-            if (oldQuestionNode == null && newQuestionNode == null) {
+        public MainQuestion(QuestionNode basedQuestionNode, QuestionNode newQuestionNode) {
+            if (basedQuestionNode == null && newQuestionNode == null) {
                 // arg exception.
                 throw new IllegalArgumentException();
             }
-            if (oldQuestionNode == null) {
+            if (basedQuestionNode == null) {
                 // add
                 this.id = newQuestionNode.getQuestionId();
                 this.newVid = newQuestionNode.getQuestionVid();
                 this.serial = newQuestionNode.serial();
+                this.getSerialOfPrinciple= newQuestionNode.getSerialOfPrinciple();
                 this.question = newQuestionNode.questionContent();
                 this.editType = EditType.NEW;
             } else if (newQuestionNode == null) {
                 // delete
-                this.id = oldQuestionNode.getQuestionId();
-                this.basedVid = oldQuestionNode.getQuestionVid();
-                this.serial = oldQuestionNode.serial();
-                this.question = oldQuestionNode.questionContent();
+                this.id = basedQuestionNode.getQuestionId();
+                this.basedVid = basedQuestionNode.getQuestionVid();
+                this.serial = basedQuestionNode.serial();
+                this.getSerialOfPrinciple= basedQuestionNode.getSerialOfPrinciple();
+                this.question = basedQuestionNode.questionContent();
                 this.editType = EditType.DELETE;
             } else {
                 // unmodified or edited
                 this.id = newQuestionNode.getQuestionId();
-                this.basedVid = oldQuestionNode.getQuestionVid();
+                this.basedVid = basedQuestionNode.getQuestionVid();
                 this.newVid = newQuestionNode.getQuestionVid();
                 this.serial = newQuestionNode.serial();
+                this.getSerialOfPrinciple= newQuestionNode.getSerialOfPrinciple();
                 this.question = newQuestionNode.questionContent();
-                if (oldQuestionNode.hasBeenEdited(newQuestionNode)) {
+                if (basedQuestionNode.hasBeenEdited(newQuestionNode)) {
                     this.editType = EditType.EDIT;
                 } else {
                     this.editType = EditType.UNMODIFIED;

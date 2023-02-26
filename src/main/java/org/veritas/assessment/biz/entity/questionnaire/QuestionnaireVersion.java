@@ -319,8 +319,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         if (node == null) {
             throw new NotFoundException("Not found the main question.");
         }
-        node.editAnswer(action.getAnswer(), action.getOperator(), action.getActionTime(), idSupplier);
-        this.modifyActionNodeList.add(node);
+        boolean success = node.editAnswer(action.getAnswer(), action.getOperator(), action.getActionTime(), idSupplier);
+        if (success) {
+            this.modifyActionNodeList.add(node);
+        }
     }
 
 

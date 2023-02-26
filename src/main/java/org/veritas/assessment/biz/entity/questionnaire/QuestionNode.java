@@ -504,22 +504,29 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return deleted;
     }
 
-    public void editAnswer(String newAnswer,
+    public boolean editAnswer(String newAnswer,
                            @NotNull User operator,
                            @NotNull Date now,
                            @NotNull Supplier<Long> idSupplier) {
+        String trimmed = StringUtils.trimToNull(newAnswer);
+        QuestionVersion old = this.getQuestionVersion();
+        if (old == null) {
+            return false;
+        }
+        if (StringUtils.equals(trimmed, old.getAnswer())) {
+            return false;
+        }
         Long questionVid = idSupplier.get();
-        QuestionVersion question = this.getQuestionVersion().clone();
-        question.setVid(questionVid);
-//        question.setQuestionId(this.getQuestionId());
-//        question.setMainQuestionId(this.getMainQuestionId());
-        question.setAnswer(newAnswer);
-        question.setAnswerEditUserId(operator.getId());
-        question.setAnswerEditTime(now);
-        this.setQuestionVersion(question);
+        QuestionVersion newQuestion = this.getQuestionVersion().clone();
+        newQuestion.setVid(questionVid);
+        newQuestion.setAnswer(trimmed);
+        newQuestion.setAnswerEditUserId(operator.getId());
+        newQuestion.setAnswerEditTime(now);
+        this.setQuestionVersion(newQuestion);
         this.setQuestionVid(questionVid);
         QuestionMeta subMeta = this.getMeta();
         subMeta.setCurrentVid(questionVid);
+        return true;
     }
 
     public QuestionNode editQuestionContent(String newContent,

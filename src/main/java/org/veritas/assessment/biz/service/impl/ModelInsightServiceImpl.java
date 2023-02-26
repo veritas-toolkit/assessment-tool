@@ -73,6 +73,9 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                 try {
                     template.process(modelMap, stringWriter);
                     String answer = StringUtils.trimToNull(stringWriter.toString());
+                    if (answer == null) {
+                        continue;
+                    }
                     EditAnswerAction action = new EditAnswerAction();
                     action.setProjectId(project.getId());
                     action.setQuestionId(questionNode.getQuestionId());
