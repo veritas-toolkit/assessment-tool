@@ -3,6 +3,7 @@ package org.veritas.assessment.biz.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
@@ -11,11 +12,12 @@ import org.veritas.assessment.biz.mapper.QuestionCommentMapper;
 import org.veritas.assessment.biz.mapper.QuestionCommentReadLogMapper;
 import org.veritas.assessment.biz.mapper.questionnaire.QuestionnaireDao;
 import org.veritas.assessment.biz.service.CommentService;
+import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.common.exception.ErrorParamException;
-import org.veritas.assessment.common.exception.IllegalDataException;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.system.entity.User;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,6 +31,9 @@ public class CommentServiceImpl implements CommentService {
     private QuestionCommentReadLogMapper commentReadLogMapper;
     @Autowired
     private QuestionnaireDao questionnaireDao;
+
+    @Autowired
+    private ProjectService projectService;
 
     @Override
     public void addComment(QuestionComment comment) {
@@ -47,6 +52,25 @@ public class CommentServiceImpl implements CommentService {
         }
         // mark all as read for current user.
         this.updateCommentReadLog(comment.getUserId(), projectId, comment.getQuestionId(), comment.getId());
+    }
+
+    @Override
+    public List<QuestionComment> findAllUnreadCommentList(User operator) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getId());
+        List<Project> projectList = projectService.findProjectList(operator.getId());
+        List<QuestionComment> result = new ArrayList<>();
+        for (Project project : projectList) {
+            List<QuestionComment> commentList = commentMapper.findByProjectId(project.getId());
+            Map<Long, QuestionCommentReadLog> logMap = commentReadLogMapper.findLog(operator.getId(), project.getId());
+            commentList.stream()
+                    .filter(c -> {
+                        QuestionCommentReadLog readLog = logMap.get(c.getQuestionId());
+                        return c.isUnread(readLog);
+                    })
+                    .forEach(result::add);
+        }
+        return result;
     }
 
     @Override

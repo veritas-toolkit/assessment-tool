@@ -27,6 +27,7 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 @Data
@@ -49,4 +50,19 @@ public class QuestionComment implements Serializable {
     private Date createdTime;
 
     private Integer referCommentId;
+
+    public boolean isUnread(QuestionCommentReadLog readLog) {
+        Objects.requireNonNull(this.questionId);
+        Objects.requireNonNull(this.id);
+        if (readLog == null) {
+            return true;
+        }
+        if (!Objects.equals(this.questionId, readLog.getQuestionId())) {
+            throw new IllegalArgumentException("Should be the same question.");
+        }
+        if (readLog.getLatestReadCommentId() == null) {
+            return true;
+        }
+        return this.id > readLog.getLatestReadCommentId();
+    }
 }

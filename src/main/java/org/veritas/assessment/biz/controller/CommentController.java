@@ -54,24 +54,10 @@ public class CommentController {
 
     @GetMapping("/all_unread_comment_list")
     public List<QuestionCommentDto> allUnreadComment(User operator) {
-
-        List<QuestionCommentDto> list = new ArrayList<>();
-        for (int i = 1; i <= 10; ++i) {
-            QuestionCommentDto dto = new QuestionCommentDto();
-            dto.setId(i);
-            dto.setComment("comment: " + i);
-            dto.setUsername("username_" + i);
-            dto.setHasRead(false);
-            dto.setProjectId(i);
-            dto.setProjectName("project_" + i);
-            dto.setProjectName("project_owner_" + i);
-            dto.setUserFullName("user full name " + i);
-            dto.setMainQuestionId((long) i);
-            dto.setQuestionId(2L + i);
-            dto.setCreatedTime(DateUtils.addMinutes(new Date(), -10 * i));
-            list.add(dto);
-        }
-        return list;
+        List<QuestionComment> list = commentService.findAllUnreadCommentList(operator);
+        List<QuestionCommentDto> dtoList = commentDtoConverter.convertFrom(list);
+        dtoList.forEach(d -> d.setHasRead(true));
+        return dtoList.stream().sorted((a, b) -> b.getId().compareTo(a.getId())).collect(Collectors.toList());
     }
 
     @Operation(summary = "Add a comment on the question.")

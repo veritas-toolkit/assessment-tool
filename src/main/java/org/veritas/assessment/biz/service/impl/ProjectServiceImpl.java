@@ -341,6 +341,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<Project> findProjectList(Integer userId) {
+        List<Integer> projectIdList = findResourceIdList(userId, ResourceType.PROJECT);
+        List<Integer> groupIdList = findResourceIdList(userId, ResourceType.GROUP);
+        return projectMapper.findProjectList(projectIdList, groupIdList);
+    }
+
+    @Override
     @Transactional
     public Pageable<Project> findProjectPageableByCreator(User user, String prefix, String keyword, int page, int pageSize) {
         return projectMapper.findProjectPageableByCreator(user.getId(), prefix, keyword, page, pageSize);

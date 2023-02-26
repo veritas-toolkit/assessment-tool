@@ -246,6 +246,16 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return Pageable.convert(page1);
     }
 
+    default List<Project> findProjectList(Collection<Integer> projectIds, Collection<Integer> groupIds) {
+        boolean projectEmpty = projectIds == null || projectIds.isEmpty();
+        boolean groupEmpty = groupIds == null || groupIds.isEmpty();
+        if (projectEmpty && groupEmpty) {
+            return Collections.emptyList();
+        }
+        LambdaQueryWrapper<Project> wrapper = queryWrapper(projectIds, groupIds, null, null);
+        return selectList(wrapper);
+    }
+
     default long countProjectOfGroup(Integer groupId) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getGroupOwnerId, groupId);

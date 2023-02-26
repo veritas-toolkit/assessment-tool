@@ -73,6 +73,8 @@ public interface ProjectService {
         return findProjectPageable(operator.getId(), prefix, keyword, page, pageSize);
     }
 
+    List<Project> findProjectList(Integer userId);
+
     Pageable<Project> findProjectPageableByCreator(User user, String prefix, String keyword, int page, int pageSize);
 
 
