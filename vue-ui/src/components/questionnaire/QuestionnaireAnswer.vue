@@ -8,7 +8,7 @@
           {{ answerDict.question }}
         </div>
         <div style="display: flex">
-          <img @click="editorShow[answerDictId] = true" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+          <img @click="mainQuesEcho(answerDictId)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
           <el-popover
               placement="left-start"
               width="400"
@@ -306,6 +306,10 @@ export default {
           this.getQuestionnaireAnswer()
         }
       })
+    },
+    mainQuesEcho(id) {
+      this.textarea[id] = this.rowAnswer[id]
+      this.editorShow[id] = true
     },
     subQuesEcho(id) {
       this.textarea[id] = this.rowAnswer[id]
