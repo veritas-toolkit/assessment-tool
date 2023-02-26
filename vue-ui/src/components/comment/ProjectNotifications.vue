@@ -30,12 +30,11 @@ export default {
   name: "ProjectNotifications",
   props: {
     projectId: {
-      type: String,
       required: true
     },
   },
   created() {
-    if (this.projectId != 0) {
+    if (this.projectId) {
       this.getUnreadCommentByProject()
     }
   },

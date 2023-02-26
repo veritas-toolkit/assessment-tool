@@ -262,8 +262,8 @@
     },
     created() {
       this.getProjectList()
-      sessionStorage.setItem('projectId', '0')
-      this.resetSetItem('projectId', '0');
+      sessionStorage.setItem('projectId', null)
+      this.resetSetItem('projectId', null);
     },
     methods: {
       querySearch(queryString, cb) {

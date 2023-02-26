@@ -39,13 +39,13 @@
             placement="top-start"
             width="400"
             trigger="click">
-          <Notifications v-if="projectId=='0'" @getNotLen="getNotLen"></Notifications>
-          <ProjectNotifications v-if="projectId!='0'" @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
+          <Notifications v-if="projectId==null" @getNotLen="getNotLen"></Notifications>
+          <ProjectNotifications v-if="projectId > 0" @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
-            <div v-if="projectId=='0'">{{notLen}}</div>
-            <div v-if="projectId!='0'">{{projNotLen}}</div>
+            <div v-if="projectId==null">{{notLen}}</div>
+            <div v-if="projectId!=null">{{projNotLen}}</div>
           </div>
         </el-popover>
 
