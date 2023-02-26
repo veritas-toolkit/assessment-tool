@@ -39,18 +39,12 @@
             placement="top-start"
             width="400"
             trigger="click">
-<!--          <div class="popover-title">-->
-<!--            <div class="not-style">Notification</div>-->
-<!--            <div class="mark-style">Mark all as read</div>-->
-<!--          </div>-->
-<!--          <div class="divide-line"></div>-->
           <Notifications @getNotLen="getNotLen"></Notifications>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
             <div>{{notLen}}</div>
           </div>
-
         </el-popover>
 
       </el-aside>
@@ -166,7 +160,6 @@ export default {
   methods: {
     getNotLen(item) {
       this.notLen = item
-      console.log(this.notLen)
     },
     nextStep() {
       this.activeStep++
