@@ -57,6 +57,7 @@ public class TemplateQuestionnaireService {
             TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
             templateQuestionnaire.setCreatorUserId(1);
             templateQuestionnaire.setBusinessScenario(businessScenarioEnum);
+            templateQuestionnaire.setName("Default Template for " + businessScenarioEnum.getName());
             for (TemplateQuestion templateQuestion : templateQuestionnaire.allQuestionList()) {
                 String defaultFilename = templateQuestion.defaultFreeMarkTemplate();
                 Template template = freemarkerTemplateService.findTemplate(businessScenarioEnum, defaultFilename);
