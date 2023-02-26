@@ -40,11 +40,12 @@
             width="400"
             trigger="click">
           <Notifications v-if="projectId=='0'" @getNotLen="getNotLen"></Notifications>
-          <div v-if="projectId!='0'">000</div>
+          <ProjectNotifications v-if="projectId!='0'" @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
-            <div>{{notLen}}</div>
+            <div v-if="projectId=='0'">{{notLen}}</div>
+            <div v-if="projectId!='0'">{{projNotLen}}</div>
           </div>
         </el-popover>
 
@@ -131,11 +132,13 @@
 
 <script>
 import Notifications from "@/components/comment/Notifications";
+import ProjectNotifications from "@/components/comment/ProjectNotifications";
 
 export default {
   name: 'Home',
   components: {
-    Notifications
+    Notifications,
+    ProjectNotifications
   },
   data() {
     return {
@@ -153,6 +156,7 @@ export default {
       },
       notLen: '',
       projectId: '',
+      projNotLen: '',
     }
   },
   watch: {
@@ -170,6 +174,9 @@ export default {
   methods: {
     getNotLen(item) {
       this.notLen = item
+    },
+    getProjNotLen(item) {
+      this.projNotLen = item
     },
     nextStep() {
       this.activeStep++
