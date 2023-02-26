@@ -9,12 +9,41 @@
         </div>
         <div style="display: flex">
           <img @click="editorShow[answerDictId] = true" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
-          <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+          <el-popover
+              placement="left-start"
+              width="400"
+              trigger="click">
+            <div>
+              <div v-for="(item,index) in commentList" style="margin-bottom: 16px" :style="!item.hasRead? 'background-color:#F8F8F8;padding:8px;border-radius:4px':''">
+                <div style="display: flex">
+                  <div style="margin-right: 8px">
+                    <img style="width: 26px;height: 26px;" src="../../assets/groupPic/Avatar.png" alt="">
+                  </div>
+                  <div>
+                    <div class="comment-name BarlowBold">{{item.userFullName}}</div>
+                    <div class="comment-time BarlowMedium">{{item.createdTime|changeTime}}</div>
+                  </div>
+                </div>
+                <div class="comment-content BarlowMedium">{{item.comment}}</div>
+              </div>
+              <div class="divide_line" v-show="commentList.length"></div>
+              <el-input type="textarea" :rows="3" placeholder="Type comment here" v-model="addComment"></el-input>
+              <div style="display: flex;justify-content: space-between;margin-top: 16px">
+                <div></div>
+                <div style="display: flex">
+                  <!--<div class="BlackBorder">Cancel</div>-->
+                  <div @click="sendComment" class="GreenBC" style="font-size: 16px;padding: 8px;color: #FFF;border-radius: 4px">Send</div>
+                </div>
+              </div>
+            </div>
+            <div @click="getComment(answerDict.id)" slot="reference">
+              <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+            </div>
+          </el-popover>
         </div>
       </div>
 <!--      <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="answerDict.answer" class="sub-ques-ans BarlowMedium"></div>-->
       <div v-show="answerDict.answer && !editorShow[answerDictId]" v-html="transformAnswer(answerDict.answer,answerDict.vid)" class="sub-ques-ans BarlowMedium"></div>
-
       <editor v-if="editorShow[answerDictId]" :key="answerDictId.toString()" :id='answerDictId.toString()' v-model="textarea[answerDictId]" :init="init"></editor>
       <div v-if="editorShow[answerDictId]" style="display: flex;justify-content: right;margin-top: 16px">
         <div class="editor-cancel" @click="editorShow[answerDictId]=false">Cancel</div>
@@ -30,7 +59,37 @@
           </div>
           <div style="display: flex">
             <img @click="subQuesEcho(item.id)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
-            <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+            <el-popover
+                placement="left-start"
+                width="400"
+                trigger="click">
+              <div>
+                <div v-for="(item,index) in commentList" style="margin-bottom: 16px" :style="!item.hasRead? 'background-color:#F8F8F8;padding:8px;border-radius:4px':''">
+                  <div style="display: flex">
+                    <div style="margin-right: 8px">
+                      <img style="width: 26px;height: 26px;" src="../../assets/groupPic/Avatar.png" alt="">
+                    </div>
+                    <div>
+                      <div class="comment-name BarlowBold">{{item.userFullName}}</div>
+                      <div class="comment-time BarlowMedium">{{item.createdTime|changeTime}}</div>
+                    </div>
+                  </div>
+                  <div class="comment-content BarlowMedium">{{item.comment}}</div>
+                </div>
+                <div class="divide_line" v-show="commentList.length"></div>
+                <el-input type="textarea" :rows="3" placeholder="Type comment here" v-model="addComment"></el-input>
+                <div style="display: flex;justify-content: space-between;margin-top: 16px">
+                  <div></div>
+                  <div style="display: flex">
+                    <!--<div class="BlackBorder">Cancel</div>-->
+                    <div @click="sendComment" class="GreenBC" style="font-size: 16px;padding: 8px;color: #FFF;border-radius: 4px">Send</div>
+                  </div>
+                </div>
+              </div>
+              <div @click="getComment(item.id)" slot="reference">
+                <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+              </div>
+            </el-popover>
           </div>
         </div>
 <!--        <div v-show="item.answer && !editorShow[item.id]" v-html="item.answer" class="sub-ques-ans BarlowMedium"></div>-->
@@ -84,7 +143,6 @@ export default {
   },
   created() {
     this.init = {
-      selector: 'textarea',
       skin_url: 'tinymce/skins/ui/oxide',
       autoresize_min_height : "60px",
       plugins: 'autoresize image link lists code table wordcount',
@@ -126,10 +184,31 @@ export default {
       textarea: {},
       answerDictId: '',
       editorShow: {},
-
+      commentList: [],
+      addComment: '',
+      commentId: '',
     }
   },
   methods: {
+    sendComment() {
+      if (this.addComment) {
+        this.$http.put(`/api/project/${this.projectId}/questionnaire/comment`,{questionId:this.commentId,comment:this.addComment}).then(res => {
+          this.getComment(this.commentId)
+          this.addComment = ''
+        })
+      }
+    },
+    getComment(id) {
+      this.commentId = id
+      id = parseInt(id)
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${id}/comment`).then(res => {
+        if(res.data[id]) {
+          this.commentList = res.data[id].reverse()
+        } else {
+          this.commentList = []
+        }
+      })
+    },
     transformAnswer(answer) {
       const el = document.createElement('div');
       el.innerHTML = answer
@@ -282,5 +361,24 @@ export default {
   border-radius: 4px;
   color: #FFFFFF;
   cursor: pointer;
+}
+.comment-name {
+  font-size: 10px;
+  line-height: 13px;
+}
+.comment-time {
+  font-size: 6px;
+  line-height: 13px;
+  color: #888888;
+}
+.comment-content {
+  font-size: 14px;
+  color: #888888;
+  border-bottom: 1px solid #E0E0E0;
+}
+.divide_line {
+  margin: 13px 0px;
+  height: 1px;
+  background-color: #CED3D9;
 }
 </style>
