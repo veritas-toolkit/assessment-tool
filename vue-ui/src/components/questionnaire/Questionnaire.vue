@@ -11,19 +11,27 @@
           <el-radio-group v-model="principle" class="principle-group">
             <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic">
               Generic
-              <span class="fairness-diff-count" v-if="compareFlag && diffNum.G > 0">{{ diffNum.G}}</span>
+              <div class="fairness-diff-count" v-if="compareFlag && diffNum.G > 0">
+                <span>{{ diffNum.G}}</span>
+              </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness">
               Fairness
-              <span class="fairness-diff-count" v-if="compareFlag && diffNum.F > 0">{{ diffNum.F}}</span>
+              <div class="fairness-diff-count" v-if="compareFlag && diffNum.F > 0">
+                <span>{{ diffNum.F}}</span>
+              </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability">
               Ethics & Accountability
-              <span class="fairness-diff-count" v-if="compareFlag && diffNum.EA > 0">{{ diffNum.EA}}</span>
+              <div class="fairness-diff-count" v-if="compareFlag && diffNum.EA > 0">
+                <span>{{ diffNum.EA}}</span>
+              </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency">
               Transparency
-              <span class="fairness-diff-count" v-if="compareFlag && diffNum.T > 0" >{{ diffNum.T}}</span>
+              <div class="fairness-diff-count" v-if="compareFlag && diffNum.T > 0" >
+                <span>{{ diffNum.T}}</span>
+              </div>
             </el-radio-button>
           </el-radio-group>
         </div>
@@ -468,12 +476,13 @@ export default {
 }
 .fairness-diff-count {
   margin-left: 8px;
-  text-align: center;
-  width: 24px;
-  line-height: 24px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
   background-color: #FCB215;
-  border-radius: 12px;
-  color: #FFFFFF;
+  > span {
+    font-family: BarlowBold;
+    color: #FFFFFF;
+  }
 }
-
 </style>

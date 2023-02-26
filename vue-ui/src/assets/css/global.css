@@ -319,3 +319,11 @@ p {
 .draft-popover .el-tabs__active-bar {
     background-color: #78BED3;
 }
+.principle-group .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    display: flex;
+    align-items: center;
+}
+.principle-group .el-radio-button__inner {
+    display: flex;
+    align-items: center;
+}
