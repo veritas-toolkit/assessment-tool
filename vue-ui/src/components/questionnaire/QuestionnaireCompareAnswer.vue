@@ -139,7 +139,7 @@ export default {
       diffSummary: {},
       mainBasedQuestion: {},
       mainNewQuestion: {},
-      diff: []
+      diff: [],
     }
   },
   created() {
@@ -171,10 +171,7 @@ export default {
     showCompareDiff() {
       let diff = compareDiff('it is a dog 1','it is a cat 1')
       this.diff = diff
-
-
       // document.getElementById('result').innerHTML = diffHtml;
-
     }
   }
 }

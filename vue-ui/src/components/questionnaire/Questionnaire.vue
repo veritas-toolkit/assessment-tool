@@ -9,10 +9,22 @@
         </div>
         <div class="BarlowMedium">
           <el-radio-group v-model="principle" class="principle-group">
-            <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic"></el-radio-button>
-            <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness"></el-radio-button>
-            <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability"></el-radio-button>
-            <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency"></el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic">
+              Generic
+              <span v-if="compareFlag">{{ diffNum.G}}</span>
+            </el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness">
+              Fairness
+              <span v-if="compareFlag">{{ diffNum.F}}</span>
+            </el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability">
+              Ethics & Accountability
+              <span v-if="compareFlag">{{ diffNum.EA}}</span>
+            </el-radio-button>
+            <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency">
+              Transparency
+              <span v-if="compareFlag">{{ diffNum.T}}</span>
+            </el-radio-button>
           </el-radio-group>
         </div>
         <div id="endComSty" class="BarlowMedium" @click="compareFlag=false" v-if="compareFlag">End comparison</div>
@@ -146,6 +158,12 @@ export default {
       modelArtifactVersionId: 0,
       projNotLen: '',
       suggestVersionDict: {},
+      diffNum: {
+        G: '',
+        F: '',
+        EA: '',
+        T: '',
+      }
     }
   },
   created() {
@@ -253,6 +271,10 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          this.diffNum.G = res.data.principleAssessments.G.diffCount
+          this.diffNum.F = res.data.principleAssessments.F.diffCount
+          this.diffNum.EA = res.data.principleAssessments.EA.diffCount
+          this.diffNum.T = res.data.principleAssessments.T.diffCount
         }
       })
     },
