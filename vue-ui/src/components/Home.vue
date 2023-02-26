@@ -44,11 +44,11 @@
 <!--            <div class="mark-style">Mark all as read</div>-->
 <!--          </div>-->
 <!--          <div class="divide-line"></div>-->
-          <Notifications></Notifications>
+          <Notifications @getNotLen="getNotLen"></Notifications>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
-            <div>6</div>
+            <div>{{notLen}}</div>
           </div>
 
         </el-popover>
@@ -155,7 +155,8 @@ export default {
         oldPassword: '',
         newPassword: '',
         passwordConfirm: '',
-      }
+      },
+      notLen: '',
     }
   },
   created() {
@@ -163,6 +164,10 @@ export default {
     this.activeName = window.location.href.split('/')[window.location.href.split('/').length - 1]
   },
   methods: {
+    getNotLen(item) {
+      this.notLen = item
+      console.log(this.notLen)
+    },
     nextStep() {
       this.activeStep++
       if (this.activeStep == 5) this.userWizardShow = false;

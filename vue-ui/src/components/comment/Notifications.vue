@@ -39,6 +39,7 @@ export default {
       this.$http.get('/api/all_unread_comment_list').then(res => {
         if (res.status == 200) {
           this.unReadCommentList = res.data
+          this.$emit('getNotLen',this.unReadCommentList.length)
         }
       })
     }
