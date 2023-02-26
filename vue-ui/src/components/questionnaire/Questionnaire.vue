@@ -255,10 +255,13 @@ export default {
             this.modelArtifactVersionId = res.data.modelArtifactVersionId
           }
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          if (this.principle == 'Fairness') {
-            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[1].mainQuestionList[0].id.toString()
-          } else {
-            this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()
+          let stepList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          for (let stepIndex = 0; stepIndex < stepList.length; ++stepIndex) {
+            let step = stepList[stepIndex];
+            if (step.mainQuestionList != null && step.mainQuestionList.length > 0) {
+              this.questionId = step.mainQuestionList[0].id.toString()
+              break
+            }
           }
           this.defaultId = this.questionId.toString()
         }
