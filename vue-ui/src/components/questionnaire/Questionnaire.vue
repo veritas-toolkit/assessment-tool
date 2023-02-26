@@ -11,19 +11,19 @@
           <el-radio-group v-model="principle" class="principle-group">
             <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic">
               Generic
-              <span v-if="compareFlag">{{ diffNum.G}}</span>
+              <span class="fairness-diff-count" v-if="compareFlag && diffNum.G > 0">{{ diffNum.G}}</span>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness">
               Fairness
-              <span v-if="compareFlag">{{ diffNum.F}}</span>
+              <span class="fairness-diff-count" v-if="compareFlag && diffNum.F > 0">{{ diffNum.F}}</span>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability">
               Ethics & Accountability
-              <span v-if="compareFlag">{{ diffNum.EA}}</span>
+              <span class="fairness-diff-count" v-if="compareFlag && diffNum.EA > 0">{{ diffNum.EA}}</span>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency">
               Transparency
-              <span v-if="compareFlag">{{ diffNum.T}}</span>
+              <span class="fairness-diff-count" v-if="compareFlag && diffNum.T > 0" >{{ diffNum.T}}</span>
             </el-radio-button>
           </el-radio-group>
         </div>
@@ -465,6 +465,15 @@ export default {
     font-family: BarlowBold;
     margin-left: 8px;
   }
+}
+.fairness-diff-count {
+  margin-left: 8px;
+  text-align: center;
+  width: 24px;
+  line-height: 24px;
+  background-color: #FCB215;
+  border-radius: 12px;
+  color: #FFFFFF;
 }
 
 </style>
