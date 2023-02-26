@@ -39,11 +39,11 @@
                 placement="top-start"
                 width="400"
                 trigger="click">
-              <Notifications></Notifications>
+              <ProjectNotifications @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
               <div class="not-box" slot="reference">
                 <img src="../../assets/projectPic/notification.png" alt="">
                 <span class="BarlowBold">Notifications</span>
-                <div>6</div>
+                <div>{{ projNotLen }}</div>
               </div>
             </el-popover>
             <div class="collapse-box" @click="isCollapse=true">
@@ -100,6 +100,7 @@ import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
 import Notifications from "@/components/comment/Notifications";
 import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
+import ProjectNotifications from "@/components/comment/ProjectNotifications";
 
 export default {
   name: "Questionnaire",
@@ -108,6 +109,7 @@ export default {
     QuestionnaireAnswer,
     QuestionnaireCompareAnswer,
     Notifications,
+    ProjectNotifications,
   },
   mounted() {
 
@@ -133,10 +135,12 @@ export default {
       compareFlag: false,
       questionnaireVid: '',
       modelArtifactVersionId: 0,
+      projNotLen: '',
     }
   },
   created() {
     this.getQuestionnaireMenu()
+    sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
   },
 
   watch: {
@@ -156,6 +160,9 @@ export default {
     },
   },
   methods: {
+    getProjNotLen(item) {
+      this.projNotLen = item
+    },
     handleCompareClick() {
       this.getDiffVersion(this.compareTab)
     },
