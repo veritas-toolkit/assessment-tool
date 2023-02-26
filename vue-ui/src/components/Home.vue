@@ -39,7 +39,8 @@
             placement="top-start"
             width="400"
             trigger="click">
-          <Notifications @getNotLen="getNotLen"></Notifications>
+          <Notifications v-if="projectId=='0'" @getNotLen="getNotLen"></Notifications>
+          <div v-if="projectId!='0'">000</div>
           <div class="not-box" slot="reference">
             <img src="../assets/projectPic/notification.png" alt="">
             <span class="BarlowBold">Notifications</span>
@@ -151,9 +152,18 @@ export default {
         passwordConfirm: '',
       },
       notLen: '',
+      projectId: '',
     }
   },
+  watch: {
+
+  },
   created() {
+    // this.projectId = JSON.parse(window.sessionStorage.getItem("projectId"));
+    window.addEventListener('setItem', ()=> {
+      this.projectId= JSON.parse(sessionStorage.getItem('projectId'));
+      console.log(this.projectId)
+    })
     this.getWhoAmI()
     this.activeName = window.location.href.split('/')[window.location.href.split('/').length - 1]
   },

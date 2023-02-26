@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 4px;border-radius: 8px;height: 480px;overflow-y: auto">
+  <div style="padding: 4px;border-radius: 8px;overflow-y: auto">
     <div class="not-head">
       <div class="not-head-left">Notification</div>
       <div class="not-head-right">Mark all as read</div>

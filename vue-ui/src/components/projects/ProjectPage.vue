@@ -337,6 +337,9 @@ export default {
     }
   },
   created() {
+    // window.sessionStorage.setItem('projectId', JSON.stringify(this.projectId))
+    sessionStorage.setItem('projectId', JSON.stringify(this.projectId))
+    this.resetSetItem('projectId', JSON.stringify(this.projectId));
     this.getProjectInfo()
     this.actionUrl = `/api/project/${this.projectId}/modelArtifact`
     this.getUserList()
