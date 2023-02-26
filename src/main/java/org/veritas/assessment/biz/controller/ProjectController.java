@@ -196,6 +196,10 @@ public class ProjectController {
         QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
         projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.from(project, questionnaireVersion));
 
+        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
+        if (modelArtifact != null) {
+            projectDetailDto.setModelArtifact(new ModelArtifactDto(modelArtifact));
+        }
 
         UserRole userRole = roleService.findUserRole(operator.getId(), ResourceType.PROJECT, projectId);
         if (userRole != null) {

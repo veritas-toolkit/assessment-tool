@@ -16,8 +16,6 @@
 
 package org.veritas.assessment.biz.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
