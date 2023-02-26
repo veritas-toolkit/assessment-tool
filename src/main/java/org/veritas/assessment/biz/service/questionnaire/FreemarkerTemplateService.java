@@ -78,15 +78,15 @@ public class FreemarkerTemplateService {
             return null;
         }
 
-        String answerTemplate = String.format(ANSWER_PREFIX + "%s/%s/%s",
+        String templatePath = String.format(ANSWER_PREFIX + "%s/%s/%s",
                 businessScenario.getAnswerTemplatePath(), principle.getShortName(), templateFilename);
         Template template = null;
         try {
-            template = configuration.getTemplate(answerTemplate);
+            template = configuration.getTemplate(templatePath);
         } catch (TemplateNotFoundException exception) {
-            log.warn("Not found the template.", exception);
+            log.warn("Not found the template: {}.", templatePath);
         } catch (IOException exception) {
-            log.warn("load template failed.", exception);
+            log.warn("load template[{}] failed.", templatePath, exception);
         }
         return template;
     }
