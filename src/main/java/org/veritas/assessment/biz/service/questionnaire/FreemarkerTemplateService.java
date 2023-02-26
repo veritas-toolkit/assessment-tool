@@ -49,9 +49,9 @@ public class FreemarkerTemplateService {
         try {
             template = configuration.getTemplate(fullname);
         } catch (TemplateNotFoundException exception) {
-            log.warn("Not found the template.", exception);
+            log.warn("Not found the template[{}].", fullname);
         } catch (IOException exception) {
-            log.warn("load template failed.", exception);
+            log.warn("load template[{}] failed.", fullname, exception);
         }
         return template;
     }
@@ -78,8 +78,8 @@ public class FreemarkerTemplateService {
             return null;
         }
 
-        String templatePath = String.format(ANSWER_PREFIX + "%s/%s/%s",
-                businessScenario.getAnswerTemplatePath(), principle.getShortName(), templateFilename);
+        String templatePath = String.format(ANSWER_PREFIX + "%s/%s",
+                businessScenario.getAnswerTemplatePath(), templateFilename);
         Template template = null;
         try {
             template = configuration.getTemplate(templatePath);
