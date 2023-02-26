@@ -51,6 +51,9 @@ public class QuestionComment implements Serializable {
 
     private Integer referCommentId;
 
+    @TableField(exist = false)
+    private Project project;
+
     public boolean isUnread(QuestionCommentReadLog readLog) {
         Objects.requireNonNull(this.questionId);
         Objects.requireNonNull(this.id);

@@ -64,9 +64,10 @@ public class CommentServiceImpl implements CommentService {
             List<QuestionComment> commentList = commentMapper.findByProjectId(project.getId());
             Map<Long, QuestionCommentReadLog> logMap = commentReadLogMapper.findLog(operator.getId(), project.getId());
             commentList.stream()
-                    .filter(c -> {
-                        QuestionCommentReadLog readLog = logMap.get(c.getQuestionId());
-                        return c.isUnread(readLog);
+                    .filter(comment -> {
+                        comment.setProject(project);
+                        QuestionCommentReadLog readLog = logMap.get(comment.getQuestionId());
+                        return comment.isUnread(readLog);
                     })
                     .forEach(result::add);
         }
@@ -80,7 +81,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<QuestionComment> findCommentListByProjectId(Integer projectId) {
-        return commentMapper.findByProjectId(projectId);
+        Project project = projectService.findProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("Not found the project");
+        }
+        List<QuestionComment> questionCommentList = commentMapper.findByProjectId(projectId);
+        questionCommentList.forEach(comment -> comment.setProject(project));
+        return questionCommentList;
     }
 
     @Override
