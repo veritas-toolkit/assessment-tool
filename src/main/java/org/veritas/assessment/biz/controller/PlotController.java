@@ -53,52 +53,19 @@ public class PlotController {
     public PlotDataDto fetchPlotData(@Parameter(hidden = true) User operator,
                                      @PathVariable("projectId") Integer projectId,
                                      @Valid @RequestBody PlotFetchDto plotFetchDto) {
-        ModelArtifact modelArtifact = modelArtifactService.findByVersionId(plotFetchDto.getModelArtifactVid());
         try {
-            modelArtifactService.loadContent(modelArtifact);
-        } catch (IOException e) {
-            log.warn("load model artifact failed", e);
+            ModelArtifact modelArtifact = modelArtifactService.findByVersionId(plotFetchDto.getModelArtifactVid());
+            try {
+                modelArtifactService.loadContent(modelArtifact);
+            } catch (IOException e) {
+                log.warn("load model artifact failed", e);
+                return PlotDataDto.none();
+            }
+            return modelArtifactService.findPlotData(modelArtifact,
+                    plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
+        } catch (Exception exception) {
             return PlotDataDto.none();
         }
-        return modelArtifactService.findPlotData(modelArtifact,
-                plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
-        /*
-        switch (plotFetchDto.getImgId()) {
-            case "calibrationCurveLineChart":
-                dto.setType(PlotTypeEnum.CURVE);
-                dto.setName("CURVE");
-                dto.setCaption("CURVE");
-                break;
-            case "classDistributionPieChart":
-                dto.setType(PlotTypeEnum.PIE);
-                dto.setName("class distribution");
-                dto.setCaption("Class Distribution");
-                break;
-            case "performanceLineChart":
-                dto.setType(PlotTypeEnum.TWO_LINE);
-                dto.setName("TWO_LINE");
-                dto.setCaption("TWO_LINE");
-                break;
-            case "featureDistributionPieChartMap_MARRIAGE":
-                dto.setType(PlotTypeEnum.PIE);
-                dto.setName("feature");
-                dto.setCaption("TWO_LINE");
-                break;
-            case "confusion_matrix":
-                dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
-                dto.setName("confusion_matrix");
-                dto.setCaption("confusion_matrix");
-                break;
-            case "correlation_matrix":
-                dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
-                dto.setName("correlation_matrix");
-                dto.setCaption("correlation_matrix");
-                break;
-            default:
-                throw new NotFoundException();
-        }
-        return dto;
-         */
     }
 
     ////////////////////////////////
