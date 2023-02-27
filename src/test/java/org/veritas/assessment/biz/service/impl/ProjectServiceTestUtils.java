@@ -1,5 +1,6 @@
 package org.veritas.assessment.biz.service.impl;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
@@ -27,7 +28,7 @@ public class ProjectServiceTestUtils {
         assertNotNull(admin);
 
         Project project = new Project();
-        project.setName("test");
+        project.setName("test_" + RandomStringUtils.randomAlphanumeric(5));
         project.setDescription("test_description");
 //        project.setBusinessScenario(BusinessScenarioEnum.CUSTOMER_MARKETING.getCode());
         project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
