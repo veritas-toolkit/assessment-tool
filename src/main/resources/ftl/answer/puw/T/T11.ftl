@@ -10,7 +10,6 @@
 
 <#if graphContainer.permutationImportancePlot??>
     <div class="image_box">
-<#--        <div class="image_title"> Summary Plot </div>-->
         <img id="permutationImportancePlot" src="${graphContainer.permutationImportancePlot}" class="permutationImportancePlot" alt="Permutation Importance Plot" />
     </div>
 </#if>

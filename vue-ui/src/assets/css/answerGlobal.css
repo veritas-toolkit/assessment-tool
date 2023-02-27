@@ -1,3 +1,81 @@
 .sub-ques-ans   {
-    /*color: yellow;*/
+        /*color: yellow;*/
+
+}
+.sub-ques-ans .image_box {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+.sub-ques-ans .image_title {
+    margin-top: auto;
+    text-align: center;
+}
+.sub-ques-ans img {
+    width: 40%;
+    display: block;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    page-break-inside: avoid;
+}
+
+.sub-ques-ans img.pie {
+    width: 40%;
+}
+.sub-ques-ans img.partial_dependence_plot {
+    width: 60%;
+}
+
+/** table */
+.sub-ques-ans .answer .table_box {
+    margin-top: 10px;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+.sub-ques-ans .answer table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+    border-spacing: 0px;
+}
+
+.sub-ques-ans .answer table thead {
+    color: white;
+    background: rgb(2, 18, 77);
+}
+.sub-ques-ans .answer th {
+    padding: 5px 15px;
+    border-top: 2pt solid rgb(2, 18, 77);
+    border-bottom: 1pt solid rgb(2, 18, 77);
+    background: rgb(2, 18, 77);
+    color: white;
+}
+.sub-ques-ans .answer td {
+    border-bottom: 0.2pt dashed rgb(2, 18, 77);
+    padding: 5px 15px;
+    text-align: center;
+}
+/*
+.answer table tbody tr td:first-child {
+    color: white;
+    background: grey;
+}
+*/
+
+.sub-ques-ans .answer table tbody tr.perf_metric_row {
+    color: red;
+}
+.sub-ques-ans .answer table tbody tr.fair_metric_row {
+    color: red;
+}
+
+.sub-ques-ans .answer table td.metric_name {
+    text-align: left;
+}
+.sub-ques-ans .answer table td.metric_value {
+    text-align: right;
 }
