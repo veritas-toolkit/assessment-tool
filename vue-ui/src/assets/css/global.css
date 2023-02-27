@@ -327,3 +327,6 @@ p {
     display: flex;
     align-items: center;
 }
+.el-upload-dragger {
+    width: 420px;
+}

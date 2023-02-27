@@ -58,8 +58,8 @@
               <div class="artifacts">Model artifacts</div>
 <!--              <div class="file-accepted">only .JSON file accepted</div>-->
               <!--upload JSON File-->
-              <div style="display: flex;align-items:center;">
-                <div style="width: 40%">
+              <div style="display: flex;align-items:center;justify-content: space-between">
+                <div style="width: 420px">
                   <el-upload
                       :disabled="archived"
                       class="upload-demo"
@@ -1163,10 +1163,10 @@ export default {
   font-family: BarlowMedium;
 }
 .file-info {
-  width: 60%;
+  width: 600px;
   display: flex;
   justify-content: space-between;
-  width: 600px;
+
   align-items: center;
   height: 74px;
   background: #F5F7F9;
