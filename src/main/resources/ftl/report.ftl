@@ -523,10 +523,6 @@ img.partial_dependence_plot {
     /*width: 240pt;*/
 }
 
-.partial_dependence_plot_box {
-    float: left;
-}
-
 
 </style>
 <title>FEAT Assessment Report</title>

@@ -9,17 +9,23 @@
 </div>
 
 <#--补充permutation importance图-->
+<#--<img src="">-->
 
 <h4>Partial Dependence Plot</h4>
 <div>
-  Partial dependence plot shows the how the predicted outcome changes with the selected feature.
+  Partial dependence plot shows how the predicted outcome changes with the selected feature.
 </div>
-
-<#--补充图-->
-
-
-
-<#--补充permutation importance图-->
+<#list graphContainer.getModelIdList() as modelId>
+        <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
+            <div class="image_box partial_dependence_plot_box">
+                <div class="image_title">PDP for ${feature}</div>
+                <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot"
+                     src="${graphContainer.getPartialDependencePlot(modelId, feature)}"
+                     alt="partial dependence plot"/>
+            </div>
+        </#list>
+<#--    <div style="clear: both"/both>-->
+</#list>
 
 <h4>Global Interpretability Based on SHAP</h4>
 
@@ -46,19 +52,6 @@
     while shown in blue are the variables pushing the predictions lower. E[f(x)] is the baseline ratio for selection while f(x)
     is the sum of all SHAP values added to baseline for a particular customer.
 </div>
-<#list graphContainer.getModelIdList() as modelId>
-    <div class="image_box">
-        <div class="image_title"> Partial dependency </div>
-        <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
-            <div class="partial_dependence_plot_box">
-                <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot"
-                     src="${graphContainer.getPartialDependencePlot(modelId, feature)}"
-                     alt="partial dependence plot"/>
-            </div>
-        </#list>
-    </div>
-    <div style="clear: both"/>
-</#list>
 
 <#--补充Water Fall图-->
 
