@@ -64,6 +64,7 @@ public class PlotController {
             return modelArtifactService.findPlotData(modelArtifact,
                     plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
         } catch (Exception exception) {
+            log.error("fetch plot failed.project [{}], param:{}", projectId, plotFetchDto, exception);
             return PlotDataDto.none();
         }
     }
