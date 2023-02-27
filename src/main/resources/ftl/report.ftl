@@ -519,8 +519,7 @@ img.pie {
     width: 40%;
 }
 img.partial_dependence_plot {
-    width: 40%;
-    /*width: 240pt;*/
+    width: 60%;
 }
 
 
