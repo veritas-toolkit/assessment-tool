@@ -232,11 +232,6 @@ def plot_waterfall(zf_name, model_id, local_interpretability_id, local_interpret
     waterfall(efx, fx, shap_values, feature_values, feature_names, title, waterfall_filename, max_display=10, show=False)
     image_file_list.append(waterfall_filename)
 
-    # plt.figure(figsize=(8, 4))
-    # plt.savefig(waterfall_filename)
-    # plt.close()
-    # image_file_list.append(waterfall_filename)
-    # waterfall(base_values, loc, values, features, feature_names,max_display=10, show=True)
 
 
 ############################ begin ############################

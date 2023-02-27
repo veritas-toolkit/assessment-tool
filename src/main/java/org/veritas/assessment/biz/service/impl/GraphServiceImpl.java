@@ -323,6 +323,14 @@ public class GraphServiceImpl implements GraphService {
                 return url;
             }
         }),
+        PERMUTATION_IMPORTANCE_PLOT("permutationImportance", new PutFunction() {
+            @Override
+            public String put(GraphContainer container, String urlPrefix, String imageFilename) {
+                String url = urlPrefix + "/" + imageFilename;
+                container.setPermutationImportancePlot(url);
+                return url;
+            }
+        })
         ;
 
         private final String name;

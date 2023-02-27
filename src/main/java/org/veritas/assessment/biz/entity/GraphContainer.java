@@ -47,6 +47,7 @@ public class GraphContainer {
 
     private Map<String, String> summaryPlotMap = new LinkedHashMap<>();
 
+    private String permutationImportancePlot;
     private Map<String, Map<String, String>> partialDependencePlotMap = new LinkedHashMap<>();
 
     private Map<String, Map<String, String>> waterfallMap = new LinkedHashMap<>();

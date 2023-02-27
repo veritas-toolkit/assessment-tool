@@ -8,8 +8,12 @@
 
 </div>
 
-<#--补充permutation importance图-->
-<#--<img src="">-->
+<#if graphContainer.permutationImportancePlot??>
+    <div class="image_box">
+<#--        <div class="image_title"> Summary Plot </div>-->
+        <img id="permutationImportancePlot" src="${graphContainer.permutationImportancePlot}" class="permutationImportancePlot" alt="Permutation Importance Plot" />
+    </div>
+</#if>
 
 <h4>Partial Dependence Plot</h4>
 <div>
@@ -24,7 +28,6 @@
                      alt="partial dependence plot"/>
             </div>
         </#list>
-<#--    <div style="clear: both"/both>-->
 </#list>
 
 <h4>Global Interpretability Based on SHAP</h4>
