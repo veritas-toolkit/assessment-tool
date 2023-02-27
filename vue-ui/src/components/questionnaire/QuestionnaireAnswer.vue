@@ -385,4 +385,6 @@ export default {
   height: 1px;
   background-color: #CED3D9;
 }
+
+
 </style>

@@ -25,8 +25,8 @@
                   <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
                 <div style="padding: 20px">
-                  <div class="progress-text">6/50</div>
-                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
                   <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
                   <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
                   <!--                </el-tooltip>-->
@@ -48,8 +48,8 @@
                   <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
                 <div style="padding: 20px">
-                  <div class="progress-text">6/50</div>
-                  <el-progress :percentage="6/50*100" color="#78BED3" :show-text="false"></el-progress>
+                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
                   <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
                   <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
                   <!--                </el-tooltip>-->
