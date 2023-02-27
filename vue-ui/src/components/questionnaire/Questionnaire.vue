@@ -87,7 +87,7 @@
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
-                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
                         <div>{{item.creator.username}}</div>
@@ -96,7 +96,7 @@
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
-                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
                         <div>{{item.creator.username}}</div>
@@ -177,7 +177,8 @@ export default {
         F: '',
         EA: '',
         T: '',
-      }
+      },
+      compareList: [],
     }
   },
   created() {
@@ -254,6 +255,7 @@ export default {
     getQuestionnaireMenu() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
         if (res.status == 200) {
+          this.questionnaireVid = res.data.questionnaireVid
           this.principleList = Object.keys(res.data.principles)
           if(!res.data.modelArtifactVersionId) {
             this.modelArtifactVersionId = 0
@@ -278,6 +280,13 @@ export default {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{exportedOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse()
+            let comList = []
+            this.draftList.map(item => {
+              if (item.questionnaireVid !== this.questionnaireVid) {
+                comList.push(item)
+              }
+            })
+            this.compareList = comList
           }
           // console.log(compareType)
         })
@@ -285,6 +294,13 @@ export default {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse()
+            let comList = []
+            this.draftList.map(item => {
+              if (item.questionnaireVid !== this.questionnaireVid) {
+                comList.push(item)
+              }
+            })
+            this.compareList = comList
           }
           // console.log(compareType)
         })
