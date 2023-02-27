@@ -58,6 +58,7 @@ public class ProjectDto {
 
     private boolean archived;
 
+    private ProjectAssessmentProgressDto assessmentProgres;
 
     private UserSimpleDto userOwner;
 

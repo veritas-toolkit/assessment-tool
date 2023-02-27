@@ -20,9 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.dto.GroupDto;
+import org.veritas.assessment.biz.dto.ProjectAssessmentProgressDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.system.entity.Group;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.GroupService;
@@ -38,6 +41,9 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
 
     @Autowired
     private GroupService groupService;
+
+    @Autowired
+    private QuestionnaireService questionnaireService;
 
     @Autowired
     private GroupDtoConverter groupDtoConverter;
@@ -58,6 +64,9 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
         } else {
             throw new IllegalArgumentException("Illegal [project] object: " + project);
         }
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(project.getId());
+        ProjectAssessmentProgressDto progressDto = new ProjectAssessmentProgressDto(project, questionnaireVersion);
+        projectDto.setAssessmentProgres(progressDto);
         return projectDto;
     }
 }
