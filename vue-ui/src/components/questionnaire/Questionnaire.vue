@@ -96,7 +96,13 @@
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
-                    最近草稿
+                    <div v-for="(item,index) in draftList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                      <div class="draft-left">
+                        <img src="../../assets/groupPic/Avatar.png" alt="">
+                        <div>{{item.creator.username}}</div>
+                      </div>
+                      <div class="draft-right">{{item.createdTime|changeTime}}</div>
+                    </div>
                   </el-tab-pane>
                 </el-tabs>
               </div>
@@ -268,13 +274,22 @@ export default {
       })
     },
     getDiffVersion(compareType) {
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/history`).then(res => {
-        if (res.status == 200) {
-          this.draftList = res.data.records.reverse()
-          // console.log(this.draftList)
-        }
-        // console.log(compareType)
-      })
+      if (compareType == 'exportedOnly') {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{exportedOnly: true}}).then(res => {
+          if (res.status == 200) {
+            this.draftList = res.data.records.reverse()
+          }
+          // console.log(compareType)
+        })
+      } else if (compareType == 'draftOnly') {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
+          if (res.status == 200) {
+            this.draftList = res.data.records.reverse()
+          }
+          // console.log(compareType)
+        })
+      }
+
     },
     compare(questionnaireVid) {
       this.compareFlag = true
