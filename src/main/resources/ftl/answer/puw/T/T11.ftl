@@ -32,6 +32,12 @@
 </div>
 
 <#--补充summary plot图-->
+<#list graphContainer.getModelIdList() as modelId>
+    <div class="image_box">
+        <div class="image_title"> Summary Plot </div>
+        <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
+    </div>
+</#list>
 
 <h4>Local Interpretability Based on SHAP</h4>
 
@@ -40,22 +46,21 @@
     while shown in blue are the variables pushing the predictions lower. E[f(x)] is the baseline ratio for selection while f(x)
     is the sum of all SHAP values added to baseline for a particular customer.
 </div>
-
-<#--补充Water Fall图-->
 <#list graphContainer.getModelIdList() as modelId>
-    <div class="image_box">
-        <div class="image_title"> Summary Plot </div>
-        <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
-    </div>
     <div class="image_box">
         <div class="image_title"> Partial dependency </div>
         <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
-        <div class="partial_dependence_plot_box">
-            <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot" src="${graphContainer.getPartialDependencePlot(modelId, feature)}"/>
-        </div>
+            <div class="partial_dependence_plot_box">
+                <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot"
+                     src="${graphContainer.getPartialDependencePlot(modelId, feature)}"
+                     alt="partial dependence plot"/>
+            </div>
         </#list>
     </div>
     <div style="clear: both"/>
 </#list>
+
+<#--补充Water Fall图-->
+
 
 
