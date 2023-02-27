@@ -375,6 +375,7 @@ export default {
   margin-right: 24px;
 }
 #endComSty {
+  cursor: pointer;
   padding: 8px 12px;
   background-color: #EDF2F6;
   border-radius: 4px;
