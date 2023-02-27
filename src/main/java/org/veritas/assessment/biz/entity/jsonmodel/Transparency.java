@@ -55,7 +55,7 @@ public class Transparency {
 
     @Data
     public static class LocalInterpretability {
-        private String id;
+        private Integer id;
         private BigDecimal efx;
         private BigDecimal fx;
         @JsonProperty(value = "feature_info")

@@ -314,7 +314,15 @@ public class GraphServiceImpl implements GraphService {
                     throw new IllegalStateException();
                 }
             }
-        })
+        }),
+        WATER_FALL_PLOT("waterfall", new PutFunction() {
+            @Override
+            public String put(GraphContainer container, String urlPrefix, String imageFilename) {
+                String url = urlPrefix + "/" + imageFilename;
+                container.putWaterfall(url);
+                return url;
+            }
+        }),
         ;
 
         private final String name;

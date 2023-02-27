@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.entity;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class GraphContainer {
 
     private Map<String, Map<String, String>> partialDependencePlotMap = new LinkedHashMap<>();
 
+    private Map<String, Map<String, String>> waterfallMap = new LinkedHashMap<>();
 
     public Map<String, String> getFeatureDistributionPieChartMap() {
         return Collections.unmodifiableMap(featureDistributionPieChartMap);
@@ -86,12 +88,36 @@ public class GraphContainer {
         }
     }
 
+    public void putWaterfall(String imgPath) {
+        String basename = FilenameUtils.getBaseName(imgPath);
+        final String SPIT = "_";
+        String[] subList = basename.split(SPIT);
+        if (subList.length >= 2) {
+            String modelId = subList[subList.length - 2];
+            String localId = subList[subList.length - 1];
+            Map<String, String> map = this.waterfallMap.computeIfAbsent(modelId, k -> new LinkedHashMap<>());
+            String old = map.put(localId, imgPath);
+            if (old != null) {
+                log.info("model[{}] summary plot updated from [{}] to [{}].", modelId, old, imgPath);
+            }
+        }
+    }
+
+    public List<String> waterfallPlotList() {
+        List<String> list = new ArrayList<>();
+        waterfallMap.values().forEach(e -> list.addAll(e.values()));
+        return list;
+    }
+
+
     public List<String> getModelIdList() {
         return new ArrayList<>(this.summaryPlotMap.keySet());
     }
+
     public List<String> getSummaryPlotList() {
         return new ArrayList<>(this.summaryPlotMap.values());
     }
+
     public String getSummaryPlot(String modelId) {
         return this.summaryPlotMap.get(modelId);
     }
@@ -155,6 +181,7 @@ public class GraphContainer {
         }
 
     }
+
     // FIXME: 2023/2/21 just for test
     public String getPersonalAttributesIdentificationTree() {
         List<String> list = new ArrayList<>(featureDistributionPieChartMap.values());

@@ -54,6 +54,13 @@
 </div>
 
 <#--补充Water Fall图-->
+<#list graphContainer.waterfallPlotList() as waterfallPlot>
+    <div class="image_box">
+<#--        <div class="image_title"> Summary Plot </div>-->
+        <img id="waterfall" src="${waterfallPlot}" class="waterfall" alt="waterfall plot" />
+    </div>
+</#list>
+
 
 
 
