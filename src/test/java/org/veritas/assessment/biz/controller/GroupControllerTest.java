@@ -19,13 +19,10 @@ package org.veritas.assessment.biz.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -65,18 +62,6 @@ class GroupControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private CacheManager cacheManager;
-
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
 
     private GroupDto createGroup(String name) throws Exception {
         GroupCreateDto dto = new GroupCreateDto();

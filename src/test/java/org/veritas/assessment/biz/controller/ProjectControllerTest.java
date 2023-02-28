@@ -22,13 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -84,19 +81,7 @@ class ProjectControllerTest {
     @Autowired
     @Lazy
     private UserService userService;
-    @Autowired
-    @Lazy
-    private CacheManager cacheManager;
 
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
 
     @Autowired
     TemplateQuestionnaireService templateQuestionnaireService;

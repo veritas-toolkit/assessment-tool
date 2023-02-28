@@ -7,6 +7,8 @@ spring:
   flyway:
     enabled: true
     clean-disabled: true
+  cache:
+    type: none
 
 veritas:
   auto-generate-answer-strict: true

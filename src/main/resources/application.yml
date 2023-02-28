@@ -36,7 +36,6 @@ spring:
     template-loader-path: classpath:/ftl/
   session:
     store-type: none
-    #    store-type: jdbc
     jdbc:
       initialize-schema: always
   flyway:

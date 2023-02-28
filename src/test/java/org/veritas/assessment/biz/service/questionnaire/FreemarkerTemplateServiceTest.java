@@ -32,7 +32,7 @@ class FreemarkerTemplateServiceTest {
     void testFindTemplate_success() throws IOException {
         QuestionNode questionNode = new QuestionNode();
         QuestionMeta meta = new QuestionMeta();
-        meta.setAnswerTemplateFilename("EA1.ftl");
+        meta.setAnswerTemplateFilename("EA/EA1.ftl");
         questionNode.setMeta(meta);
         questionNode.setPrinciple(Principle.EA);
         Template template = service.findTemplate(1, questionNode);

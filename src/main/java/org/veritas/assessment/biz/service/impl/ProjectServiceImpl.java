@@ -37,6 +37,7 @@ import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.IllegalDataException;
+import org.veritas.assessment.common.exception.InternalException;
 import org.veritas.assessment.common.exception.PermissionException;
 import org.veritas.assessment.common.exception.QuotaException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -166,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService {
 
             questionnaireService.saveNewQuestionnaire(questionnaire);
             roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, project);
         }
         return project;
@@ -233,7 +234,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setLastEditedTime(new Date());
         try {
             projectMapper.updateBasicInfo(old, project);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, project);
         }
         return this.projectMapper.findById(project.getId());
@@ -406,7 +407,7 @@ public class ProjectServiceImpl implements ProjectService {
         questionnaireService.editAnswer(operator, project, actionList, modelArtifact);
     }
 
-    private void exceptionHandler(PersistenceException exception, Project project) {
+    private void exceptionHandler(Exception exception, Project project) {
         if (PersistenceExceptionUtils.isUniqueConstraintException(exception)) {
             log.warn("exception message: {}", exception.getMessage(), exception);
             if (project.isPersonProject()) {
@@ -423,7 +424,7 @@ public class ProjectServiceImpl implements ProjectService {
                         exception);
             }
         } else {
-            throw exception;
+            throw new InternalException("Internal error.", exception);
         }
     }
 

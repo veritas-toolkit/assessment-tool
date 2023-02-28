@@ -22,8 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,8 +64,6 @@ class GroupServiceImplTest {
     private User admin;
 
     private User test1;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Autowired
     private TemplateQuestionnaireService templateQuestionnaireService;
@@ -79,12 +75,7 @@ class GroupServiceImplTest {
         assertNotNull(this.admin);
         assertNotNull(this.test1);
 
-        for(String name : cacheManager.getCacheNames()){
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
+
     }
 
     @Test
@@ -251,7 +242,6 @@ class GroupServiceImplTest {
         List<Member> memberList2 = groupService.getMemberList(group.getId());
         assertEquals(1, memberList2.size());
     }
-
 
 
     @Test

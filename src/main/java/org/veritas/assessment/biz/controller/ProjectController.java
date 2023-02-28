@@ -58,7 +58,6 @@ import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
-import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
@@ -105,8 +104,6 @@ public class ProjectController {
     private ProjectDtoConverter projectDtoConverter;
     @Autowired
     private ModelArtifactService modelArtifactService;
-    @Autowired
-    private ProjectReportService reportService;
     @Autowired
     private QuestionnaireService questionnaireService;
     @Autowired

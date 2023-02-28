@@ -22,8 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,21 +61,9 @@ public class ProjectServiceImplTest {
     private UserMapper userMapper;
     private User admin;
     private Project individualProject;
-    @Autowired
-    private CacheManager cacheManager;
 
     @Autowired
     private TemplateQuestionnaireService templateQuestionnaireService;
-
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
 
     @BeforeEach
     public void init() {

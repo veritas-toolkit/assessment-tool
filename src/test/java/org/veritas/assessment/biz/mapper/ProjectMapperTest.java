@@ -34,7 +34,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Slf4j
@@ -91,12 +95,15 @@ class ProjectMapperTest {
     void testFindProjectPageable_byQueryActionSuccess() {
         this.init();
         QueryProjectPageableAction action = new QueryProjectPageableAction();
-        action.setKeyWordsString("use group");
-        List<Integer> projectIdList = Arrays.asList(1, 2);
-        List<Integer> grojectIdList = Arrays.asList(3, 1);
+//        action.setKeyWordsString("use group");
+//        List<Integer> projectIdList = Arrays.asList(1, 2);
+//        List<Integer> groupIdList = Arrays.asList(3, 1);
+
+        List<Integer> projectIdList = null;
+        List<Integer> groupIdList = null;
 
 
-        Pageable<Project> pageable = projectMapper.findProjectPageable(projectIdList, grojectIdList, action);
+        Pageable<Project> pageable = projectMapper.findProjectPageable(projectIdList, groupIdList, action);
         log.info("pageable: {}", pageable);
         log.info("records: {}", pageable.getRecords());
     }
@@ -129,7 +136,7 @@ class ProjectMapperTest {
 //        List<Integer> projectIds = Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> projectIds = null;
         List<Integer> groupIds = Arrays.asList(1, 2, 3, 4, 5);
-        String keyWord = "me_2";
+        String keyWord = "group";
         List<Project> list = projectMapper.findProjectList(projectIds, groupIds, null, keyWord);
         log.info("list size: {}", list.size());
         log.info("list: {}", list);

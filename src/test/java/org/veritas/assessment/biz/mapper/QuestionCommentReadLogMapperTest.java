@@ -63,7 +63,6 @@ class QuestionCommentReadLogMapperTest {
         assertNotNull(readLog);
         assertEquals(4, readLog.getLatestReadCommentId());
         Map<Long, QuestionCommentReadLog> map2 = mapper.findLog(userId, projectId);
-        // use cache, so they are same
         assertEquals(map.hashCode(), map2.hashCode());
     }
 
