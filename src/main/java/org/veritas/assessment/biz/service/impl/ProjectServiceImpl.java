@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.action.EditAnswerAction;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -331,6 +332,14 @@ public class ProjectServiceImpl implements ProjectService {
             }
         });
         return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Pageable<Project> findProjectPageable(User operator, QueryProjectPageableAction queryAction) {
+        List<Integer> projectIdList = findResourceIdList(operator.getId(), ResourceType.PROJECT);
+        List<Integer> groupIdList = findResourceIdList(operator.getId(), ResourceType.GROUP);
+        return projectMapper.findProjectPageable(projectIdList, groupIdList, queryAction);
     }
 
     @Override

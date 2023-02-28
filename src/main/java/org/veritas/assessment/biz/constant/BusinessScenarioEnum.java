@@ -50,7 +50,10 @@ public enum BusinessScenarioEnum {
         this.answerTemplatePath = answerTemplatePath;
     }
 
-    public static BusinessScenarioEnum ofCode(int code) {
+    public static BusinessScenarioEnum ofCode(Integer code) {
+        if (code == null) {
+            return null;
+        }
         for (BusinessScenarioEnum e : BusinessScenarioEnum.values()) {
             if (e.getCode() == code) {
                 return e;

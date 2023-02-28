@@ -16,6 +16,7 @@
 
 package org.veritas.assessment.biz.service;
 
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -66,12 +67,8 @@ public interface ProjectService {
 
     List<Member> findMemberList(int projectId);
 
+    Pageable<Project> findProjectPageable(User operator, QueryProjectPageableAction queryAction);
     Pageable<Project> findProjectPageable(Integer userId, String prefix, String keyword, int page, int pageSize);
-
-    default Pageable<Project> findProjectPageable(User operator, String prefix, String keyword,
-                                                  int page, int pageSize) {
-        return findProjectPageable(operator.getId(), prefix, keyword, page, pageSize);
-    }
 
     List<Project> findProjectList(Integer userId);
 

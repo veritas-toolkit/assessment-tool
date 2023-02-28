@@ -26,9 +26,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.common.metadata.Pageable;
+import org.veritas.assessment.system.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -187,6 +189,53 @@ public interface ProjectMapper extends BaseMapper<Project> {
         wrapper.eq(Project::getUserOwnerId, userId);
         wrapper.orderByDesc(Project::getLastEditedTime);
         return selectList(wrapper);
+    }
+
+    default Pageable<Project> findProjectPageable(Collection<Integer> projectIds,
+                                                  Collection<Integer> groupIds,
+                                                  QueryProjectPageableAction queryAction) {
+        Objects.requireNonNull(queryAction);
+        boolean projectEmpty = projectIds == null || projectIds.isEmpty();
+        boolean groupEmpty = groupIds == null || groupIds.isEmpty();
+        if (projectEmpty && groupEmpty) {
+            Pageable.noRecord(queryAction.getPage(), queryAction.getPageSize());
+        }
+        LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
+        if (queryAction.hasKeyWords()) {
+            for (String keyword : queryAction.getKeywords()) {
+                wrapper.apply("(upper(name) like {0} or upper(description) like {1})",
+                        "%" + StringUtils.upperCase(keyword) + "%",
+                        "%" + StringUtils.upperCase(keyword) + "%");
+            }
+        }
+        if (queryAction.getCreatorUserId() != null) {
+            wrapper.eq(Project::getCreatorUserId, queryAction.getCreatorUserId());
+        }
+        if (queryAction.getGroupOwnerId() != null) {
+            wrapper.eq(Project::getGroupOwnerId, queryAction.getGroupOwnerId());
+        }
+        wrapper.eq(Project::isArchived, queryAction.isArchived());
+
+        wrapper.and(ownerQueryWrapper -> {
+            if (projectEmpty && groupEmpty) {
+                throw new IllegalArgumentException();
+            } else if (!projectEmpty && !groupEmpty) {
+                ownerQueryWrapper.in(Project::getId, projectIds);
+                ownerQueryWrapper.or(w -> {
+                    w.in(Project::getGroupOwnerId, groupIds);
+                });
+            } else if (projectEmpty) {
+                ownerQueryWrapper.in(Project::getGroupOwnerId, groupIds);
+            } else {
+                ownerQueryWrapper.in(Project::getId, projectIds);
+            }
+        });
+        wrapper.orderByDesc(Project::getLastEditedTime);
+        Page<Project> projectPage = new Page<>();
+        projectPage.setCurrent(queryAction.getPage());
+        projectPage.setSize(queryAction.getPageSize());
+        Page<Project> page1 = selectPage(projectPage, wrapper);
+        return Pageable.convert(page1);
     }
 
     /**

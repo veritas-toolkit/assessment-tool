@@ -42,6 +42,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
 import org.veritas.assessment.biz.dto.ProjectBasicDto;
@@ -117,11 +119,25 @@ public class ProjectController {
     @GetMapping("")
     public Pageable<ProjectDto> listProject(
             @Parameter(hidden = true) User operator,
-            @RequestParam(name = "prefix", required = false) String prefix,
-            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "keyword", required = false) String keywordString,
+            @RequestParam(name = "archived", required = false, defaultValue = "false") boolean archived,
+            @RequestParam(name = "businessScenario", required = false) Integer businessScenarioCode,
+            @RequestParam(name = "createdByMe", required = false, defaultValue = "false") boolean createdByMe,
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
             @RequestParam(name = "pageSize", defaultValue = "20", required = false) Integer pageSize) {
-        Pageable<Project> pageable = projectService.findProjectPageable(operator, prefix, keyword, page, pageSize);
+        QueryProjectPageableAction action = new QueryProjectPageableAction();
+        action.setKeyWordsString(keywordString);
+        action.setArchived(archived);
+        action.setBusinessScenario(BusinessScenarioEnum.ofCode(businessScenarioCode));
+        if (createdByMe) {
+            action.setCreatorUserId(operator.getId());
+        }
+        action.setPage(page);
+        action.setPageSize(pageSize);
+
+
+
+        Pageable<Project> pageable = projectService.findProjectPageable(operator, action);
         return projectDtoConverter.convertFrom(pageable);
     }
 

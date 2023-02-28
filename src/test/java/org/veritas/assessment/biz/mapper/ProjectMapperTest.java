@@ -24,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.metadata.Pageable;
 
@@ -48,20 +50,20 @@ class ProjectMapperTest {
         for (int i = 0; i < 10; i++) {
             Project project = new Project();
             project.setUserOwnerId(2);
-            project.setName("name_" + i);
+            project.setName("name_user_own_" + i);
             project.setDescription("description_" + i);
             project.setCreatorUserId(2);
-            project.setBusinessScenario(5);
+            project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
             project.setLastEditedTime(new Date());
             projectMapper.addProject(project);
         }
         for (int i = 0; i < 20; i++) {
             Project project = new Project();
             project.setGroupOwnerId(1);
-            project.setName("name_" + i);
+            project.setName("name_group_own_" + i);
             project.setDescription("description_" + i);
             project.setCreatorUserId(2);
-            project.setBusinessScenario(5);
+            project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
             project.setLastEditedTime(new Date());
             projectMapper.addProject(project);
         }
@@ -83,6 +85,20 @@ class ProjectMapperTest {
         assertEquals(1, result);
 //        projectMapper.addProject(project);
         log.info("table: {}", jdbcTemplate.queryForList("select * from vat2_project"));
+    }
+
+    @Test
+    void testFindProjectPageable_byQueryActionSuccess() {
+        this.init();
+        QueryProjectPageableAction action = new QueryProjectPageableAction();
+        action.setKeyWordsString("user");
+        List<Integer> projectIdList = Arrays.asList(1, 2);
+        List<Integer> grojectIdList = Arrays.asList(3, 4);
+
+
+        Pageable<Project> pageable = projectMapper.findProjectPageable(projectIdList, grojectIdList, action);
+        log.info("pageable: {}", pageable);
+        log.info("records: {}", pageable.getRecords());
     }
 
     @Test
