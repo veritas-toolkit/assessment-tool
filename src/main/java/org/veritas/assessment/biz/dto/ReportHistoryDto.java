@@ -17,6 +17,7 @@
 package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.entity.ProjectReport;
 
 import java.util.Collections;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 public class ReportHistoryDto {
     private Integer versionId;
 
@@ -33,6 +35,8 @@ public class ReportHistoryDto {
     private Integer versionIdOfProject;
 
     private Integer creatorUserId;
+
+    private UserSimpleDto creator;
 
     private Date createdTime;
 
