@@ -14,7 +14,7 @@
     <!--main tabs-->
     <div style="margin-top: 10px">
       <div>
-        <el-select clearable v-model="searchByBusinessScenario" @visible-change="getSearchByBS" placeholder="Business scenario" class="search-business">
+        <el-select clearable v-model="searchByBusinessScenario" placeholder="Business scenario" class="search-business">
           <el-option
               v-for="item in businessScenarioList"
               :key="item.code"
@@ -275,13 +275,9 @@
       this.getProjectList()
       sessionStorage.setItem('projectId', null)
       this.resetSetItem('projectId', null);
+      this.getBusinessScenarioList()
     },
     methods: {
-      getSearchByBS(flag) {
-        if(flag) {
-          this.getBusinessScenarioList()
-        }
-      },
       querySearch(queryString, cb) {
         let projects = []
         this.projectList.map(item => {
@@ -324,7 +320,6 @@
         this.getProjectList()
       },
       createProjectShow() {
-        this.getBusinessScenarioList()
         this.getCreateTemplateList()
         this.getGroupList()
         this.getWhoAmI()
