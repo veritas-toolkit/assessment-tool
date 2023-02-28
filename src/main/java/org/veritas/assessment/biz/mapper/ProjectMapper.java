@@ -197,7 +197,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
         boolean projectEmpty = projectIds == null || projectIds.isEmpty();
         boolean groupEmpty = groupIds == null || groupIds.isEmpty();
         if (projectEmpty && groupEmpty) {
-            Pageable.noRecord(queryAction.getPage(), queryAction.getPageSize());
+            return Pageable.noRecord(queryAction.getPage(), queryAction.getPageSize());
         }
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         if (queryAction.hasKeyWords()) {
