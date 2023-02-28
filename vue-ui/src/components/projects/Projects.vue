@@ -14,7 +14,7 @@
     <!--main tabs-->
     <div style="margin-top: 10px">
       <div>
-        <el-select clearable v-model="searchByBusinessScenario" placeholder="Business scenario" class="search-business">
+        <el-select @change="getProjectsByBusSce" clearable v-model="searchByBusinessScenario" placeholder="Business scenario" class="search-business">
           <el-option
               v-for="item in businessScenarioList"
               :key="item.code"
@@ -444,14 +444,31 @@
       },
       getProjectList() {
         if (this.activeName == 'first') {
-          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize}}).then(res => {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
             if (res.status == 200) {
               this.projectList = res.data.records
               this.total = res.data.total
             }
           })
         } else if(this.activeName == 'second') {
-          this.$http.get('/api/project/my-projects',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize}}).then(res => {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
+            if (res.status == 200) {
+              this.myProjectList = res.data.records
+              this.total = res.data.total
+            }
+          })
+        }
+      },
+      getProjectsByBusSce() {
+        if (this.activeName == 'first') {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
+            if (res.status == 200) {
+              this.projectList = res.data.records
+              this.total = res.data.total
+            }
+          })
+        } else if(this.activeName == 'second') {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
             if (res.status == 200) {
               this.myProjectList = res.data.records
               this.total = res.data.total
