@@ -30,7 +30,6 @@ import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.common.metadata.Pageable;
-import org.veritas.assessment.system.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -202,11 +201,14 @@ public interface ProjectMapper extends BaseMapper<Project> {
         }
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         if (queryAction.hasKeyWords()) {
-            for (String keyword : queryAction.getKeywords()) {
-                wrapper.apply("(upper(name) like {0} or upper(description) like {1})",
-                        "%" + StringUtils.upperCase(keyword) + "%",
-                        "%" + StringUtils.upperCase(keyword) + "%");
-            }
+//            LambdaQueryWrapper<Project> inner = new LambdaQueryWrapper<>();
+            wrapper.or().and(inner -> {
+                for (String keyword : queryAction.getKeywords()) {
+                    inner.or().apply("(upper(name) like {0} or upper(description) like {1})",
+                            "%" + StringUtils.upperCase(keyword) + "%",
+                            "%" + StringUtils.upperCase(keyword) + "%");
+                }
+            });
         }
         if (queryAction.getCreatorUserId() != null) {
             wrapper.eq(Project::getCreatorUserId, queryAction.getCreatorUserId());
@@ -379,7 +381,7 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return Pageable.convert(page1);
     }
 
-//    default boolean updateQuestionnaireForLock(int projectId, long questionnaireVid, long questionnaireNewVid) {
+    //    default boolean updateQuestionnaireForLock(int projectId, long questionnaireVid, long questionnaireNewVid) {
     default boolean updateQuestionnaireForLock(int projectId, long questionnaireOldVid, long questionnaireNewVid) {
         LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Project::getId, projectId);

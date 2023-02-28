@@ -91,9 +91,9 @@ class ProjectMapperTest {
     void testFindProjectPageable_byQueryActionSuccess() {
         this.init();
         QueryProjectPageableAction action = new QueryProjectPageableAction();
-        action.setKeyWordsString("user");
+        action.setKeyWordsString("use group");
         List<Integer> projectIdList = Arrays.asList(1, 2);
-        List<Integer> grojectIdList = Arrays.asList(3, 4);
+        List<Integer> grojectIdList = Arrays.asList(3, 1);
 
 
         Pageable<Project> pageable = projectMapper.findProjectPageable(projectIdList, grojectIdList, action);
