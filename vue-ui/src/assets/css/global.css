@@ -339,3 +339,15 @@ p {
 .upload-demo .el-progress-bar__outer {
     margin-top: -26px;
 }
+.search-business {
+    width: 200px;
+    height: 38px;
+    position: absolute;
+    right: 24px;
+    z-index: 1;
+    font-family: BarlowMedium;
+}
+.search-business .el-input__inner{
+    border: none;
+    background-color: #FFFFFF;
+}

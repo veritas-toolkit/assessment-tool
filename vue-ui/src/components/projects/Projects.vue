@@ -13,54 +13,64 @@
     </el-row>
     <!--main tabs-->
     <div style="margin-top: 10px">
-      <el-tabs class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="All" name="first">
-          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
-            <el-col v-for="(item,index) in projectList" :span="6">
-              <el-card class="box-card" @click.native="projectPage(item)">
-                <div slot="header" class="boxCardHeader">
-                  <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
-                  <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
-                  <div class="projName oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
-                </div>
-                <div style="padding: 20px">
-                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
-                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
-                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
-                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
-                  <!--                </el-tooltip>-->
-                  <!--<div class="progressLabel">6/18</div>
-                  <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="Created by me" name="second">
-          <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
-            <el-col v-for="(item,index) in myProjectList" :span="6">
-              <el-card class="box-card" @click.native="projectPage(item)">
-                <div slot="header" class="boxCardHeader">
-                  <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
-                  <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
-                  <div class="projName oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
-                </div>
-                <div style="padding: 20px">
-                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
-                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
-                  <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
-                  <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
-                  <!--                </el-tooltip>-->
-                  <!--<div class="progressLabel">13/18</div>
-                  <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
-                </div>
-              </el-card>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
+      <div>
+        <el-select clearable v-model="searchByBusinessScenario" @visible-change="getSearchByBS" placeholder="Business scenario" class="search-business">
+          <el-option
+              v-for="item in businessScenarioList"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+          </el-option>
+        </el-select>
+        <el-tabs class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="All" name="first">
+            <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
+              <el-col v-for="(item,index) in projectList" :span="6">
+                <el-card class="box-card" @click.native="projectPage(item)">
+                  <div slot="header" class="boxCardHeader">
+                    <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
+                    <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
+                    <div class="projName oneLine BarlowBold">{{item.name}}</div>
+                    <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
+                  </div>
+                  <div style="padding: 20px">
+                    <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                    <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
+                    <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                    <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                    <!--                </el-tooltip>-->
+                    <!--<div class="progressLabel">6/18</div>
+                    <el-progress :percentage="6/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="Created by me" name="second">
+            <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
+              <el-col v-for="(item,index) in myProjectList" :span="6">
+                <el-card class="box-card" @click.native="projectPage(item)">
+                  <div slot="header" class="boxCardHeader">
+                    <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
+                    <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
+                    <div class="projName oneLine BarlowBold">{{item.name}}</div>
+                    <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
+                  </div>
+                  <div style="padding: 20px">
+                    <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                    <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
+                    <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                    <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                    <!--                </el-tooltip>-->
+                    <!--<div class="progressLabel">13/18</div>
+                    <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
       <div class="block">
         <el-pagination
           hide-on-single-page
@@ -193,6 +203,7 @@
         activeNewProjectName: 'create',
         createProjectVisible: false,
         keyword: '',
+        searchByBusinessScenario: '',
         projectForm: {
           name: '',
           description: '',
@@ -266,6 +277,11 @@
       this.resetSetItem('projectId', null);
     },
     methods: {
+      getSearchByBS(flag) {
+        if(flag) {
+          this.getBusinessScenarioList()
+        }
+      },
       querySearch(queryString, cb) {
         let projects = []
         this.projectList.map(item => {
@@ -583,5 +599,8 @@
     border-radius: 20px;
     opacity: 0.65;
     padding: 0px 12px;
+  }
+  .el-tabs {
+    position: relative;
   }
 </style>
