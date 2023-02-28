@@ -7,11 +7,11 @@
         <div style="display: flex;width: 100%">
           <div style="margin-left: 16px;width: 80px">v {{ item.version }}</div>
           <div style="width: 30%">{{ item.message }}</div>
-          <div style="display: flex;width: 100px">
+          <div style="display: flex;width: 250px">
             <img style="width: 20px;height: 20px;margin-right: 8px" src="../../assets/groupPic/Avatar.png" alt="">
-            &nbsp;{{ item.creatorUserId }}
+            &nbsp;{{ item.creator.username }}
           </div>
-          <div>{{ dateFormat(item.createdTime) }}</div>
+          <div>{{ item.createdTime|changeTime }}</div>
         </div>
         <div style="display: flex;flex-shrink: 0;margin-right: 16px">
           <div class="model-artifacts" @click="downloadHistoryJsonFile(item)">
