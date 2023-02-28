@@ -68,8 +68,8 @@
                       :action="actionUrl"
                       multiple
                       accept=".json"
-                      :limit="1"
-                      :show-file-list="false"
+                      :on-change="fileChange"
+                      :show-file-list="true"
                       :file-list="fileList"
                       :on-success="handleSuccess"
                       :on-error="handleFailed"
@@ -348,6 +348,11 @@ export default {
     this.fetchReportHistoryList()
   },
   methods: {
+    fileChange(file, fileList) {
+      if (fileList.length > 0) {
+        this.fileList = [fileList[fileList.length - 1]]; // 获取最后一次选择的文件
+      }
+    },
     has_permission(target_permission) {
       return permissionCheck(this.permissionList, target_permission);
     },

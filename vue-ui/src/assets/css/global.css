@@ -330,3 +330,12 @@ p {
 .el-upload-dragger {
     width: 420px;
 }
+.upload-demo .el-upload-list__item-name {
+    display: none;
+}
+.upload-demo .el-upload-list__item .el-icon-upload-success {
+    display: none;
+}
+.upload-demo .el-progress-bar__outer {
+    margin-top: -26px;
+}
