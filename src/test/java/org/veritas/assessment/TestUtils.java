@@ -8,9 +8,14 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String toJson(Object object) throws JsonProcessingException {
+    public static String toJson(Object object)  {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         objectMapper.setDateFormat(df);
-        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        try {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException exception) {
+            throw new RuntimeException("to json failed.", exception);
+        }
+
     }
 }

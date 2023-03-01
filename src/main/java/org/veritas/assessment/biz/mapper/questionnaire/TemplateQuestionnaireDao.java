@@ -1,5 +1,7 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
@@ -20,6 +22,14 @@ public class TemplateQuestionnaireDao {
     public void save(TemplateQuestionnaire templateQuestionnaire) {
         questionnaireMapper.insert(templateQuestionnaire);
         questionMapper.saveAll(templateQuestionnaire.getMainQuestionList());
+    }
+
+    public void updateBasicInfo(TemplateQuestionnaire templateQuestionnaire) {
+        LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
+        wrapper.set(TemplateQuestionnaire::getName, templateQuestionnaire.getName());
+        wrapper.set(TemplateQuestionnaire::getDescription, templateQuestionnaire.getDescription());
+        questionnaireMapper.update(null, wrapper);
     }
     public List<TemplateQuestionnaire> findAll() {
         List<TemplateQuestionnaire> list = questionnaireMapper.findAll();
@@ -51,6 +61,13 @@ public class TemplateQuestionnaireDao {
 
     public List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
         return questionnaireMapper.findByBusinessScenario(businessScenarioEnum);
+    }
+
+    public void delete(Integer templateId) {
+        questionnaireMapper.deleteById(templateId);
+        LambdaQueryWrapper<TemplateQuestion> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TemplateQuestion::getTemplateId, templateId);
+        questionMapper.delete(wrapper);
     }
 
     // update basic info

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.handler.TimestampHandler;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 public class TemplateQuestion implements Comparable<TemplateQuestion> {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private int templateId;
-    //    private Integer mainQuestionId;
+
+    private Integer templateId;
     private Principle principle;
 
     private AssessmentStep step;
@@ -142,5 +143,20 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
             }
         }
         return mainList;
+    }
+
+    public TemplateQuestion create() {
+        TemplateQuestion newOne = new TemplateQuestion();
+        BeanUtils.copyProperties(this, newOne, "subList");
+        newOne.setId(null);
+        newOne.setTemplateId(null);
+        if (this.isSub()) {
+            newOne.subList = null;
+        } else {
+            List<TemplateQuestion> list = new ArrayList<>();
+            this.subList.forEach(e -> list.add(e.create()));
+            newOne.setSubList(list);
+        }
+        return newOne;
     }
 }

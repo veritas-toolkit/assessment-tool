@@ -3,10 +3,12 @@ package org.veritas.assessment.biz.entity.questionnaire;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.common.handler.TimestampHandler;
@@ -16,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -36,6 +39,9 @@ public class TemplateQuestionnaire {
     private Date createdTime;
 
     private Integer creatorUserId;
+
+    @TableLogic
+    private boolean deleted = false;
 
     @TableField(exist = false)
     private List<TemplateQuestion> mainQuestionList;
@@ -72,4 +78,9 @@ public class TemplateQuestionnaire {
             q.getSubList().forEach(sub -> sub.setTemplateId(id));
         });
     }
+
+    public boolean canBeEditOrDeleted() {
+        return this.type != QuestionnaireTemplateType.SYSTEM;
+    }
+
 }

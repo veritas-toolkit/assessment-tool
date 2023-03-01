@@ -20,8 +20,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +34,19 @@ import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConvert
 
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireCreateDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.metadata.Pageable;
+import org.veritas.assessment.system.entity.User;
+
+import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -70,14 +83,14 @@ public class AdminQuestionnaireController {
         return new TemplateQuestionnaireTocDto(questionnaire);
     }
 
-    /*
+
     // create
     @Operation(summary = "Admin: create a new questionnaire template.")
     @PutMapping("")
-    public TemplateQuestionnaireDto create(
-            @RequestBody TemplateQuestionnaireCreateDto dto) {
+    public TemplateQuestionnaireDto create(User operator,
+                                           @Valid @RequestBody TemplateQuestionnaireCreateDto dto) {
         TemplateQuestionnaire questionnaire =
-                service.create(dto.getBasicTemplateId(), dto.getName(), dto.getDescription());
+                service.create(operator, dto.getBasicTemplateId(), dto.getName(), dto.getDescription());
         return dtoConverter.convertFrom(questionnaire);
     }
 
@@ -87,21 +100,20 @@ public class AdminQuestionnaireController {
         service.delete(templateId);
     }
 
-
-
     // edit basic info
     @Operation(summary = "Admin: update questionnaire template name and description.")
     @PostMapping("/{templateId}/basic")
-    public TemplateQuestionnaireDto editBasicInfo(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody TemplateQuestionnaireBasicDto dto) {
-        if (Objects.isNull(dto.getName())) {
-            throw new ErrorParamException("There is no name property");
+    public TemplateQuestionnaireDto editBasicInfo(User operator,
+                                                  @PathVariable("templateId") Integer templateId,
+                                                  @Valid @RequestBody TemplateQuestionnaireEditDto dto) {
+        if (!Objects.equals(templateId, dto.getTemplateId())) {
+            throw new IllegalRequestException();
         }
-        TemplateQuestionnaire questionnaire = service.updateBasicInfo(templateId, dto.getName(), dto.getDescription());
+        TemplateQuestionnaire questionnaire =
+                service.updateBasicInfo(operator, templateId, dto.getName(), dto.getDescription());
         return dtoConverter.convertFrom(questionnaire);
     }
-
+/*
     // add main question
     @Operation(summary = "Admin: add a question with subs into questionnaire template.")
     @PutMapping("/{templateId}/question")
@@ -150,6 +162,5 @@ public class AdminQuestionnaireController {
         }
         return service.updateMainQuestionWithSub(templateId, question);
     }
-
      */
 }

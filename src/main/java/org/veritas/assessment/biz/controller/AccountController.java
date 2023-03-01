@@ -32,6 +32,7 @@ import org.veritas.assessment.biz.dto.UserChangePasswordDto;
 import org.veritas.assessment.biz.dto.UserDetailDto;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.exception.PermissionException;
 import org.veritas.assessment.system.entity.User;
@@ -74,7 +75,7 @@ public class AccountController {
     }
 
     @PostMapping("/change_password")
-    public UserDetailDto changePassword(User operator, @Valid @RequestBody UserChangePasswordDto dto) throws Exception {
+    public UserDetailDto changePassword(User operator, @Valid @RequestBody UserChangePasswordDto dto) {
         if (dto.getId() == null) {
             dto.setId(operator.getId());
         }
@@ -82,7 +83,7 @@ public class AccountController {
             throw new PermissionException("Cannot change other's information.");
         }
         if (StringUtils.equals(dto.getNewPassword(), dto.getOldPassword())) {
-            throw new ErrorParamException("The new password should not be same as the old.");
+            throw new IllegalRequestException("The new password should not be same as the old.");
         }
         User user = userService.changePassword(operator, dto.getOldPassword(), dto.getNewPassword());
         return userDetailDtoConverter.convertFrom(user);

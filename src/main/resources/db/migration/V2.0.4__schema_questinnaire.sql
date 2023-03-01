@@ -65,7 +65,8 @@ create table vat2_template_questionnaire (
     business_scenario integer not null,
     type number(1) not null,                -- 1-system, 2-user defined
     creator_user_id number not null,
-    created_time varchar(100) not null
+    created_time varchar(100) not null,
+    deleted number(1) not null default false
 );
 
 create table vat2_template_question (
