@@ -69,6 +69,29 @@
               </el-col>
             </el-row>
           </el-tab-pane>
+          <el-tab-pane label="Archived" name="third">
+            <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
+              <el-col v-for="(item,index) in projectList" :span="6">
+                <el-card class="box-card" @click.native="projectPage(item)">
+                  <div slot="header" class="boxCardHeader">
+                    <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
+                    <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
+                    <div class="projName oneLine BarlowBold">{{item.name}}</div>
+                    <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
+                  </div>
+                  <div style="padding: 20px">
+                    <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                    <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
+                    <!--                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">-->
+                    <!--                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>-->
+                    <!--                </el-tooltip>-->
+                    <!--<div class="progressLabel">13/18</div>
+                    <el-progress :percentage="13/18*100" color="#78BED3" :show-text="false"></el-progress>-->
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <div class="block">
@@ -457,6 +480,13 @@
               this.total = res.data.total
             }
           })
+        } else if(this.activeName == 'third') {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
+            if (res.status == 200) {
+              this.projectList = res.data.records
+              this.total = res.data.total
+            }
+          })
         }
       },
       getProjectsByBusSce() {
@@ -471,6 +501,13 @@
           this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
             if (res.status == 200) {
               this.myProjectList = res.data.records
+              this.total = res.data.total
+            }
+          })
+        } else if(this.activeName == 'third') {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
+            if (res.status == 200) {
+              this.projectList = res.data.records
               this.total = res.data.total
             }
           })
