@@ -12,8 +12,9 @@ public enum PlotTypeEnum {
     CONFUSION_MATRIX("confusion_matrix", "Confusion Matrix"),
     CORRELATION_MATRIX("correlation_matrix", "Correlation Matrix"),
 
-    H_BAR("permutation_importance", "Permutation Importance")
+    H_BAR("permutation_importance", "Permutation Importance"),
 
+    WATERFALL("waterfall", "Local Interpretability"),
     ;
 
     @JsonValue

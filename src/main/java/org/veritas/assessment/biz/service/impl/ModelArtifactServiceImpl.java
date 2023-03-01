@@ -34,6 +34,7 @@ import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.Fairness;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
+import org.veritas.assessment.biz.entity.jsonmodel.Transparency;
 import org.veritas.assessment.biz.mapper.ModelArtifactMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.common.exception.ErrorParamException;
@@ -46,11 +47,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -147,7 +148,6 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
     @Override
     public PlotDataDto findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
         PlotDataDto dto = new PlotDataDto();
-        Object data = null;
         try {
             JsonModel jsonModel = modelArtifact.getJsonModel();
             if (jsonModel == null) {
@@ -159,8 +159,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             if (jsonModel.getFairness() != null) {
                 final String calibrationCurveLineChart = "calibrationCurveLineChart";
                 if (StringUtils.contains(imgSrc, calibrationCurveLineChart)) {
-                    data = jsonModel.getFairness().getCalibrationCurve();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getFairness().getCalibrationCurve());
                     dto.setType(PlotTypeEnum.CURVE);
                     dto.setName("Calibration Curve");
                     dto.setCaption("CalibrationCurve");
@@ -168,8 +167,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 }
                 final String classDistributionPieChart = "classDistributionPieChart";
                 if (StringUtils.contains(imgSrc, classDistributionPieChart)) {
-                    data = jsonModel.getFairness().getClassDistribution();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getFairness().getClassDistribution());
                     dto.setType(PlotTypeEnum.PIE);
                     dto.setName("Class Distribution");
                     dto.setCaption("Class Distribution");
@@ -177,8 +175,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 }
                 final String correlationHeatMapChart = "correlationHeatMapChart";
                 if (StringUtils.contains(imgSrc, correlationHeatMapChart)) {
-                    data = jsonModel.getFairness().getCorrelationMatrix();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getFairness().getCorrelationMatrix());
                     dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
                     dto.setName("CorrelationHeat");
                     dto.setCaption("CorrelationHeat");
@@ -186,8 +183,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 }
                 final String weightedConfusionHeatMapChart = "weightedConfusionHeatMapChart";
                 if (StringUtils.contains(imgSrc, weightedConfusionHeatMapChart)) {
-                    data = jsonModel.getFairness().getCorrelationMatrix();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getFairness().getCorrelationMatrix());
                     dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
                     dto.setName("Weighted Confusion Heatmap");
                     dto.setCaption("weightedConfusionHeatMapChart");
@@ -200,8 +196,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     Map<String, Fairness.Feature> featureMap = jsonModel.getFairness().getFeatureMap();
                     for (String name : featureMap.keySet()) {
                         if (StringUtils.contains(imgSrc, featureDistributionPieChartMap + "_" + name + ".")) {
-                            data = featureMap.get(name).getFeatureDistributionMap();
-                            dto.setData(data);
+                            dto.setData(featureMap.get(name).getFeatureDistributionMap());
                             dto.setType(PlotTypeEnum.PIE);
                             dto.setName("Feature Distribution Pie Chart");
                             dto.setCaption("Feature Distribution Pie Chart");
@@ -213,8 +208,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
 
                 final String performanceLineChart = "performanceLineChart";
                 if (StringUtils.contains(imgSrc, performanceLineChart)) {
-                    data = jsonModel.getFairness().getPerfDynamic();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getFairness().getPerfDynamic());
                     dto.setType(PlotTypeEnum.TWO_LINE);
                     dto.setName("Performance Line Chart");
                     dto.setCaption("Performance Line Chart");
@@ -224,12 +218,36 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             if (jsonModel.getTransparency() != null) {
                 final String permutationImportance = "permutationImportance";
                 if (StringUtils.contains(imgSrc, permutationImportance)) {
-                    data = jsonModel.getTransparency().getPermutationScoreList();
-                    dto.setData(data);
+                    dto.setData(jsonModel.getTransparency().getPermutationScoreList());
                     dto.setType(PlotTypeEnum.H_BAR);
                     dto.setName("Permutation Importance");
                     dto.setCaption("Permutation Importance");
                     return dto;
+                }
+
+                final String waterfall = "waterfall";
+                if (StringUtils.contains(imgSrc, waterfall)) {
+                    List<Transparency.ModelInfo> modelList = jsonModel.getTransparency().getModelList();
+                    if (modelList != null && !modelList.isEmpty()) {
+                        for (Transparency.ModelInfo modelInfo : modelList) {
+                            Integer mi = modelInfo.getId();
+                            List<Transparency.LocalInterpretability> localInterpretabilityList =
+                                    modelInfo.getLocalInterpretabilityList();
+                            if (localInterpretabilityList != null) {
+                                for (Transparency.LocalInterpretability localInterpretability :
+                                        localInterpretabilityList) {
+                                    Integer li = localInterpretability.getId();
+                                    String partialName = String.format("%s_%d_%d", waterfall, mi, li);
+                                    if (StringUtils.contains(imgSrc, partialName)) {
+                                        dto.setData(localInterpretability);
+                                        dto.setType(PlotTypeEnum.WATERFALL);
+                                        dto.setName("Local Interpretability");
+                                        dto.setCaption("Local Interpretability");
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } catch (IOException | NullPointerException exception) {
