@@ -56,10 +56,12 @@
 </div>
 
 <#--补充Water Fall图-->
+<#assign waterfallCount = 1>
 <#list graphContainer.waterfallPlotList() as waterfallPlot>
     <div class="image_box">
 <#--        <div class="image_title"> Summary Plot </div>-->
-        <img id="waterfall" src="${waterfallPlot}" class="waterfall" alt="waterfall plot" />
+        <img id="waterfall_${waterfallCount}" src="${waterfallPlot}" class="waterfall" alt="waterfall plot" />
+        <#assign waterfallCount++>
     </div>
 </#list>
 
