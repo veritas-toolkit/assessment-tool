@@ -76,7 +76,7 @@ public class CommentController {
         return dtoList;
     }
 
-    @Operation(summary = "Find comment by project.")
+    @Operation(summary = "Find all unread comment of the project.")
     @GetMapping(path = "/project/{projectId}/questionnaire/all_unread_comment_list")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public List<QuestionCommentDto> findUnreadCommentListByProject(@Parameter(hidden = true) User operator,
@@ -99,7 +99,7 @@ public class CommentController {
         return dtoList;
     }
 
-    @Operation(summary = "Find comment by project.")
+    @Operation(summary = "Find all comment of project.")
     @GetMapping(path = "/project/{projectId}/questionnaire/comment")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public Map<Long, List<QuestionCommentDto>> findCommentListByProject(
@@ -136,7 +136,7 @@ public class CommentController {
         return QuestionCommentDto.toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
     }
 
-    @Operation(summary = "Mark the comment read.")
+    @Operation(summary = "Mark the comment as read.")
     @RequestMapping(path = "/project/{projectId}/questionnaire/question/{questionId}/comment/{commentId}/read",
             method = {RequestMethod.POST, RequestMethod.PUT})
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
