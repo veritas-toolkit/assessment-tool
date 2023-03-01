@@ -135,6 +135,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         return version;
     }
 
+//    @Cacheable(cacheNames = "model_artifact",key = "'vid_'+#modelArtifact.versionId")
     @Override
     public void loadContent(ModelArtifact modelArtifact) throws IOException {
         try {
@@ -243,6 +244,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                                         dto.setType(PlotTypeEnum.WATERFALL);
                                         dto.setName("Local Interpretability");
                                         dto.setCaption("Local Interpretability");
+                                        return dto;
                                     }
                                 }
                             }
@@ -346,11 +348,11 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             try (InputStream is = zipFile.getInputStream(zipEntry)) {
                 String content = IOUtils.toString(is, StandardCharsets.UTF_8);
 
-                String sha256 = DigestUtils.sha256Hex(content);
-                if (!StringUtils.equals(sha256, artifact.getJsonContentSha256())) {
+//                String sha256 = DigestUtils.sha256Hex(content);
+//                if (!StringUtils.equals(sha256, artifact.getJsonContentSha256())) {
                     // FIXME: 2021/9/9
-                    throw new IOException();
-                }
+//                    throw new IOException();
+//                }
 
                 JsonModel jsonModel = parser(content);
                 artifact.setJsonContent(content);
