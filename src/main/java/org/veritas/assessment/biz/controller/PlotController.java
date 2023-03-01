@@ -35,15 +35,6 @@ import java.util.Map;
 @RequestMapping("/project/{projectId}/")
 public class PlotController {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SimpleBarDto {
-        private String type;
-        private Map<String, BigDecimal> data;
-    }
-
-
 
     @Autowired
     private ModelArtifactService modelArtifactService;
@@ -55,6 +46,9 @@ public class PlotController {
                                      @Valid @RequestBody PlotFetchDto plotFetchDto) {
         try {
             ModelArtifact modelArtifact = modelArtifactService.findByVersionId(plotFetchDto.getModelArtifactVid());
+            if (modelArtifact == null) {
+                return PlotDataDto.none();
+            }
             try {
                 modelArtifactService.loadContent(modelArtifact);
             } catch (IOException e) {
@@ -68,58 +62,5 @@ public class PlotController {
             return PlotDataDto.none();
         }
     }
-
-    ////////////////////////////////
-
-    @Operation(summary = "Fetch simple bar data")
-    @GetMapping(path = "/plot")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public HttpEntity<?> plot(@PathVariable("projectId") int projectId,
-                              @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid,
-                              @RequestParam("plot-id") String plotId) throws IOException {
-        if (questionnaireVid == null) {
-            // fetch the latest questionnaire
-        }
-        switch (plotId) {
-            case "plot-bar":
-                return new HttpEntity<>(this.simpleBarDto(projectId));
-            default:
-                return null;
-        }
-    }
-
-
-
-    @Operation(summary = "Fetch simple bar data")
-    @GetMapping(path = "/plot-bar/", params = {"plot-type=test"})
-    public SimpleBarDto simpleBarDto(@PathVariable("projectId") int projectId) {
-        Map<String, BigDecimal> data = new LinkedHashMap<>();
-        data.put("Mon", new BigDecimal(120));
-        data.put("Tue", new BigDecimal(200));
-        data.put("Wed", new BigDecimal(150));
-        data.put("Thu", new BigDecimal(80));
-        data.put("Fri", new BigDecimal(70));
-        data.put("Sat", new BigDecimal(110));
-        data.put("Sun", new BigDecimal(130));
-        SimpleBarDto dto = new SimpleBarDto("bar", data);
-        return dto;
-    }
-
-    @Operation(summary = "Fetch simple bar data")
-    @GetMapping(path = "/confusionmatrix/", params = {"plot-type=confusion-matrix"})
-    public HeatmapDto heatmapDto() {
-        return null;
-    }
-
-    public static class HeatmapDto {
-
-    }
-
-
-
-
-
-
-
 
 }

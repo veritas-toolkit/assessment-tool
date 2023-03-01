@@ -144,7 +144,6 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         }
     }
 
-    // FIXME: 2023/2/17 to delete
     @Override
     public PlotDataDto findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc) {
         PlotDataDto dto = new PlotDataDto();
@@ -163,8 +162,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     data = jsonModel.getFairness().getCalibrationCurve();
                     dto.setData(data);
                     dto.setType(PlotTypeEnum.CURVE);
-                    dto.setName("CURVE");
-                    dto.setCaption("CURVE");
+                    dto.setName("Calibration Curve");
+                    dto.setCaption("CalibrationCurve");
                     return dto;
                 }
                 final String classDistributionPieChart = "classDistributionPieChart";
@@ -172,8 +171,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     data = jsonModel.getFairness().getClassDistribution();
                     dto.setData(data);
                     dto.setType(PlotTypeEnum.PIE);
-                    dto.setName("classDistributionPieChart");
-                    dto.setCaption("classDistributionPieChart");
+                    dto.setName("Class Distribution");
+                    dto.setCaption("Class Distribution");
                     return dto;
                 }
                 final String correlationHeatMapChart = "correlationHeatMapChart";
@@ -181,8 +180,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     data = jsonModel.getFairness().getCorrelationMatrix();
                     dto.setData(data);
                     dto.setType(PlotTypeEnum.CORRELATION_MATRIX);
-                    dto.setName("correlationHeatMapChart");
-                    dto.setCaption("correlationHeatMapChart");
+                    dto.setName("CorrelationHeat");
+                    dto.setCaption("CorrelationHeat");
                     return dto;
                 }
                 final String weightedConfusionHeatMapChart = "weightedConfusionHeatMapChart";
@@ -190,7 +189,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     data = jsonModel.getFairness().getCorrelationMatrix();
                     dto.setData(data);
                     dto.setType(PlotTypeEnum.CONFUSION_MATRIX);
-                    dto.setName("weightedConfusionHeatMapChart");
+                    dto.setName("Weighted Confusion Heatmap");
                     dto.setCaption("weightedConfusionHeatMapChart");
                     return dto;
                 }
@@ -204,26 +203,21 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                             data = featureMap.get(name).getFeatureDistributionMap();
                             dto.setData(data);
                             dto.setType(PlotTypeEnum.PIE);
-                            dto.setName("featureDistributionPieChartMap");
-                            dto.setCaption("featureDistributionPieChartMap");
+                            dto.setName("Feature Distribution Pie Chart");
+                            dto.setCaption("Feature Distribution Pie Chart");
                             return dto;
                         }
                     }
                 }
 
-//            featureDistributionPieChartMap_gender-race-nationality
-//            featureDistributionPieChartMap_gender
-//            featureDistributionPieChartMap_race
-//            featureTradeoffContourMap_gender-race-nationality
-//            featureTradeoffContourMap_gender
-//            featureTradeoffContourMap_race
+
                 final String performanceLineChart = "performanceLineChart";
                 if (StringUtils.contains(imgSrc, performanceLineChart)) {
                     data = jsonModel.getFairness().getPerfDynamic();
                     dto.setData(data);
                     dto.setType(PlotTypeEnum.TWO_LINE);
-                    dto.setName("performanceLineChart");
-                    dto.setCaption("performanceLineChart");
+                    dto.setName("Performance Line Chart");
+                    dto.setCaption("Performance Line Chart");
                     return dto;
                 }
             }
@@ -232,9 +226,9 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 if (StringUtils.contains(imgSrc, permutationImportance)) {
                     data = jsonModel.getTransparency().getPermutationScoreList();
                     dto.setData(data);
-                    dto.setType(PlotTypeEnum.TWO_LINE);
-                    dto.setName("CURVE");
-                    dto.setCaption("CURVE");
+                    dto.setType(PlotTypeEnum.H_BAR);
+                    dto.setName("Permutation Importance");
+                    dto.setCaption("Permutation Importance");
                     return dto;
                 }
             }
