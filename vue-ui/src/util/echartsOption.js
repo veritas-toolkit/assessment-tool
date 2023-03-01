@@ -1,3 +1,87 @@
+export function waterfallOptionData(data) {
+    console.log(data)
+}
+
+export function permutationImportanceOptionData(data) {
+    let feature_list = []
+    let score_list = []
+    data.map(item => {
+        feature_list.push(item.feature)
+        score_list.push(item.score.toFixed(2))
+    })
+    console.log(feature_list,score_list)
+    let option = {
+        title: {
+            text: 'Permutation Importance',
+            left: 'center',
+            textStyle: {
+                fontSize: 24
+            }
+        },
+        xAxis: {
+            type: 'value',
+            axisLabel: {
+                textStyle: {
+                    fontSize: 16
+                }
+            }
+
+        },
+        yAxis: {
+            type: 'category',
+            data: feature_list,
+            splitArea: {
+                show: true
+            },
+            nameTextStyle: {
+                fontSize: 16,
+            },
+            axisLabel: {
+                interval: 0, //强制文字产生间隔
+                rotate:0, //倾斜多少度
+                //x轴的文字改为竖版显示
+                formatter: function (value) {
+                    if (value.length > 4) {
+                        return `${value.slice(0, 9)}...`;
+                    }
+                    return value;
+                },
+                textStyle: {
+                    fontSize: 16
+                }
+            }
+        },
+        series: [
+            {
+                data: score_list,
+                type: 'bar',
+                // label: {
+                //     normal: {
+                //         show: true,
+                //         textStyle: {
+                //             fontSize: 16 }
+                //     },
+                // },
+
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    },
+                    label: {
+                        show: true,
+                        textStyle: {
+                            fontSize: 20
+                        }
+                    }
+                }
+            }
+        ]
+    };
+    return option
+}
+
 export function correlationMatrixOptionData(data) {
     let dataValue = data.corr_values.slice().reverse()
     let nameList = data.feature_names

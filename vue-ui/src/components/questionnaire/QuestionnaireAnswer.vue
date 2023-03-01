@@ -128,7 +128,15 @@ import 'tinymce/plugins/colorpicker'
 import 'tinymce/plugins/textcolor'
 import axios from "axios";
 import * as echarts from 'echarts';
-import {curveOptionData,twoLineOptionData,pieOptionData,confusionMatrixOptionData,correlationMatrixOptionData} from "@/util/echartsOption";
+import {
+  curveOptionData,
+  twoLineOptionData,
+  pieOptionData,
+  confusionMatrixOptionData,
+  correlationMatrixOptionData,
+  permutationImportanceOptionData,
+  waterfallOptionData
+} from "@/util/echartsOption";
 import {Message} from "element-ui";
 import option from "element-ui/packages/option";
 
@@ -271,6 +279,10 @@ export default {
               optionData = confusionMatrixOptionData(res.data.data)
             } else if (res.data.type == 'correlation_matrix') {
               optionData = correlationMatrixOptionData(res.data.data)
+            } else if (res.data.type == 'permutation_importance') {
+              optionData = permutationImportanceOptionData(res.data.data)
+            } else if (res.data.type == 'waterfall') {
+              optionData = waterfallOptionData(res.data.data)
             } else {
               optionData = null;
             }
