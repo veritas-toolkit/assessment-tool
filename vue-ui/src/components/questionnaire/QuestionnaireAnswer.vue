@@ -37,7 +37,10 @@
               </div>
             </div>
             <div @click="getComment(answerDict.id)" slot="reference">
-              <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+              <el-badge :value="commentCount[answerDict.id]" class="item" :hidden="commentCount[answerDict.id] == 0">
+                <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+              </el-badge>
+
             </div>
           </el-popover>
         </div>
@@ -87,7 +90,9 @@
                 </div>
               </div>
               <div @click="getComment(item.id)" slot="reference">
-                <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+                <el-badge :value="commentCount[item.id]" class="item" :hidden="commentCount[item.id] == 0">
+                  <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
+                </el-badge>
               </div>
             </el-popover>
           </div>
@@ -142,6 +147,7 @@ export default {
     }
   },
   created() {
+    this.getFullComment()
     this.init = {
       skin_url: 'tinymce/skins/ui/oxide',
       autoresize_min_height : "60px",
@@ -187,6 +193,7 @@ export default {
       commentList: [],
       addComment: '',
       commentId: '',
+      commentCount: {},
     }
   },
   methods: {
@@ -206,6 +213,22 @@ export default {
           this.commentList = res.data[id].reverse()
         } else {
           this.commentList = []
+        }
+        this.commentCount[id] = 0
+      })
+    },
+    getFullComment() {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/comment`).then(res => {
+        this.allComment = res.data
+        this.commentCount = {}
+        for (let key in this.allComment) {
+          let n = 0
+          this.allComment[key].map(item => {
+            if (!item.hasRead) {
+              n++
+            }
+          })
+          this.commentCount[key] = n
         }
       })
     },
@@ -328,6 +351,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-top: 16px;
+  padding-right: 16px;
   background: #F5F7F9;
   border-radius: 4px 4px 0px 0px;
   border: 1px solid #D5D8DD;
@@ -341,7 +365,6 @@ export default {
 .subQues-com {
   width: 24px;
   height: 24px;
-  margin-right: 16px;
   cursor: pointer;
 }
 .sub-ques-ans {
