@@ -241,7 +241,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 }
             }
             this.setError(reason);
-            this.setMessage(throwable.getMessage());
+            this.setMessage("Internal error.");
         }
     }
 
