@@ -129,6 +129,8 @@ import 'tinymce/plugins/textcolor'
 import axios from "axios";
 import * as echarts from 'echarts';
 import {curveOptionData,twoLineOptionData,pieOptionData,confusionMatrixOptionData,correlationMatrixOptionData} from "@/util/echartsOption";
+import {Message} from "element-ui";
+import option from "element-ui/packages/option";
 
 export default {
   name: "QuestionnaireAnswer",
@@ -238,26 +240,13 @@ export default {
       const allImages =  el.getElementsByTagName('img')
       for (let i = 0; i < allImages.length; i++) {
         let plotImg = allImages[i];
-        let divChart = document.createElement("div");
-        divChart.style.width = '80%'
-        divChart.style.margin = 'auto'
-        divChart.style.height = '500px'
         if (!plotImg.id) {
           plotImg.id = Math.ceil(Math.random()*999999999).toString()+'_plot';
         }
-        divChart.id = plotImg.id + '_plot'
-
-
         // get echarts option data
         this.getPlotData(plotImg)
-        if (plotImg.nextSibling) {
-          plotImg.parentNode.insertBefore(divChart, plotImg.nextSibling);
-        } else {
-          plotImg.parentNode.appendChild(divChart);
-        }
         // plotImg.remove();
       }
-
       return el.innerHTML
     },
     getPlotData(plotImg) {
@@ -266,39 +255,59 @@ export default {
       plotFetch.imgId = plotImg.id
       plotFetch.imgSrc = plotImg.src
 
-      this.$http.post(`/api/project/${this.projectId}/plot`,plotFetch).then(res => {
-        if (res.status == 200) {
-          let optionData = {}
-          if (res.data.type == 'none') {
-            optionData = null
-          } else if (res.data.type == 'curve') {
-            optionData = curveOptionData(res.data.data)
-          } else if (res.data.type == 'two_line') {
-            optionData = twoLineOptionData(res.data.data)
-          } else if (res.data.type == 'pie') {
-            optionData = pieOptionData(res.data.data)
-          } else if (res.data.type == 'confusion_matrix') {
-            optionData = confusionMatrixOptionData(res.data.data)
-          } else if (res.data.type == 'correlation_matrix') {
-            optionData = correlationMatrixOptionData(res.data.data)
-          } else {
-            optionData = null;
-          }
-          this.$nextTick(() => {
-            let img = document.getElementById(plotImg.id)
-            let echartsDiv = document.getElementById(plotImg.id+'_plot')
-            if (optionData == null) {
-              echartsDiv.remove();
-              return false;
+      this.$nextTick(() => {
+        let optionData = {}
+        this.$http.post(`/api/project/${this.projectId}/plot`,plotFetch).then(res => {
+          if (res.status == 200) {
+            if (res.data.type == 'none') {
+              optionData = null
+            } else if (res.data.type == 'curve') {
+              optionData = curveOptionData(res.data.data)
+            } else if (res.data.type == 'two_line') {
+              optionData = twoLineOptionData(res.data.data)
+            } else if (res.data.type == 'pie') {
+              optionData = pieOptionData(res.data.data)
+            } else if (res.data.type == 'confusion_matrix') {
+              optionData = confusionMatrixOptionData(res.data.data)
+            } else if (res.data.type == 'correlation_matrix') {
+              optionData = correlationMatrixOptionData(res.data.data)
+            } else {
+              optionData = null;
             }
-            echarts.dispose(echartsDiv)
-            let myChart = echarts.init(document.getElementById(plotImg.id+'_plot'));
-            myChart.setOption(optionData);
-            img.remove();
-            return true;
-          })
-        }
-      })
+          } else  {
+            let mess = Message({option})
+            mess.closeAll()
+          }
+          if (optionData == null) {
+            // echartsDiv.remove();
+            return false;
+          }
+          let img = document.getElementById(plotImg.id)
+          if (img == null) {
+            return false;
+          }
+          let divChart = document.createElement("div");
+          divChart.style.width = '80%'
+          divChart.style.margin = 'auto'
+          divChart.style.height = '500px'
+          divChart.id = plotImg.id + '_plot'
+          if (img.nextSibling) {
+            img.parentNode.insertBefore(divChart, img.nextSibling);
+          } else {
+            img.parentNode.appendChild(divChart);
+          }
+          let echartsDiv = document.getElementById(plotImg.id+'_plot')
+
+          echarts.dispose(echartsDiv)
+          //let myChart = echarts.init(document.getElementById(plotImg.id+'_plot'));
+          let myChart = echarts.init(echartsDiv);
+          myChart.setOption(optionData);
+          img.remove();
+          return true;
+        })
+        })
+
+
     },
     getQuestionnaireAnswer() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${this.questionId}`).then(res => {
