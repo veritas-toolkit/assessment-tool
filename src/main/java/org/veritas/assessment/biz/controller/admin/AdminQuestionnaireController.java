@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter2;
+import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
 
 
-import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter2;
+import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -39,16 +39,16 @@ import org.veritas.assessment.common.metadata.Pageable;
 @Slf4j
 @RequestMapping("/admin/questionnaire")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-public class AdminQuestionnaireController2 {
+public class AdminQuestionnaireController {
     @Autowired
     private TemplateQuestionnaireService service;
 
     @Autowired
-    private TemplateQuestionnaireDtoConverter2 dtoConverter;
+    private TemplateQuestionnaireDtoConverter dtoConverter;
 
 
     @Autowired
-    private TemplateQuestionnaireBasicDtoConverter2 basicDtoConverter2;
+    private TemplateQuestionnaireBasicDtoConverter basicDtoConverter;
 
     @Operation(summary = "Admin: list questionnaire template pageable.")
     @GetMapping("")
@@ -59,7 +59,7 @@ public class AdminQuestionnaireController2 {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "pageSize", defaultValue = "20") Integer pageSize) {
         Pageable<TemplateQuestionnaire> pageable = service.findTemplatePageable(prefix, keyword, businessScenario, page, pageSize);
-        return basicDtoConverter2.convertFrom(pageable);
+        return basicDtoConverter.convertFrom(pageable);
     }
 
     @Operation(summary = "Admin: get questionnaire table of content.")

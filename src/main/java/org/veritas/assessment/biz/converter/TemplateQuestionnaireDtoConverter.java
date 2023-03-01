@@ -17,24 +17,17 @@
 package org.veritas.assessment.biz.converter;
 
 import org.springframework.stereotype.Component;
-import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
 @Component
-public class TemplateQuestionnaireBasicDtoConverter2
-        implements Converter<TemplateQuestionnaireBasicDto, TemplateQuestionnaire> {
+public class TemplateQuestionnaireDtoConverter
+        implements Converter<TemplateQuestionnaireDto, TemplateQuestionnaire> {
     @Override
-    public TemplateQuestionnaireBasicDto convertFrom(TemplateQuestionnaire source) {
+    public TemplateQuestionnaireDto convertFrom(TemplateQuestionnaire source) {
         if (source == null) {
             return null;
         }
-        TemplateQuestionnaireBasicDto dto = new TemplateQuestionnaireBasicDto();
-        dto.setTemplateId(source.getId());
-        dto.setName(source.getName());
-        dto.setBusinessScenario(source.getBusinessScenario());
-        dto.setDescription(source.getDescription());
-        dto.setCreatedTime(source.getCreatedTime());
-        dto.setType(source.getType());
-        return dto;
+        return new TemplateQuestionnaireDto(source);
     }
 }

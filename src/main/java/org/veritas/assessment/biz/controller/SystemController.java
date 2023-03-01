@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
-import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter2;
+import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
 import org.veritas.assessment.biz.dto.BusinessScenarioDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -48,7 +48,7 @@ public class SystemController {
     private SystemService systemService;
 
     @Autowired
-    private TemplateQuestionnaireBasicDtoConverter2 questionnaireBasicDtoConverter;
+    private TemplateQuestionnaireBasicDtoConverter questionnaireBasicDtoConverter;
 
     @Autowired
     private SystemConfigService systemConfigService;

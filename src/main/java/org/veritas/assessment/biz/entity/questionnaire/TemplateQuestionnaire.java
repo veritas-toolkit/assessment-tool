@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apache.ibatis.type.JdbcType;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
@@ -33,7 +31,6 @@ public class TemplateQuestionnaire {
     private QuestionnaireTemplateType type;
 
     private String description;
-
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date createdTime;

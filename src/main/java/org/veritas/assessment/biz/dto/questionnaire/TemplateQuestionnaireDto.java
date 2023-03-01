@@ -17,6 +17,7 @@
 package org.veritas.assessment.biz.dto.questionnaire;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -25,6 +26,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class TemplateQuestionnaireDto {
     private Integer templateId;
 
