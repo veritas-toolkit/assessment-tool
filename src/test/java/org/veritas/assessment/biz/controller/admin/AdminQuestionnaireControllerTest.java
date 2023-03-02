@@ -28,12 +28,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.AssessmentStep;
+import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionAddDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionEditDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -108,7 +115,7 @@ class AdminQuestionnaireControllerTest {
         TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
         TemplateQuestion question = template.findMainBySerial("G1");
         log.info("question: {}", question);
-        TemplateQuestionDto dto = new TemplateQuestionDto();
+        TemplateQuestionEditDto dto = new TemplateQuestionEditDto();
         dto.setId(question.getId());
         String content = "new content: " + RandomStringUtils.randomAlphanumeric(20);
         dto.setContent(content);
@@ -124,6 +131,38 @@ class AdminQuestionnaireControllerTest {
         TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
         TemplateQuestion newQuestion = newQuestionnaire.findMainBySerial("G1");
         assertEquals(content, newQuestion.getContent());
+    }
 
+    @Test
+    void testMainQuestion_success() throws Exception {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
+        TemplateQuestion question = template.findMainBySerial("G1");
+        log.info("question: {}", question);
+        TemplateQuestionAddDto dto = new TemplateQuestionAddDto();
+        dto.setTemplateId(template.getId());
+        dto.setPrinciple(Principle.F);
+        dto.setStep(AssessmentStep.STEP_2);
+        dto.setSerialOfPrinciple(4);
+        String content = "new content: " + RandomStringUtils.randomAlphanumeric(20);
+        dto.setQuestion(content);
+        List<String> list = new ArrayList<>();
+        for (int i = 1; i < 4; ++i) {
+            list.add("Sub " + i);
+        }
+        dto.setSubQuestionList(list);
+
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/admin/questionnaire/{templateId}/question/new", template.getId())
+                                .with(user("admin").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
+        TemplateQuestion newQuestion = newQuestionnaire.findMainBySerial("F4");
+        assertEquals(content, newQuestion.getContent());
     }
 }

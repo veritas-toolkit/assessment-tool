@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
@@ -56,6 +58,7 @@ public class TemplateQuestionnaireService {
             throw new RuntimeException("load json failed", exception);
         }
         List<TemplateQuestionnaire> list = new ArrayList<>();
+        Date now = new Date();
 
         for (BusinessScenarioEnum businessScenarioEnum : BusinessScenarioEnum.values()) {
             List<TemplateQuestionnaire> exist = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
@@ -63,7 +66,10 @@ public class TemplateQuestionnaireService {
                 continue;
             }
             TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
-            templateQuestionnaire.setCreatorUserId(1);
+            templateQuestionnaire.setCreatedTime(now);
+            templateQuestionnaire.setCreatorUserId(1); // admin
+            templateQuestionnaire.setEditTime(now);
+            templateQuestionnaire.setEditUserId(1); // admin
             templateQuestionnaire.setBusinessScenario(businessScenarioEnum);
             templateQuestionnaire.setType(QuestionnaireTemplateType.SYSTEM);
             templateQuestionnaire.setName("Default Template for " + businessScenarioEnum.getName());
@@ -137,8 +143,12 @@ public class TemplateQuestionnaireService {
         newOne.setType(QuestionnaireTemplateType.USER_DEFINED);
         newOne.setName(name);
         newOne.setDescription(description);
-        newOne.setCreatedTime(new Date());
+        Date now = new Date();
+        newOne.setCreatedTime(now);
         newOne.setCreatorUserId(operator.getId());
+        newOne.setEditTime(now);
+        newOne.setEditUserId(operator.getId());
+
 
         List<TemplateQuestion> templateQuestionList = new ArrayList<>();
         for (TemplateQuestion templateQuestion : old.getMainQuestionList()) {
@@ -205,7 +215,7 @@ public class TemplateQuestionnaireService {
         question.setContent(content);
         question.setEditTime(new Date());
         question.setEditorUserId(operator.getId());
-        int result = templateQuestionnaireDao.updateQuestionContent(question);
+        int result = templateQuestionnaireDao.updateQuestionContent(questionnaire, question);
         if (result == 0) {
             throw new UpdateException("Update the question failed.");
         }
@@ -214,6 +224,99 @@ public class TemplateQuestionnaireService {
     }
 
     // delete question(main or sub)
+
+    @Transactional
+    public TemplateQuestionnaire deleteMainQuestion(User operator, Integer templateId, Integer questionId) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+        TemplateQuestion question = findQuestionForEdit(questionnaire, questionId);
+        questionnaire.deleteMainQuestion(questionId);
+        questionnaire.setEditTime(new Date());
+        questionnaire.setEditUserId(operator.getId());
+        templateQuestionnaireDao.deleteMainQuestion(questionnaire, question);
+        return templateQuestionnaireDao.findById(templateId);
+    }
+
+    @Transactional
+    public TemplateQuestion deleteSubQuestion(User operator, Integer templateId, Integer questionId, Integer subQuestionId) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+        int result = questionnaire.deleteSubQuestion(questionId, subQuestionId);
+        if (result == 0) {
+            log.warn("Not found the sub question. Return success.");
+            return questionnaire.findQuestion(questionId);
+        }
+        questionnaire.setEditTime(new Date());
+        questionnaire.setEditUserId(operator.getId());
+        templateQuestionnaireDao.deleteSubQuestion(questionnaire, questionId, subQuestionId);
+        TemplateQuestionnaire after = templateQuestionnaireDao.findById(templateId);
+        return after.findQuestion(questionId);
+    }
+
+    @Transactional
+    public TemplateQuestionnaire addMainQuestion(User operator,
+                                                 Integer templateId,
+                                                 Principle principle,
+                                                 AssessmentStep step,
+                                                 Integer serialOfPrinciple,
+                                                 List<String> questionContentList) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+
+        List<TemplateQuestion> list = new ArrayList<>(questionContentList.size());
+        int subSeq = 0;
+        Date now = new Date();
+        for (String content : questionContentList) {
+            TemplateQuestion question = new TemplateQuestion();
+            question.setTemplateId(templateId);
+            question.setSubSerial(subSeq);
+            ++subSeq;
+            question.setPrinciple(principle);
+            question.setStep(step);
+            question.setContent(content);
+            question.setEditable(true);
+            question.setEditTime(now);
+            question.setEditorUserId(operator.getId());
+            list.add(question);
+        }
+        TemplateQuestion main = list.get(0);
+        if (questionContentList.size() > 1) {
+            List<TemplateQuestion> subList = list.subList(1, list.size());
+            main.setSubList(subList);
+        }
+        int count = questionnaire.findMainQuestionListByPrinciple(principle).size();
+        if (serialOfPrinciple == null || serialOfPrinciple > count) {
+            serialOfPrinciple = count+1;
+        } else if (serialOfPrinciple <= 1) {
+            serialOfPrinciple = 1;
+        }
+        main.setSerialOfPrinciple(serialOfPrinciple);
+        questionnaire.addMainQuestion(main);
+        questionnaire.setEditTime(new Date());
+        questionnaire.setEditUserId(operator.getId());
+        templateQuestionnaireDao.addMainQuestion(questionnaire, main);
+        return templateQuestionnaireDao.findById(templateId);
+    }
+    private TemplateQuestionnaire findTemplateForEdit(Integer templateId) {
+        TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
+        if (questionnaire == null) {
+            throw new NotFoundException("Not found the questionnaire template.");
+        }
+        if (questionnaire.cannotBeEditOrDeleted()) {
+            throw new IllegalRequestException("Cannot edit this questionnaire template.");
+        }
+        return questionnaire;
+    }
+    private TemplateQuestion findQuestionForEdit(TemplateQuestionnaire questionnaire, Integer questionId) {
+        if (questionnaire.cannotBeEditOrDeleted()) {
+            throw new IllegalRequestException("Cannot edit this questionnaire template.");
+        }
+        TemplateQuestion question = questionnaire.findQuestion(questionId);
+        if (question == null) {
+            throw new NotFoundException("Not found the question.");
+        }
+        if (!question.isEditable()) {
+            throw new IllegalRequestException("Cannot edit this question.");
+        }
+        return question;
+    }
 
 
 

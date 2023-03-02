@@ -1,12 +1,14 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.Collections;
@@ -55,6 +57,21 @@ public interface TemplateQuestionnaireMapper extends BaseMapper<TemplateQuestion
         return Pageable.convert(page1);
     }
 
-    
+    default int updateBasicInfo(TemplateQuestionnaire templateQuestionnaire) {
+        LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
+        wrapper.set(TemplateQuestionnaire::getName, templateQuestionnaire.getName());
+        wrapper.set(TemplateQuestionnaire::getDescription, templateQuestionnaire.getDescription());
+        wrapper.set(TemplateQuestionnaire::getEditUserId, templateQuestionnaire.getEditUserId());
+        wrapper.set(TemplateQuestionnaire::getEditTime, TimestampHandler.toDbString(templateQuestionnaire.getEditTime()));
+        return this.update(null, wrapper);
+    }
 
+    default int updateEditInfo(TemplateQuestionnaire templateQuestionnaire) {
+        LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
+        wrapper.set(TemplateQuestionnaire::getEditUserId, templateQuestionnaire.getEditUserId());
+        wrapper.set(TemplateQuestionnaire::getEditTime, TimestampHandler.toDbString(templateQuestionnaire.getEditTime()));
+        return update(null, wrapper);
+    }
 }

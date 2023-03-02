@@ -30,9 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
-
-
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionAddDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
@@ -48,6 +47,8 @@ import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -60,7 +61,6 @@ public class AdminQuestionnaireController {
 
     @Autowired
     private TemplateQuestionnaireDtoConverter dtoConverter;
-
 
     @Autowired
     private TemplateQuestionnaireBasicDtoConverter basicDtoConverter;
@@ -115,6 +115,7 @@ public class AdminQuestionnaireController {
                 service.updateBasicInfo(operator, templateId, dto.getName(), dto.getDescription());
         return dtoConverter.convertFrom(questionnaire);
     }
+
     @Operation(summary = "Admin: edit a question (main or sub) with of questionnaire template.")
     @PostMapping("/{templateId}/question")
     public TemplateQuestionDto updateQuestion(User operator,
@@ -123,38 +124,47 @@ public class AdminQuestionnaireController {
         TemplateQuestion question = service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
         return new TemplateQuestionDto(question);
     }
-/*
-    // add main question
-    @Operation(summary = "Admin: add a question with subs into questionnaire template.")
-    @PutMapping("/{templateId}/question")
-    public TemplateQuestion addMainQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody QuestionDto dto) {
-        TemplateQuestion question = new TemplateQuestion();
-        question.copyFrom(dto, TemplateQuestion::new);
-        question.setTemplateId(templateId);
-        question.setSubSerial(0);
-        return service.addMainQuestion(templateId, question);
+
+    @Operation(summary = "Admin: delete a main question with of questionnaire template.")
+    @DeleteMapping("/{templateId}/question/{questionId}")
+    public TemplateQuestionnaireTocDto deleteMainQuestion(User operator,
+                                                          @PathVariable("templateId") Integer templateId,
+                                                          @PathVariable("questionId") Integer questionId) {
+        TemplateQuestionnaire templateQuestionnaire = service.deleteMainQuestion(operator, templateId, questionId);
+        return new TemplateQuestionnaireTocDto(templateQuestionnaire);
     }
 
-    @Operation(summary = "Admin: delete question(main/sub) from questionnaire template.")
-    @DeleteMapping("/{templateId}/question")
-    public TemplateQuestionnaireDto deleteQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestParam(name = "questionId", required = false) Integer questionId,
-            @RequestParam(name = "subQuestionId", required = false) Integer subQuestionId) {
-        if (subQuestionId != null) {
-            service.deleteSubQuestion(templateId, subQuestionId);
-        } else if (questionId != null) {
-            service.deleteMainQuestion(templateId, questionId);
-        } else {
-            throw new ErrorParamException(
-                    "Error param: At least one value exists for [questionId] and [subQuestionId]");
-        }
-        TemplateQuestionnaire questionnaire = service.findQuestionnaireById(templateId);
-        return dtoConverter.convertFrom(questionnaire);
+    @Operation(summary = "Admin: delete a sub question with of questionnaire template.")
+    @DeleteMapping("/{templateId}/question/{questionId}/sub/{subQuestionId}")
+    public TemplateQuestionDto deleteSubQuestion(User operator,
+                                                 @PathVariable("templateId") Integer templateId,
+                                                 @PathVariable("questionId") Integer questionId,
+                                                 @PathVariable("subQuestionId") Integer subQuestionId) {
+        TemplateQuestion templateQuestion = service.deleteSubQuestion(operator, templateId, questionId, subQuestionId);
+        return new TemplateQuestionDto(templateQuestion);
     }
 
+    @Operation(summary = "Admin: add a main question with of questionnaire template.")
+    @PostMapping("/{templateId}/question/new")
+    public TemplateQuestionnaireTocDto addMainQuestion(User operator,
+                                                       @PathVariable("templateId") Integer templateId,
+                                                       @Valid @RequestBody TemplateQuestionAddDto dto) {
+        List<String> allQuestionList = new ArrayList<>();
+        allQuestionList.add(dto.getQuestion());
+        allQuestionList.addAll(dto.getSubQuestionList());
+        TemplateQuestionnaire questionnaire = service.addMainQuestion(operator,
+                templateId,
+                dto.getPrinciple(),
+                dto.getStep(),
+                dto.getSerialOfPrinciple(), allQuestionList);
+        return new TemplateQuestionnaireTocDto(questionnaire);
+    }
 
-     */
+    @Operation(summary = "Admin: add a sub question with of questionnaire template.")
+    @PostMapping("/{templateId}/question/{questionId}/sub")
+    public TemplateQuestionDto addSubQuestion(User operator,
+                                              @PathVariable("templateId") Integer templateId,
+                                              @PathVariable("questionId") Integer questionId) {
+        return null;
+    }
 }

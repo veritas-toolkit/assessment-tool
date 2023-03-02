@@ -60,6 +60,20 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         }
     }
 
+    public List<TemplateQuestion> plainList() {
+        List<TemplateQuestion> list = new ArrayList<>(this.getSubList().size());
+        list.add(this);
+        list.addAll(this.getSubList());
+        return Collections.unmodifiableList(list);
+    }
+
+    public void setSerialOfPrinciple(int serialOfPrinciple) {
+        this.serialOfPrinciple = serialOfPrinciple;
+        if (this.isMain()) {
+            this.getSubList().forEach(s -> s.setSerialOfPrinciple(serialOfPrinciple));
+        }
+    }
+
     public void addSub(TemplateQuestion sub) {
         if (!this.contain(sub)) {
             throw new IllegalArgumentException();
@@ -89,7 +103,7 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         if (sub.isMain()) {
             return false;
         }
-        boolean sameTemplate = this.getTemplateId() == sub.getTemplateId();
+        boolean sameTemplate = Objects.equals(this.getTemplateId(), sub.getTemplateId());
         boolean samePrinciple = this.getPrinciple() == sub.getPrinciple();
         boolean sameStep = this.getStep() == sub.getStep();
         boolean sameSerial = this.getSerialOfPrinciple() == sub.getSerialOfPrinciple();

@@ -10,7 +10,7 @@ import org.veritas.assessment.common.handler.TimestampHandler;
 import java.util.List;
 import java.util.Objects;
 
-@Repository(value = "TemplateQuestionMapper2")
+@Repository
 public interface TemplateQuestionMapper extends BaseMapper<TemplateQuestion> {
 
     default List<TemplateQuestion> findByTemplateId(int templateId) {
@@ -46,4 +46,29 @@ public interface TemplateQuestionMapper extends BaseMapper<TemplateQuestion> {
         wrapper.set(TemplateQuestion::getEditorUserId, templateQuestion.getEditorUserId());
         return update(null, wrapper);
     }
+
+    default int updateStructureInfo(TemplateQuestion mainQuestion) {
+        int result = 0;
+        for (TemplateQuestion question : mainQuestion.plainList()) {
+            LambdaUpdateWrapper<TemplateQuestion> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(TemplateQuestion::getId, question.getId());
+            wrapper.set(TemplateQuestion::getSerialOfPrinciple, question.getSerialOfPrinciple());
+            wrapper.set(TemplateQuestion::getSubSerial, question.getSubSerial());
+            result += update(null, wrapper);
+        }
+        return result;
+
+
+    }
+    default int updateStructureInfo(List<TemplateQuestion> questionList) {
+        if (questionList == null || questionList.isEmpty()) {
+            return 0;
+        }
+        int result = 0;
+        for (TemplateQuestion question : questionList) {
+            result += updateStructureInfo(question);
+        }
+        return result;
+    }
+
 }

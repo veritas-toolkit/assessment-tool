@@ -1,7 +1,6 @@
 package org.veritas.assessment.biz.mapper.questionnaire;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,6 +9,7 @@ import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -27,12 +27,12 @@ public class TemplateQuestionnaireDao {
     }
 
     public void updateBasicInfo(TemplateQuestionnaire templateQuestionnaire) {
-        LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
-        wrapper.set(TemplateQuestionnaire::getName, templateQuestionnaire.getName());
-        wrapper.set(TemplateQuestionnaire::getDescription, templateQuestionnaire.getDescription());
-        questionnaireMapper.update(null, wrapper);
+        int result = questionnaireMapper.updateBasicInfo(templateQuestionnaire);
+        if (result == 0) {
+            log.warn("update template questionnaire[{}] failed.", templateQuestionnaire.getId());
+        }
     }
+
     public List<TemplateQuestionnaire> findAll() {
         List<TemplateQuestionnaire> list = questionnaireMapper.findAll();
         for (TemplateQuestionnaire questionnaire : list) {
@@ -73,11 +73,37 @@ public class TemplateQuestionnaireDao {
     }
 
     // update question
-    public int updateQuestionContent(TemplateQuestion question) {
+    public int updateQuestionContent(TemplateQuestionnaire questionnaire, TemplateQuestion question) {
+        questionnaireMapper.updateEditInfo(questionnaire);
         int result = questionMapper.updateContent(question);
         if (result == 0) {
             log.warn("update content failed, [{}]", question);
         }
+        return result;
+    }
+
+    public int addMainQuestion(TemplateQuestionnaire questionnaire, TemplateQuestion toAdd) {
+        questionnaireMapper.updateEditInfo(questionnaire);
+        int result = questionMapper.saveAll(Collections.singletonList(toAdd));
+        questionMapper.updateStructureInfo(questionnaire.findMainQuestionListByPrinciple(toAdd.getPrinciple()));
+        return result;
+    }
+
+    public int deleteMainQuestion(TemplateQuestionnaire templateQuestionnaire, TemplateQuestion toDelete) {
+        questionnaireMapper.updateEditInfo(templateQuestionnaire);
+        int result = questionMapper.deleteById(toDelete.getId());
+        for (TemplateQuestion sub : toDelete.getSubList()) {
+            result += questionMapper.deleteById(sub.getId());
+        }
+        questionMapper.updateStructureInfo(templateQuestionnaire.allQuestionList());
+        return result;
+    }
+
+    public int deleteSubQuestion(TemplateQuestionnaire templateQuestionnaire, Integer questionId, Integer subQuestionId) {
+        questionnaireMapper.updateEditInfo(templateQuestionnaire);
+        int result = questionMapper.deleteById(subQuestionId);
+        TemplateQuestion main = templateQuestionnaire.findQuestion(questionId);
+        questionMapper.updateStructureInfo(main.getSubList());
         return result;
     }
 

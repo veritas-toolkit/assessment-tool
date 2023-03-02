@@ -66,6 +66,8 @@ create table vat2_template_questionnaire (
     type number(1) not null,                -- 1-system, 2-user defined
     creator_user_id number not null,
     created_time varchar(100) not null,
+    edit_user_id integer not null,
+    edit_time varchar(100) not null,
     deleted number(1) not null default false
 );
 
