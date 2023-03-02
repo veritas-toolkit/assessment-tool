@@ -2,6 +2,7 @@ package org.veritas.assessment.biz.mapper.questionnaire;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
@@ -11,7 +12,8 @@ import org.veritas.assessment.common.metadata.Pageable;
 
 import java.util.List;
 
-@Repository(value = "TemplateQuestionnaireDao2")
+@Repository
+@Slf4j
 public class TemplateQuestionnaireDao {
     @Autowired
     private TemplateQuestionMapper questionMapper;
@@ -70,9 +72,14 @@ public class TemplateQuestionnaireDao {
         questionMapper.delete(wrapper);
     }
 
-    // update basic info
-
     // update question
+    public int updateQuestionContent(TemplateQuestion question) {
+        int result = questionMapper.updateContent(question);
+        if (result == 0) {
+            log.warn("update content failed, [{}]", question);
+        }
+        return result;
+    }
 
 
 }

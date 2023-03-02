@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.common.handler.TimestampHandler;
@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -79,8 +78,29 @@ public class TemplateQuestionnaire {
         });
     }
 
-    public boolean canBeEditOrDeleted() {
-        return this.type != QuestionnaireTemplateType.SYSTEM;
+    public boolean cannotBeEditOrDeleted() {
+        return this.type == QuestionnaireTemplateType.SYSTEM;
+    }
+
+    public TemplateQuestion findQuestion(Integer questionId) {
+        for (TemplateQuestion question : this.mainQuestionList) {
+            if (Objects.equals(question.getId(), questionId)) {
+                return question;
+            }
+            for (TemplateQuestion sub : question.getSubList()) {
+                if (Objects.equals(sub.getId(), questionId)) {
+                    return sub;
+                }
+            }
+        }
+        return null;
+    }
+
+    public TemplateQuestion findMainBySerial(String serial) {
+        return this.getMainQuestionList().stream()
+                .filter(e -> StringUtils.equals(e.serial(), serial))
+                .findFirst().orElse(null);
+
     }
 
 }

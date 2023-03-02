@@ -18,19 +18,29 @@ package org.veritas.assessment.biz.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,6 +56,8 @@ class AdminQuestionnaireControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private TemplateQuestionnaireService service;
+    @Autowired
+    private UserService userService;
 
     @Test
     void testList_success() throws Exception {
@@ -79,12 +91,39 @@ class AdminQuestionnaireControllerTest {
 
     @Test
     void testDelete_success() throws Exception {
-//        TemplateQuestionnaire template = service.create(1, "test", "test description");
-//
-//        MvcResult mvcResult = mockMvc.perform(delete("/api/admin/questionnaire/" + template.getTemplateId())
-//                        .with(user("admin").roles("ADMIN", "USER")))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andReturn();
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
+
+        MvcResult mvcResult = mockMvc.perform(delete("/api/admin/questionnaire/" + template.getId())
+                        .with(user("admin").roles("ADMIN", "USER")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        assertNull(service.findByTemplateId(template.getId()));
+    }
+
+    @Test
+    void testUpdateQuestion_success() throws Exception {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
+        TemplateQuestion question = template.findMainBySerial("G1");
+        log.info("question: {}", question);
+        TemplateQuestionDto dto = new TemplateQuestionDto();
+        dto.setId(question.getId());
+        String content = "new content: " + RandomStringUtils.randomAlphanumeric(20);
+        dto.setContent(content);
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/admin/questionnaire/{templateId}/question", template.getId())
+                                .with(user("admin").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
+        TemplateQuestion newQuestion = newQuestionnaire.findMainBySerial("G1");
+        assertEquals(content, newQuestion.getContent());
+
     }
 }

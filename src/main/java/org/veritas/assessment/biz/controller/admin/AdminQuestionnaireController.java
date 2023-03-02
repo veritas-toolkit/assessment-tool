@@ -33,14 +33,16 @@ import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConvert
 
 
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireDtoConverter;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireCreateDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
-import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
@@ -113,6 +115,14 @@ public class AdminQuestionnaireController {
                 service.updateBasicInfo(operator, templateId, dto.getName(), dto.getDescription());
         return dtoConverter.convertFrom(questionnaire);
     }
+    @Operation(summary = "Admin: edit a question (main or sub) with of questionnaire template.")
+    @PostMapping("/{templateId}/question")
+    public TemplateQuestionDto updateQuestion(User operator,
+                                              @PathVariable("templateId") Integer templateId,
+                                              @Valid @RequestBody TemplateQuestionEditDto dto) {
+        TemplateQuestion question = service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
+        return new TemplateQuestionDto(question);
+    }
 /*
     // add main question
     @Operation(summary = "Admin: add a question with subs into questionnaire template.")
@@ -145,22 +155,6 @@ public class AdminQuestionnaireController {
         return dtoConverter.convertFrom(questionnaire);
     }
 
-    @Operation(summary = "Admin: edit a question with of questionnaire template.")
-    @PostMapping("/{templateId}/question")
-    public TemplateQuestion updateQuestion(
-            @PathVariable("templateId") Integer templateId,
-            @RequestBody QuestionDto dto) {
-        TemplateQuestion question = new TemplateQuestion();
-        question.copyFrom(dto, TemplateQuestion::new);
-        question.setTemplateId(templateId);
 
-        int subSerial = 1;
-        for (TemplateQuestion subQuestion : question.getSubQuestions()) {
-            subQuestion.setTemplateId(templateId);
-            subQuestion.setSubSerial(subSerial);
-            ++subSerial;
-        }
-        return service.updateMainQuestionWithSub(templateId, question);
-    }
      */
 }

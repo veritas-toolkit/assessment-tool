@@ -18,6 +18,7 @@ import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaireJson
 import org.veritas.assessment.biz.mapper.questionnaire.TemplateQuestionnaireDao;
 import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.common.exception.UpdateException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
@@ -173,7 +174,7 @@ public class TemplateQuestionnaireService {
         if (templateQuestionnaire == null) {
             throw new NotFoundException("Not found the questionnaire template.");
         }
-        if (!templateQuestionnaire.canBeEditOrDeleted()) {
+        if (templateQuestionnaire.cannotBeEditOrDeleted()) {
             throw new IllegalRequestException("Cannot edit this questionnaire template.");
         }
         templateQuestionnaire.setName(name);
@@ -185,7 +186,35 @@ public class TemplateQuestionnaireService {
 
     // update question content
 
+    @Transactional
+    public TemplateQuestion updateQuestionContent(User operator, Integer templateId, Integer questionId, String content) {
+        TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
+        if (questionnaire == null) {
+            throw new NotFoundException("Not found the questionnaire template.");
+        }
+        if (questionnaire.cannotBeEditOrDeleted()) {
+            throw new IllegalRequestException("Cannot edit this questionnaire template.");
+        }
+        TemplateQuestion question = questionnaire.findQuestion(questionId);
+        if (question == null) {
+            throw new NotFoundException("Not found the question.");
+        }
+        if (!question.isEditable()) {
+            throw new IllegalRequestException("Cannot edit this question.");
+        }
+        question.setContent(content);
+        question.setEditTime(new Date());
+        question.setEditorUserId(operator.getId());
+        int result = templateQuestionnaireDao.updateQuestionContent(question);
+        if (result == 0) {
+            throw new UpdateException("Update the question failed.");
+        }
+        questionnaire = templateQuestionnaireDao.findById(templateId);
+        return questionnaire.findQuestion(questionId);
+    }
+
     // delete question(main or sub)
+
 
 
 }
