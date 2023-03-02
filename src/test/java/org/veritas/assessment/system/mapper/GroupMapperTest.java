@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Slf4j
 @Transactional
 @ActiveProfiles("test")
-@DirtiesContext(classMode= DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class GroupMapperTest {
     @Autowired
     private GroupMapper groupMapper;
@@ -66,10 +64,11 @@ class GroupMapperTest {
         for (Group group : groupList) {
 //            log.info("group: {}", group);
             Group g = groupMapper.findById(group.getId());
+            log.info("group added: {}", group);
+            log.info("group find:  {}", g);
             assertEquals(group.getId(), g.getId());
             assertEquals(group.getName(), g.getName());
             assertEquals(group.getDescription(), g.getDescription());
-            log.info("group: {}", groupMapper.findById(group.getId()));
         }
     }
 
