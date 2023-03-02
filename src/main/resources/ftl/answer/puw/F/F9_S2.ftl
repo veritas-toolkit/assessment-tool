@@ -43,9 +43,9 @@
         </table>
         </div>
 
-        <div>Fairness Threshold Input: <b>${fairness.fairnessInit.fairThresholdInput}%</b></div>
-        <div>Fairness Threshold: <b>${feature.fairThreshold}</b></div>
-        <div>Fairness Conclusion: <b>${feature.fairnessConclusion}</b></div>
+        <div>Fairness Threshold Input: ${fairness.fairnessInit.fairThresholdInput}%</div>
+        <div>Fairness Threshold: ${feature.fairThreshold}</div>
+        <div>Fairness Conclusion: ${feature.fairnessConclusion}</div>
 
     </div>
 </#list>
