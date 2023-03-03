@@ -41,6 +41,7 @@ import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionReorderDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionReorderDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
@@ -193,10 +194,19 @@ public class AdminQuestionnaireController {
     @PostMapping("/{templateId}/question/reorder")
     public TemplateQuestionnaireTocDto reorderMainQuestion(User operator,
                                                    @PathVariable("templateId") Integer templateId,
-                                                   @PathVariable("questionId") Integer questionId,
                                                    @Valid @RequestBody TemplateQuestionReorderDto dto) {
-
-        return null;
+        TemplateQuestionnaire questionnaire = service.reorderMainQuestion(operator, templateId, dto.getPrinciple(),
+                dto.getStep(), dto.getQuestionIdList());
+        return new TemplateQuestionnaireTocDto(questionnaire);
     }
 
+    @Operation(summary = "Admin: reorder the sub question of questionnaire template.")
+    @PostMapping("/{templateId}/question/{questionId}/sub/reorder")
+    public TemplateQuestionDto reorderSubQuestion(User operator,
+                                                  @PathVariable("templateId") Integer templateId,
+                                                  @PathVariable("questionId") Integer questionId,
+                                                  @Valid @RequestBody TemplateSubQuestionReorderDto dto) {
+        TemplateQuestionnaire q = service.reorderSubQuestion(operator, templateId, questionId, dto.getNewOrderList());
+        return new TemplateQuestionDto(q.findQuestion(questionId));
+    }
 }

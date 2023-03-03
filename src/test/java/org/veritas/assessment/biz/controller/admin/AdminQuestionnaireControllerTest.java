@@ -33,7 +33,10 @@ import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionAddDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionEditDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionReorderDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionReorderDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
@@ -41,10 +44,14 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -223,10 +230,84 @@ class AdminQuestionnaireControllerTest {
         assertEquals(content, newQuestion.getSubList().get(2).getContent());
     }
 
+    @Test
+    void testReorderMainQuestion_success() throws Exception {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire questionnaire = service.create(admin, 1, "test", "test description");
+        List<TemplateQuestion> oldList = questionnaire.findMainQuestionListByPrincipleStep(Principle.EA, AssessmentStep.STEP_0);
+        oldList.forEach(this::logMain);
+        List<TemplateQuestion> newList = new ArrayList<>(oldList);
+        Collections.reverse(newList);
+        List<Integer> newIdList = newList.stream().map(TemplateQuestion::getId).collect(Collectors.toList());
+        TemplateQuestionReorderDto dto = new TemplateQuestionReorderDto();
+        dto.setTemplateId(questionnaire.getId());
+        dto.setPrinciple(Principle.EA);
+        dto.setStep(AssessmentStep.STEP_0);
+        dto.setQuestionIdList(newIdList);
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/admin/questionnaire/{templateId}/question/reorder",
+                                questionnaire.getId())
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TemplateQuestionnaireTocDto result =
+                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), TemplateQuestionnaireTocDto.class);
+        log.info("result: {}", result);
+        String resultString = mvcResult.getResponse().getContentAsString();
+        int preIndex = Integer.MAX_VALUE;
+        for (TemplateQuestion question : oldList) {
+            int index = resultString.indexOf(question.getContent());
+            assertTrue(index < preIndex);
+            preIndex = index;
+        }
+    }
+
+    @Test
+    void testReorderSubQuestion_success() throws Exception {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire questionnaire = service.create(admin, 1, "test", "test description");
+        TemplateQuestion main = questionnaire.findMainBySerial("EA5");
+        assertNotNull(main);
+        log.info("---------------------");
+        logMain(main);
+
+        List<TemplateQuestion> subList = main.getSubList();
+        List<Integer> oldSubIdList = subList.stream().map(TemplateQuestion::getId).collect(Collectors.toList());
+        List<Integer> newSubIdList = new ArrayList<>(oldSubIdList);
+        Collections.reverse(newSubIdList);
+        TemplateSubQuestionReorderDto dto = new TemplateSubQuestionReorderDto();
+        dto.setTemplateId(questionnaire.getId());
+        dto.setMainQuestionId(main.getId());
+        dto.setNewOrderList(newSubIdList);
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/admin/questionnaire/{templateId}/question/{questionId}/sub/reorder",
+                                questionnaire.getId(), main.getId())
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TemplateQuestionDto result =
+                objectMapper.readValue(mvcResult.getResponse().getContentAsString(), TemplateQuestionDto.class);
+        log.info("result: {}", result);
+        String resultString = mvcResult.getResponse().getContentAsString();
+        int index = 0;
+        for (TemplateQuestionDto subDto : result.getSubList()) {
+            assertEquals(subDto.getId(), newSubIdList.get(index));
+            ++index;
+        }
+    }
+
     private void logMain(TemplateQuestion question) {
-        log.info("{} {} -  : {}", question.getStep(), question.serial(), question.getContent());
+        log.info("{} {} {} -  : {}", question.getId(), question.getStep(), question.serial(), question.getContent());
         for (TemplateQuestion sub : question.getSubList()) {
-            log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
+            log.info("{} {} {} - {}: {}", sub.getId(), sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
         }
     }
 }

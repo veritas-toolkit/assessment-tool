@@ -3,6 +3,7 @@ package org.veritas.assessment.biz.dto.questionnaire;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * Structure: principle -> step -> main question
  */
 @Data
+@NoArgsConstructor
 public class TemplateQuestionnaireTocDto {
 
     private int templateId;
@@ -36,8 +38,10 @@ public class TemplateQuestionnaireTocDto {
 
     private List<PrinciplePart> principlePartList;
 
-    @Setter(value = AccessLevel.PRIVATE)
-    @Getter(value = AccessLevel.PUBLIC)
+//    @Setter(value = AccessLevel.PRIVATE)
+//    @Getter(value = AccessLevel.PUBLIC)
+    @Data
+    @NoArgsConstructor
     public static class PrinciplePart {
         // Generic
         private String principle;
@@ -53,8 +57,8 @@ public class TemplateQuestionnaireTocDto {
         }
     }
 
-    @Setter(value = AccessLevel.PRIVATE)
-    @Getter(value = AccessLevel.PUBLIC)
+    @Data
+    @NoArgsConstructor
     public static class Step {
         // 2
         private int serial;
@@ -62,9 +66,6 @@ public class TemplateQuestionnaireTocDto {
         private String step;
 
         List<MainQuestion> mainQuestionList = new ArrayList<>();
-        private Step() {
-            // yes, do nothing.
-        }
 
         void addQuestion(MainQuestion question) {
             Objects.requireNonNull(question);
@@ -72,8 +73,8 @@ public class TemplateQuestionnaireTocDto {
         }
     }
 
-    @Setter(value = AccessLevel.PRIVATE)
-    @Getter(value = AccessLevel.PUBLIC)
+    @Data
+    @NoArgsConstructor
     public static class MainQuestion {
         private int id;
         // F5
@@ -117,7 +118,6 @@ public class TemplateQuestionnaireTocDto {
             partList.add(part);
         }
         this.principlePartList = Collections.unmodifiableList(partList);
-
     }
 
 }

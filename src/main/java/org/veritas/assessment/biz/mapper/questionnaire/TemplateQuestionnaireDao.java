@@ -122,5 +122,14 @@ public class TemplateQuestionnaireDao {
         return result > 0 ? 1: 0;
     }
 
+    public int updateStructure(TemplateQuestionnaire questionnaire, Integer mainQuestionId) {
+        int result = questionnaireMapper.updateEditInfo(questionnaire);
+        TemplateQuestion main = questionnaire.findQuestion(mainQuestionId);
+        if (main != null) {
+            result += questionMapper.updateStructureInfo(main);
+        }
+        return result > 0 ? 1: 0;
+    }
+
 
 }

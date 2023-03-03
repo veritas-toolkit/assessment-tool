@@ -174,7 +174,7 @@ class TemplateQuestionnaireServiceTest {
     }
 
     @Test
-    void testReorder_success() {
+    void testReorderMainQuestion_success() {
         User admin = userService.findUserById(1);
         TemplateQuestionnaire questionnaire = service.create(admin, 1, "test_template", "template for test");
 
@@ -194,6 +194,33 @@ class TemplateQuestionnaireServiceTest {
 
         for (int i = 0; i < afterList.size(); ++i) {
             assertEquals(newList.get(i).getId(), afterList.get(i).getId());
+        }
+    }
+
+    @Test
+    void testReorderSubQuestion_success() {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire questionnaire = service.create(admin, 1, "test_template", "template for test");
+
+        TemplateQuestion main = questionnaire.findMainBySerial("EA5");
+        assertNotNull(main);
+        log.info("---------------------");
+        logMain(main);
+
+        List<TemplateQuestion> subList = main.getSubList();
+        List<Integer> oldSubIdList = subList.stream().map(TemplateQuestion::getId).collect(Collectors.toList());
+        List<Integer> newSubIdList = new ArrayList<>(oldSubIdList);
+        Collections.reverse(newSubIdList);
+
+        TemplateQuestionnaire newOne = service.reorderSubQuestion(admin, questionnaire.getId(), main.getId(), newSubIdList);
+
+        TemplateQuestion after = newOne.findMainBySerial("EA5");
+        log.info("---------------------");
+        logMain(after);
+        log.info("---------------------");
+
+        for (int i = 0; i < after.getSubList().size(); ++i) {
+            assertEquals(after.getSubList().get(i).getId(), newSubIdList.get(i));
         }
     }
 

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +45,7 @@ public class TemplateQuestionnaireService {
 
     @Autowired
     FreemarkerTemplateService freemarkerTemplateService;
+
     @PostConstruct
     @Transactional
     public List<TemplateQuestionnaire> load() {
@@ -64,7 +64,7 @@ public class TemplateQuestionnaireService {
 
         for (BusinessScenarioEnum businessScenarioEnum : BusinessScenarioEnum.values()) {
             List<TemplateQuestionnaire> exist = templateQuestionnaireDao.findByBusinessScenario(businessScenarioEnum);
-            if ( exist != null && ! exist.isEmpty()) {
+            if (exist != null && !exist.isEmpty()) {
                 continue;
             }
             TemplateQuestionnaire templateQuestionnaire = questionnaireJson.toTemplateQuestionnaire();
@@ -101,6 +101,7 @@ public class TemplateQuestionnaireService {
      * The keyword will search in template's name and description.
      * <br/>
      * Both <code>keyword</code> and <code>businessScenario</code> can be null.
+     *
      * @param keyword
      * @param businessScenario
      * @return
@@ -281,7 +282,7 @@ public class TemplateQuestionnaireService {
         }
         int count = questionnaire.findMainQuestionListByPrinciple(principle).size();
         if (serialOfPrinciple == null || serialOfPrinciple > count) {
-            serialOfPrinciple = count+1;
+            serialOfPrinciple = count + 1;
         } else if (serialOfPrinciple <= 1) {
             serialOfPrinciple = 1;
         }
@@ -321,12 +322,24 @@ public class TemplateQuestionnaireService {
     @Transactional
     public TemplateQuestionnaire reorderMainQuestion(User operator, Integer templateId, Principle principle,
                                                      AssessmentStep step, List<Integer> newOrderList) {
-        TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
         questionnaire.reorderMainQuestion(principle, step, newOrderList);
         questionnaire.setEditUserId(operator.getId());
         questionnaire.setEditTime(new Date());
         templateQuestionnaireDao.updateStructure(questionnaire);
         return questionnaire;
+    }
+
+    @Transactional
+    public TemplateQuestionnaire reorderSubQuestion(User operator, Integer templateId, Integer mainQuestionId,
+                                                    List<Integer> newOrderList) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+        TemplateQuestion main = findQuestionForEdit(questionnaire, mainQuestionId);
+        main.reorderSub(newOrderList);
+        questionnaire.setEditUserId(operator.getId());
+        questionnaire.setEditTime(new Date());
+        templateQuestionnaireDao.updateStructure(questionnaire, mainQuestionId);
+        return templateQuestionnaireDao.findById(templateId);
     }
 
 
@@ -340,6 +353,7 @@ public class TemplateQuestionnaireService {
         }
         return questionnaire;
     }
+
     private TemplateQuestion findQuestionForEdit(TemplateQuestionnaire questionnaire, Integer questionId) {
         if (questionnaire.cannotBeEditOrDeleted()) {
             throw new IllegalRequestException("Cannot edit this questionnaire template.");
@@ -353,7 +367,6 @@ public class TemplateQuestionnaireService {
         }
         return question;
     }
-
 
 
 }

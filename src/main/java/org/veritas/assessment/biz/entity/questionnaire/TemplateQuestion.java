@@ -11,6 +11,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.ArrayList;
@@ -150,6 +151,33 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
             question.setSubSerial(seq);
             ++seq;
         }
+    }
+
+    public void reorderSub(List<Integer> newOrderList) {
+        if (isSub()) {
+            throw new IllegalStateException();
+        }
+        if (newOrderList == null || newOrderList.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        List<TemplateQuestion> newOrderSubList = new ArrayList<>();
+        for (Integer id : newOrderList) {
+            for (TemplateQuestion sub : this.getSubList()) {
+                if (Objects.equals(sub.getId(), id)) {
+                    newOrderSubList.add(sub);
+                    break;
+                }
+            }
+        }
+        if (this.getSubList().size() != newOrderSubList.size()) {
+            throw new IllegalRequestException("");
+        }
+        int subSeq = 1;
+        for (TemplateQuestion sub : newOrderSubList) {
+            sub.setSubSerial(subSeq);
+            ++subSeq;
+        }
+        this.setSubList(Collections.unmodifiableList(newOrderSubList));
     }
 
     @Override

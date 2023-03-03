@@ -34,5 +34,5 @@ public class TemplateQuestionReorderDto {
     @NotNull(message = "The step cannot be null.")
     private AssessmentStep step;
 
-    private List<Long> questionIdList;
+    private List<Integer> questionIdList;
 }
