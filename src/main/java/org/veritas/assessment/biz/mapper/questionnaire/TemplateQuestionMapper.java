@@ -28,9 +28,14 @@ public interface TemplateQuestionMapper extends BaseMapper<TemplateQuestion> {
             return 0;
         }
         int result = 0;
-        for (TemplateQuestion templateQuestion : templateQuestionList) {
-            result += this.insert(templateQuestion);
-            for (TemplateQuestion sub : templateQuestion.getSubList()) {
+        for (TemplateQuestion main : templateQuestionList) {
+            result += this.insert(main);
+            main.setMainQuestionId(main.getId());
+            LambdaUpdateWrapper<TemplateQuestion> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.eq(TemplateQuestion::getId, main.getId());
+            wrapper.set(TemplateQuestion::getMainQuestionId, main.getMainQuestionId());
+            this.update(null, wrapper);
+            for (TemplateQuestion sub : main.getSubList()) {
                 result += this.insert(sub);
             }
         }

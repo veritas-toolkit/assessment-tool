@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
@@ -126,7 +127,7 @@ public class TemplateQuestionnaireService {
     }
 
     // find by template id
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.SUPPORTS)
     public TemplateQuestionnaire findByTemplateId(int templateId) {
         return templateQuestionnaireDao.findById(templateId);
     }
@@ -149,15 +150,11 @@ public class TemplateQuestionnaireService {
         newOne.setEditTime(now);
         newOne.setEditUserId(operator.getId());
 
-
         List<TemplateQuestion> templateQuestionList = new ArrayList<>();
         for (TemplateQuestion templateQuestion : old.getMainQuestionList()) {
             templateQuestionList.add(templateQuestion.create());
         }
         newOne.setMainQuestionList(templateQuestionList);
-
-
-
         templateQuestionnaireDao.save(newOne);
         return newOne;
     }
@@ -294,6 +291,33 @@ public class TemplateQuestionnaireService {
         templateQuestionnaireDao.addMainQuestion(questionnaire, main);
         return templateQuestionnaireDao.findById(templateId);
     }
+
+    @Transactional
+    public void addSubQuestion(User operator, Integer templateId, Integer mainQuestionId, Integer subSerial,
+                               String subQuestionContent) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+        TemplateQuestion main = questionnaire.findQuestion(mainQuestionId);
+
+        Date now = new Date();
+        TemplateQuestion sub = new TemplateQuestion();
+        sub.setTemplateId(templateId);
+        sub.setMainQuestionId(mainQuestionId);
+        sub.setPrinciple(main.getPrinciple());
+        sub.setStep(main.getStep());
+        sub.setSerialOfPrinciple(main.getSerialOfPrinciple());
+        sub.setEditTime(now);
+        sub.setEditorUserId(operator.getId());
+        sub.setEditable(true);
+        sub.setSubSerial(subSerial);
+        sub.setContent(subQuestionContent);
+        main.addNewSub(sub);
+
+        questionnaire.setEditTime(now);
+        questionnaire.setEditUserId(operator.getId());
+        templateQuestionnaireDao.addSubQuestion(questionnaire, main, sub);
+    }
+
+
     private TemplateQuestionnaire findTemplateForEdit(Integer templateId) {
         TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
         if (questionnaire == null) {

@@ -33,6 +33,7 @@ import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionAddDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionEditDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
@@ -138,7 +139,8 @@ class AdminQuestionnaireControllerTest {
         User admin = userService.findUserById(1);
         TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
         TemplateQuestion question = template.findMainBySerial("G1");
-        log.info("question: {}", question);
+        log.info("before: -------------");
+        logMain(question);
         TemplateQuestionAddDto dto = new TemplateQuestionAddDto();
         dto.setTemplateId(template.getId());
         dto.setPrinciple(Principle.F);
@@ -163,6 +165,68 @@ class AdminQuestionnaireControllerTest {
                 .andReturn();
         TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
         TemplateQuestion newQuestion = newQuestionnaire.findMainBySerial("F4");
+        log.info("-----------");
+        logMain(newQuestion);
         assertEquals(content, newQuestion.getContent());
+    }
+
+    @Test
+    void testSubQuestion_success() throws Exception {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire template = service.create(admin, 1, "test", "test description");
+        int count = 0;
+        for (TemplateQuestion question : template.getMainQuestionList()) {
+            count += 1;
+            count += question.getSubList().size();
+        }
+        log.info("question count: {}", count);
+
+        TemplateQuestion question = template.findMainBySerial("T2");
+        logMain(question);
+        log.info("question: {}", question);
+        TemplateSubQuestionAddDto dto = new TemplateSubQuestionAddDto();
+        dto.setTemplateId(template.getId());
+        dto.setMainQuestionId(question.getId());
+        dto.setSubSerial(4);
+        String content = "new content: " + RandomStringUtils.randomAlphanumeric(20);
+        dto.setQuestion(content);
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/admin/questionnaire/{templateId}/question/{questionId}/sub/new",
+                                template.getId(), question.getId())
+                                .with(user("admin").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TemplateQuestionDto result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), TemplateQuestionDto.class);
+        log.info("result: {}", result);
+
+        TemplateQuestionDto subDto = null;
+        if (result.getSubList().size() >= 4) {
+            subDto = result.getSubList().get(4 - 1);
+        } else {
+            subDto = result.getSubList().get(result.getSubList().size() - 1);
+        }
+        assertEquals(content, subDto.getContent());
+        TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
+        int count2 = 0;
+        for (TemplateQuestion main : newQuestionnaire.getMainQuestionList()) {
+            count2 += 1;
+            count2 += main.getSubList().size();
+        }
+        log.info("question count: {}", count2);
+        TemplateQuestion newQuestion = newQuestionnaire.findMainBySerial("T2");
+        log.info("---------------------");
+        logMain(newQuestion);
+        assertEquals(content, newQuestion.getSubList().get(2).getContent());
+    }
+
+    private void logMain(TemplateQuestion question) {
+        log.info("{} {} -  : {}", question.getStep(), question.serial(), question.getContent());
+        for (TemplateQuestion sub : question.getSubList()) {
+            log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
+        }
     }
 }

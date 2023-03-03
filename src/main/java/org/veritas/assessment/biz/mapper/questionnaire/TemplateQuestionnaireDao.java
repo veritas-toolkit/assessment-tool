@@ -52,13 +52,13 @@ public class TemplateQuestionnaireDao {
     }
 
     public TemplateQuestionnaire findById(int templateId) {
-        TemplateQuestionnaire q = questionnaireMapper.selectById(templateId);
-        if (q == null) {
+        TemplateQuestionnaire questionnaire = questionnaireMapper.selectById(templateId);
+        if (questionnaire == null) {
             return null;
         }
-        List<TemplateQuestion> questionList = questionMapper.findByTemplateId(q.getId());
-        q.addAllQuestionList(questionList);
-        return q;
+        List<TemplateQuestion> questionList = questionMapper.findByTemplateId(questionnaire.getId());
+        questionnaire.addAllQuestionList(questionList);
+        return questionnaire;
     }
 
     public List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
@@ -86,6 +86,15 @@ public class TemplateQuestionnaireDao {
         questionnaireMapper.updateEditInfo(questionnaire);
         int result = questionMapper.saveAll(Collections.singletonList(toAdd));
         questionMapper.updateStructureInfo(questionnaire.findMainQuestionListByPrinciple(toAdd.getPrinciple()));
+        return result;
+    }
+
+    public int addSubQuestion(TemplateQuestionnaire questionnaire,
+                              TemplateQuestion mainQuestion,
+                              TemplateQuestion toAddSub) {
+        questionnaireMapper.updateEditInfo(questionnaire);
+        int result = questionMapper.insert(toAddSub);
+        questionMapper.updateStructureInfo(mainQuestion);
         return result;
     }
 

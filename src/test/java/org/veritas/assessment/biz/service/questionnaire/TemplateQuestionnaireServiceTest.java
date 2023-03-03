@@ -12,7 +12,6 @@ import org.veritas.assessment.TestUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.Principle;
-import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionAddDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.exception.IllegalRequestException;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -149,8 +147,34 @@ class TemplateQuestionnaireServiceTest {
         for (TemplateQuestion question : after.findMainQuestionListByPrinciple(Principle.F)) {
             log.info("{} {} -  : {}", question.getStep(), question.serial(), question.getContent());
             for (TemplateQuestion sub : question.getSubList()) {
-            log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
+                log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
             }
+        }
+    }
+
+    @Test
+    void testAddSubQuestion_success() {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire questionnaire = service.create(admin, 1, "test_template", "template for test");
+
+        TemplateQuestion main = questionnaire.findMainBySerial("G5");
+        logMain(main);
+        String content = "Sub 2";
+        service.addSubQuestion(admin, questionnaire.getId(), main.getId(), 2, content);
+        TemplateQuestion afterMain = service.findByTemplateId(questionnaire.getId()).findQuestion(main.getId());
+        log.info("-----------------");
+        logMain(afterMain);
+        TemplateQuestion afterSub = afterMain.getSubList().get(1);
+        assertEquals(2, afterSub.getSubSerial());
+        assertEquals(content, afterSub.getContent());
+        assertEquals(main.getId(), afterSub.getMainQuestionId());
+        assertEquals(main.getSubList().size(), afterMain.getSubList().size() - 1);
+    }
+
+    private void logMain(TemplateQuestion question) {
+        log.info("{} {} -  : {}", question.getStep(), question.serial(), question.getContent());
+        for (TemplateQuestion sub : question.getSubList()) {
+            log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
         }
     }
 }

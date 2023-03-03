@@ -39,10 +39,12 @@ import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireCreateD
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.IllegalRequestException;
+import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
@@ -124,7 +126,21 @@ public class AdminQuestionnaireController {
         TemplateQuestion question = service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
         return new TemplateQuestionDto(question);
     }
-
+    @Operation(summary = "Admin: fetch a main question with of questionnaire template.")
+    @GetMapping("/{templateId}/question/{questionId}")
+    public TemplateQuestionDto fetchMainQuestion(User operator,
+                                                         @PathVariable("templateId") Integer templateId,
+                                                         @PathVariable("questionId") Integer questionId) {
+        TemplateQuestionnaire questionnaire = service.findByTemplateId(templateId);
+        if (questionnaire == null) {
+            throw new NotFoundException("Not found the questionnaire template.");
+        }
+        TemplateQuestion question = questionnaire.findQuestion(questionId);
+        if (question == null) {
+            throw new NotFoundException("Not found the question template.");
+        }
+        return new TemplateQuestionDto(question);
+    }
     @Operation(summary = "Admin: delete a main question with of questionnaire template.")
     @DeleteMapping("/{templateId}/question/{questionId}")
     public TemplateQuestionnaireTocDto deleteMainQuestion(User operator,
@@ -161,10 +177,14 @@ public class AdminQuestionnaireController {
     }
 
     @Operation(summary = "Admin: add a sub question with of questionnaire template.")
-    @PostMapping("/{templateId}/question/{questionId}/sub")
+    @PostMapping("/{templateId}/question/{questionId}/sub/new")
     public TemplateQuestionDto addSubQuestion(User operator,
                                               @PathVariable("templateId") Integer templateId,
-                                              @PathVariable("questionId") Integer questionId) {
-        return null;
+                                              @PathVariable("questionId") Integer questionId,
+                                              @Valid @RequestBody TemplateSubQuestionAddDto dto) {
+        service.addSubQuestion(operator, templateId, questionId, dto.getSubSerial(), dto.getQuestion());
+        TemplateQuestionnaire questionnaire = service.findByTemplateId(templateId);
+        TemplateQuestion question = questionnaire.findQuestion(questionId);
+        return new TemplateQuestionDto(question);
     }
 }

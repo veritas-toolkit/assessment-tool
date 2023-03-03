@@ -28,6 +28,8 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
     private Integer id;
 
     private Integer templateId;
+
+    private Integer mainQuestionId;
     private Principle principle;
 
     private AssessmentStep step;
@@ -74,9 +76,19 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         }
     }
 
+    public void setMainQuestionId(Integer mainQuestionId) {
+        this.mainQuestionId = mainQuestionId;
+        if (this.isMain()) {
+            this.getSubList().forEach(s -> s.mainQuestionId = mainQuestionId);
+        }
+    }
+
     public void addSub(TemplateQuestion sub) {
         if (!this.contain(sub)) {
             throw new IllegalArgumentException();
+        }
+        if (this.getSubList().contains(sub)) {
+            return;
         }
         List<TemplateQuestion> temp = new ArrayList<>(subList);
         temp.add(sub);
@@ -95,6 +107,7 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
     public String serial() {
         return this.principle.getShortName() + this.serialOfPrinciple;
     }
+
     public boolean contain(TemplateQuestion sub) {
         Objects.requireNonNull(sub);
         if (!this.isMain()) {
@@ -117,6 +130,25 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         } else {
             return String.format("%s/%s_S%d.ftl",
                     this.principle.getShortName(), this.serial(), this.subSerial);
+        }
+    }
+
+    public void addNewSub(TemplateQuestion sub) {
+        if (!this.contain(sub)) {
+            throw new IllegalArgumentException();
+        }
+        List<TemplateQuestion> temp = new ArrayList<>(subList);
+        temp.forEach(s -> {
+            if (s.getSubSerial() >= sub.getSubSerial()) {
+                s.setSubSerial(s.getSubSerial() + 1);
+            }
+        });
+        temp.add(sub);
+        temp = temp.stream().sorted().collect(Collectors.toList());
+        int seq = 1;
+        for (TemplateQuestion question : temp) {
+            question.setSubSerial(seq);
+            ++seq;
         }
     }
 
@@ -143,14 +175,17 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
             return Collections.emptyList();
         }
         List<TemplateQuestion> mainList = new ArrayList<>();
+        List<TemplateQuestion> allSubList = new ArrayList<>();
         for (TemplateQuestion q : templateQuestionList) {
             if (q.isMain()) {
                 mainList.add(q);
+            } else {
+                allSubList.add(q);
             }
         }
         mainList = mainList.stream().sorted().collect(Collectors.toList());
-        for (TemplateQuestion main : mainList) {
-            for (TemplateQuestion sub : templateQuestionList) {
+        for (TemplateQuestion sub : allSubList) {
+            for (TemplateQuestion main : mainList) {
                 if (sub.isSub() && main.contain(sub)) {
                     main.addSub(sub);
                 }

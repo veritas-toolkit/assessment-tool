@@ -101,7 +101,8 @@ public class TemplateQuestionnaireJson {
                 }
             }
         }
-        templateQuestionnaire.setMainQuestionList(templateQuestionList);
+//        templateQuestionnaire.setMainQuestionList(templateQuestionList);
+        templateQuestionnaire.addAllQuestionList(templateQuestionList);
         return templateQuestionnaire;
     }
 

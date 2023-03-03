@@ -74,6 +74,7 @@ create table vat2_template_questionnaire (
 create table vat2_template_question (
     id integer primary key autoincrement,
     template_id integer not null,
+    main_question_id integer,
     principle varchar(10) not null,
     step integer not null,
     serial_of_principle integer not null,
