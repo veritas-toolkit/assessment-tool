@@ -43,5 +43,5 @@ The following table is an example. You can refer to the table and edit the conte
         </tr>
 
 
-    </table>
+</table>
 </div>

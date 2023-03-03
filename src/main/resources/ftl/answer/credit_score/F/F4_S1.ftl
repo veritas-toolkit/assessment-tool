@@ -12,7 +12,6 @@
 
 The pie chart for target label distribution is shown.
 
-
 <#if graphContainer.classDistributionPieChart??>
 <div class="image_box">
     <div class="image_title">Class Distribution</div>

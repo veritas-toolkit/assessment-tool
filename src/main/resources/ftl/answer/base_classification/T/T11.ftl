@@ -8,16 +8,26 @@
 
 </div>
 
-<#--补充permutation importance图-->
+<#if graphContainer.permutationImportancePlot??>
+    <div class="image_box">
+        <img id="permutationImportancePlot" src="${graphContainer.permutationImportancePlot}" class="permutationImportancePlot" alt="Permutation Importance Plot" />
+    </div>
+</#if>
 
 <h4>Partial Dependence Plot</h4>
 <div>
   Partial dependence plot shows how the predicted outcome changes with the selected feature.
 </div>
-
-<#--补充PDP图-->
-
-
+<#list graphContainer.getModelIdList() as modelId>
+        <#list graphContainer.getPartialDependenceFeatureList(modelId) as feature>
+            <div class="image_box partial_dependence_plot_box">
+                <div class="image_title">PDP for ${feature}</div>
+                <img id="PartialDependence_${modelId}_${feature}" class="partial_dependence_plot"
+                     src="${graphContainer.getPartialDependencePlot(modelId, feature)}"
+                     alt="partial dependence plot"/>
+            </div>
+        </#list>
+</#list>
 
 <h4>Global Interpretability Based on SHAP</h4>
 
@@ -30,6 +40,12 @@
 </div>
 
 <#--补充summary plot图-->
+<#list graphContainer.getModelIdList() as modelId>
+    <div class="image_box">
+        <div class="image_title"> Summary Plot </div>
+        <img id="summaryPlot_${modelId}" src="${graphContainer.getSummaryPlot(modelId)}" class="summary_plot" alt="summary plot" />
+    </div>
+</#list>
 
 <h4>Local Interpretability Based on SHAP</h4>
 
@@ -40,5 +56,11 @@
 </div>
 
 <#--补充Water Fall图-->
+<#list graphContainer.waterfallPlotList() as waterfallPlot>
+    <div class="image_box">
+<#--        <div class="image_title"> Summary Plot </div>-->
+        <img id="waterfall" src="${waterfallPlot}" class="waterfall" alt="waterfall plot" />
+    </div>
+</#list>
 
 

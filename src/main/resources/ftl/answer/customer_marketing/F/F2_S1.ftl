@@ -6,29 +6,32 @@ The following confusion matrix applies to binary classification.
 
 
 <div class="table_box">
-<div>
-<big>
-Fairness metrics for <b>Confusion Matrix</b>
-</big>
-</div>
-<table>
-    <thead>
-    <tr>
-        <td> </td>
-        <td>Positive(Actual)</td>
-        <td>Negative(Actual)</td>
-    </tr>
-    <tr>
-        <td>Positive(Predicted)</td>
-        <td> </td>
-    </tr>
-    <tr>
-        <td>Negative(Predicted)</td>
-        <td> </td>
-    </tr>
-    </thead>
-
-</table>
+    <div>
+        <big>
+            Fairness metrics for <b>Confusion Matrix</b>
+        </big>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <td> </td>
+            <td>Positive(Actual)</td>
+            <td>Negative(Actual)</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Positive(Predicted)</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Negative(Predicted)</td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 There are four decisions:

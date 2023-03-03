@@ -53,6 +53,6 @@
 
 
 <#if fairness.individualFairness?? && fairness.individualFairness.consistencyScore??>
-<h3>Individual Fairness</h3>
-For individual fairness, the consistency score is ${fairness.individualFairness.consistencyScore}.
+    <h3>Individual Fairness</h3>
+    For individual fairness, the consistency score is ${fairness.individualFairness.consistencyScore}.
 </#if>

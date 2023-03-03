@@ -8,6 +8,7 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
 </div>
 
 <#list fairness.featureMap as feature_name, feature>
+<#if feature.featureImportance??>
     <div>
         Feature: <b>${feature_name}</b>
         <div class="table_box">
@@ -60,5 +61,5 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
          </#if>
     </div>
     <#-- todo 增加空隙 -->
-
+</#if>
 </#list>
