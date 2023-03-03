@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -315,6 +316,17 @@ public class TemplateQuestionnaireService {
         questionnaire.setEditTime(now);
         questionnaire.setEditUserId(operator.getId());
         templateQuestionnaireDao.addSubQuestion(questionnaire, main, sub);
+    }
+
+    @Transactional
+    public TemplateQuestionnaire reorderMainQuestion(User operator, Integer templateId, Principle principle,
+                                                     AssessmentStep step, List<Integer> newOrderList) {
+        TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
+        questionnaire.reorderMainQuestion(principle, step, newOrderList);
+        questionnaire.setEditUserId(operator.getId());
+        questionnaire.setEditTime(new Date());
+        templateQuestionnaireDao.updateStructure(questionnaire);
+        return questionnaire;
     }
 
 

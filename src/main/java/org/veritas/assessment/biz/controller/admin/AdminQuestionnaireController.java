@@ -38,6 +38,7 @@ import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDt
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireCreateDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionReorderDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
@@ -176,7 +177,7 @@ public class AdminQuestionnaireController {
         return new TemplateQuestionnaireTocDto(questionnaire);
     }
 
-    @Operation(summary = "Admin: add a sub question with of questionnaire template.")
+    @Operation(summary = "Admin: add a sub question into questionnaire template.")
     @PostMapping("/{templateId}/question/{questionId}/sub/new")
     public TemplateQuestionDto addSubQuestion(User operator,
                                               @PathVariable("templateId") Integer templateId,
@@ -187,4 +188,15 @@ public class AdminQuestionnaireController {
         TemplateQuestion question = questionnaire.findQuestion(questionId);
         return new TemplateQuestionDto(question);
     }
+
+    @Operation(summary = "Admin: reorder the question of questionnaire template.")
+    @PostMapping("/{templateId}/question/reorder")
+    public TemplateQuestionnaireTocDto reorderMainQuestion(User operator,
+                                                   @PathVariable("templateId") Integer templateId,
+                                                   @PathVariable("questionId") Integer questionId,
+                                                   @Valid @RequestBody TemplateQuestionReorderDto dto) {
+
+        return null;
+    }
+
 }

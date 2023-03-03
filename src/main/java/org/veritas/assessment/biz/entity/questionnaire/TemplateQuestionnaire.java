@@ -9,9 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
+import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireDiffTocDto;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
 import java.util.ArrayList;
@@ -120,6 +123,13 @@ public class TemplateQuestionnaire {
                 .filter(q -> q.getPrinciple() == principle)
                 .collect(Collectors.toList());
     }
+    public List<TemplateQuestion> findMainQuestionListByPrincipleStep(Principle principle, AssessmentStep step) {
+        Objects.requireNonNull(principle);
+        Objects.requireNonNull(step);
+        return this.getMainQuestionList().stream()
+                .filter(q -> q.getPrinciple() == principle && q.getStep() == step)
+                .collect(Collectors.toList());
+    }
 
     public TemplateQuestion findMainBySerial(String serial) {
         return this.getMainQuestionList().stream()
@@ -152,6 +162,31 @@ public class TemplateQuestionnaire {
         }
         main.setSubList(newSubList);
         return 1;
+    }
+
+    public void reorderMainQuestion(Principle principle, AssessmentStep step, List<Integer> newOrderList) {
+        List<TemplateQuestion> oldList = this.findMainQuestionListByPrincipleStep(principle, step);
+        if (oldList == null || oldList.isEmpty()) {
+            return;
+        }
+        List<TemplateQuestion> newList = new ArrayList<>(oldList.size());
+        for (Integer id : newOrderList) {
+            for (TemplateQuestion question : oldList) {
+                if (Objects.equals(question.getId(), id)) {
+                    newList.add(question);
+                    break;
+                }
+            }
+        }
+        if (oldList.size() != newList.size()) {
+            throw new IllegalRequestException("The questionnaire has been changed.");
+        }
+        int sop = oldList.get(0).getSerialOfPrinciple();
+        for (TemplateQuestion question : newList) {
+            question.setSerialOfPrinciple(sop);
+            ++sop;
+        }
+        this.mainQuestionList = fixStructure(mainQuestionList);
     }
 
 

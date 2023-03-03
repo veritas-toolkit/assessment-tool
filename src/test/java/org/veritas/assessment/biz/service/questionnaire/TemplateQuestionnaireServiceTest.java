@@ -19,7 +19,9 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -171,10 +173,34 @@ class TemplateQuestionnaireServiceTest {
         assertEquals(main.getSubList().size(), afterMain.getSubList().size() - 1);
     }
 
+    @Test
+    void testReorder_success() {
+        User admin = userService.findUserById(1);
+        TemplateQuestionnaire questionnaire = service.create(admin, 1, "test_template", "template for test");
+
+        List<TemplateQuestion> oldList = questionnaire.findMainQuestionListByPrincipleStep(Principle.F, AssessmentStep.STEP_2);
+        oldList.forEach(this::logMain);
+        List<TemplateQuestion> newList = new ArrayList<>(oldList);
+        Collections.reverse(newList);
+        List<Integer> newIdList = newList.stream().map(TemplateQuestion::getId).collect(Collectors.toList());
+
+        TemplateQuestionnaire newOne = service.reorderMainQuestion(admin, questionnaire.getId(), Principle.F,
+                AssessmentStep.STEP_2, newIdList);
+
+        List<TemplateQuestion> afterList = newOne.findMainQuestionListByPrincipleStep(Principle.F, AssessmentStep.STEP_2);
+        log.info("---------------------");
+        afterList.forEach(this::logMain);
+        log.info("---------------------");
+
+        for (int i = 0; i < afterList.size(); ++i) {
+            assertEquals(newList.get(i).getId(), afterList.get(i).getId());
+        }
+    }
+
     private void logMain(TemplateQuestion question) {
-        log.info("{} {} -  : {}", question.getStep(), question.serial(), question.getContent());
+        log.info("{} {} {} -  : {}", question.getId(), question.getStep(), question.serial(), question.getContent());
         for (TemplateQuestion sub : question.getSubList()) {
-            log.info("{} {} - {}: {}", sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
+            log.info("{} {} {} - {}: {}", sub.getId(), sub.getStep(), sub.serial(), sub.getSubSerial(), sub.getContent());
         }
     }
 }

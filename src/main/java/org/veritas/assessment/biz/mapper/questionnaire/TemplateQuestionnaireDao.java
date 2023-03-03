@@ -116,5 +116,11 @@ public class TemplateQuestionnaireDao {
         return result;
     }
 
+    public int updateStructure(TemplateQuestionnaire questionnaire) {
+        int result = questionnaireMapper.updateEditInfo(questionnaire);
+        result += questionMapper.updateStructureInfo(questionnaire.getMainQuestionList());
+        return result > 0 ? 1: 0;
+    }
+
 
 }
