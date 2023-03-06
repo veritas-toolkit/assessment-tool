@@ -216,7 +216,7 @@ class AdminQuestionnaireControllerTest {
         } else {
             subDto = result.getSubList().get(result.getSubList().size() - 1);
         }
-        assertEquals(content, subDto.getContent());
+        assertEquals(content, subDto.getQuestion());
         TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
         int count2 = 0;
         for (TemplateQuestion main : newQuestionnaire.getMainQuestionList()) {
