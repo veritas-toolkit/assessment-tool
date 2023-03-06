@@ -185,6 +185,8 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         report.setPdfPath(filePath);
 
         reportMapper.add(report);
+        questionnaireService.updateAsExported(questionnaire.getVid());
+
         return report;
     }
 

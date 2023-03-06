@@ -108,27 +108,26 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     @Transactional
-    public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList) {
+    public QuestionnaireVersion editAnswer(User operator, Integer projectId, EditAnswerAction action) {
         Date now = new Date();
-        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
+        QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
         Long questionnaireVid = current.getVid();
-        boolean locked = projectMapper.updateQuestionnaireForLock(project.getId(), latest.getVid(), questionnaireVid);
+        boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
         if (!locked) {
             throw new HasBeenModifiedException("The questionnaire has been modify by others.");
         }
-        actionList.forEach(action -> {
-            action.setOperator(operator);
-            action.setActionTime(now);
-        });
-        current.editAnswer(actionList, idGenerateService::nextId);
+        action.setOperator(operator);
+        action.setActionTime(now);
+        current.editAnswer(action, idGenerateService::nextId);
         questionnaireDao.save(current);
         return current;
     }
 
     @Override
     @Transactional
-    public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList, ModelArtifact modelArtifact) {
+    public QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> actionList,
+                                           ModelArtifact modelArtifact) {
         Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(project.getId());
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
@@ -149,6 +148,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
 
     @Override
     @Transactional
+    @Deprecated
     public QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId)
             throws HasBeenModifiedException {
         Date now = new Date();
@@ -192,6 +192,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         questionnaire.setCreatorUserId(editorId);
         questionnaire.setCreatedTime(now);
         questionnaire.setMessage(String.format("Update question[%s] answer.", node.serial()));
+        questionnaire.setExported(false);
         boolean createdSuccess = questionnaireDao.createNewVersion(questionnaire, questionVersion);
         if (!createdSuccess) {
             throw new IllegalStateException("Edit answer failed.");
@@ -200,8 +201,9 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     }
 
     @Override
-    public Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize) {
-        return questionnaireDao.findHistoryPageable(projectId, page, pageSize);
+    public Pageable<QuestionnaireVersion> findHistory(int projectId, boolean exportedOnly, boolean draftOnly,
+                                                      int page, int pageSize) {
+        return questionnaireDao.findHistoryPageable(projectId, exportedOnly, draftOnly, page, pageSize);
     }
 
     @Override
@@ -362,5 +364,11 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         current.reorderSubQuestion(action);
         questionnaireDao.save(current);
         return current;
+    }
+
+    @Override
+    @Transactional
+    public int updateAsExported(long vid) {
+        return questionnaireDao.updateAsExported(vid);
     }
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
 import org.veritas.assessment.biz.action.EditAnswerAction;
@@ -263,9 +264,13 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         }
         Long newVid = idSupplier.get();
         QuestionnaireVersion newQuestionnaire = new QuestionnaireVersion();
-        BeanUtils.copyProperties(this, newQuestionnaire);
-        newQuestionnaire.setCreatedTime(now);
+        newQuestionnaire.setProjectId(this.getProjectId());
+        newQuestionnaire.setModelArtifactVid(this.getModelArtifactVid());
         newQuestionnaire.setCreatorUserId(operator.getId());
+        newQuestionnaire.setCreatedTime(now);
+        newQuestionnaire.setExported(false);
+        newQuestionnaire.setMessage(null);
+
         newQuestionnaire.mainQuestionNodeList = QuestionNode.createNewList(this.mainQuestionNodeList);
         newQuestionnaire.configureQuestionnaireVid(newVid);
         return newQuestionnaire;

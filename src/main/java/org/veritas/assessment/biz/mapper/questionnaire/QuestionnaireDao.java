@@ -57,6 +57,7 @@ public class QuestionnaireDao {
         questionnaire.fill(nodeList, questionMetaList, questionVersionList);
         return questionnaire;
     }
+
     public QuestionnaireVersion findByQuestionnaireVid(long vid) {
         QuestionnaireVersion questionnaire = questionnaireMapper.findByQuestionnaireVid(vid);
         if (questionnaire == null) {
@@ -117,9 +118,15 @@ public class QuestionnaireDao {
         return result > 0;
     }
 
-    public Pageable<QuestionnaireVersion> findHistoryPageable(int projectId, int page, int pageSize) {
+    public Pageable<QuestionnaireVersion> findHistoryPageable(int projectId, boolean exportedOnly, boolean draftOnly,
+                                                              int page, int pageSize) {
         LambdaQueryWrapper<QuestionnaireVersion> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(QuestionnaireVersion::getProjectId, projectId);
+        if (exportedOnly) {
+            wrapper.eq(QuestionnaireVersion::getExported, true);
+        } else if (draftOnly) {
+            wrapper.eq(QuestionnaireVersion::getExported, false);
+        }
 
         wrapper.orderByAsc(QuestionnaireVersion::getVid);
         Page<QuestionnaireVersion> p = new Page<>();
@@ -142,6 +149,10 @@ public class QuestionnaireDao {
             return false;
         }
         return true;
+    }
+
+    public int updateAsExported(long vid) {
+        return questionnaireMapper.updateAsExported(vid);
     }
 
     public boolean deleteMainQuestion(QuestionnaireVersion questionnaireVersion, QuestionNode delete) {

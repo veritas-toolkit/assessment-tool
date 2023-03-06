@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.converter.QuestionnaireRecordDtoConverter;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionAnswerInputDto;
@@ -45,6 +46,8 @@ import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 
 @RestController
@@ -70,19 +73,15 @@ public class ProjectQuestionnaireController {
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @RequestParam(name = "mainQuestionId", required = false) Long mainQuestionId,
-            @RequestParam(name = "draftOnly", required = false) Boolean draftOnly,
-            @RequestParam(name = "exportedOnly", required = false) Boolean exportedOnly,
+            @RequestParam(name = "exportedOnly", required = false, defaultValue = "false") Boolean exportedOnly,
+            @RequestParam(name = "draftOnly", required = false, defaultValue = "false") Boolean draftOnly,
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
             @RequestParam(name = "pageSize", defaultValue = "20", required = false) Integer pageSize
     ) {
-        Pageable<QuestionnaireVersion> page2 = questionnaireService.findHistory(projectId, page, pageSize);
+        Pageable<QuestionnaireVersion> page2 = questionnaireService.findHistory(projectId, exportedOnly,
+                draftOnly, page, pageSize);
 
-        return questionnaireRecordDtoConverter.convertFrom(page2,
-                (questionnaireRecordDto, questionnaireVersion) -> {
-                    User user = userService.findUserById(questionnaireVersion.getCreatorUserId());
-                    UserSimpleDto simpleDto = new UserSimpleDto(user);
-                    questionnaireRecordDto.setCreator(simpleDto);
-                });
+        return questionnaireRecordDtoConverter.convertFrom(page2);
     }
 
     // latest questionnaire table of contents.
@@ -132,15 +131,19 @@ public class ProjectQuestionnaireController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'input answer')")
     public SimpleQuestionDto editAnswer(@Parameter(hidden = true) User operator,
                                         @PathVariable("projectId") Integer projectId,
-                                        @RequestBody QuestionAnswerInputDto projectQuestion) {
-        Objects.requireNonNull(projectQuestion);
-        Objects.requireNonNull(projectQuestion.getQuestionId());
-        Long questionId = projectQuestion.getQuestionId();
+                                        @RequestBody QuestionAnswerInputDto dto) {
+        Objects.requireNonNull(dto);
+        Objects.requireNonNull(dto.getQuestionId());
+        Long questionId = dto.getQuestionId();
+        EditAnswerAction action = new EditAnswerAction();
+        action.setActionTime(new Date());
+        action.setOperator(operator);
+        action.setProjectId(projectId);
+        action.setBasedQuestionVid(dto.getBasedQuestionVid());
+        action.setQuestionId(dto.getQuestionId());
+        action.setAnswer(dto.getAnswer());
 
-        QuestionnaireVersion questionnaire = questionnaireService.editAnswer(projectId,
-                questionId, projectQuestion.getBasedQuestionVid(),
-                projectQuestion.getAnswer(),
-                operator.getId());
+        QuestionnaireVersion questionnaire = questionnaireService.editAnswer(operator, projectId, action);
         QuestionNode questionNode = questionnaire.findNodeByQuestionId(questionId);
         return new SimpleQuestionDto(questionNode);
     }

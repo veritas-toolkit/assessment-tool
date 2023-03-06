@@ -17,16 +17,26 @@
 package org.veritas.assessment.biz.converter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireRecordDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 @Component
 @Slf4j
 public class QuestionnaireRecordDtoConverter implements Converter<QuestionnaireRecordDto, QuestionnaireVersion> {
+    @Autowired
+    private UserService userService;
 
     @Override
     public QuestionnaireRecordDto convertFrom(QuestionnaireVersion source) {
-        return new QuestionnaireRecordDto(source);
+        QuestionnaireRecordDto dto =  new QuestionnaireRecordDto(source);
+        User user = userService.findUserById(source.getCreatorUserId());
+        UserSimpleDto simpleDto = new UserSimpleDto(user);
+        dto.setCreator(simpleDto);
+        return dto;
     }
 }

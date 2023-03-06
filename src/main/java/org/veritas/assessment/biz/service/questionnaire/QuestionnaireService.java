@@ -44,12 +44,13 @@ public interface QuestionnaireService {
 
     // edit answer
 
-    QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> editAnswerActionList);
+    QuestionnaireVersion editAnswer(User operator, Integer projectId, EditAnswerAction editAnswerAction);
     QuestionnaireVersion editAnswer(User operator, Project project, List<EditAnswerAction> editAnswerActionList, ModelArtifact modelArtifact);
     @Deprecated
     QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId);
 
-    Pageable<QuestionnaireVersion> findHistory(int projectId, int page, int pageSize);
+    Pageable<QuestionnaireVersion> findHistory(int projectId, boolean exportedOnly, boolean draftOnly,
+                                               int page, int pageSize);
 
     QuestionnaireVersion addMainQuestion(AddMainQuestionAction action);
 
@@ -67,4 +68,5 @@ public interface QuestionnaireService {
 
     QuestionnaireVersion reorderSubQuestion(ReorderSubQuestionAction action);
 
+    int updateAsExported(long vid);
 }
