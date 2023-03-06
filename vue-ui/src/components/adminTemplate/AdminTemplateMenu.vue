@@ -144,7 +144,7 @@ export default {
           this.$emit("getId",res.data.question.id.toString())
           this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
           this.$set(this.editMainQuesFlag,res.data.question.id.toString(),false)
-          this.$set(this.editMainQues,res.data.question.id.toString(),res.data.question.content)
+          this.$set(this.editMainQues,res.data.question.id.toString(),res.data.question.question)
           this.addMainQues[stepNo] = ''
           this.addMainQuesFlag[stepNo] = false
         }
