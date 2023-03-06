@@ -236,4 +236,16 @@ public class TemplateQuestion implements Comparable<TemplateQuestion> {
         }
         return newOne;
     }
+
+    public int nextSubSerial() {
+        if (!isMain()) {
+            throw new IllegalStateException();
+        }
+        List <TemplateQuestion> list = this.getSubList();
+        if (list == null || list.isEmpty()) {
+            return 1;
+        } else {
+            return list.get(list.size() - 1).getSubSerial() + 1;
+        }
+    }
 }

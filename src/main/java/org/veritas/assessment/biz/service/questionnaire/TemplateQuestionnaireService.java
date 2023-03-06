@@ -298,6 +298,9 @@ public class TemplateQuestionnaireService {
         sub.setEditTime(now);
         sub.setEditorUserId(operator.getId());
         sub.setEditable(true);
+        if (subSerial == null) {
+            subSerial = main.nextSubSerial();
+        }
         sub.setSubSerial(subSerial);
         sub.setContent(subQuestionContent);
         main.addNewSub(sub);
