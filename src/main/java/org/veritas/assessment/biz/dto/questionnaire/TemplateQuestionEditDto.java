@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 public class TemplateQuestionEditDto {
     @NotNull
     private Integer id;
+    @NotNull
+    private Integer mainQuestionId;
     @NotEmpty
     private String content;
 }

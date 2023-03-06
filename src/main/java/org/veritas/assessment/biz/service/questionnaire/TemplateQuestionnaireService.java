@@ -196,21 +196,10 @@ public class TemplateQuestionnaireService {
     // update question content
 
     @Transactional
-    public TemplateQuestion updateQuestionContent(User operator, Integer templateId, Integer questionId, String content) {
-        TemplateQuestionnaire questionnaire = templateQuestionnaireDao.findById(templateId);
-        if (questionnaire == null) {
-            throw new NotFoundException("Not found the questionnaire template.");
-        }
-        if (questionnaire.cannotBeEditOrDeleted()) {
-            throw new IllegalRequestException("Cannot edit this questionnaire template.");
-        }
-        TemplateQuestion question = questionnaire.findQuestion(questionId);
-        if (question == null) {
-            throw new NotFoundException("Not found the question.");
-        }
-        if (!question.isEditable()) {
-            throw new IllegalRequestException("Cannot edit this question.");
-        }
+    public TemplateQuestionnaire updateQuestionContent(User operator, Integer templateId, Integer questionId, String content) {
+        TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);
+        TemplateQuestion question = findQuestionForEdit(questionnaire, questionId);
+
         question.setContent(content);
         question.setEditTime(new Date());
         question.setEditorUserId(operator.getId());
@@ -219,11 +208,10 @@ public class TemplateQuestionnaireService {
             throw new UpdateException("Update the question failed.");
         }
         questionnaire = templateQuestionnaireDao.findById(templateId);
-        return questionnaire.findQuestion(questionId);
+        return questionnaire;
     }
 
     // delete question(main or sub)
-
     @Transactional
     public TemplateQuestionnaire deleteMainQuestion(User operator, Integer templateId, Integer questionId) {
         TemplateQuestionnaire questionnaire = findTemplateForEdit(templateId);

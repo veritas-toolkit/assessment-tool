@@ -119,13 +119,25 @@ public class AdminQuestionnaireController {
                 service.updateBasicInfo(operator, templateId, dto.getName(), dto.getDescription());
         return dtoConverter.convertFrom(questionnaire);
     }
-
-    @Operation(summary = "Admin: edit a question (main or sub) with of questionnaire template.")
-    @PostMapping("/{templateId}/question")
-    public TemplateQuestionDto updateQuestion(User operator,
-                                              @PathVariable("templateId") Integer templateId,
-                                              @Valid @RequestBody TemplateQuestionEditDto dto) {
-        TemplateQuestion question = service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
+    @Operation(summary = "Admin: edit a main question with of questionnaire template.")
+    @PostMapping("/{templateId}/question/{questionId}")
+    public TemplateQuestionnaireTocDto updateMainQuestion(User operator,
+                                                          @PathVariable("templateId") Integer templateId,
+                                                          @PathVariable("questionId") Integer questionId,
+                                                          @Valid @RequestBody TemplateQuestionEditDto dto) {
+        TemplateQuestionnaire questionnaire =
+                service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
+        return new TemplateQuestionnaireTocDto(questionnaire);
+    }
+    @Operation(summary = "Admin: edit a sub question with of questionnaire template.")
+    @PostMapping("/{templateId}/question/{questionId}/sub")
+    public TemplateQuestionDto updateSubQuestion(User operator,
+                                                 @PathVariable("templateId") Integer templateId,
+                                                 @PathVariable("questionId") Integer questionId,
+                                                 @Valid @RequestBody TemplateQuestionEditDto dto) {
+        TemplateQuestionnaire questionnaire =
+                service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
+        TemplateQuestion question = questionnaire.findQuestion(questionId);
         return new TemplateQuestionDto(question);
     }
     @Operation(summary = "Admin: fetch a main question with of questionnaire template.")
