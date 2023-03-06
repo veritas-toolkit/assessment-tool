@@ -31,6 +31,7 @@ public class TemplateQuestionDto {
         BeanUtils.copyProperties(question, this);
         this.question = question.getContent();
         this.serial = question.serial();
+        this.editable = question.isEditable();
         if (question.getSubList() != null && !question.getSubList().isEmpty()) {
             this.subQuestionList = question.getSubList().stream().map(TemplateQuestionDto::new).collect(Collectors.toList());
         }
