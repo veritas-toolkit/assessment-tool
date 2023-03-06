@@ -18,6 +18,7 @@ package org.veritas.assessment.biz.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +41,7 @@ import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionReorderDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireTocWitMainDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionAddDto;
 import org.veritas.assessment.biz.dto.questionnaire.TemplateSubQuestionReorderDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
@@ -176,7 +178,7 @@ public class AdminQuestionnaireController {
 
     @Operation(summary = "Admin: add a main question with of questionnaire template.")
     @PostMapping("/{templateId}/question/new")
-    public TemplateQuestionnaireTocDto addMainQuestion(User operator,
+    public TemplateQuestionnaireTocWitMainDto addMainQuestion(User operator,
                                                        @PathVariable("templateId") Integer templateId,
                                                        @Valid @RequestBody TemplateQuestionAddDto dto) {
         List<String> allQuestionList = new ArrayList<>();
@@ -187,7 +189,11 @@ public class AdminQuestionnaireController {
                 dto.getPrinciple(),
                 dto.getStep(),
                 dto.getSerialOfPrinciple(), allQuestionList);
-        return new TemplateQuestionnaireTocDto(questionnaire);
+        TemplateQuestion main = questionnaire.findMainQuestionListByPrincipleStep(dto.getPrinciple(), dto.getStep())
+                .stream()
+                .filter(q -> StringUtils.equals(q.getContent(), dto.getQuestion()))
+                .findFirst().orElse(null);
+        return new TemplateQuestionnaireTocWitMainDto(questionnaire, main);
     }
 
     @Operation(summary = "Admin: add a sub question into questionnaire template.")
