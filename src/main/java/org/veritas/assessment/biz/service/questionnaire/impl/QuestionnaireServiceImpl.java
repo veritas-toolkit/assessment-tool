@@ -16,7 +16,6 @@ import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.ProjectMapper;
@@ -25,7 +24,6 @@ import org.veritas.assessment.biz.service.IdGenerateService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.IllegalRequestException;
-import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
@@ -144,60 +142,6 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         current.editAnswer(actionList, idGenerateService::nextId);
         questionnaireDao.save(current);
         return current;
-    }
-
-    @Override
-    @Transactional
-    @Deprecated
-    public QuestionnaireVersion editAnswer(int projectId, long questionId, long basedQuestionVid, String answer, int editorId)
-            throws HasBeenModifiedException {
-        Date now = new Date();
-
-        long questionNewVid = idGenerateService.nextId();
-        // lock question-meta
-        boolean questionLocked = questionnaireDao.updateQuestionVidForLock(questionId, basedQuestionVid, questionNewVid);
-        if (!questionLocked) {
-            throw new HasBeenModifiedException("The question has been modify by others.");
-        }
-
-
-        Long questionnaireNewVid = idGenerateService.nextId();
-        QuestionnaireVersion questionnaire = questionnaireDao.findLatestQuestionnaire(projectId);
-        // lock
-        // update project table.
-        boolean questionnaireLocked = projectMapper.updateQuestionnaireForLock(projectId,
-                questionnaire.getVid(), questionnaireNewVid);
-        if (!questionnaireLocked) {
-            throw new HasBeenModifiedException("The questionnaire has been modify by others.");
-        }
-
-
-        // load latestQuestionnaire
-        QuestionNode node = questionnaire.findNodeByQuestionId(questionId);
-        if (node == null) {
-            throw new NotFoundException("Not found the question.");
-        }
-
-        QuestionVersion questionVersion = node.getQuestionVersion();
-        // update question's vid
-        questionVersion.setVid(questionNewVid);
-        node.setQuestionnaireVid(questionNewVid);
-
-        questionVersion.setAnswer(answer);
-        questionVersion.setAnswerEditUserId(editorId);
-        questionVersion.setAnswerEditTime(now);
-        node.updateQuestionVersion(questionVersion);
-
-        questionnaire.configureQuestionnaireVid(questionnaireNewVid);
-        questionnaire.setCreatorUserId(editorId);
-        questionnaire.setCreatedTime(now);
-        questionnaire.setMessage(String.format("Update question[%s] answer.", node.serial()));
-        questionnaire.setExported(false);
-        boolean createdSuccess = questionnaireDao.createNewVersion(questionnaire, questionVersion);
-        if (!createdSuccess) {
-            throw new IllegalStateException("Edit answer failed.");
-        }
-        return questionnaire;
     }
 
     @Override

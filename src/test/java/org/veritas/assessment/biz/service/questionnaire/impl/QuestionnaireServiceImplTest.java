@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.TestUtils;
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -18,6 +19,8 @@ import org.veritas.assessment.biz.mapper.questionnaire.QuestionnaireDao;
 import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 import java.util.Date;
 
@@ -98,6 +101,8 @@ class QuestionnaireServiceImplTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @Autowired
+    UserService userService;
 
     @Test
     void testEditAnswer_success() {
@@ -106,9 +111,15 @@ class QuestionnaireServiceImplTest {
         QuestionNode f1 = questionnaireVersion.findMainQuestionBySerial("F1");
         assertNotNull(f1);
         QuestionNode sub = f1.getSubList().get(0);
-        int editor = 28;
-        questionnaireService.editAnswer(projectId, sub.getQuestionId(), sub.getQuestionVid(),
-                "new answer", editor);
+        User admin = userService.findUserById(1);
+        EditAnswerAction action = new EditAnswerAction();
+        action.setAnswer("new answer");
+        action.setProjectId(projectId);
+        action.setQuestionId(sub.getQuestionId());
+        action.setBasedQuestionVid(questionnaireVersion.getVid());
+        action.setOperator(admin);
+        action.setActionTime(new Date());
+        questionnaireService.editAnswer(admin, projectId, action);
         String[] tables = {
                 "vat2_project",
                 "vat2_questionnaire_version",
