@@ -17,11 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonModelTest {
 
 
-//    @Test
+    @Test
     void testLoad_successCreditScore() throws IOException {
         JsonModel jsonModel = JsonModelTestUtils.load(JsonModelTestUtils.EXAMPLE_CS);
         Transparency transparency = jsonModel.getTransparency();
         assertNotNull(transparency);
+        transparency.getModelList().get(0).getSummaryPlot2().test();
     }
 
     @Test

@@ -219,7 +219,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             if (jsonModel.getTransparency() != null) {
                 final String permutationImportance = "permutationImportance";
                 if (StringUtils.contains(imgSrc, permutationImportance)) {
-                    dto.setData(jsonModel.getTransparency().getPermutationScoreList());
+                    dto.setData(jsonModel.getTransparency().getPermutation());
                     dto.setType(PlotTypeEnum.H_BAR);
                     dto.setName("Permutation Importance");
                     dto.setCaption("Permutation Importance");
