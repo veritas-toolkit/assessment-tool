@@ -145,6 +145,7 @@ export default {
           this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
           this.addMainQues[stepNo] = ''
           this.$set(this.editMainQuesFlag,res.data.question.id.toString(),false)
+          this.$set(this.editMainQues,res.data.question.id.toString(),res.data.question.question)
           this.addMainQuesFlag[stepNo] = false
         }
       })
