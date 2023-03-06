@@ -18,7 +18,8 @@ public class JsonModelTestUtils {
 
     public static final String EXAMPLE_CM = "json/model_artifact_custmr_marketing_20230306_1425.json";
     @Deprecated
-    public static final String EXAMPLE_PUW = "json/model_artifact_pred_underwriting_v2.json";
+//    public static final String EXAMPLE_PUW = "json/model_artifact_pred_underwriting_v2.json";
+    public static final String EXAMPLE_PUW = EXAMPLE_CM;
 
 
     public static JsonModel load(String urlString) throws IOException {
@@ -26,7 +27,7 @@ public class JsonModelTestUtils {
         objectMapper.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
         objectMapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
-        objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
+//        objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
 //        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 //        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);

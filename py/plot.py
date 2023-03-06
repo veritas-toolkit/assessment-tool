@@ -214,9 +214,9 @@ def plot_waterfall(zf_name, model_id, local_interpretability_id, local_interpret
     fx = local_interpretability['fx']
 
     feature_info = local_interpretability['feature_info']
-    feature_names = np.array([j['name'] for j in local_interpretability['feature_info']])
-    shap_values = np.array([j['shap'] for j in local_interpretability['feature_info']])
-    feature_values = np.array([j['value'] for j in local_interpretability['feature_info']])
+    feature_names = np.array([j['Feature_name'] for j in local_interpretability['feature_info']])
+    shap_values = np.array([j['Shap'] for j in local_interpretability['feature_info']])
+    feature_values = np.array([j['Value'] for j in local_interpretability['feature_info']])
     # feature_names = [] #np.array([j['name'] for j in local_interpretability['feature_info']])
     # shap_values = [] # np.array([j['shap'] for j in local_interpretability['feature_info']])
     # feature_values = [] # np.array([j['value'] for j in local_interpretability['feature_info']])
@@ -308,7 +308,9 @@ for key in features_dict:
     plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
 ##### transparency
-plot_permutation_importance(zf_name, transparency['permutation_score'])
+permutation = transparency['permutation']
+if permutation is not None and permutation['score'] is not None:
+    plot_permutation_importance(zf_name, permutation['score'])
 
 model_list = transparency['model_list']
 seq = 0

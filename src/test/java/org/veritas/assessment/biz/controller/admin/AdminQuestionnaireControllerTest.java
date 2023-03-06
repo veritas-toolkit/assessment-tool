@@ -125,11 +125,14 @@ class AdminQuestionnaireControllerTest {
         log.info("question: {}", question);
         TemplateQuestionEditDto dto = new TemplateQuestionEditDto();
         dto.setId(question.getId());
+        dto.setMainQuestionId(question.getMainQuestionId());
         String content = "new content: " + RandomStringUtils.randomAlphanumeric(20);
         dto.setContent(content);
 
+
         MvcResult mvcResult = mockMvc.perform(
-                        post("/api/admin/questionnaire/{templateId}/question", template.getId())
+                        post("/api/admin/questionnaire/{templateId}/question/{questionId}",
+                                template.getId(), question.getId())
                                 .with(user("admin").roles("ADMIN", "USER"))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(dto)))

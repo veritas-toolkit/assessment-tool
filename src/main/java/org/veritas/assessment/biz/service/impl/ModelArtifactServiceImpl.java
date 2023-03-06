@@ -217,18 +217,27 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                 }
             }
             if (jsonModel.getTransparency() != null) {
+                Transparency transparency = jsonModel.getTransparency();
                 final String permutationImportance = "permutationImportance";
                 if (StringUtils.contains(imgSrc, permutationImportance)) {
-                    dto.setData(jsonModel.getTransparency().getPermutation());
+                    Transparency.Permutation permutation = transparency.getPermutation();
+                    if (permutation == null || permutation.getScore() == null) {
+                        return PlotDataDto.none();
+                    }
+                    dto.setData(permutation);
                     dto.setType(PlotTypeEnum.H_BAR);
-                    dto.setName("Permutation Importance");
+                    if (StringUtils.isEmpty(permutation.getTitle())) {
+                        dto.setName("Permutation Importance");
+                    } else {
+                        dto.setName(permutation.getTitle());
+                    }
                     dto.setCaption("Permutation Importance");
                     return dto;
                 }
 
                 final String waterfall = "waterfall";
                 if (StringUtils.contains(imgSrc, waterfall)) {
-                    List<Transparency.ModelInfo> modelList = jsonModel.getTransparency().getModelList();
+                    List<Transparency.ModelInfo> modelList = transparency.getModelList();
                     if (modelList != null && !modelList.isEmpty()) {
                         for (Transparency.ModelInfo modelInfo : modelList) {
                             Integer mi = modelInfo.getId();
