@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.veritas.assessment.biz.constant.AssessmentStep;
-import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 
 import java.util.Date;
@@ -18,9 +17,8 @@ import java.util.stream.Collectors;
 public class TemplateQuestionDto {
     private Integer id;
     private Integer templateId;
-    private Principle principle;
     private AssessmentStep step;
-    private int serialOfPrinciple;
+    private String serial;
     private int subSerial;
     private String question;
     private String hint;
@@ -32,6 +30,7 @@ public class TemplateQuestionDto {
     public TemplateQuestionDto(TemplateQuestion question) {
         BeanUtils.copyProperties(question, this);
         this.question = question.getContent();
+        this.serial = question.serial();
         if (question.getSubList() != null && !question.getSubList().isEmpty()) {
             this.subList = question.getSubList().stream().map(TemplateQuestionDto::new).collect(Collectors.toList());
         }
