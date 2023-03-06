@@ -25,14 +25,14 @@ public class TemplateQuestionDto {
     private boolean editable;
     private int editorUserId;
     private Date editTime;
-    private List<TemplateQuestionDto> subList;
+    private List<TemplateQuestionDto> subQuestionList;
 
     public TemplateQuestionDto(TemplateQuestion question) {
         BeanUtils.copyProperties(question, this);
         this.question = question.getContent();
         this.serial = question.serial();
         if (question.getSubList() != null && !question.getSubList().isEmpty()) {
-            this.subList = question.getSubList().stream().map(TemplateQuestionDto::new).collect(Collectors.toList());
+            this.subQuestionList = question.getSubList().stream().map(TemplateQuestionDto::new).collect(Collectors.toList());
         }
     }
 }

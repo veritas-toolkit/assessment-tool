@@ -211,10 +211,10 @@ class AdminQuestionnaireControllerTest {
         log.info("result: {}", result);
 
         TemplateQuestionDto subDto = null;
-        if (result.getSubList().size() >= 4) {
-            subDto = result.getSubList().get(4 - 1);
+        if (result.getSubQuestionList().size() >= 4) {
+            subDto = result.getSubQuestionList().get(4 - 1);
         } else {
-            subDto = result.getSubList().get(result.getSubList().size() - 1);
+            subDto = result.getSubQuestionList().get(result.getSubQuestionList().size() - 1);
         }
         assertEquals(content, subDto.getQuestion());
         TemplateQuestionnaire newQuestionnaire = service.findByTemplateId(template.getId());
@@ -298,7 +298,7 @@ class AdminQuestionnaireControllerTest {
         log.info("result: {}", result);
         String resultString = mvcResult.getResponse().getContentAsString();
         int index = 0;
-        for (TemplateQuestionDto subDto : result.getSubList()) {
+        for (TemplateQuestionDto subDto : result.getSubQuestionList()) {
             assertEquals(subDto.getId(), newSubIdList.get(index));
             ++index;
         }
