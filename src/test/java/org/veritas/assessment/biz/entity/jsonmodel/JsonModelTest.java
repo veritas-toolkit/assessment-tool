@@ -1,15 +1,10 @@
 package org.veritas.assessment.biz.entity.jsonmodel;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 import org.veritas.assessment.TestUtils;
 
 import java.io.IOException;
-import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +17,7 @@ class JsonModelTest {
         JsonModel jsonModel = JsonModelTestUtils.load(JsonModelTestUtils.EXAMPLE_CS);
         Transparency transparency = jsonModel.getTransparency();
         assertNotNull(transparency);
-        transparency.getModelList().get(0).getSummaryPlot2().test();
+        log.info("summary plot data: {} ", transparency.getModelList().get(0).getSummaryPlotFeatureList());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.veritas.assessment.biz.entity.jsonmodel;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -13,11 +14,11 @@ import java.nio.charset.StandardCharsets;
 
 public class JsonModelTestUtils {
 
-    public static final String EXAMPLE_CS = "json2/model_artifact_credit_scoring_20230306_1054.json";
+    public static final String EXAMPLE_CS = "json/model_artifact_credit_scoring_20230306_1423.json";
 
-    public static final String EXAMPLE_CM = "json2/model_artifact_custmr_marketing_20230306_1059.json";
+    public static final String EXAMPLE_CM = "json/model_artifact_custmr_marketing_20230306_1425.json";
     @Deprecated
-    public static final String EXAMPLE_PUW = "json2/model_artifact_pred_underwriting_v2.json";
+    public static final String EXAMPLE_PUW = "json/model_artifact_pred_underwriting_v2.json";
 
 
     public static JsonModel load(String urlString) throws IOException {
@@ -25,9 +26,10 @@ public class JsonModelTestUtils {
         objectMapper.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
         objectMapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
         objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
 //        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+//        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         URL url = new ClassPathResource(urlString).getURL();
         return objectMapper.readValue(url, JsonModel.class);
     }

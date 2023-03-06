@@ -90,7 +90,7 @@ public class GraphServiceImpl implements GraphService {
             String summaryPlotFilename = modelArtifact.getJsonContentSha256() + "_summaryPlot_" + modelInfo.getId() + ".png";
             this.saveFile(imageDir, summaryPlotFilename ,modelInfo.getSummaryPlotImage());
             ImageEnum.SUMMARY_PLOT.put(container, prefix, summaryPlotFilename);
-            for (Map.Entry<String, byte[]> entry : modelInfo.partial_dependence_plot().entrySet()) {
+            for (Map.Entry<String, byte[]> entry : modelInfo.partialDependencePlotMap().entrySet()) {
                 String feature = entry.getKey();
                 byte[] content = entry.getValue();
                 String filename = String.format("%s_partialDependencePlot_%d_%s.png",
