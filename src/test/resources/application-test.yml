@@ -1,6 +1,12 @@
 spring:
   datasource:
-    url: 'jdbc:sqlite::memory:'
+    url: 'jdbc:sqlite::memory:?journal_mode=WAL'
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 10
+      maximum-pool-size: 10
+      max-lifetime: 360000
+      auto-commit: false
   session:
     jdbc:
       initialize-schema: always

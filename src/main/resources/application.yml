@@ -13,7 +13,7 @@ spring:
     banner-mode: off
     allow-circular-references: true
   datasource:
-    url: 'jdbc:sqlite:file/db/sqlite.db'
+    url: 'jdbc:sqlite:file/db/sqlite.db?journal_mode=WAL'
     driver-class-name: 'org.sqlite.JDBC'
     hikari:
       connection-timeout: 30000
