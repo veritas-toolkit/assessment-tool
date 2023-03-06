@@ -143,8 +143,8 @@ public class AdminQuestionnaireController {
     @Operation(summary = "Admin: fetch a main question with of questionnaire template.")
     @GetMapping("/{templateId}/question/{questionId}")
     public TemplateQuestionDto fetchMainQuestion(User operator,
-                                                         @PathVariable("templateId") Integer templateId,
-                                                         @PathVariable("questionId") Integer questionId) {
+                                                 @PathVariable("templateId") Integer templateId,
+                                                 @PathVariable("questionId") Integer questionId) {
         TemplateQuestionnaire questionnaire = service.findByTemplateId(templateId);
         if (questionnaire == null) {
             throw new NotFoundException("Not found the questionnaire template.");
