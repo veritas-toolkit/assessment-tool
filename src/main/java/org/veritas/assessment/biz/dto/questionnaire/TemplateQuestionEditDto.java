@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TemplateQuestionEditDto {
+    /**
+     * question id, including main-question and sub-question.
+     */
     @NotNull
     private Integer id;
     @NotNull

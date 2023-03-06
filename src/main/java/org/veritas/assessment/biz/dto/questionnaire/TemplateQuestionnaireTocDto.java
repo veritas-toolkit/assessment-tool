@@ -1,10 +1,7 @@
 package org.veritas.assessment.biz.dto.questionnaire;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
@@ -12,7 +9,6 @@ import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * Table of content for questionnaire.
- *
+ * <p>
  * Structure: principle -> step -> main question
  */
 @Data
@@ -36,10 +32,8 @@ public class TemplateQuestionnaireTocDto {
 
     private Map<String, String> principles;
 
-    private List<PrinciplePart> principlePartList;
+    private Map<String, PrinciplePart> principleAssessments;
 
-//    @Setter(value = AccessLevel.PRIVATE)
-//    @Getter(value = AccessLevel.PUBLIC)
     @Data
     @NoArgsConstructor
     public static class PrinciplePart {
@@ -51,9 +45,12 @@ public class TemplateQuestionnaireTocDto {
 
         private List<Step> stepList = new ArrayList<>();
 
-        void addStep(Step step) {
-            Objects.requireNonNull(step);
-            stepList.add(step);
+        public PrinciplePart(Principle principle, List<TemplateQuestion> questionList) {
+            Objects.requireNonNull(principle);
+            this.principle = principle.getFullname();
+            this.principleShortName = principle.getShortName();
+            this.stepList = Arrays.stream(AssessmentStep.values())
+                    .map(step -> new Step(principle, step, questionList)).collect(Collectors.toList());
         }
     }
 
@@ -67,9 +64,14 @@ public class TemplateQuestionnaireTocDto {
 
         List<MainQuestion> mainQuestionList = new ArrayList<>();
 
-        void addQuestion(MainQuestion question) {
-            Objects.requireNonNull(question);
-            this.mainQuestionList.add(question);
+        public Step(Principle principle, AssessmentStep assessmentStep, List<TemplateQuestion> questionList) {
+            Objects.requireNonNull(principle);
+            Objects.requireNonNull(assessmentStep);
+            Objects.requireNonNull(questionList);
+            this.mainQuestionList = questionList.stream()
+                    .filter(q -> q.getPrinciple() == principle)
+                    .filter(q -> q.getStep() == assessmentStep)
+                    .map(MainQuestion::new).collect(Collectors.toList());
         }
     }
 
@@ -97,27 +99,13 @@ public class TemplateQuestionnaireTocDto {
         this.principles = new LinkedHashMap<>();
         Arrays.stream(Principle.values()).forEach(e -> this.principles.put(e.getShortName(), e.getFullname()));
 
-        List<PrinciplePart> partList = new ArrayList<>();
-        for (Principle principle : Principle.values()) {
-            PrinciplePart part = new PrinciplePart();
-            part.setPrinciple(principle.getFullname());
-            part.setPrincipleShortName(principle.getShortName());
-            List<TemplateQuestion> questionList = questionnaire.getMainQuestionList().stream()
-                    .filter(q -> q.getPrinciple() == principle)
-                    .collect(Collectors.toList());
-            for (AssessmentStep s : AssessmentStep.values()) {
-                Step step = new Step();
-                step.setStep(s.getDescription());
-                step.setSerial(s.getStepSerial());
-                questionList.stream()
-                        .filter(q -> q.getStep() == s && q.isMain())
-                        .sorted()
-                        .forEach(q -> step.addQuestion(new MainQuestion(q)));
-                part.addStep(step);
-            }
-            partList.add(part);
-        }
-        this.principlePartList = Collections.unmodifiableList(partList);
+        this.principleAssessments = Arrays.stream(Principle.values())
+                .collect(Collectors.toMap(
+                        Principle::getShortName,
+                        p -> new PrinciplePart(p, questionnaire.getMainQuestionList().stream()
+                                .filter(q -> q.getPrinciple() == p)
+                                .collect(Collectors.toList()))
+                ));
     }
 
 }
