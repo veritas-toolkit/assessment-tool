@@ -58,7 +58,7 @@ public class TemplateQuestionnaireTocDto {
     @NoArgsConstructor
     public static class Step {
         // 2
-        private int serial;
+        private int serialNo;
         // Prepare Input Data
         private String step;
 
@@ -80,14 +80,14 @@ public class TemplateQuestionnaireTocDto {
     public static class MainQuestion {
         private int id;
         // F5
-        private String serialTitle;
-        private String content;
+        private String serial;
+        private String question;
         private boolean editable;
 
         private MainQuestion(TemplateQuestion q) {
             this.id = q.getId();
-            this.serialTitle = q.getPrinciple().getShortName() + q.getSerialOfPrinciple();
-            this.content = q.getContent();
+            this.serial = q.getPrinciple().getShortName() + q.getSerialOfPrinciple();
+            this.question = q.getContent();
             this.editable = q.isEditable();
         }
     }
