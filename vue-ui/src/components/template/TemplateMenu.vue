@@ -144,6 +144,7 @@ export default {
           this.$emit("getId",res.data.question.id.toString())
           this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
           this.addMainQues[stepNo] = ''
+          this.$set(this.editMainQuesFlag,res.data.question.id.toString(),false)
           this.addMainQuesFlag[stepNo] = false
         }
       })
@@ -164,7 +165,10 @@ export default {
       editQues.question = this.editMainQues[id]
       this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`,editQues).then(res => {
         if (res.status == 200) {
-          this.$emit("getId",res.data.id)
+          this.$emit("getId",res.data.question.id.toString())
+          this.$emit("getEditFlag",true)
+          this.menuList = res.data.toc.principleAssessments[this.principleMap[this.principle]].stepList
+          this.editMainQuesFlag[id] = false
         }
       })
     },

@@ -39,6 +39,9 @@ export default {
     },
     addSubQuesFlag: {
       type: Boolean
+    },
+    editFlag: {
+      type: Boolean
     }
   },
   data() {
@@ -55,6 +58,12 @@ export default {
       this.getSubQuestion()
       this.$emit('updateFlag', false)
     },
+    'editFlag': function() {
+      if (this.editFlag) {
+        this.getSubQuestion()
+        this.$emit('getEditFlag', false)
+      }
+    }
   },
   created() {
 

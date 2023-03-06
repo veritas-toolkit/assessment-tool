@@ -22,10 +22,10 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside width="400px">
-          <TemplateMenu @getId="getQuestionId"  :principle="principle" :defaultId="defaultId" :projectId="projectId" :menuData="menuData"></TemplateMenu>
+          <TemplateMenu @getId="getQuestionId" @getEditFlag="getEditFlag"  :principle="principle" :defaultId="defaultId" :projectId="projectId" :menuData="menuData"></TemplateMenu>
         </el-aside>
         <el-main>
-          <TemplateSubQuestion @updateFlag="updateValue" :addSubQuesFlag="addSubQuesFlag" :projectId="projectId" :questionId="questionId"></TemplateSubQuestion>
+          <TemplateSubQuestion @updateFlag="updateValue" :editFlag="editFlag" :addSubQuesFlag="addSubQuesFlag" :projectId="projectId" :questionId="questionId"></TemplateSubQuestion>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -85,6 +85,7 @@ export default {
       principleList: [],
       menuData: [],
       addSubQuesFlag: false,
+      editFlag: false,
     }
   },
   created() {
@@ -98,6 +99,9 @@ export default {
   methods: {
     updateValue(data) {
       this.addSubQuesFlag = data
+    },
+    getEditFlag(data) {
+      this.editFlag = data
     },
     getQuestionId(data) {
       this.questionId = data
