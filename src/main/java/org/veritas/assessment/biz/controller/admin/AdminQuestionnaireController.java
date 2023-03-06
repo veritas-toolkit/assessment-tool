@@ -123,13 +123,14 @@ public class AdminQuestionnaireController {
     }
     @Operation(summary = "Admin: edit a main question with of questionnaire template.")
     @PostMapping("/{templateId}/question/{questionId}")
-    public TemplateQuestionnaireTocDto updateMainQuestion(User operator,
+    public TemplateQuestionnaireTocWitMainDto updateMainQuestion(User operator,
                                                           @PathVariable("templateId") Integer templateId,
                                                           @PathVariable("questionId") Integer questionId,
                                                           @Valid @RequestBody TemplateQuestionEditDto dto) {
         TemplateQuestionnaire questionnaire =
                 service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
-        return new TemplateQuestionnaireTocDto(questionnaire);
+        TemplateQuestion question = questionnaire.findQuestion(dto.getMainQuestionId());
+        return new TemplateQuestionnaireTocWitMainDto(questionnaire, question);
     }
     @Operation(summary = "Admin: edit a sub question with of questionnaire template.")
     @PostMapping("/{templateId}/question/{questionId}/sub")
