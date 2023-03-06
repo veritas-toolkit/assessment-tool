@@ -68,6 +68,8 @@ public class TemplateQuestionnaireTocDto {
             Objects.requireNonNull(principle);
             Objects.requireNonNull(assessmentStep);
             Objects.requireNonNull(questionList);
+            this.serialNo = assessmentStep.getStepSerial();
+            this.step = assessmentStep.getDescription();
             this.mainQuestionList = questionList.stream()
                     .filter(q -> q.getPrinciple() == principle)
                     .filter(q -> q.getStep() == assessmentStep)
