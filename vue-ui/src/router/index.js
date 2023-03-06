@@ -21,6 +21,7 @@ import Questionnaire from "@/components/questionnaire/Questionnaire";
 
 import MenuQuestionaire from "../components/MenuQuestionaire";
 import Template from "@/components/template/Template";
+import AdminTemplate from "@/components/adminTemplate/AdminTemplate";
 
 Vue.use(VueRouter)
 
@@ -53,6 +54,7 @@ const router = new VueRouter({
     {path: '/test', component: MenuQuestionaire},
     {path: '/questionnaire', component: Questionnaire},
     {path: '/template', component: Template},
+    {path: '/adminTemplate',component:AdminTemplate}
   ]
 })
 

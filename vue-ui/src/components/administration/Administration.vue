@@ -358,7 +358,7 @@ export default {
       this.$router.push({path:'/adminUserPage',query: {userId:item.id}})
     },
     adminTemplatePage(item) {
-      this.$router.push({path:'/adminTemplatePage',query: {templateId:item.templateId}})
+      this.$router.push({path:'/adminTemplate',query: {templateId:item.templateId}})
     },
     createUser() {
       this.$router.push({path:'/createUser'})
