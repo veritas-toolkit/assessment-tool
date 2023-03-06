@@ -63,22 +63,6 @@ public class ProjectQuestionnaireController {
     @Autowired
     QuestionnaireRecordDtoConverter questionnaireRecordDtoConverter;
 
-
-    // TODO: 2023/2/25 delete this function 
-    @Operation(summary = "Get the project's questionnaire.")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    @GetMapping("/test")
-    public QuestionnaireVersion findQuestionnaireTest(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
-            throw new NotFoundException("");
-        }
-        return q;
-    }
-
     @Operation(summary = "Find the project's questionnaire history list.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     @GetMapping("/history")
