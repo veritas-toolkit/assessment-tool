@@ -224,7 +224,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     if (permutation == null || permutation.getScore() == null) {
                         return PlotDataDto.none();
                     }
-                    dto.setData(permutation);
+                    dto.setData(permutation.getScore());
                     dto.setType(PlotTypeEnum.H_BAR);
                     if (StringUtils.isEmpty(permutation.getTitle())) {
                         dto.setName("Permutation Importance");
