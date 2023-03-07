@@ -282,13 +282,13 @@ export default {
             this.draftList = res.data.records.reverse()
             let comList = []
             this.draftList.map(item => {
-              if (item.questionnaireVid !== this.questionnaireVid) {
+              // if (item.questionnaireVid !== this.questionnaireVid) {
                 comList.push(item)
-              }
+              // }
             })
             this.compareList = comList
           }
-          // console.log(compareType)
+          console.log(this.compareList)
         })
       } else if (compareType == 'draftOnly') {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
