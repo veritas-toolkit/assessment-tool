@@ -25,7 +25,7 @@
           <AdminTemplateMenu @getId="getQuestionId" @getEditFlag="getEditFlag" :principle="principle" :defaultId="defaultId" :templateId="templateId" :menuData="menuData"></AdminTemplateMenu>
         </el-aside>
         <el-main>
-          <AdminTemplateSubQuestion @updateFlag="updateValue" :editFlag="editFlag" :addSubQuesFlag="addSubQuesFlag" :templateId="templateId" :questionId="questionId"></AdminTemplateSubQuestion>
+          <AdminTemplateSubQuestion @updateFlag="updateValue" @getEditFlag="getEditFlag" :editFlag="editFlag" :addSubQuesFlag="addSubQuesFlag" :templateId="templateId" :questionId="questionId"></AdminTemplateSubQuestion>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
