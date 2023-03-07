@@ -193,8 +193,10 @@ export default {
         if (res.status == 200) {
           if(index > 0) {
             this.$emit("getId",mainQuesList[index-1])
+            this.$emit("getEditFlag",true)
           } else {
             this.$emit("getId",mainQuesList[mainQuesList.length-1])
+            this.$emit("getEditFlag",true)
           }
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
         }
@@ -220,8 +222,10 @@ export default {
         if (res.status == 200) {
           if(index < mainQuesList.length-1) {
             this.$emit("getId",mainQuesList[index+1])
+            this.$emit("getEditFlag",true)
           } else {
             this.$emit("getId",mainQuesList[0])
+            this.$emit("getEditFlag",true)
           }
 
           this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList

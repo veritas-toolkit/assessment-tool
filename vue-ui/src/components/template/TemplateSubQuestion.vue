@@ -66,7 +66,6 @@ export default {
     }
   },
   created() {
-
   },
   methods: {
     getSubQuestion() {
