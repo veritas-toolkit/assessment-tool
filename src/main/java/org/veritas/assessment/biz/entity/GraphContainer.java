@@ -50,10 +50,22 @@ public class GraphContainer {
     private String permutationImportancePlot;
     private Map<String, Map<String, String>> partialDependencePlotMap = new LinkedHashMap<>();
 
+    // TODO: 2023/3/7 rename as local_interpretability 
     private Map<String, Map<String, String>> waterfallMap = new LinkedHashMap<>();
 
     public Map<String, String> getFeatureDistributionPieChartMap() {
         return Collections.unmodifiableMap(featureDistributionPieChartMap);
+    }
+
+    public String getLocalInterpretability(String model, String localInterpretability) {
+        if (StringUtils.isEmpty(model) || StringUtils.isEmpty(localInterpretability)) {
+            return null;
+        }
+        Map<String, String> map = waterfallMap.get(model);
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        return map.get(localInterpretability);
     }
 
     public void putFeatureDistributionPieChart(String feature, String chart) {
