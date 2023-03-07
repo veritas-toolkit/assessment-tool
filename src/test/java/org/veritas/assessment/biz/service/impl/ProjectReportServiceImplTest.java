@@ -63,7 +63,7 @@ class ProjectReportServiceImplTest {
 
         String json = JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_PUW);
 
-        ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, "cm.json");
+        ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, "puw.json");
         // save file out of transaction.
         modelArtifactService.saveJsonFile(modelArtifact);
 

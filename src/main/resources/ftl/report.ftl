@@ -295,6 +295,10 @@ ul li {
     text-align: center;
     page-break-inside: avoid;
 }
+.answer .table_title {
+    margin-top: auto;
+    text-align: center;
+}
 
 .answer table {
     margin-left: auto;
