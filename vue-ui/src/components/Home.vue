@@ -166,7 +166,6 @@ export default {
     // this.projectId = JSON.parse(window.sessionStorage.getItem("projectId"));
     window.addEventListener('setItem', ()=> {
       this.projectId= JSON.parse(sessionStorage.getItem('projectId'));
-      console.log(this.projectId)
     })
     this.getWhoAmI()
     this.activeName = window.location.href.split('/')[window.location.href.split('/').length - 1]

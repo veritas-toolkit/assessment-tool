@@ -1,5 +1,125 @@
 export function waterfallOptionData(data) {
-    console.log(data)
+    let start = data.efx
+
+    let feature_info = data.feature_info
+    let end = data.fx
+    feature_info = feature_info.sort((a,b) => {return Math.abs(b.Shap) - Math.abs(a.Shap)}).reverse()
+    let plus_list = []
+    let minus_list = []
+    let feature_list = []
+    let row_data = []
+    let data_list = []
+
+    feature_info.map(item => {
+        feature_list.push(item.Feature_name)
+        row_data.push(item.Shap)
+        if (item.Shap >= 0) {
+            plus_list.push(item.Shap)
+            minus_list.push('-')
+        } else {
+            plus_list.push('-')
+            minus_list.push(-item.Shap)
+        }
+    })
+    for (let i=0;i<row_data.length;i++) {
+        let sum = start
+        for (let j=0;j<i;j++) {
+            sum += row_data[j]
+        }
+        if (row_data[i]<0) {
+            sum += row_data[i]
+        }
+        data_list.push(sum)
+    }
+
+    let option = {
+        title: {
+            text: 'Local Interpretability Water Plot',
+            left: 'center',
+            textStyle: {
+                fontSize: 24
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            axisLabel: {
+                textStyle: {
+                    fontSize: 16
+                },
+                formatter: function (value) {
+                    return value.toFixed(2);
+                },
+            }
+        },
+        yAxis: {
+            type: 'category',
+            data: feature_list,
+            axisLabel: {
+                textStyle: {
+                    fontSize: 16
+                }
+            }
+        },
+        series: [
+            {
+                name: 'Placeholder',
+                type: 'bar',
+                stack: 'Total',
+                silent: true,
+                itemStyle: {
+                    borderColor: 'transparent',
+                    color: 'transparent'
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    },
+                    label: {
+                        show: false,
+                        textStyle: {
+                            fontSize: 20
+                        },
+                    },
+                },
+                data: data_list
+            },
+            {
+                // name: 'Income',
+                type: 'bar',
+                stack: 'Total',
+                label: {
+                    show: true,
+                    position: 'left',
+                },
+                data: plus_list,
+            },
+            {
+                // name: 'Expenses',
+                type: 'bar',
+                stack: 'Total',
+                label: {
+                    show: true,
+                    position: 'left',
+                },
+                data: minus_list,
+            }
+        ]
+    };
+    return option
 }
 
 export function permutationImportanceOptionData(data) {
@@ -9,7 +129,6 @@ export function permutationImportanceOptionData(data) {
         feature_list.push(item.feature)
         score_list.push(item.score.toFixed(2))
     })
-    console.log(feature_list,score_list)
     let option = {
         title: {
             text: 'Permutation Importance',
