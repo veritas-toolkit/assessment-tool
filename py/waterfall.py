@@ -4,7 +4,7 @@ import numpy as np
 import re
 
 # def waterfall(base_values, loc, values, features, feature_names,max_display=10, show=True):
-def waterfall(base_values, loc, values, features, feature_names, title, filename, max_display=10, show=True):
+def waterfall(base_values, loc, values, features, feature_names, filename, max_display=10, show=True):
     """ Plots an explantion of a single prediction as a waterfall plot.
     The SHAP value of a feature represents the impact of the evidence provided by that feature on the model's
     output. The waterfall plot is designed to visually display how the SHAP values (evidence) of each feature
@@ -299,12 +299,9 @@ def waterfall(base_values, loc, values, features, feature_names, title, filename
     if show:
         plt.show()
     else:
-        plt.title(title, fontsize=18)
         # plt.figure(figsize=(8, 4))
         plt.savefig(filename)
         plt.close()
-        # return plt.gcf()
-        # return plt
 
 def format_value(s, format_str):
     """ Strips trailing zeros and uses a unicode minus sign.
