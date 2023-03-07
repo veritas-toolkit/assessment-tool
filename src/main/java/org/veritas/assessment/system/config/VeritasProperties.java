@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -56,6 +58,9 @@ public class VeritasProperties {
     private String pythonCommand;
 
     private boolean lazyLoadPython = false;
+
+    @Autowired
+    private Environment environment;
 
     @PostConstruct
     public void init() throws Exception {
@@ -161,6 +166,19 @@ public class VeritasProperties {
             FileUtils.forceMkdir(dir);
         }
         return dir;
+    }
+
+    public boolean isTestProfileActive() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        if (activeProfiles == null || activeProfiles.length == 0) {
+            return false;
+        }
+        for (String profile : activeProfiles) {
+            if (StringUtils.equalsIgnoreCase(profile, "test")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

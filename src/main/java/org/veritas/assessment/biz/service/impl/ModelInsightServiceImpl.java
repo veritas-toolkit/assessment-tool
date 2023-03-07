@@ -35,6 +35,7 @@ import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.questionnaire.FreemarkerTemplateService;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.system.config.VeritasProperties;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -50,6 +51,8 @@ public class ModelInsightServiceImpl implements ModelInsightService {
     @Autowired
     private GraphService graphService;
 
+    @Autowired
+    private VeritasProperties veritasProperties;
 
     @Autowired
     private FreemarkerTemplateService freemarkerTemplateService;
@@ -83,7 +86,10 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                     actionList.add(action);
                 } catch (TemplateException | IOException e) {
                     log.error("freemarker template process filed.", e);
-//                    throw new RuntimeException("freemarker template process filed. template: " + template.getName(), e);
+                    if (veritasProperties.isTestProfileActive()) {
+                        throw new RuntimeException("freemarker template process filed. template: " + template.getName(),
+                                e);
+                    }
                 }
             }
         }
