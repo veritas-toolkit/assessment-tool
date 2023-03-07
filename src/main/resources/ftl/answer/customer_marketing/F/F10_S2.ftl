@@ -14,21 +14,7 @@
     <li>The x-axis and y-axis show a range of possible lending risk thresholds for two groups, respectively.</li>
 </ul>
 
-
-
-<#if fairness.hasTradeoff() == true>
-
-<#list graphContainer.getFeatureTradeoffContourMap() as feature_name, chart>
-    <#if chart??>
-        <br/>
-        <div class="image_box">
-            <div class="image_title">Fairness Tradeoff for ${feature_name}</div>
-            <img id="FeatureTradeoffContour_${feature_name}" src="${graphContainer.findFeatureTradeoffContour(feature_name)}" />
-        </div>
-        <br/>
-    </#if>
-</#list>
-</#if>
+<#include "../../../common/fairness_feature_tradeoff_contour.ftl">
 
 There are three points of interests on the heatmap:
 <ul>
@@ -36,7 +22,3 @@ There are three points of interests on the heatmap:
 <li>The <b>red X</b> maximizes model performance while keeping the same risk threshold for privileged and unprivileged group. </li>
 <li>The <b>purple star</b> maximizes the model performance while ensuring optimal fairness as measured via the selected fairness metric. </li>
 </ul>
-
-<#--加个颜色-->
-
-
