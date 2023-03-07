@@ -20,8 +20,8 @@
                       {{item2.serial}}
                     </div>
                     <div class="ques-img">
-                      <img src="../../assets/adminPic/upPage.png" @click="upRecordMainQues(index2,item1.serialNo)" alt="">
-                      <img src="../../assets/adminPic/downPage.png" @click="downRecordMainQues(index2,item1.serialNo)" alt="">
+                      <img src="../../assets/adminPic/upPage.png" @click.stop="upRecordMainQues(index2,item1.serialNo)" alt="">
+                      <img src="../../assets/adminPic/downPage.png" @click.stop="downRecordMainQues(index2,item1.serialNo)" alt="">
                       <img src="../../assets/adminPic/writeProblem.png" @click="editMainQuesFlag[item2.id] = true" alt="">
                       <img src="../../assets/adminPic/deleteProblem.png" @click="deleteMainQues(item2.id)" alt="">
                     </div>

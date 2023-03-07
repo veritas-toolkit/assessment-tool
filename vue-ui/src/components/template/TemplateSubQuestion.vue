@@ -55,8 +55,10 @@ export default {
   },
   watch: {
     'questionId': function () {
-      this.getSubQuestion()
-      this.$emit('updateFlag', false)
+      if (!this.editFlag) {
+        this.getSubQuestion()
+        this.$emit('updateFlag', false)
+      }
     },
     'editFlag': function() {
       if (this.editFlag) {
