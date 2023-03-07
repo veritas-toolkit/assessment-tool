@@ -17,39 +17,7 @@
     if the absolute difference is lower than the fairness threshold, the fairness conclusion would be fair.
 </div>
 
-<#list fairness.featureMap as feature_name, feature>
-    <div>
-        <div class="table_box">
-        <div>
-        <big>
-        Fairness metrics for <b>${feature_name}</b>
-        </big>
-        </div>
-        <table>
-            <thead>
-            <tr>
-                <th>Fairness Metric</th>
-                <th>Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <#list feature.fairMetricValueListMap as metricName, valueList>
-                <tr <#if fairness.isFairMetric(metricName)> class="fair_metric_row"</#if>>
-                    <td class="metric_name">${metricName}</td>
-                    <td class="metric_value">${feature.faireMetricValueFormat(valueList)}</td>
-                </tr>
-            </#list>
-            </tbody>
-        </table>
-        </div>
-
-        <div>Fairness Threshold Input: <b>${fairness.fairnessInit.fairThresholdInput}%</b></div>
-        <div>Fairness Threshold: <b>${feature.fairThreshold}</b></div>
-        <div>Fairness Conclusion: <b>${feature.fairnessConclusion}</b></div>
-
-    </div>
-</#list>
-
+<#include "../../../common/fairness_metric_value_table.ftl">
 
 
 <#if fairness.individualFairness?? && fairness.individualFairness.consistencyScore??>
