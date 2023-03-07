@@ -171,7 +171,6 @@ public class Fairness {
     }
 
     @Data
-//    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FairnessInit {
         @JsonProperty(value = "fair_metric_name_input")
         private String fairMetricNameInput;
@@ -192,7 +191,6 @@ public class Fairness {
         @JsonProperty(value = "fair_impact")
         private String fairImpact;
 
-        // 'special_params' node may be different in different json file.
         @JsonProperty(value = "special_params")
         private Map<String, Object> specialParameters;
 

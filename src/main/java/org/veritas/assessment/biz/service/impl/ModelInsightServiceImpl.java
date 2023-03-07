@@ -31,7 +31,6 @@ import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
-import org.veritas.assessment.biz.model.SpecialParameterContainer;
 import org.veritas.assessment.biz.service.GraphService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.questionnaire.FreemarkerTemplateService;
@@ -100,8 +99,6 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         modelMap.addAttribute("fairness", jsonModel.getFairness());
         modelMap.addAttribute("transparency", jsonModel.getTransparency());
 
-        SpecialParameterContainer specialParameterContainer = new SpecialParameterContainer(jsonModel);
-        modelMap.addAttribute("specialParameter", specialParameterContainer);
 
         GraphContainer container = graphService.createAllGraph(modelArtifact);
         modelMap.addAttribute("graphContainer", container);
