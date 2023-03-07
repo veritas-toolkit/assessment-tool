@@ -293,7 +293,7 @@ export default {
       } else if (compareType == 'draftOnly') {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
           if (res.status == 200) {
-            this.draftList = res.data.records.reverse()
+            this.draftList = res.data.records.reverse().slice(0, 10)
             let comList = []
             this.draftList.map(item => {
               if (item.questionnaireVid !== this.questionnaireVid) {
