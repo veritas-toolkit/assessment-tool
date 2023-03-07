@@ -86,17 +86,22 @@ public class GraphServiceImpl implements GraphService {
         File imageDir = veritasProperties.getImageDirFile(modelArtifact.getProjectId());
         String prefix = String.format("api/project/%d/image", modelArtifact.getProjectId());
         for (Transparency.ModelInfo modelInfo : modelList) {
-            // summary plot
-            String summaryPlotFilename = modelArtifact.getJsonContentSha256() + "_summaryPlot_" + modelInfo.getId() + ".png";
-            this.saveFile(imageDir, summaryPlotFilename ,modelInfo.getSummaryPlotImage());
-            ImageEnum.SUMMARY_PLOT.put(container, prefix, summaryPlotFilename);
+            if (modelInfo.hasSummaryPlotBase64()) {
+                // summary plot
+                String summaryPlotFilename = String.format("%s_summaryPlot_%d.png",
+                        modelArtifact.getJsonContentSha256(), modelInfo.getId());
+                this.saveFile(imageDir, summaryPlotFilename ,modelInfo.getSummaryPlotImage());
+                ImageEnum.SUMMARY_PLOT.put(container, prefix, summaryPlotFilename);
+            }
             for (Map.Entry<String, byte[]> entry : modelInfo.partialDependencePlotMap().entrySet()) {
                 String feature = entry.getKey();
                 byte[] content = entry.getValue();
-                String filename = String.format("%s_partialDependencePlot_%d_%s.png",
-                        modelArtifact.getJsonContentSha256(), modelInfo.getId(), feature);
-                this.saveFile(imageDir, filename, content);
-                ImageEnum.PARTIAL_DEPENDENCE_PLOT.put(container, prefix, filename);
+                if (content != null && content.length > 0) {
+                    String filename = String.format("%s_partialDependencePlot_%d_%s.png",
+                            modelArtifact.getJsonContentSha256(), modelInfo.getId(), feature);
+                    this.saveFile(imageDir, filename, content);
+                    ImageEnum.PARTIAL_DEPENDENCE_PLOT.put(container, prefix, filename);
+                }
             }
         }
     }

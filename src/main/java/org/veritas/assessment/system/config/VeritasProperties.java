@@ -127,9 +127,11 @@ public class VeritasProperties {
             Process process = builder.start();
             String stdout = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
             String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-            log.debug("command:[{}], stdout:[{}], stderr:[{}]", command, stdout, stderr);
-            log.debug("stdout: {}", stdout);
-            log.debug("stderr: {}", stderr);
+            if (log.isDebugEnabled()) {
+                log.debug("command: {}", command);
+                log.debug("stdout: {}", StringUtils.removeEnd(stdout, "\n"));
+                log.debug("stderr: {}", StringUtils.removeEnd(stderr, "\n"));
+            }
             return StringUtils.startsWith(stdout, "Python 3");
         } catch (Exception exception) {
             log.debug("command:[{}] failed.", command, exception);

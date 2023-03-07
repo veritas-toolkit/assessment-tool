@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -45,13 +46,17 @@ public class Transparency {
         private Map<String, String> partialDependencePlot;
 
         @JsonProperty(value = "summary_plot")
-        private String summaryPlot;
+        private String summaryPlotBase64;
 
         @JsonProperty(value = "summary_plot_data_table")
         private List<SummaryPlotFeature> summaryPlotFeatureList;
 
         public byte[] getSummaryPlotImage() {
-            return Base64.decodeBase64(this.summaryPlot);
+            return Base64.decodeBase64(this.summaryPlotBase64);
+        }
+
+        public boolean hasSummaryPlotBase64() {
+            return !StringUtils.isEmpty(summaryPlotBase64);
         }
 
         public Map<String, byte[]> partialDependencePlotMap() {
