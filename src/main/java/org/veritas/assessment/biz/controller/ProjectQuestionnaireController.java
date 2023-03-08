@@ -90,10 +90,16 @@ public class ProjectQuestionnaireController {
     @GetMapping("/toc")
     public QuestionnaireTocDto findLatestToc(
             @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId) {
-        QuestionnaireVersion q = questionnaireService.findLatestQuestionnaire(projectId);
-        if (q == null) {
-            throw new NotFoundException("Not found the questionnaire.");
+            @PathVariable("projectId") Integer projectId,
+            @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid) {
+        QuestionnaireVersion q = null;
+        if (questionnaireVid == null) {
+            q = questionnaireService.findLatestQuestionnaire(projectId);
+        } else {
+            q = questionnaireService.findByQuestionnaireVid(questionnaireVid);
+        }
+        if (q == null || !Objects.equals(projectId, q.getProjectId())) {
+            throw new NotFoundException("Not found the questionnaire in current project.");
         }
         Project project = projectService.findProjectById(projectId);
         User user = userService.findUserById(q.getCreatorUserId());
