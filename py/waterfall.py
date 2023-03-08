@@ -4,7 +4,7 @@ import numpy as np
 import re
 
 # def waterfall(base_values, loc, values, features, feature_names,max_display=10, show=True):
-def waterfall(base_values, loc, values, features, feature_names, filename, max_display=10, show=True):
+def waterfall(base_values, loc, shap_values, feature_values, feature_names, filename, max_display=10, show=True):
     """ Plots an explantion of a single prediction as a waterfall plot.
     The SHAP value of a feature represents the impact of the evidence provided by that feature on the model's
     output. The waterfall plot is designed to visually display how the SHAP values (evidence) of each feature
@@ -18,9 +18,9 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
         Expected base value
     loc : float
         Actual value
-    values : ndarray
+    shap_values : ndarray
         SHAP values of the features
-    features : ndarray
+    feature_values : ndarray
         Actual values of the features
     feature_names : ndarray
         Feature names to plot
@@ -51,7 +51,7 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
                         "shap.waterfall_plot(explainer.base_values[0], values[0][0], X[0]).")
 
     # make sure we only have a single explanation to plot
-    if len(values.shape) == 2:
+    if len(shap_values.shape) == 2:
         raise Exception(
             "The waterfall_plot can currently only plot a single explanation but a matrix of explanations was passed!")
 
@@ -66,10 +66,10 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
     #     feature_names = np.array([labels['FEATURE'] % str(i) for i in range(len(values))])
 
     # init variables we use for tracking the plot locations
-    num_features = min(max_display, len(values))
+    num_features = min(max_display, len(shap_values))
     row_height = 0.5
     rng = range(num_features - 1, -1, -1)
-    order = np.argsort(-np.abs(values))
+    order = np.argsort(-np.abs(shap_values))
     pos_lefts = []
     pos_inds = []
     pos_widths = []
@@ -87,14 +87,14 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
     plt.gcf().set_size_inches(8, num_features * row_height + 1.5)
 
     # see how many individual (vs. grouped at the end) features we are plotting
-    if num_features == len(values):
+    if num_features == len(shap_values):
         num_individual = num_features
     else:
         num_individual = num_features - 1
 
     # compute the locations of the individual features and plot the dashed connecting lines
     for i in range(num_individual):
-        sval = values[order[i]]
+        sval = shap_values[order[i]]
         loc -= sval
         if sval >= 0:
             pos_inds.append(rng[i])
@@ -113,17 +113,20 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
         if num_individual != num_features or i + 4 < num_individual:
             plt.plot([loc, loc], [rng[i] - 1 - 0.4, rng[i] + 0.4],
                      color="#bbbbbb", linestyle="--", linewidth=0.5, zorder=-1)
-        if features is None:
+        if feature_values is None:
             yticklabels[rng[i]] = feature_names[order[i]]
         else:
-            if np.issubdtype(type(features[order[i]]), np.number):
-                yticklabels[rng[i]] = format_value(float(features[order[i]]), "%0.03f") + " = " + feature_names[order[i]]
+            v = feature_values[order[i]]
+            if np.isnan(v):
+                yticklabels[rng[i]] = feature_names[order[i]]
+            elif np.issubdtype(type(v), np.number):
+                yticklabels[rng[i]] = format_value(float(v), "%0.3f") + " = " + feature_names[order[i]]
             else:
-                yticklabels[rng[i]] = features[order[i]] + " = " + feature_names[order[i]]
+                yticklabels[rng[i]] = v + " = " + feature_names[order[i]]
 
     # add a last grouped feature to represent the impact of all the features we didn't show
-    if num_features < len(values):
-        yticklabels[0] = "%d other features" % (len(values) - num_features + 1)
+    if num_features < len(shap_values):
+        yticklabels[0] = "%d other features" % (len(shap_values) - num_features + 1)
         remaining_impact = base_values - loc
         if remaining_impact < 0:
             pos_inds.append(0)
@@ -243,7 +246,7 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
 
     # mark the prior expected value and the model prediction
     plt.axvline(base_values, 0, 1/num_features, color="#bbbbbb", linestyle="--", linewidth=0.5, zorder=-1)
-    fx = base_values + values.sum()
+    fx = base_values + shap_values.sum()
     plt.axvline(fx, 0, 1, color="#bbbbbb", linestyle="--", linewidth=0.5, zorder=-1)
 
     # clean up the main axis
@@ -269,7 +272,7 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
     ax3 = ax2.twiny()
     ax3.set_xlim(xmin, xmax)
     # The 1e-8 is so matplotlib 3.3 doesn't try and collapse the ticks
-    ax3.set_xticks([base_values + values.sum(), base_values + values.sum() + 1e-8])
+    ax3.set_xticks([base_values + shap_values.sum(), base_values + shap_values.sum() + 1e-8])
     ax3.set_xticklabels(["$f(x)$", "$ = "+format_value(fx, "%0.03f")+"$"], fontsize=12, ha="left")
     tick_labels = ax3.xaxis.get_majorticklabels()
     tick_labels[0].set_transform(tick_labels[0].get_transform(
@@ -300,6 +303,7 @@ def waterfall(base_values, loc, values, features, feature_names, filename, max_d
         plt.show()
     else:
         # plt.figure(figsize=(8, 4))
+        plt.subplots_adjust(left=0.3, bottom=1/len(shap_values), right=0.9, top=1 - 1 / len(shap_values))
         plt.savefig(filename)
         plt.close()
 
