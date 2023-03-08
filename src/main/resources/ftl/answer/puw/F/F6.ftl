@@ -5,10 +5,12 @@
     Group 2 personal attributes are justified for use in decision-making.
 </div>
 
-<div class="image_box">
-    <div class="image_title">Personal Attribute Classification</div>
-    <img class="pie" id="PersonalAttributesClassification" src="${graphContainer.getPersonalAttributesClassification()}" />
-</div>
+<#if graphContainer.getPersonalAttributesClassification()??>
+    <div class="image_box">
+        <div class="image_title">Personal Attribute Classification</div>
+        <img class="pie" id="PersonalAttributesClassification" src="${graphContainer.getPersonalAttributesClassification()}" />
+    </div>
+</#if>
 
 <div>
     Personal attributes are features about individuals that should not be used as the basis for decisions without reasonable justification.
