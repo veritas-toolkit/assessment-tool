@@ -11,14 +11,18 @@ export function waterfallOptionData(data) {
     let data_list = []
 
     feature_info.map(item => {
-        feature_list.push(item.Feature_name)
+        if (item.Value == null) {
+            feature_list.push(item.Feature_name)
+        } else {
+            feature_list.push(item.Value.toFixed(2)+'='+item.Feature_name)
+        }
         row_data.push(item.Shap)
         if (item.Shap >= 0) {
-            plus_list.push(item.Shap)
+            plus_list.push(item.Shap.toFixed(5))
             minus_list.push('-')
         } else {
             plus_list.push('-')
-            minus_list.push(-item.Shap)
+            minus_list.push(-item.Shap.toFixed(5))
         }
     })
     for (let i=0;i<row_data.length;i++) {
@@ -126,6 +130,7 @@ export function waterfallOptionData(data) {
                     show: true,
                     position: 'inside',
                 },
+
                 data: minus_list,
             }
         ]
