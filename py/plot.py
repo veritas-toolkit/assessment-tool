@@ -1,15 +1,16 @@
 # Core Packages
 import json
-import zipfile
 import os
-import sys
 import re
+import sys
+import zipfile
+
 # Third Party
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 
-#import waterfall
+from waterfall import waterfall
 
 
 # plot perf_dynamic
@@ -192,7 +193,7 @@ def plot_contour(zf_name, key, fair_metric_name, perf_metric_name):
     image_file_list.append(filename)
 
 
-def plot_permutation_importance(zf_name, feature_score_list, title = None, footnote = None):
+def plot_permutation_importance(zf_name, feature_score_list, title=None, footnote=None):
     features = []
     importance = []
     for feature_score in feature_score_list:
@@ -208,32 +209,28 @@ def plot_permutation_importance(zf_name, feature_score_list, title = None, footn
     if footnote is not None:
         plt.figtext(0.5, 0.01, footnote, ha="right", fontsize=18)
 
-
     plt.barh(features, importance, color='#437694')
     filename = zf_name + '_permutationImportance.png'
     plt.savefig(filename)
     plt.close()
     image_file_list.append(filename)
 
-from waterfall import waterfall
+
+
 def plot_waterfall(zf_name, model_id, local_interpretability_id, local_interpretability):
-
-    # local_interpretability = a1['transparency']['model_list'][0]['local_interpretability'][i]
-
     efx = local_interpretability['efx']
     fx = local_interpretability['fx']
 
-    feature_info = local_interpretability['feature_info']
-    feature_names = np.array([j['Feature_name'] for j in local_interpretability['feature_info']])
-    shap_values = np.array([j['Shap'] for j in local_interpretability['feature_info']])
-    feature_values = np.array([j['Value'] for j in local_interpretability['feature_info']])
+    feature_info_list = local_interpretability['feature_info']
+    feature_names = np.array([j['Feature_name'] for j in feature_info_list])
+    shap_values = np.array([j['Shap'] for j in feature_info_list])
+    feature_values = np.array([j['Value'] if j['Value'] != '' and j['Value'] is not None else np.nan for j in feature_info_list])
 
     txt = zf_name + "_waterfall_{model_id:d}_{local_interpretability_id:d}.png"
-    waterfall_filename = txt.format(model_id = model_id, local_interpretability_id = local_interpretability_id)
+    waterfall_filename = txt.format(model_id=model_id, local_interpretability_id=local_interpretability_id)
 
     waterfall(efx, fx, shap_values, feature_values, feature_names, waterfall_filename, max_display=10, show=False)
     image_file_list.append(waterfall_filename)
-
 
 
 ############################ begin ############################
@@ -241,9 +238,7 @@ def plot_waterfall(zf_name, model_id, local_interpretability_id, local_interpret
 image_file_list = []
 
 # load JSON file
-# prepare data
 filename = sys.argv[1]
-# with zipfile.ZipFile('../file/project/1/json/1e2fc6190d50a4e8a9ab56500ebbf77827985983dd3fb92cba39888fd7bf1340.json.zip', 'r') as zf:
 with zipfile.ZipFile(filename, 'r') as zf:
     jsonObject = json.load(zf.open(zf.namelist()[0]))
     image_dir = os.path.dirname(os.path.dirname(zf.filename)) + "/image/"
@@ -307,20 +302,19 @@ for key in features_dict:
     # plot feature_distribution
     plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
     # plot contour
-    plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
+    # plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
-##### transparency
-permutation = transparency['permutation']
-if permutation is not None and permutation['score'] is not None:
-    plot_permutation_importance(zf_name, permutation['score'], permutation['title'], permutation['footnote'])
+# transparency
+if transparency is not None:
+    permutation = transparency['permutation']
+    if permutation is not None and permutation['score'] is not None:
+        plot_permutation_importance(zf_name, permutation['score'], permutation['title'], permutation['footnote'])
 
-model_list = transparency['model_list']
-seq = 0
-for model in model_list:
-    for local_interpretability in model['local_interpretability']:
-        plot_waterfall(zf_name, model['id'], local_interpretability['id'], local_interpretability)
-        seq += 1
-
-
+    model_list = transparency['model_list']
+    seq = 0
+    for model in model_list:
+        for local_interpretability in model['local_interpretability']:
+            plot_waterfall(zf_name, model['id'], local_interpretability['id'], local_interpretability)
+            seq += 1
 
 print(json.dumps(image_file_list))
