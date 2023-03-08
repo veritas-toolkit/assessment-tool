@@ -11,7 +11,8 @@
                         <br/>
                         efx: ${localInterpretability.efx}, fx: ${localInterpretability.fx}
                     </div>
-                    <table id="table_local_interpretability_${modelId}_${localInterpretabilityId}" class="table_local_interpretability">
+                    <table id="table_local_interpretability_${modelId}_${localInterpretabilityId}"
+                           class="table_local_interpretability">
                         <thead>
                         <tr>
                             <th>Feature Name</th>
@@ -33,10 +34,10 @@
             <#else>
                 <div class="image_box">
                     <div class="image_title"> Local interpretability plot for index: ${localInterpretabilityId}</div>
-                    <img id="local_interpretability__${modelId}_${localInterpretabilityId}"
+                    <img id="local_interpretability_${modelId}_${localInterpretabilityId}"
                          src="${graphContainer.getLocalInterpretability(modelId?c, localInterpretabilityId?c)}"
                          class="img_local_interpretability"
-                         alt="Local interpretability plot" />
+                         alt="Local interpretability plot"/>
                 </div>
             </#if>
         </#list>
