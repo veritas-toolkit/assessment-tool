@@ -523,9 +523,8 @@ img.pie {
     width: 40%;
 }
 img.partial_dependence_plot {
-    width: 60%;
+    width: 40%;
 }
-
 
 </style>
 <title>FEAT Assessment Report</title>
