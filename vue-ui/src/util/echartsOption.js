@@ -45,6 +45,9 @@ export function waterfallOptionData(data) {
             axisPointer: {
                 type: 'shadow'
             },
+            // formatter: function (value) {
+            //     return value.toFixed(2);
+            // },
         },
         grid: {
             left: '3%',
@@ -54,12 +57,10 @@ export function waterfallOptionData(data) {
         },
         xAxis: {
             type: 'value',
+            scale: true,
             axisLabel: {
                 textStyle: {
                     fontSize: 16
-                },
-                formatter: function (value) {
-                    return value.toFixed(2);
                 },
             }
         },
@@ -101,9 +102,14 @@ export function waterfallOptionData(data) {
                 // name: 'Income',
                 type: 'bar',
                 stack: 'Total',
+                itemStyle: {
+                    normal: {
+                        color: '#FF0051',
+                    }
+                },
                 label: {
                     show: true,
-                    position: 'left',
+                    position: 'inside',
                 },
                 data: plus_list,
             },
@@ -111,9 +117,14 @@ export function waterfallOptionData(data) {
                 // name: 'Expenses',
                 type: 'bar',
                 stack: 'Total',
+                itemStyle: {
+                    normal: {
+                        color: '#008BFB'
+                    }
+                },
                 label: {
                     show: true,
-                    position: 'left',
+                    position: 'inside',
                 },
                 data: minus_list,
             }
