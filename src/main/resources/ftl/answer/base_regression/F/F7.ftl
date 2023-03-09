@@ -8,7 +8,4 @@
     The decision tree in the following figure is used to identify and classify individual attributes, which is a reference.
 </div>
 
-<div class="image_box">
-    <div class="image_title">Personal Attribute Identification</div>
-    <img id="PersonalAttributesIdentificationTree" src="${graphContainer.getPersonalAttributesIdentificationTree()}" />
-</div>
+<#include "../../../common/fairness_personal_attributes_identification.ftl">
