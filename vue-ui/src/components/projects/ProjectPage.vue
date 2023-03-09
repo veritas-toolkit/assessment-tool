@@ -576,27 +576,25 @@ export default {
               const jsonModel = JSON.parse(jsonContent);
               if (jsonModel.fairness == null && this.projectPrinciple.principleFairness) {
                 // console.log("fairness is null")
-                this.$message.warning("Your project contains fairness, but not in the json file")
-                // this.$confirm('Your project contains fairness, but not in the json file, continue?', {
-                //   type: 'warning'
-                // }).then(() => {
-                //   return resolve(true);
-                // }).catch(() => {
-                //   return reject(false);
-                // });
-                return resolve(true);
+                // this.$message.warning("Your project contains fairness, but not in the json file")
+                return this.$confirm('Your project contains fairness, but not in the json file, continue?', {
+                  type: 'warning'
+                }).then(() => {
+                  return resolve(true);
+                }).catch(() => {
+                  return reject(false);
+                });
               }
               if (jsonModel.transparency == null  && this.projectPrinciple.principleTransparency) {
                 // console.log("transparency is null")
-                this.$message.warning("Your project contains transparency, but not in the json file")
-                // this.$confirm('Your project contains transparency, but not in the json file, continue?', {
-                //   type: 'warning'
-                // }).then(() => {
-                //   return resolve(true);
-                // }).catch(() => {
-                //   return reject(false);
-                // })
-                return resolve(true);
+                //this.$message.warning("Your project contains transparency, but not in the json file")
+                return this.$confirm('Your project contains transparency, but not in the json file, continue?', {
+                  type: 'warning'
+                }).then(() => {
+                  return resolve(true);
+                }).catch(() => {
+                  return reject(false);
+                })
               }
             } catch (e) {
               // console.log("error");
