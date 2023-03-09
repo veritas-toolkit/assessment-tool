@@ -5,13 +5,4 @@
     The correlation matrix heatmap (if applicable) of top 20 most important features are shown as follows.
 </div>
 
-<#-- fairnessInit.corr_values 画相关性矩阵热力图-->
-
-<#if graphContainer.getCorrelationHeatMapChart()??>
-<div class="image_box">
-    <div class="image_title">Correlation Heatmap</div>
-    <img id="CorrelationHeatMapChart" src="${graphContainer.getCorrelationHeatMapChart()}" />
-</div>
-<#else>
-   <div>Correlation matrix heatmap does not apply to this project.</div>
-</#if>
+<#include "../../../common/fairness_correlation_heatmap.ftl">
