@@ -73,6 +73,7 @@
                       :file-list="fileList"
                       :on-success="handleSuccess"
                       :on-error="handleFailed"
+                      :before-upload="beforeUpload"
                       :auto-upload="true">
                     <div class="upload-div">
                       <div>
@@ -552,6 +553,43 @@ export default {
     },
     handleFailed() {
       this.$message.error('Upload failed')
+    },
+    beforeUpload(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        if (file.name.includes(".json")) {
+          reader.onload = (res) => {
+            const jsonContent = res.target.result;
+            try {
+              const jsonModel = JSON.parse(jsonContent);
+              if (jsonModel.fairness == null) {
+                console.log("fairness is null")
+                this.$message.warning("fairness is null")
+                return reject(false);
+              }
+              if (jsonModel.transparency == null) {
+                console.log("transparency is null")
+                this.$message.warning("transparency is null")
+                return reject(false);
+              }
+              return resolve(true);
+            } catch (e) {
+              console.log("error");
+              return reject(false);
+            }
+            return resolve(true);
+          };
+          reader.onerror = (err) => {
+            return reject(false);
+          }
+          reader.readAsText(file);
+        } else {
+          this.$message.error("This is not a json file.");
+        }
+        return true;
+
+          }
+      )
     },
     downloadJsonFile() {
       this.$http({
