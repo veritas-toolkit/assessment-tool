@@ -161,6 +161,7 @@ export default {
     let id = this.projectId
     this.init = {
       skin_url: 'tinymce/skins/ui/oxide',
+      content_css: 'tinymce/skins/content/answer_editor.css',
       autoresize_min_height : "60px",
       plugins: 'autoresize image link lists code table wordcount',
       toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists image media table | removeformat',
