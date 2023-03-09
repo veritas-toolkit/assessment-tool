@@ -335,6 +335,14 @@ export default {
       },
       PermissionType: PermissionType,
       archived: false,
+      projectPrinciple: {
+        principleGeneric: false,
+        principleFairness: false,
+        principleEA: false,
+        principleTransparency: false,
+      }
+
+
     }
   },
   created() {
@@ -517,6 +525,10 @@ export default {
           this.editProjectForm.principleFairness = res.data.principleFairness
           this.editProjectForm.principleEA = res.data.principleEA
           this.editProjectForm.principleTransparency = res.data.principleTransparency
+          this.projectPrinciple.principleFairness = res.data.principleFairness
+          this.projectPrinciple.principleEA = res.data.principleEA
+          this.projectPrinciple.principleTransparency = res.data.principleTransparency
+          this.projectPrinciple.principleGeneric = res.data.principleGeneric
           if (res.data.userOwnerId) {
             this.userOwnerId = res.data.userOwnerId
           }
@@ -562,19 +574,32 @@ export default {
             const jsonContent = res.target.result;
             try {
               const jsonModel = JSON.parse(jsonContent);
-              if (jsonModel.fairness == null) {
-                console.log("fairness is null")
-                this.$message.warning("fairness is null")
-                return reject(false);
+              if (jsonModel.fairness == null && this.projectPrinciple.principleFairness) {
+                // console.log("fairness is null")
+                this.$message.warning("Your project contains fairness, but not in the json file")
+                // this.$confirm('Your project contains fairness, but not in the json file, continue?', {
+                //   type: 'warning'
+                // }).then(() => {
+                //   return resolve(true);
+                // }).catch(() => {
+                //   return reject(false);
+                // });
+                return resolve(true);
               }
-              if (jsonModel.transparency == null) {
-                console.log("transparency is null")
-                this.$message.warning("transparency is null")
-                return reject(false);
+              if (jsonModel.transparency == null  && this.projectPrinciple.principleTransparency) {
+                // console.log("transparency is null")
+                this.$message.warning("Your project contains transparency, but not in the json file")
+                // this.$confirm('Your project contains transparency, but not in the json file, continue?', {
+                //   type: 'warning'
+                // }).then(() => {
+                //   return resolve(true);
+                // }).catch(() => {
+                //   return reject(false);
+                // })
+                return resolve(true);
               }
-              return resolve(true);
             } catch (e) {
-              console.log("error");
+              // console.log("error");
               return reject(false);
             }
             return resolve(true);
