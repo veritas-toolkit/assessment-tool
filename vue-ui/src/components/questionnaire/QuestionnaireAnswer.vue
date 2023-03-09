@@ -158,6 +158,7 @@ export default {
   },
   created() {
     this.getFullComment()
+    let id = this.projectId
     this.init = {
       skin_url: 'tinymce/skins/ui/oxide',
       autoresize_min_height : "60px",
