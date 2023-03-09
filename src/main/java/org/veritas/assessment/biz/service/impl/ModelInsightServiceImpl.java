@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
@@ -64,10 +65,19 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         Objects.requireNonNull(project);
         Objects.requireNonNull(questionnaireVersion);
         Objects.requireNonNull(modelArtifact);
+        Objects.requireNonNull(modelArtifact.getJsonModel());
+        JsonModel jsonModel = modelArtifact.getJsonModel();
         ModelMap modelMap = genModelMap(project, modelArtifact);
         List<QuestionNode> allQuestionList = questionnaireVersion.finAllQuestionNodeList();
         List<EditAnswerAction> actionList = new ArrayList<>();
         for (QuestionNode questionNode : allQuestionList) {
+            if (questionNode.getPrinciple() == Principle.F && jsonModel.getFairness() == null) {
+                log.warn("The json file does not contain fairness info.");
+                continue;
+            } else if (questionNode.getPrinciple() == Principle.T && jsonModel.getTransparency() == null) {
+                log.warn("The json file does not contain transparency info.");
+                continue;
+            }
             Template template = freemarkerTemplateService.findTemplate(project.getBusinessScenario(), questionNode);
             if (template != null) {
                 // write the freemarker output to a StringWriter
