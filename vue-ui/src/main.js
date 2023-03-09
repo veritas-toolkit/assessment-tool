@@ -6,7 +6,7 @@ import store from './store'
 import axios from 'axios'
 import './plugins/element.js'
 import '../src/assets/css/global.css'
-import '../src/assets/css/answerGlobal.css'
+import './assets/css/answerGlobal.less'
 import Print from './plugins/print.js'
 import { Message } from 'element-ui';
 import { format } from 'timeago.js';
