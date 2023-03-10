@@ -30,7 +30,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.GraphContainer;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
+import org.veritas.assessment.biz.entity.jsonmodel.Transparency;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 
 import java.io.File;
@@ -47,6 +49,7 @@ import java.util.zip.ZipOutputStream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SpringBootTest
@@ -101,12 +104,20 @@ class GraphServiceImplTest {
         ModelArtifact artifact = new ModelArtifact();
         artifact.setProjectId(projectId);
         artifact.setJsonZipPath(zipFile.getName());
-        artifact.setJsonModel(JsonModelTestUtils.load(JsonModelTestUtils.EXAMPLE_PUW));
+        JsonModel jsonModel = JsonModelTestUtils.load(JsonModelTestUtils.EXAMPLE_PUW);
+        artifact.setJsonModel(jsonModel);
         artifact.setJsonContentSha256(sha256);
         GraphContainer graphContainer = graphService.createAllGraph(artifact);
         assertNotNull(graphContainer);
         log.info("container:\n{}", graphContainer);
-        assertFalse(graphContainer.getSummaryPlotMap().isEmpty());
+
+        Transparency.ModelInfo modelInfo = jsonModel.getTransparency().getModelList().stream()
+                .filter(Transparency.ModelInfo::hasSummaryPlotBase64)
+                .findFirst()
+                .orElse(null);
+        if (modelInfo != null) {
+            assertFalse(graphContainer.getSummaryPlotMap().isEmpty());
+        }
 
 //        FileUtils.deleteDirectory(zipFile.getParentFile().getParentFile());
     }
