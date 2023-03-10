@@ -111,13 +111,10 @@ class GraphServiceImplTest {
         assertNotNull(graphContainer);
         log.info("container:\n{}", graphContainer);
 
-        Transparency.ModelInfo modelInfo = jsonModel.getTransparency().getModelList().stream()
+        jsonModel.getTransparency().getModelList().stream()
                 .filter(Transparency.ModelInfo::hasSummaryPlotBase64)
                 .findFirst()
-                .orElse(null);
-        if (modelInfo != null) {
-            assertFalse(graphContainer.getSummaryPlotMap().isEmpty());
-        }
+                .ifPresent(modelInfo -> assertFalse(graphContainer.getSummaryPlotMap().isEmpty()));
 
 //        FileUtils.deleteDirectory(zipFile.getParentFile().getParentFile());
     }
