@@ -1,7 +1,6 @@
 package org.veritas.assessment.biz.entity.jsonmodel;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -17,9 +16,9 @@ public class JsonModelTestUtils {
     public static final String EXAMPLE_CS = "json/model_artifact_credit_scoring_20230306_1423.json";
 
     public static final String EXAMPLE_CM = "json/model_artifact_custmr_marketing_20230306_1425.json";
-    @Deprecated
-    public static final String EXAMPLE_PUW = EXAMPLE_CS;
-//    public static final String EXAMPLE_PUW = EXAMPLE_CM;
+
+    public static final String EXAMPLE_PUW = "json/model_artifact_pred_underwriting_v1.json";
+//    public static final String EXAMPLE_PUW = "json/model_artifact_pred_underwriting_v2.json";
 
 
     public static JsonModel load(String urlString) throws IOException {
