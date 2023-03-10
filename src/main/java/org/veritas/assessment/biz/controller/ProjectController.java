@@ -174,7 +174,7 @@ public class ProjectController {
         } else if (copyFromProjectId != null) {
             Project old = projectService.findProjectById(copyFromProjectId);
             if (old == null) {
-
+                throw new NotFoundException("Not found the project.");
             }
             newProject = projectService.createProject(operator, project, old);
         } else {
