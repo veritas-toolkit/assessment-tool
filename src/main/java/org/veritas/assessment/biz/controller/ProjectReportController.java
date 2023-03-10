@@ -172,7 +172,7 @@ public class ProjectReportController {
         Project project = projectService.findProjectById(projectId);
         ProjectReport report = reportService.createReport(operator, project, exportReportDto.getVersion(),
                 exportReportDto.getMessage());
-        return ReportHistoryDto.copyFrom(report);
+        return reportHistoryDtoConverter.convertFrom(report);
     }
 
 }

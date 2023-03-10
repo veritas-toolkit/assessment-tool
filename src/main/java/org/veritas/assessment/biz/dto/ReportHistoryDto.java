@@ -18,12 +18,8 @@ package org.veritas.assessment.biz.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.veritas.assessment.biz.entity.ProjectReport;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -46,25 +42,7 @@ public class ReportHistoryDto {
 
     private String version;
 
-    public ReportHistoryDto(ProjectReport report) {
-        this.setVersionId(report.getVersionId());
-        this.setProjectId(report.getProjectId());
-        this.setVersionIdOfProject(report.getVersionIdOfProject());
-        this.setCreatorUserId(report.getCreatorUserId());
-        this.setCreatedTime(report.getCreatedTime());
-        this.setTag(report.getTag());
-        this.setVersion(report.getVersion());
-        this.setMessage(report.getMessage());
-    }
+    private Integer modelArtifactVid;
 
-    public static ReportHistoryDto copyFrom(ProjectReport report) {
-        return new ReportHistoryDto(report);
-    }
-    public static List<ReportHistoryDto> copyFrom(List<ProjectReport> reportList) {
-        if (reportList == null || reportList.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return reportList.stream().map(ReportHistoryDto::new).collect(Collectors.toList());
-    }
-
+    private Long questionnaireVid;
 }

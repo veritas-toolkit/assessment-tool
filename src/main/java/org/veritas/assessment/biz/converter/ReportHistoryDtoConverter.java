@@ -52,6 +52,8 @@ public class ReportHistoryDtoConverter implements Converter<ReportHistoryDto, Pr
         dto.setTag(report.getTag());
         dto.setVersion(report.getVersion());
         dto.setMessage(report.getMessage());
+        dto.setQuestionnaireVid(report.getQuestionnaireVid());
+        dto.setModelArtifactVid(report.getModelArtifactVid());
         User creator = userService.findUserById(report.getCreatorUserId());
         if (creator != null) {
             dto.setCreator(new UserSimpleDto(creator));
