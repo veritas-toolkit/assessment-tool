@@ -27,17 +27,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.biz.converter.QuestionnaireTocDtoConverter;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -119,6 +126,16 @@ public class ProjectVersionController {
         return new HttpEntity<>(artifact.getJsonContent(), header);
     }
 
+    @Autowired
+    private QuestionnaireService questionnaireService;
+
+    @Autowired
+    private QuestionnaireTocDtoConverter questionnaireTocDtoConverter;
+
+    @Autowired
+    private UserService userService;
+
+    @Deprecated
     @Operation(summary = "Find the questionnaire of the report.")
     @GetMapping("/questionnaire")
     public QuestionnaireTocDto findQuestionnaire(
@@ -128,11 +145,14 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found report of the project.");
         }
-        // TODO: 2023/2/16 fetch questionnaire by vid; 
-//        QuestionnaireVersion questionnaire = null;
-//        if (questionnaire == null) {
-//            throw new NotFoundException("Not the questionnaire.");
-//        }
-        return null;
+        Long vid = report.getQuestionnaireVid();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findByQuestionnaireVid(vid);
+        if (!Objects.equals(projectId, questionnaireVersion.getProjectId())) {
+            throw new NotFoundException("Not fount the questionnaire in current project.");
+        }
+        Project project = projectService.findProjectById(projectId);
+        User user = userService.findUserById(questionnaireVersion.getCreatorUserId());
+//        return questionnaireTocDtoConverter.convertFrom(questionnaireVersion);
+        return new QuestionnaireTocDto(questionnaireVersion, project, user);
     }
 }
