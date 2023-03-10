@@ -168,7 +168,7 @@ public class ProjectController {
         if (templateId != null) {
             TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
             if (template == null) {
-
+                throw new NotFoundException("Not found the questionnaire template.");
             }
             newProject = projectService.createProject(operator, project, template);
         } else if (copyFromProjectId != null) {
