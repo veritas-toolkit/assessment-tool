@@ -1,4 +1,4 @@
-docker/Dockerfile FROM centos:7 AS build
+FROM centos:7 AS build
 
 ENV GOSU_VERSION=1.14
 RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
