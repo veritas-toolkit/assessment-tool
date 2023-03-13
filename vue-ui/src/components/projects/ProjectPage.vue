@@ -2,8 +2,7 @@
   <div v-if="projectInfo !== null" style="padding: 32px 64px !important;">
     <!--groupPage title-->
     <div class="title BarlowBold">
-      <router-link :to="{ path: '/projects' }"><img class="backPic" src="../../assets/groupPic/back.png" alt="">
-      </router-link>
+      <img @click="$router.back()" class="backPic" src="../../assets/groupPic/back.png" alt="">
       <span>Project</span>
     </div>
     <!--groupPage body-->

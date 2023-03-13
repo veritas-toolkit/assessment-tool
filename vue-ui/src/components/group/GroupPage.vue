@@ -266,7 +266,7 @@
         })
       },
       projectPage(item) {
-        this.$router.push({path:'/groupProjectPage',query: {id:item.id,groupId:this.groupId}})
+        this.$router.push({path:'/projectPage',query: {id:item.id,groupId:this.groupId}})
       },
       addUsersToGroup() {
         let addUserList = []
