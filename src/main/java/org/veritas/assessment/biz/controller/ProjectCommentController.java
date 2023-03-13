@@ -3,7 +3,6 @@ package org.veritas.assessment.biz.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,12 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
 import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
 import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
@@ -27,8 +24,6 @@ import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.system.entity.User;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +33,7 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequestMapping("/")
-public class CommentController {
+public class ProjectCommentController {
 
     @Autowired
     private QuestionCommentDtoConverter commentDtoConverter;
