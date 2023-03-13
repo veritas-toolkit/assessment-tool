@@ -37,6 +37,7 @@
               </div>
             </div>
             <div @click="getComment(answerDictId)" slot="reference">
+              {{answerDictId}}
               <el-badge :value="commentCount[answerDict.id]" class="item" :hidden="commentCount[answerDict.id] == 0">
                 <img class="subQues-com" src="../../assets/questionnairePic/comment.svg" alt="">
               </el-badge>
@@ -219,7 +220,6 @@ export default {
     },
     getComment(id) {
       this.commentId = id
-      id = parseInt(id)
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${id}/comment`).then(res => {
         if(res.data[id]) {
           this.commentList = res.data[id].reverse()

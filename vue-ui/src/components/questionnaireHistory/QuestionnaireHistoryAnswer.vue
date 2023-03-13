@@ -219,7 +219,7 @@ export default {
     },
     getComment(id) {
       this.commentId = id
-      id = parseInt(id)
+      // id = parseInt(id)
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${id}/comment`).then(res => {
         if(res.data[id]) {
           this.commentList = res.data[id].reverse()
