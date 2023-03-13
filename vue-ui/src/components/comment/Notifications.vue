@@ -2,7 +2,7 @@
   <div style="padding: 4px;border-radius: 8px;overflow-y: auto">
     <div class="not-head">
       <div class="not-head-left">Notification</div>
-      <div class="not-head-right">Mark all as read</div>
+      <div class="not-head-right" @click="markAllRead">Mark all as read</div>
     </div>
     <div v-for="(item,index) in unReadCommentList">
       <div class="body-list-box" @click="markCommentRead(item.projectId,item.questionId,item.id)">
@@ -48,6 +48,15 @@ export default {
           this.unReadCommentList = res.data
           this.$emit('getNotLen',this.unReadCommentList.length)
         }
+      })
+    },
+    markAllRead() {
+      this.unReadCommentList.map(item => {
+        this.$http.post(`/api/project/${item.projectId}/questionnaire/question/${item.questionId}/comment/${item.id}/read`).then(res => {
+          if (res.status == 200) {
+          }
+        })
+        this.getUnreadComment()
       })
     }
   }
