@@ -108,7 +108,7 @@ export default {
         projectId: reportHistory.projectId,
         versionId: reportHistory.versionIdOfProject
       };
-      await Router.push({path: '/assessmentToolHistory', query: reportInfo})
+      await Router.push({path: '/questionnaireHistory', query: reportInfo})
     },
 
     previewHistoryPdf(reportHistory) {
