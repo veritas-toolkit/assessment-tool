@@ -48,17 +48,19 @@
                 <div slot="header" class="boxCardHeader">
                   <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
                   <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
-                  <div class="projName1 oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited at {{dateFormat(item.lastEditedTime)}}</span>
+                  <div class="projName oneLine BarlowBold">{{item.name}}</div>
+                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
-                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">
-                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>
-                </el-tooltip>
+                <div style="padding: 20px">
+                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
+                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
+                </div>
               </el-card>
             </el-col>
           </el-row>
           <div class="block">
             <el-pagination
+              hide-on-single-page
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page=page
@@ -492,7 +494,7 @@
     align-items: center;
   }
   .projName {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
   }
   .projName1 {
@@ -742,5 +744,11 @@
       margin-left: 8px;
       font-size: 14px;
     }
+  }
+  .progress-text {
+    margin-top: -10px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: BarlowBold;
   }
 </style>
