@@ -505,9 +505,9 @@ public class QuestionNode implements Comparable<QuestionNode> {
     }
 
     public boolean editAnswer(String newAnswer,
-                           @NotNull User operator,
-                           @NotNull Date now,
-                           @NotNull Supplier<Long> idSupplier) {
+                              @NotNull User operator,
+                              @NotNull Date now,
+                              @NotNull Supplier<Long> idSupplier) {
         String trimmed = StringUtils.trimToNull(newAnswer);
         QuestionVersion old = this.getQuestionVersion();
         if (old == null) {

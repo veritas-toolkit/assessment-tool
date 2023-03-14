@@ -46,6 +46,8 @@ import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -137,7 +139,7 @@ public class ProjectQuestionnaireController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'input answer')")
     public SimpleQuestionDto editAnswer(@Parameter(hidden = true) User operator,
                                         @PathVariable("projectId") Integer projectId,
-                                        @RequestBody QuestionAnswerInputDto dto) {
+                                        @Valid @RequestBody @NotNull QuestionAnswerInputDto dto) {
         Objects.requireNonNull(dto);
         Objects.requireNonNull(dto.getQuestionId());
         Long questionId = dto.getQuestionId();

@@ -322,7 +322,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     public void editAnswer(@Valid @NotNull EditAnswerAction action, Supplier<Long> idSupplier) {
         QuestionNode node = this.findNodeByQuestionId(action.getQuestionId());
         if (node == null) {
-            throw new NotFoundException("Not found the main question.");
+            throw new NotFoundException("Not found the question.");
+        }
+        if (!Objects.equals(node.getQuestionVid(), action.getBasedQuestionVid())) {
+            throw new IllegalRequestException("The question's answer has been modified.");
         }
         boolean success = node.editAnswer(action.getAnswer(), action.getOperator(), action.getActionTime(), idSupplier);
         if (success) {
