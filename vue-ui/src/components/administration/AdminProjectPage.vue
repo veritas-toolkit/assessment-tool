@@ -8,10 +8,14 @@
     <!--body part-->
     <div style="margin-left: 40px">
       <div class="title-box BarlowBold">
-        <span class="oneLine">
+        <span class="oneLine" style="display: flex;align-items: center">
           <span v-if="projectInfo.userOwner">{{projectInfo.userOwner.username}}</span>
           <span v-else-if="projectInfo.groupOwner">{{projectInfo.groupOwner.name}}</span>
-          / {{projectInfo.name}}</span>
+          / {{projectInfo.name}}
+          <span class="archivedStyle oneLine" v-if="archived">
+          <div>Archived</div>
+          </span>
+        </span>
         <div style="display: flex;align-items: center">
           <!--<div class="editDiv" @click="editProjectVisible = true">Edit</div>-->
           <div class="deleteDiv oneLine" @click="deleteProjectInfo">Delete</div>
@@ -154,6 +158,7 @@
           businessScenario: '',
         },
         principleList: ['principleGeneric'],
+        archived: false,
       }
     },
     created() {
@@ -277,6 +282,7 @@
       },
       getProjectInfo() {
         this.$http.get(`/api/admin/project/${this.projectId}`).then(res => {
+          this.archived = res.data.archived
           this.projectInfo = res.data
           this.saveProjInfo = res.data
           this.saveProjInfoName = res.data.name
@@ -434,4 +440,21 @@
     border: 1px solid;
     border-radius: 4px;
   }
+  .archivedStyle {
+    flex-shrink: 0;
+    width: auto;
+    display: flex !important;
+    margin-left: 16px;
+    height: 24px;
+    background-color: #FCB215;
+    padding: 0px 8px;
+    text-align: center;
+    border-radius: 14px;
+    > div {
+      color: #FFF;
+      font-size: 14px;
+      line-height: 24px;
+    }
+  }
+
 </style>
