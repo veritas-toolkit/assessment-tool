@@ -141,35 +141,6 @@
             </div>
           </div>
           <div class="dividingLine"></div>
-          <!--version history-->
-<!--
-          <div class="version" v-show="reportHistoryList.length != 0">Version history old</div>
-          <div class="dividingLine1" v-show="reportHistoryList.length != 0"></div>
-          <div v-for="(item,index) in reportHistoryList" v-show="reportHistoryList.length != 0">
-            <div class="version-box">
-              <div class="oneLine">
-                <div
-                    style="display:flex;font-size: 14px;margin-right: 12px;padding: 4px 20px 2px 0px;font-weight: bold">
-                  <div class="version-style"><i class="el-icon-price-tag"></i> v {{ item.version }}</div>
-                  <span>&nbsp;&nbsp;&nbsp;</span>
-                  <div class="oneLine"><i class="el-icon-document"></i> {{ item.message }}</div>
-                </div>
-                <div style="padding: 0px 0px 4px 0px">
-                  <span class="date"><i class="el-icon-time"></i> on {{ dateFormat(item.createdTime) }}</span>
-                </div>
-              </div>
-              <div style="display: flex;flex-shrink: 0;">
-                <div class="model-artifacts" @click="downloadHistoryJsonFile(item.projectId,item.versionIdOfProject)"><i
-                    class="el-icon-help"></i><span>Model artifacts</span></div>
-                <div class="fairness-assessment" @click="questionnaireHistory(item.projectId,item.versionIdOfProject)">
-                  <i class="el-icon-notebook-1"></i><span>Fairness assessment</span></div>
-                <div class="pdf-report" @click="previewHistoryPdf(item.projectId,item.versionIdOfProject)"><i
-                    class="el-icon-document-remove"></i><span>Report</span></div>
-              </div>
-            </div>
-            <div class="dividingLine2"></div>
-          </div>
--->
           <project-version-history :reportHistoryList="reportHistoryList"></project-version-history>
         </el-tab-pane>
         <el-tab-pane label="Member" name="second">
@@ -193,7 +164,7 @@
                     v-model="editProjectForm.description"></el-input>
         </el-form-item>
         <el-form-item class="login" disabled label="Business scenario" prop="businessScenario">
-          <el-select v-model="editProjectForm.businessScenario" placeholder="Please choose a business scenario">
+          <el-select disabled v-model="editProjectForm.businessScenario" placeholder="Please choose a business scenario">
             <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name"
                        :value="item.code"></el-option>
           </el-select>
