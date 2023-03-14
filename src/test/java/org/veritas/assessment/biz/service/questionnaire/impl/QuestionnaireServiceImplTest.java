@@ -116,7 +116,7 @@ class QuestionnaireServiceImplTest {
         action.setAnswer("new answer");
         action.setProjectId(projectId);
         action.setQuestionId(sub.getQuestionId());
-        action.setBasedQuestionVid(questionnaireVersion.getVid());
+        action.setBasedQuestionVid(sub.getQuestionVid());
         action.setOperator(admin);
         action.setActionTime(new Date());
         questionnaireService.editAnswer(admin, projectId, action);
