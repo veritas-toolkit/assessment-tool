@@ -1,6 +1,6 @@
 FROM centos:7 AS build
 
-ENV GOSU_VERSION=1.14
+ENV GOSU_VERSION=1.16
 RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
     && curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64" \
     && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64.asc" \
@@ -12,9 +12,9 @@ RUN gpg --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4
 
 RUN cd /tmp &&\
     yum groupinstall -y "Development Tools" &&\
-    curl -O https://www.sqlite.org/2021/sqlite-autoconf-3360000.tar.gz &&\
-    tar -zxvf sqlite-autoconf-3360000.tar.gz &&\
-    mv sqlite-autoconf-3360000 sqlite &&\
+    curl -O https://www.sqlite.org/2023/sqlite-autoconf-3410100.tar.gz &&\
+    tar -zxvf sqlite-autoconf-3410100.tar.gz &&\
+    mv sqlite-autoconf-3410100 sqlite &&\
     cd sqlite &&\
     ./configure &&\
     make -j 2 &&\
@@ -37,11 +37,11 @@ FROM centos:7
 ENV LANG='en_US.UTF-8' \
     LANGUAGE='en_US:en' \
     LC_ALL='en_US.UTF-8' \
-    PYTHON_VERSION=3.8.15
+    PYTHON_VERSION=3.8.16
 
 RUN groupadd -g 1000 veritas &&\
     useradd -d /home/veritas -u 1000 -g veritas -G root veritas &&\
-    #yum install -y python3 java-1.8.0-openjdk &&\
+    yum update -y &&\
     yum install -y java-1.8.0-openjdk &&\
     cd /tmp &&\
     yum install -y make gcc openssl-devel bzip2-devel libffi-devel zlib-devel wget &&\
