@@ -817,6 +817,7 @@ export default {
         if(res.status == 200) {
           this.$message.success('Archive successfully')
           this.editProjectVisible = false
+          this.getProjectInfo()
         }
       })
     }
