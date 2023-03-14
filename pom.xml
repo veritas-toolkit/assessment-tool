@@ -193,7 +193,7 @@
                                 <resource>
                                     <directory>${project.basedir}/py</directory>
                                     <includes>
-                                        <include>plot.py</include>
+                                        <include>*.py</include>
                                         <include>requirements.txt</include>
                                     </includes>
                                 </resource>
