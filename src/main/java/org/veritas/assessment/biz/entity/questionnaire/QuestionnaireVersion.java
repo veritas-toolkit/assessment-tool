@@ -293,7 +293,8 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
             return result;
         }).collect(Collectors.toList());
         Principle principle = main.getPrinciple();
-        int serial = 0;
+        final int SERIAL_OF_PRINCIPLE_START = 1;
+        int serial = SERIAL_OF_PRINCIPLE_START;
         for (QuestionNode questionNode : list) {
             if (principle == questionNode.getPrinciple()) {
                 questionNode.configureSerialOfPrinciple(serial);
