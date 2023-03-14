@@ -194,6 +194,14 @@ export default {
     changePasswordClosed() {
       this.$refs.passwordFormRefs.resetFields()
     },
+    userWizardFunction() {
+      this.userWizardShow = !this.finishedUserGuide
+      this.$http.post('/api/account/finish_user_guide').then(res => {
+        if(res.status == 200) {
+          console.log(res)
+        }
+      })
+    },
     changePassword() {
       if (this.passwordForm.newPassword && this.passwordForm.passwordConfirm && this.passwordForm.oldPassword) {
         if (this.passwordForm.newPassword === this.passwordForm.passwordConfirm) {
@@ -204,12 +212,9 @@ export default {
               newPassword:this.passwordForm.newPassword}).then(res => {
               if(res.status == 200) {
                 this.$message.success('Change successfully')
+                setTimeout(this.userWizardFunction, 1000);
                 this.shouldChangePassword = false
               }
-            })
-            this.userWizardShow = !this.finishedUserGuide
-            this.$http.post('/api/account/finish_user_guide').then(res => {
-              console.log(res)
             })
           } else {
             this.$message.warning('Old password and new password cannot be the same')
