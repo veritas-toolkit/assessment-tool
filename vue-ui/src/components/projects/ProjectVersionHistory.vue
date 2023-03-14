@@ -120,16 +120,6 @@ export default {
         let blob = new Blob(binaryData,{type: res.data.type})
         let pdfUrl = window.URL.createObjectURL(blob)
         window.open(pdfUrl)
-      }).catch(err => {
-        if (err.response.config.responseType === "blob") {
-          let data = err.response.data
-          let fileReader = new FileReader()
-          fileReader.onload = function() {
-            let jsonData = JSON.parse(this.result)
-            Vue.prototype.$message.error(jsonData.message)
-          };
-          fileReader.readAsText(data)
-        }
       })
     }
   },

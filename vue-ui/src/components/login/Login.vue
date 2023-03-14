@@ -136,8 +136,12 @@
         this.$refs.loginFormRefs.validate(val => {
           if (val) {
             this.$http.post('/api/login',this.loginForm).then(res => {
-              if (res.status == 200) {
-                this.$router.push('/home')
+              if (res.status === 200) {
+                if (this.$route.query.redirect != null) {
+                  this.$router.replace(this.$route.query.redirect)
+                } else {
+                  this.$router.push('/home')
+                }
               }
             })
           }

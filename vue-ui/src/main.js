@@ -3,7 +3,6 @@ import VueCookies from 'vue-cookies'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import axios from 'axios'
 import './plugins/element.js'
 import '../src/assets/css/global.css'
 import './assets/css/answerGlobal.less'
@@ -33,26 +32,9 @@ Vue.prototype.resetSetItem = function (key, newVal) {
   }
 }
 
-
-axios.interceptors.response.use(
-  function(response) {
-    return response
-  },
-  function(err) {
-    if (err.response.status == '403') {
-
-      window.location.href = '/'
-    } else {
-      if (err.response.config.responseType != "blob") {
-        Vue.prototype.$message.error(err.response.data.message)
-      }
-      return Promise.reject(err)
-    }
-  }
-)
-
 /*全局挂载*/
-Vue.prototype.$http = axios
+import request from "@/api/request";
+Vue.prototype.$http = request
 //定义全局的过滤器 "changeTime":改变时间为几周前
 Vue.filter('changeTime', function(dateStr) {
   return format(dateStr);
