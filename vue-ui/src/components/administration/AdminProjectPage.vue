@@ -32,7 +32,14 @@
           <div style="margin-bottom: 4px">Project name</div>
           <el-input style="margin-bottom: 16px" v-model="saveProjInfoName"></el-input>
           <div style="margin-bottom: 4px">Project description</div>
-          <el-input type="textarea" :rows="5" v-model="saveProjInfoDescription"></el-input>
+          <el-input type="textarea" :rows="2" v-model="saveProjInfoDescription"></el-input>
+          <div style="margin-bottom: 10px;margin-top: 16px">Principles</div>
+          <el-checkbox-group v-model="principleList">
+            <el-checkbox label="principleGeneric" disabled>Generic</el-checkbox>
+            <el-checkbox label="principleFairness">Fairness</el-checkbox>
+            <el-checkbox label="principleEA">Ethics & Accountability</el-checkbox>
+            <el-checkbox label="principleTransparency">Transparency</el-checkbox>
+          </el-checkbox-group>
         </div>
       </div>
       <div style="display: flex;justify-content: flex-end">
@@ -145,7 +152,8 @@
           name: '',
           description: '',
           businessScenario: '',
-        }
+        },
+        principleList: ['principleGeneric'],
       }
     },
     created() {
@@ -187,6 +195,15 @@
       doSaveProjInfo() {
         this.saveProjInfo.name = this.saveProjInfoName
         this.saveProjInfo.description = this.saveProjInfoDescription
+        if (this.principleList.indexOf('principleFairness') != -1) {
+          this.saveProjInfo.principleFairness = true
+        } else {this.saveProjInfo.principleFairness = false}
+        if (this.principleList.indexOf('principleEA') != -1) {
+          this.saveProjInfo.principleEA = true
+        } else {this.saveProjInfo.principleEA = false}
+        if (this.principleList.indexOf('principleTransparency') != -1) {
+          this.saveProjInfo.principleTransparency = true
+        } else {this.saveProjInfo.principleTransparency = false}
         this.$http.post(`/api/admin/project/${this.projectId}`,this.saveProjInfo).then(res => {
           if (res.status == 200) {
             this.$message.success('Save successfully')
@@ -266,6 +283,9 @@
           this.saveProjInfoDescription = res.data.description
           this.createdTime = this.dateFormat(res.data.createdTime)
           this.lastEditedTime = this.dateFormat(res.data.lastEditedTime)
+          if (res.data.principleFairness) {this.principleList.push('principleFairness')}
+          if (res.data.principleEA) {this.principleList.push('principleEA')}
+          if (res.data.principleTransparency) {this.principleList.push('principleTransparency')}
         })
       },
       dateFormat(date) {
