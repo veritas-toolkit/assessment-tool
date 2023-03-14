@@ -1,5 +1,5 @@
 #! /bin/bash
-
+set -e
 cd $(dirname $0)/.. || exit
 
 if [[ -f py/venv/bin/activate ]]; then
