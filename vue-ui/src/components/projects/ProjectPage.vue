@@ -365,6 +365,8 @@ export default {
         }
         if (res.data.projectRole) {
           this.permissionList = this.permissionList.concat(res.data.projectRole.permissionList)
+        } else {
+          this.permissionList = []
         }
         this.fairnessAssessmentVisible = true
         this.projectDetail = res.data
@@ -520,7 +522,7 @@ export default {
       })
     },
     questionnaire() {
-      this.$router.push({path: '/questionnaire', query: {id: this.projectId}})
+      this.$router.push({path: '/questionnaire', query: {id: this.projectId,permissionList:this.permissionList}})
     },
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})

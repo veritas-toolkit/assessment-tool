@@ -49,12 +49,12 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
           <el-aside :width="isCollapse? '72px':'400px'">
-            <QuestionnaireMenu @getId="getQuestionId" :defaultId="defaultId" :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
+            <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList" :defaultId="defaultId" :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
           </el-aside>
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
-            <QuestionnaireAnswer :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-show="compareFlag" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
+            <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
+            <QuestionnaireCompareAnswer v-show="compareFlag" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -157,6 +157,7 @@ export default {
       compareTab: 'exportedOnly',
       openCompare: false,
       projectId: this.$route.query.id,
+      permissionList: this.$route.query.permissionList,
       questionId: '',
       defaultId: '',
       menuData: [],
@@ -183,7 +184,9 @@ export default {
   },
   created() {
     this.getQuestionnaireMenu()
+    // console.log('pid',this.projectId)
     sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
+    // console.log('plist',this.permissionList)
   },
 
   watch: {

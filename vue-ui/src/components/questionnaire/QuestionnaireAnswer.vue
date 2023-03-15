@@ -8,7 +8,7 @@
           {{ answerDict.question }}
         </div>
         <div style="display: flex">
-          <img @click="mainQuesEcho(answerDictId)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+          <img @click="mainQuesEcho(answerDictId)" v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
           <el-popover
               placement="left-start"
               width="400"
@@ -61,7 +61,7 @@
             {{ item.question }}
           </div>
           <div style="display: flex">
-            <img @click="subQuesEcho(item.id)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+            <img @click="subQuesEcho(item.id)" v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
             <el-popover
                 placement="left-start"
                 width="400"
@@ -139,11 +139,16 @@ import {
 } from "@/util/echartsOption";
 import {Message} from "element-ui";
 import option from "element-ui/packages/option";
+import {permissionCheck,PermissionType} from "@/util/permission";
 
 export default {
   name: "QuestionnaireAnswer",
   components: { editor },
   props: {
+    permissionList: {
+      type: Array,
+      required: false
+    },
     projectId: {
       type: String,
       required: true
@@ -157,6 +162,7 @@ export default {
     }
   },
   created() {
+    console.log(this.permissionList)
     this.getFullComment()
     let id = this.projectId
     this.init = {
@@ -206,9 +212,13 @@ export default {
       addComment: '',
       commentId: '',
       commentCount: {},
+      PermissionType:PermissionType
     }
   },
   methods: {
+    has_permission(target_permission) {
+      return permissionCheck(this.permissionList, target_permission);
+    },
     sendComment() {
       if (this.addComment) {
         this.$http.put(`/api/project/${this.projectId}/questionnaire/comment`,{questionId:this.commentId,comment:this.addComment}).then(res => {
