@@ -123,7 +123,12 @@
               </el-card>
             </div>
             <div style="display: flex;align-items: center;">
-              <div :class="archived?'archivedButton':'fairnessButton'" @click="questionnaire">
+              <div class="fairnessButton" v-if="archived" @click="questionnaire">
+                <!-- view questionnaire if the project has been archived. -->
+                <img src="../../assets/projectPic/new_edit.png" alt="">
+                <span>View</span>
+              </div>
+              <div class="fairnessButton" v-if="!archived" @click="questionnaire">
                 <img src="../../assets/projectPic/new_edit.png" alt="">
                 <span>Edit</span>
               </div>
@@ -131,13 +136,8 @@
                 <img src="../../assets/projectPic/new_preview.png" alt="">
                 <span>Preview</span>
               </div>
-              <!--
-              <div class="fairnessButton" @click="exportPdfVisible = true"  v-show="fairnessAssessmentVisible">
-                <img src="../../assets/projectPic/exportReport.png" alt="">
-                <span>Export report</span>
-              </div>
-              -->
-              <div :class="archived?'archivedButton':'fairnessButton'" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
+
+              <div class="fairnessButton" v-if="!archived" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
                 <img src="../../assets/projectPic/new_export.png" alt="">
                 <span>Export</span>
               </div>
@@ -807,7 +807,7 @@ export default {
       this.$http.post(`/api/project/${this.projectId}/archive`).then(res => {
         if(res.status == 200) {
           this.$message.success('Archive successfully')
-          // this.editProjectVisible = false
+          this.editProjectVisible = false
           this.getProjectInfo()
         }
       })
@@ -816,7 +816,7 @@ export default {
       this.$http.post(`/api/project/${this.projectId}/unarchive`).then(res => {
         if(res.status == 200) {
           this.$message.success('Unarchive successfully')
-          // this.editProjectVisible = false
+          this.editProjectVisible = false
           this.getProjectInfo()
         }
       })
