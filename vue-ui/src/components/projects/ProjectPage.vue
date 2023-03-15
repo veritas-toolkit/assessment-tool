@@ -861,6 +861,7 @@ export default {
 }
 
 .backPic {
+  cursor: pointer;
   line-height: 40px;
   width: 32px;
   height: 32px;
