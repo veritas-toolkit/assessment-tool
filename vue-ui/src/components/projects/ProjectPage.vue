@@ -21,21 +21,29 @@
         <el-popover placement="left" width="154px" trigger="click"
                     v-show="has_permission(PermissionType.PROJECT_EDIT) || has_permission(PermissionType.PROJECT_DELETE) || has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)">
           <div>
-            <div v-show="has_permission(PermissionType.PROJECT_EDIT)" class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
-                 @click="editProjectVisible = true" style="cursor: pointer"><img src="../../assets/groupPic/edit.png"
-                                                                                 alt=""><span>Edit project</span></div>
-            <div
-                v-show="has_permission(PermissionType.PROJECT_EDIT) && has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)"
+            <div v-show="showEditProjectButton"
+                 class="editProject BarlowMedium"
+                 @click="editProjectVisible = true" style="cursor: pointer">
+              <img src="../../assets/groupPic/edit.png" alt=""/>
+              <span>Edit project</span>
+            </div>
+            <div v-show="showEditProjectButton && showEditQuestionnaireButton"
+                class="divide_line">
+            </div>
+            <div v-show="showEditQuestionnaireButton"
+                 class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
+                 @click="editTemplate" style="cursor: pointer">
+              <img src="../../assets/projectPic/editQuestionnaire.png" alt=""/>
+              <span>Edit questionnaire</span>
+            </div>
+            <div v-show="showEditQuestionnaireButton && showDeleteProjectButton"
                 class="divide_line"></div>
-            <div v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
-                 @click="editTemplate" style="cursor: pointer"><img src="../../assets/projectPic/editQuestionnaire.png"
-                                                                    alt=""><span>Edit questionnaire</span></div>
-            <div
-                v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE) && has_permission(PermissionType.PROJECT_DELETE)"
-                class="divide_line"></div>
-            <div v-show="has_permission(PermissionType.PROJECT_DELETE)" class="deleteProject BarlowMedium"
-                 @click="deleteProjectInfo" style="cursor: pointer"><img src="../../assets/groupPic/delete.png"
-                                                                         alt=""><span>Delete project</span></div>
+            <div v-show="showDeleteProjectButton"
+                 class="deleteProject BarlowMedium"
+                 @click="deleteProjectInfo" style="cursor: pointer">
+              <img src="../../assets/groupPic/delete.png" alt=""/>
+              <span>Delete project</span>
+            </div>
           </div>
           <div slot="reference" class="moreAct" style="cursor: pointer">
             <img src="../../assets/groupPic/more.png" alt="">
@@ -157,11 +165,11 @@
                class="createProject"
                :model="editProjectForm">
         <el-form-item class="login" label="Project name" prop="name">
-          <el-input placeholder="Please input a project name" v-model="editProjectForm.name"></el-input>
+          <el-input placeholder="Please input a project name" v-model="editProjectForm.name" :disabled="archived"/>
         </el-form-item>
         <el-form-item class="login" label="Project description" prop="description">
           <el-input :rows="3" type="textarea" placeholder="Please input project description here"
-                    v-model="editProjectForm.description"></el-input>
+                    v-model="editProjectForm.description" :disabled="archived"/>
         </el-form-item>
         <el-form-item class="login" disabled label="Business scenario" prop="businessScenario">
           <el-select disabled v-model="editProjectForm.businessScenario" placeholder="Please choose a business scenario">
@@ -171,13 +179,14 @@
         </el-form-item>
         <el-form-item class="login" label="Assess Principle" prop="principleGeneric">
           <el-checkbox disabled v-model="editProjectForm.principleGeneric">Generic</el-checkbox>
-          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleFairness">Fairness</el-checkbox>
-          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleEA">Ethics & Accountability</el-checkbox>
-          <el-checkbox style="margin-left: 8px" v-model="editProjectForm.principleTransparency">Transparency</el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleFairness">Fairness</el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleEA">Ethics & Accountability</el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleTransparency">Transparency</el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer" style="display: flex;justify-content: space-between">
-        <el-button class="GreenBC" @click="archiveProject">Archive</el-button>
+        <el-button class="GreenBC" @click="archiveProject" v-show="!archived">Archive</el-button>
+        <el-button class="GreenBC" @click="unarchiveProject" v-show="archived">Unarchive</el-button>
         <div>
           <el-button class="BlackBorder" @click="editProjectVisible = false">Cancel</el-button>
           <el-button class="GreenBC" @click="editProjectInfo">Edit</el-button>
@@ -325,6 +334,17 @@ export default {
     this.getProjectMember()
     this.getProjectDetail()
     this.fetchReportHistoryList()
+  },
+  computed: {
+    showEditProjectButton() {
+      return this.has_permission(PermissionType.PROJECT_EDIT)
+    },
+    showEditQuestionnaireButton() {
+      return this.has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE) && !this.archived
+    },
+    showDeleteProjectButton() {
+      return this.has_permission(PermissionType.PROJECT_DELETE) && !this.archived
+    }
   },
   methods: {
     fileChange(file, fileList) {
@@ -787,11 +807,21 @@ export default {
       this.$http.post(`/api/project/${this.projectId}/archive`).then(res => {
         if(res.status == 200) {
           this.$message.success('Archive successfully')
-          this.editProjectVisible = false
+          // this.editProjectVisible = false
           this.getProjectInfo()
         }
       })
     },
+    unarchiveProject() {
+      this.$http.post(`/api/project/${this.projectId}/unarchive`).then(res => {
+        if(res.status == 200) {
+          this.$message.success('Unarchive successfully')
+          // this.editProjectVisible = false
+          this.getProjectInfo()
+        }
+      })
+    },
+
   }
 }
 </script>
