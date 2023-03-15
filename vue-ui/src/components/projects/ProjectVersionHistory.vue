@@ -25,30 +25,6 @@
           </div>
         </div>
       </div>
-<!--      <div class="version-box">-->
-<!--        <div class="oneLine">-->
-<!--          <div style="display:flex;font-size: 14px;margin-right: 12px;padding: 4px 20px 2px 0px;font-weight: bold">-->
-<!--            <div class="version-style"><i class="el-icon-price-tag"></i> v {{ item.version }}</div>-->
-<!--            <span>&nbsp;&nbsp;&nbsp;</span>-->
-<!--            <div class="oneLine"><i class="el-icon-document"></i> {{ item.message }}</div>-->
-<!--          </div>-->
-<!--          <div style="padding: 0px 0px 4px 0px">-->
-<!--            <span class="date"><i class="el-icon-time"></i> on {{ dateFormat(item.createdTime) }}</span>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div style="display: flex;flex-shrink: 0;">-->
-<!--          <div class="model-artifacts" @click="downloadHistoryJsonFile(item)">-->
-<!--            <i class="el-icon-help"></i><span>Model artifacts</span>-->
-<!--          </div>-->
-<!--          <div class="fairness-assessment" @click="questionnaireHistory(item)">-->
-<!--            <i class="el-icon-notebook-1"></i><span>Fairness assessment</span>-->
-<!--          </div>-->
-<!--          <div class="pdf-report" @click="previewHistoryPdf(item)">-->
-<!--            <i class="el-icon-document-remove"></i><span>Report</span>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="dividingLine2"></div>-->
     </div>
   </div>
 </template>
@@ -73,6 +49,12 @@ export default {
       return dateFormat.dateFormat(date);
     },
     downloadHistoryJsonFile(reportHistory) {
+      if (reportHistory['modelArtifactVid'] == null) {
+        this.$alert("This report does not have an associated model artifact.",
+            "Model Artifact",
+            {type: "warning"})
+        return
+      }
       projectApi.fetchHistoryJsonInfo(reportHistory.projectId, reportHistory.versionId)
           .then(res => {
             return res.data;
@@ -100,7 +82,7 @@ export default {
                     window.URL.revokeObjectURL(Temp.href)
                   }
                 })
-          })
+          });
 
     },
     questionnaireHistory: async function (reportHistory) {
@@ -113,7 +95,7 @@ export default {
 
     previewHistoryPdf(reportHistory) {
       let projectId = reportHistory.projectId;
-      let versionId = reportHistory.versionIdOfProject;
+      let versionId = reportHistory['versionIdOfProject'];
       projectApi.fetchReportPdf(projectId,versionId).then(res => {
         const binaryData = []
         binaryData.push(res.data)
