@@ -27,13 +27,10 @@ service.interceptors.response.use(
         return response
     },
     function(err) {
-        console.log("route_name:" + router.currentRoute.name)
-        console.log("router.currentRoute.fullPath: " + router.currentRoute.fullPath)
         console.log(err.response)
-        if (err.response.status === 403) {
-            console.log("for 403")
+        if (err.response.status === 401) {
             if (router.currentRoute.path !== "/login") {
-                router.push({
+                router.replace({
                     path:"/login",
                     query: {redirect: router.currentRoute.fullPath}
                 })
