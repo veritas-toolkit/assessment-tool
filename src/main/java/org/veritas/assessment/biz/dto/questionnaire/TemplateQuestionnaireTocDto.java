@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
+import org.veritas.assessment.biz.constant.QuestionnaireTemplateType;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 
@@ -29,6 +30,8 @@ public class TemplateQuestionnaireTocDto {
     private String name;
 
     private String description;
+
+    private QuestionnaireTemplateType type;
 
     private Map<String, String> principles;
 
@@ -98,6 +101,7 @@ public class TemplateQuestionnaireTocDto {
         this.templateId = questionnaire.getId();
         this.name = questionnaire.getName();
         this.description = questionnaire.getDescription();
+        this.type = questionnaire.getType();
         this.principles = new LinkedHashMap<>();
         Arrays.stream(Principle.values()).forEach(e -> this.principles.put(e.getShortName(), e.getFullname()));
 
