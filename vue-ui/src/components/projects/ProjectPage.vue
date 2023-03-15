@@ -185,8 +185,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer" style="display: flex;justify-content: space-between">
-        <el-button class="GreenBC" @click="archiveProject" v-show="!archived">Archive</el-button>
-        <el-button class="GreenBC" @click="unarchiveProject" v-show="archived">Unarchive</el-button>
+        <el-button class="GreenBC" @click="archiveProject" v-if="!archived">Archive</el-button>
+        <el-button class="GreenBC" @click="unarchiveProject" v-if="archived">Unarchive</el-button>
         <div>
           <el-button class="BlackBorder" @click="editProjectVisible = false">Cancel</el-button>
           <el-button class="GreenBC" @click="editProjectInfo">Edit</el-button>
