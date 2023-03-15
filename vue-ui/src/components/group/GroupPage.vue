@@ -116,24 +116,90 @@
     </div>
     <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="createProjectVisible" width="548px">
       <template slot="title"><span class="dialogTitle">New project</span></template>
-      <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
-        <el-form-item class="BarlowMedium" label="Project name" prop="name">
-          <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Project description" prop="description">
-          <el-input type="textarea" :rows="3" placeholder="Please input project description here" v-model="projectForm.description"></el-input>
-        </el-form-item>
-        <el-form-item class="login" label="Business scenario" prop="businessScenario">
-          <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
-            <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">
-          <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
-            <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
+<!--      <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">-->
+<!--        <el-form-item class="BarlowMedium" label="Project name" prop="name">-->
+<!--          <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item class="BarlowMedium" label="Project description" prop="description">-->
+<!--          <el-input type="textarea" :rows="3" placeholder="Please input project description here" v-model="projectForm.description"></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item class="login" label="Business scenario" prop="businessScenario">-->
+<!--          <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">-->
+<!--            <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">-->
+<!--          <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">-->
+<!--            <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+      <el-tabs v-model="activeNewProjectName" @tab-click="handleClickProject">
+        <el-tab-pane label="New project" name="create">
+          <!--create project form-->
+          <el-form class="createProject" :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
+            <el-form-item class="BarlowMedium" label="Project name" prop="name">
+              <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project description" prop="description">
+              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
+              <el-select clearable v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
+                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="projectForm.businessScenario || projectForm.businessScenario===0">
+              <el-select clearable v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
+                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
+              <el-checkbox disabled v-model="projectForm.principleGeneric">Generic</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleFairness">Fairness</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleEA">Ethics & Accountability</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleTransparency">Transparency</el-checkbox>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="Create from existing project" name="copy">
+          <!--Create from existing project-->
+          <div class="form-label">Existing project</div>
+          <el-autocomplete
+              class="inline-input"
+              clearable
+              v-model="selectExistingProject"
+              :fetch-suggestions="querySearch"
+              placeholder="Please input a existing project name"
+              @select="handleSelect">
+            <i class="el-icon-search el-input__icon" slot="suffix"></i>
+          </el-autocomplete>
+          <el-form v-show="createExistFlag" class="createProject" :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
+            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
+              <el-select disabled v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
+                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="existingProjectForm.businessScenario || existingProjectForm.businessScenario===0">
+              <el-select clearable v-model="existingProjectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
+                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
+              <el-checkbox disabled v-model="existingProjectForm.principleGeneric">Generic</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleFairness">Fairness</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleEA">Ethics & Accountability</el-checkbox>
+              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleTransparency">Transparency</el-checkbox>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project name" prop="name">
+              <el-input placeholder="Please input a project name" v-model="existingProjectForm.name"></el-input>
+            </el-form-item>
+            <el-form-item class="BarlowMedium" label="Project description" prop="description">
+              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="existingProjectForm.description"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
       <span slot="footer" class="dialog-footer">
         <el-button @click="createProjectVisible = false" class="BlackBorder BarlowMedium">Cancel</el-button>
         <el-button type="primary" @click="createProject" class="GreenBC BarlowMedium">Create</el-button>
@@ -189,6 +255,9 @@
     name: "GroupPage",
     data() {
       return {
+        createExistFlag: false,
+        selectExistingProject: '',
+        activeNewProjectName: 'create',
         checkList: [],
         userTypeGroup: '',
         userType: '',
@@ -235,14 +304,35 @@
           name: '',
           description: '',
           businessScenario: '',
-          groupOwnerId: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
           questionnaireTemplateId: '',
+        },
+        existingProjectForm: {
+          businessScenario: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
+          questionnaireTemplateId: '',
+          name: '',
+          description: '',
         },
         projectFormRules: {
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           businessScenario: [{ required: true, trigger: 'blur' },],
           questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          principleGeneric: [{ required: true, message: 'principle is required', trigger: 'blur' },],
+        },
+        existingProjectFormRules: {
+          businessScenario: [{ required: true, trigger: 'blur' },],
+          principleGeneric: [{ required: true, trigger: 'blur' },],
+          questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          name: [{ required: true, trigger: 'blur' },],
+          description: [{ required: true, trigger: 'blur' },],
         },
         addUserId: [],
         permissionList: [],
@@ -262,6 +352,42 @@
       this.getCreateTemplateList()
     },
     methods: {
+      handleSelect(item) {
+        if (item) {
+          this.createExistFlag = true
+        }
+        this.$http.get(`/api/project/${item.id}`).then(res => {
+          if (res.status == 200) {
+            let projectInfo = res.data
+            console.log(projectInfo.businessScenario)
+            this.existingProjectForm.businessScenario = projectInfo.businessScenario
+            this.existingProjectForm.principleGeneric = projectInfo.principleGeneric
+            this.existingProjectForm.principleFairness = projectInfo.principleFairness
+            this.existingProjectForm.principleEA = projectInfo.principleEA
+            this.existingProjectForm.principleTransparency = projectInfo.principleTransparency
+            this.existingProjectForm.name = projectInfo.name
+            this.existingProjectForm.description = projectInfo.description
+            this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':projectInfo.businessScenario}}).then(res => {
+              if(res.status == 200) {
+                this.createTemplateList = res.data
+              }
+            })
+          }
+        })
+        // this.selectExistingProject = item.id
+        console.log(item);
+      },
+      querySearch(queryString, cb) {
+        let projects = []
+        this.projectList.map(item => {
+          item.value = item.name
+          projects.push(item)
+        })
+        cb(projects);
+      },
+      handleClickProject(tab, event) {
+        this.activeNewProjectName = tab.name
+      },
       getGroupDetail() {
         this.$http.get(`/api/group/${this.groupId}/detail`).then(res => {
           this.permissionList = res.data.groupRole.permissionList
@@ -303,21 +429,54 @@
           }
         })
       },
+      // createProject() {
+      //   this.$refs.projectFormRefs.validate(val => {
+      //     if (val) {
+      //       this.projectForm.groupOwnerId = this.groupId
+      //       this.$http.put('/api/project/new',this.projectForm).then(res => {
+      //         if (res.status == 201) {
+      //           this.$message.success('Create successfully')
+      //           this.$refs.projectFormRefs.resetFields()
+      //           this.getProjectList()
+      //         }
+      //       })
+      //       this.createProjectVisible = false
+      //     }
+      //   })
+      // },
       createProject() {
-        this.$refs.projectFormRefs.validate(val => {
-          if (val) {
-            this.projectForm.groupOwnerId = this.groupId
-            this.$http.put('/api/project/new',this.projectForm).then(res => {
-              if (res.status == 201) {
-                this.$message.success('Create successfully')
-                this.$refs.projectFormRefs.resetFields()
-                this.getProjectList()
-              }
-            })
-            this.createProjectVisible = false
-          }
-        })
+        if (this.activeNewProjectName == 'create') {
+          this.$refs.projectFormRefs.validate(val => {
+            if (val) {
+              this.projectForm.groupOwnerId = this.groupId
+              this.$http.post('/api/project/new',this.projectForm).then(res => {
+                if(res.status == 201) {
+                  this.$message.success('Create successfully')
+                  this.$refs.projectFormRefs.resetFields()
+                  this.getProjectList()
+                }
+              })
+              this.createProjectVisible = false
+            }
+          })
+        } else if (this.activeNewProjectName == 'copy') {
+          this.$refs.existingProjectFormRefs.validate(val => {
+            if (val) {
+              this.existingProjectForm.groupOwnerId = this.groupId
+              this.$http.post('/api/project/new',this.existingProjectForm).then(res => {
+                if(res.status == 201) {
+                  this.$message.success('Create successfully')
+                  this.$refs.existingProjectFormRefs.resetFields()
+                  this.getProjectList()
+                }
+              })
+              this.createProjectVisible = false
+            }
+          })
+        }
+
       },
+
       addUserToTags(value) {
         if (this.tags.indexOf(value) == -1 && value != '') {
           this.tags.push(value)
@@ -750,5 +909,27 @@
     font-size: 16px;
     font-weight: bold;
     font-family: BarlowBold;
+  }
+  .form-label {
+    line-height: 40px;
+    float: none;
+    font-size: 14px;
+    color: #aaa;
+    display: flex !important;
+    text-align: left;
+    height: 32px;
+    margin-top: 4px !important;
+    padding: 0 !important;
+  }
+  .generic {
+    background: #78BED3;
+    font-size: 16px;
+    line-height: 16px !important;
+    border-radius: 20px;
+    opacity: 0.65;
+    padding: 0px 12px;
+  }
+  .el-tabs {
+    position: relative;
   }
 </style>
