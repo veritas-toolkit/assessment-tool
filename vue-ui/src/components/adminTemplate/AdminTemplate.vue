@@ -22,10 +22,10 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside width="400px">
-          <AdminTemplateMenu @getId="getQuestionId" @getEditFlag="getEditFlag" :principle="principle" :defaultId="defaultId" :templateId="templateId" :menuData="menuData"></AdminTemplateMenu>
+          <AdminTemplateMenu @getId="getQuestionId" @getEditFlag="getEditFlag" :type="type" :principle="principle" :defaultId="defaultId" :templateId="templateId" :menuData="menuData"></AdminTemplateMenu>
         </el-aside>
         <el-main>
-          <AdminTemplateSubQuestion @updateFlag="updateValue" @getEditFlag="getEditFlag" :editFlag="editFlag" :addSubQuesFlag="addSubQuesFlag" :templateId="templateId" :questionId="questionId"></AdminTemplateSubQuestion>
+          <AdminTemplateSubQuestion @updateFlag="updateValue" @getEditFlag="getEditFlag" :type="type" :editFlag="editFlag" :addSubQuesFlag="addSubQuesFlag" :templateId="templateId" :questionId="questionId"></AdminTemplateSubQuestion>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -44,7 +44,7 @@
             </el-popover>
           </div>
           <div class="footer-right BarlowMedium draft-popover"  style="width: calc(100% - 400px)">
-            <div style="display: flex;justify-content: right">
+            <div style="display: flex;justify-content: right" v-show="type != 'SYSTEM'">
               <div class="add-subques" @click="addSubQuesFlag = true">
                 <img class="watch" src="../../assets/questionnairePic/watch.svg" alt="">
                 Add subquestion
@@ -85,6 +85,7 @@ export default {
       menuData: [],
       addSubQuesFlag: false,
       editFlag: false,
+      type: '',
     }
   },
   created() {
@@ -108,6 +109,7 @@ export default {
     getQuestionnaireMenu() {
       this.$http.get(`/api/admin/questionnaire/${this.templateId}/toc`).then(res => {
         if (res.status == 200) {
+          this.type = res.data.type
           this.principleList = Object.keys(res.data.principles)
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[0].mainQuestionList[0].id.toString()

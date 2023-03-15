@@ -19,7 +19,7 @@
                     <div class="serial-font">
                       {{item2.serial}}
                     </div>
-                    <div class="ques-img">
+                    <div class="ques-img" v-show="type != 'SYSTEM'">
                       <img src="../../assets/adminPic/upPage.png" @click.stop="upRecordMainQues(index2,item1.serialNo)" alt="" v-show="item2.editable">
                       <img src="../../assets/adminPic/downPage.png" @click.stop="downRecordMainQues(index2,item1.serialNo)" alt="" v-show="item2.editable">
                       <img src="../../assets/adminPic/writeProblem.png" @click="editMainQuesFlag[item2.id] = true" alt="" v-show="item2.editable">
@@ -39,7 +39,7 @@
               <i slot="suffix" class="el-input__icon el-icon-check" @click="addMainQuestion(item1.serialNo)"></i>
               <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag[item1.serialNo] = false"></i>
             </el-input>
-            <div class="add-main" @click="addMainQuesFlag[item1.serialNo] = true" v-show="!addMainQuesFlag[item1.serialNo]">
+            <div class="add-main" @click="addMainQuesFlag[item1.serialNo] = true" v-show="!addMainQuesFlag[item1.serialNo] && type != 'SYSTEM'">
               <img class="add-main-pic" src="../../assets/questionnairePic/add.svg" alt="">
             </div>
           </el-collapse-item>
@@ -68,7 +68,11 @@ export default {
     defaultId: {
       type: String,
       required: true
-    }
+    },
+    type: {
+      type: String,
+      required: true
+    },
   },
   watch: {
     'menuData': function () {

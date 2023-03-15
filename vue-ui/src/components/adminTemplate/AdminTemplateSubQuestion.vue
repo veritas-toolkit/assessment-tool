@@ -10,7 +10,7 @@
         <i slot="suffix" class="el-input__icon el-icon-close" @click="editSubQuesFlag[item.id] = false"></i>
       </el-input>
       <div>
-        <div class="ques-img " v-show="!editSubQuesFlag[item.id]"> <!--target-->
+        <div class="ques-img " v-show="!editSubQuesFlag[item.id] && type != 'SYSTEM'"> <!--target-->
           <img src="../../assets/adminPic/upPage.png" @click="upRecordSubQues(index)" alt="">
           <img src="../../assets/adminPic/downPage.png" @click="downRecordSubQues(index)" alt="">
           <img src="../../assets/adminPic/writeProblem.png" @click="editSubQuesFlag[item.id] = true" alt="">
@@ -42,7 +42,11 @@ export default {
     },
     editFlag: {
       type: Boolean
-    }
+    },
+    type: {
+      type: String,
+      required: true
+    },
   },
   data() {
     return {
