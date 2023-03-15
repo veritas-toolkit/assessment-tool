@@ -5,7 +5,7 @@
         <div class="title BarlowBold">
           <img class="backPic" src="../../assets/groupPic/back.png" @click="$router.back()" alt="" style="cursor: pointer">
           <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
-          <span>Template</span>
+          <span>Questionnaire</span>
         </div>
         <div class="BarlowMedium">
           <el-radio-group v-model="principle" class="principle-group">
@@ -35,11 +35,11 @@
                 placement="top-start"
                 width="400"
                 trigger="click">
-              <Notifications></Notifications>
+              <ProjectNotifications @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
               <div class="not-box" slot="reference">
                 <img src="../../assets/projectPic/notification.png" alt="">
                 <span class="BarlowBold">Notifications</span>
-                <div>6</div>
+                <div>{{ projNotLen }}</div>
               </div>
             </el-popover>
           </div>
@@ -61,6 +61,7 @@
 import Notifications from "@/components/comment/Notifications";
 import TemplateMenu from "@/components/template/TemplateMenu";
 import TemplateSubQuestion from "@/components/template/TemplateSubQuestion";
+import ProjectNotifications from "@/components/comment/ProjectNotifications";
 
 export default {
   name: "Template",
@@ -68,6 +69,7 @@ export default {
     Notifications,
     TemplateMenu,
     TemplateSubQuestion,
+    ProjectNotifications
   },
 
   data() {
@@ -86,6 +88,7 @@ export default {
       menuData: [],
       addSubQuesFlag: false,
       editFlag: false,
+      projNotLen: '',
     }
   },
   created() {
@@ -97,6 +100,9 @@ export default {
     }
   },
   methods: {
+    getProjNotLen(item) {
+      this.projNotLen = item
+    },
     updateValue(data) {
       this.addSubQuesFlag = data
     },
