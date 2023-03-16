@@ -8,7 +8,7 @@
           {{ answerDict.question }}
         </div>
         <div style="display: flex">
-          <img @click="mainQuesEcho(answerDictId)" v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+          <img @click="mainQuesEcho(answerDictId)" v-show="has_permission(PermissionType.PROJECT_INPUT_ANSWER)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
           <el-popover
               placement="left-start"
               width="400"
@@ -61,7 +61,8 @@
             {{ item.question }}
           </div>
           <div style="display: flex">
-            <img @click="subQuesEcho(item.id)" v-show="has_permission(PermissionType.PROJECT_EDIT_QUESTIONNAIRE)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+            <img @click="subQuesEcho(item.id)" v-show="has_permission(PermissionType.PROJECT_INPUT_ANSWER)" class="subQues-edit"
+                 src="../../assets/questionnairePic/edit.svg" alt="">
             <el-popover
                 placement="left-start"
                 width="400"
