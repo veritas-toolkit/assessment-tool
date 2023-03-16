@@ -7,7 +7,7 @@ create table vat2_project_report (
     tag varchar(255),
     version varchar(255), -- x.y.z, created by user
     message varchar(2000),
-    model_artifact_vid integer not null,
+    model_artifact_vid integer,
     questionnaire_vid integer not null,
     pdf_path varchar(2000)
 );
