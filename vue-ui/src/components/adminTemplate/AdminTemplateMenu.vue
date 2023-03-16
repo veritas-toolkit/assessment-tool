@@ -28,17 +28,21 @@
 
                   </div>
                   <div v-show="!editMainQuesFlag[item2.id]" class="ques-content">{{item2.question}}</div>
-                  <el-input v-show="editMainQuesFlag[item2.id]" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
-                    <i slot="suffix" class="el-input__icon el-icon-check" @click="editMainQuestion(item2.id)"></i>
-                    <i slot="suffix" class="el-input__icon el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
+                  <el-input v-show="editMainQuesFlag[item2.id]" type="textarea" :rows="3" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
                   </el-input>
+                  <div style="display: flex;justify-content: right">
+                    <i v-show="editMainQuesFlag[item2.id]" style="color: #78BED3;font-weight: bold;font-size: 20px" class="el-icon-check" @click="editMainQuestion(item2.id)"></i>
+                    <i v-show="editMainQuesFlag[item2.id]" style="color: darkred;font-weight: bold;font-size: 20px;margin-left: 8px" class="el-icon-close" @click="editMainQuesFlag[item2.id] = false"></i>
+                  </div>
                 </div>
               </template>
             </el-menu-item>
-            <el-input v-show="addMainQuesFlag[item1.serialNo]" v-model="addMainQues[item1.serialNo]" placeholder="Please input a new main question">
-              <i slot="suffix" class="el-input__icon el-icon-check" @click="addMainQuestion(item1.serialNo)"></i>
-              <i slot="suffix" class="el-input__icon el-icon-close" @click="addMainQuesFlag[item1.serialNo] = false"></i>
+            <el-input v-show="addMainQuesFlag[item1.serialNo]" type="textarea" :rows="3" v-model="addMainQues[item1.serialNo]" placeholder="Please input a new main question">
             </el-input>
+            <div style="display: flex;justify-content: right">
+              <i class="el-icon-check" v-show="addMainQuesFlag[item1.serialNo]" style="color: #78BED3;font-weight: bold;font-size: 20px" @click="addMainQuestion(item1.serialNo)"></i>
+              <i class="el-icon-close" v-show="addMainQuesFlag[item1.serialNo]" style="color: darkred;font-weight: bold;font-size: 20px;margin-left: 8px" @click="addMainQuesFlag[item1.serialNo] = false"></i>
+            </div>
             <div class="add-main" @click="addMainQuesFlag[item1.serialNo] = true" v-show="!addMainQuesFlag[item1.serialNo] && type != 'SYSTEM'">
               <img class="add-main-pic" src="../../assets/questionnairePic/add.svg" alt="">
             </div>
