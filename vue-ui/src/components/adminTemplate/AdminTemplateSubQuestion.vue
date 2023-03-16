@@ -18,10 +18,12 @@
         </div>
       </div>
     </div>
-    <el-input v-show="addSubQuesFlag" style="margin-top: 24px" v-model="addSubQues" placeholder="Please input a new subquestion">
-      <i slot="suffix" class="el-input__icon el-icon-check" @click="addSubQuestion"></i>
-      <i slot="suffix" class="el-input__icon el-icon-close" @click="handleAddSubQues"></i>
+    <el-input v-show="addSubQuesFlag" type="textarea" :rows="3" style="margin-top: 24px" v-model="addSubQues" placeholder="Please input a new subquestion">
     </el-input>
+    <div v-show="addSubQuesFlag" style="display: flex;justify-content: right">
+      <i class="el-icon-check" style="color: #78BED3;font-weight: bold;font-size: 20px" @click="addSubQuestion"></i>
+      <i class="el-icon-close" style="color: darkred;font-weight: bold;font-size: 20px;margin-left: 8px" @click="handleAddSubQues"></i>
+    </div>
   </div>
 </template>
 
