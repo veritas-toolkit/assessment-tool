@@ -447,9 +447,10 @@ export default {
         if (val) {
           this.editProjectForm.id = this.projectId
           this.$http.post(`/api/project/${this.projectId}`, this.editProjectForm).then(res => {
-            if (res.status == 200) {
+            if (res.status === 200) {
               this.$message.success('Edit successfully')
-              this.getProjectDetail()
+              // this.getProjectDetail()
+              this.getProjectInfo()
             }
             this.editProjectVisible = false
           })
