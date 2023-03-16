@@ -71,7 +71,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="info" class="GreenBC" @click="changePassword">Save</el-button>
+        <el-button type="info" class="GreenBC" @click="changePassword" @keyup.enter.native="changePassword">Save</el-button>
       </span>
     </el-dialog>
     <!--user wizardPic-->
