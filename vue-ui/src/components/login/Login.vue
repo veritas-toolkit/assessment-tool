@@ -143,6 +143,12 @@
                   this.$router.push('/home')
                 }
               }
+            }).catch(err => {
+              let message = err.response.data.message;
+              if (!message) {
+                  message = 'Login failed.'
+              }
+              this.$message.error(message)
             })
           }
         })

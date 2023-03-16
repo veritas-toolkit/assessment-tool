@@ -26,15 +26,13 @@ service.interceptors.response.use(
         return response
     },
     function(err) {
-        console.log(err.response)
         if (err.response.status === 401) {
-            if (router.currentRoute.path !== "/login") {
-                router.replace({
+            const notLoginPage = router.currentRoute.path !== "/login";
+            if (notLoginPage) {
+                return router.replace({
                     path:"/login",
                     query: {redirect: router.currentRoute.fullPath}
                 })
-            } else {
-                Vue.prototype.$message.error(err.response.data.message)
             }
         } else {
             if (err.response.config.responseType !== "blob") {
