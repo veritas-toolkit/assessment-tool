@@ -340,6 +340,9 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
         if (!zip.exists()) {
             throw new FileNotFoundException(zip.getPath());
         }
+        if (log.isDebugEnabled()) {
+            log.debug("read the json from zip: {}", zip.getAbsolutePath());
+        }
         try (ZipFile zipFile = new ZipFile(zip)) {
             ZipEntry zipEntry = zipFile.getEntry(artifact.getFilename());
             if (zipEntry == null) {
@@ -369,7 +372,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
 
             }
         }
-
-
+        if (log.isDebugEnabled()) {
+            log.info("read done");
+        }
     }
 }
