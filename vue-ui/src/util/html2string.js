@@ -33,6 +33,10 @@ function html2string(data) {
         text = text.replace(/&lt;/g, '<');
         text = text.replace(/&gt;/g, '>');
         text = text.replace(/&amp;/g, '&');
+        text = text.replace(/&rsquo;/g, '’ ');
+        text = text.replace(/&#39;/g, '’');
+        text = text.replace(/&ldquo;/g, '“');
+        text = text.replace(/&rdquo;/g, '”');
 
         res['text'] = text
         res['imgContents'] = imgContents
