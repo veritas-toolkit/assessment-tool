@@ -1,11 +1,11 @@
 <template>
   <div style="position: relative;height: 100%">
-    <div class="compare-version-tag">
-      <div>
-        {{creator.username}} {{compareVersionTime|changeTime}} Version
+    <div class="compare-version-tag" :style="isCollapse?'width:calc(100% - 72px)':'width:calc(100% - 400px)'">
+      <div style="width: calc(50% - 16px);display: flex;justify-content: right">
+        <span class="comp-version">{{creator.username}} {{compareVersionTime|changeTime}} Version</span>
       </div>
-      <div>
-        Your Version
+      <div style="width: calc(50% - 16px);display: flex;justify-content: right">
+        <span class="ur-version">Your Version</span>
       </div>
     </div>
     <div class="vertical-line"></div>
@@ -144,6 +144,9 @@ export default {
     },
     compareVersionTime: {
       type: String,
+    },
+    isCollapse: {
+      type: Boolean,
     }
   },
   data() {
@@ -254,5 +257,23 @@ export default {
 .compare-right {
   background: #D3F2E3;
   color: #00945A;
+}
+.compare-version-tag {
+  display: flex;
+  position: fixed;
+  font-family: BarlowMedium;
+  font-size: 14px;
+}
+.comp-version {
+  background-color: #FCB215;
+  color: #FFFFFF;
+  padding: 0px 8px;
+  border-radius: 14px;
+}
+.ur-version {
+  background-color: #78BED3;
+  color: #FFFFFF;
+  padding: 0px 8px;
+  border-radius: 14px;
 }
 </style>

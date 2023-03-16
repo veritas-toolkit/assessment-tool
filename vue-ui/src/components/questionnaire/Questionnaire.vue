@@ -54,7 +54,7 @@
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
             <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-show="compareFlag" :compareVersionTime="compareVersionTime" :creator="creator" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
+            <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse" :compareVersionTime="compareVersionTime" :creator="creator" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
