@@ -161,8 +161,6 @@ export default {
   },
   created() {
     this.showCompareDiff()
-    console.log('11111',this.creator)
-    // console.log(this.compareDiff('','1212'))
   },
   watch: {
     'questionnaireVid': function() {
@@ -181,7 +179,23 @@ export default {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/question/${this.questionId}`,{params:{'basedQuestionnaireVid':this.questionnaireVid}}).then(res => {
         if (res.status == 200) {
           this.diffSummary = res.data
-          this.mainBasedQuestion = res.data.basedQuestion
+          if (res.data.subList) {
+            for(let i=0;i<res.data.subList.length;i++) {
+              if (res.data.subList[i].basedQuestion == null) {
+                this.diffSummary.subList[i].basedQuestion = {
+                  question: '',
+                  answer: ''
+                }
+              }
+            }
+          }
+          if (res.data.basedQuestion) {
+            this.mainBasedQuestion = res.data.basedQuestion
+          } else {
+            this.mainBasedQuestion.serial = ''
+            this.mainBasedQuestion.question = ''
+            this.mainBasedQuestion.answer = ''
+          }
           this.mainNewQuestion = res.data.newQuestion
         }
       })
