@@ -1,10 +1,11 @@
 <template>
   <div style="position: relative;height: 100%">
-    <div class="compare-version-tag" :style="isCollapse?'width:calc(100% - 72px)':'width:calc(100% - 400px)'">
-      <div style="width: calc(50% - 16px);display: flex;justify-content: right">
+<!--    :style="isCollapse?'width:calc(100% - 72px)':'width:calc(100% - 400px)'"-->
+    <div class="compare-version-tag" style="width: 100%">
+      <div style="width: 50%;display: flex;justify-content: right;margin-right: 24px">
         <span class="comp-version">{{creator.username}} {{compareVersionTime|changeTime}} Version</span>
       </div>
-      <div style="width: calc(50% - 16px);display: flex;justify-content: right">
+      <div style="width: 50%;display: flex;justify-content: left;margin-left: 24px">
         <span class="ur-version">Your Version</span>
       </div>
     </div>
@@ -274,7 +275,7 @@ export default {
 }
 .compare-version-tag {
   display: flex;
-  position: fixed;
+  //position: fixed;
   font-family: BarlowMedium;
   font-size: 14px;
 }
