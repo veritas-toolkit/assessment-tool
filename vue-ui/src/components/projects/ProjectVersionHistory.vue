@@ -55,35 +55,36 @@ export default {
             {type: "warning"})
         return
       }
-      projectApi.fetchHistoryJsonInfo(reportHistory.projectId, reportHistory.versionId)
-          .then(res => {
-            return res.data;
-          })
-          .then(modelArtifact => {
-            projectApi.downloadHistoryJsonFile(reportHistory.projectId, reportHistory.versionId)
-                .then(res => {
-                  let blob = new Blob([res.data], {type: "application/octet-stream;charset=utf-8"});
-                  if (window.navigator.msSaveBlob) {
-                    try {
-                      window.navigator.msSaveBlob(blob, modelArtifact.filename)
-                    } catch (e) {
-                    }
-                  } else {
-                    let Temp = document.createElement('a')
-                    Temp.href = window.URL.createObjectURL(blob)
-                    if (modelArtifact.filename) {
-                      Temp.download = modelArtifact.filename
-                    } else {
-                      Temp.download = 'data.json'
-                    }
-                    document.body.appendChild(Temp)
-                    Temp.click()
-                    document.body.removeChild(Temp)
-                    window.URL.revokeObjectURL(Temp.href)
-                  }
-                })
-          });
+      projectApi.downloadHistoryJsonFile(reportHistory.projectId, reportHistory['versionIdOfProject'])
+          .then(response => {
+            let blob = new Blob([response.data], {type: "application/octet-stream;charset=utf-8"});
+            if (window.navigator.msSaveBlob) {
+              try {
+                window.navigator.msSaveBlob(blob, modelArtifact.filename)
+              } catch (e) {
+              }
+            } else {
+              let Temp = document.createElement('a')
+              Temp.href = window.URL.createObjectURL(blob)
 
+              let headerLine = response.headers['content-disposition'];
+              if (!headerLine) {
+                headerLine = response.headers['Content-Disposition']
+              }
+              let filename;
+              if (headerLine) {
+                filename = headerLine.split('filename=')[1].split(';')[0]
+              }
+              if (!filename) {
+                filename = 'data.json'
+              }
+              Temp.download = filename
+              document.body.appendChild(Temp)
+              Temp.click()
+              document.body.removeChild(Temp)
+              window.URL.revokeObjectURL(Temp.href)
+            }
+          })
     },
     questionnaireHistory: async function (reportHistory) {
       let reportInfo = {
