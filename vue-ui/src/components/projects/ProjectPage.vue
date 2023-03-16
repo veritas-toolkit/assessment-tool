@@ -231,6 +231,7 @@ import ProjectMember from "@/components/projects/ProjectMember";
 import ProjectVersionHistory from "@/components/projects/ProjectVersionHistory";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
+import userApi from "@/api/userApi";
 
 export default {
   name: "ProjectPage",
@@ -560,6 +561,13 @@ export default {
     },
     beforeUpload(file) {
       return new Promise((resolve, reject) => {
+        return userApi.whomai()
+            .then(() => {
+              return resolve(true);
+            })
+            .catch(() => {
+              return reject(false);
+            });
         const reader = new FileReader();
         if (file.name.includes(".json")) {
           reader.onload = (res) => {
