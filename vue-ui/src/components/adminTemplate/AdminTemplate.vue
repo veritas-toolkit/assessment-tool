@@ -5,7 +5,7 @@
         <div class="title BarlowBold">
 <!--          <img class="backPic" src="../../assets/groupPic/back.png" @click="$router.back()" alt="" style="cursor: pointer">-->
           <router-link :to="{ path: '/administration',query: {activeName: 'fourth'}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>
-          <span>Template</span>
+          <span>Questionnaire</span>
         </div>
         <div class="BarlowMedium">
           <el-radio-group v-model="principle" class="principle-group">
