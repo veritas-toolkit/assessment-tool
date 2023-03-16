@@ -3,8 +3,8 @@
     <el-container style="height: calc(100% - 1px);display: flex;flex-direction: column">
       <el-header height="64px">
         <div class="title BarlowBold">
-          <img class="backPic" src="../../assets/groupPic/back.png" @click="$router.back()" alt="" style="cursor: pointer">
-          <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
+<!--          <img class="backPic" src="../../assets/groupPic/back.png" @click="$router.back()" alt="" style="cursor: pointer">-->
+          <router-link :to="{ path: '/administration',query: {activeName: 'fourth'}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>
           <span>Template</span>
         </div>
         <div class="BarlowMedium">
@@ -16,7 +16,7 @@
           </el-radio-group>
         </div>
         <div class="BarlowMedium">
-          <div id="save">Save</div>
+<!--          <div id="save">Save</div>-->
         </div>
       </el-header>
       <!--flex-direction: column; overflow-y: auto-->

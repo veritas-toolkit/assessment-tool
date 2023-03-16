@@ -16,7 +16,7 @@
           </el-radio-group>
         </div>
         <div class="BarlowMedium">
-          <div id="save">Save</div>
+<!--          <div id="save">Save</div>-->
         </div>
       </el-header>
       <!--flex-direction: column; overflow-y: auto-->
