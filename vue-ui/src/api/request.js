@@ -1,5 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
 import Vue from "vue";
 import router from "@/router";
 
@@ -34,6 +33,8 @@ service.interceptors.response.use(
                     path:"/login",
                     query: {redirect: router.currentRoute.fullPath}
                 })
+            } else {
+                Vue.prototype.$message.error(err.response.data.message)
             }
         } else {
             if (err.response.config.responseType !== "blob") {
