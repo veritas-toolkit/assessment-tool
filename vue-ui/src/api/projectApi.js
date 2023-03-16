@@ -1,9 +1,6 @@
 import request from "@/api/request";
 import Router from '@/router'
-// import Vue from "vue";
-// import axios from "axios"
 
-// const request = Vue.prototype.$http.create({    timeout: 5000})
 
 const projectApi = {
     detail(projectId) {
