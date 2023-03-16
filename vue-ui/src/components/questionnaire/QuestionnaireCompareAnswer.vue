@@ -1,5 +1,13 @@
 <template>
   <div style="position: relative;height: 100%">
+    <div class="compare-version-tag">
+      <div>
+        {{creator.username}} {{compareVersionTime|changeTime}} Version
+      </div>
+      <div>
+        Your Version
+      </div>
+    </div>
     <div class="vertical-line"></div>
 <!--main-ques & ans-->
     <div class="main-ques-box">
@@ -119,6 +127,9 @@ export default {
       type: String,
       required: true
     },
+    creator: {
+      type: Object,
+    },
     questionId: {
       type: String,
       required: true
@@ -130,6 +141,9 @@ export default {
     compareFlag: {
       type: Boolean,
       required: true
+    },
+    compareVersionTime: {
+      type: String,
     }
   },
   data() {
@@ -144,6 +158,7 @@ export default {
   },
   created() {
     this.showCompareDiff()
+    console.log('11111',this.creator)
     // console.log(this.compareDiff('','1212'))
   },
   watch: {

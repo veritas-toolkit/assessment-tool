@@ -54,7 +54,7 @@
           <el-main :style="openCompare?'display:flex':''">
 <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
             <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-show="compareFlag" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
+            <QuestionnaireCompareAnswer v-show="compareFlag" :compareVersionTime="compareVersionTime" :creator="creator" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
           </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -96,7 +96,7 @@
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
-                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
                         <div>{{item.creator.username}}</div>
@@ -169,6 +169,7 @@ export default {
       },
       draftList: [],
       compareFlag: false,
+      creator: {},
       questionnaireVid: '',
       modelArtifactVersionId: 0,
       projNotLen: '',
@@ -180,6 +181,7 @@ export default {
         T: '',
       },
       compareList: [],
+      compareVersionTime: '',
     }
   },
   created() {
@@ -199,7 +201,7 @@ export default {
     },
     'compareFlag': function () {
       if(this.compareFlag) {
-        this.compare(this.questionnaireVid)
+        this.compare(this.questionnaireVid,this.creator,this.compareVersionTime)
       } else {
         this.getQuestionnaireMenu()
       }
@@ -291,7 +293,6 @@ export default {
             })
             this.compareList = comList
           }
-          console.log(this.compareList)
         })
       } else if (compareType == 'draftOnly') {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
@@ -310,8 +311,10 @@ export default {
       }
 
     },
-    compare(questionnaireVid) {
+    compare(questionnaireVid,creator,compareVersionTime) {
       this.compareFlag = true
+      this.creator = creator
+      this.compareVersionTime = compareVersionTime
       this.questionnaireVid = questionnaireVid.toString()
       this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
         if (res.status == 200) {
