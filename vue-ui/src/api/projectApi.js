@@ -6,6 +6,12 @@ import Router from '@/router'
 // const request = Vue.prototype.$http.create({    timeout: 5000})
 
 const projectApi = {
+    detail(projectId) {
+        return request({
+            url: `api/project/${projectId}/detail`,
+            method: 'get'
+        });
+    },
     getMemberList(projectId) {
         return request({
             url: `api/project/${projectId}/member`,
