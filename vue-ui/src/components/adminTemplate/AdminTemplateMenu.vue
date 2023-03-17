@@ -159,12 +159,13 @@ export default {
       })
     },
     deleteMainQues(id) {
-      this.deleteFlag = true
-      this.$http.delete(`/api/admin/questionnaire/${this.templateId}/question/${id}`).then(res => {
-        if (res.status == 200) {
-          this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-
-        }
+      this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
+        this.deleteFlag = true
+        this.$http.delete(`/api/admin/questionnaire/${this.templateId}/question/${id}`).then(res => {
+          if (res.status == 200) {
+            this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          }
+        })
       })
     },
     editMainQuestion(id) {

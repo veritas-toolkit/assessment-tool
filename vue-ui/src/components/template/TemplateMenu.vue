@@ -25,7 +25,6 @@
                       <img src="../../assets/adminPic/writeProblem.png" @click="editMainQuesFlag[item2.id] = true" alt="">
                       <img src="../../assets/adminPic/deleteProblem.png" @click="deleteMainQues(item2.id)" alt="">
                     </div>
-
                   </div>
                   <div v-show="!editMainQuesFlag[item2.id]" class="ques-content">{{item2.question}}</div>
                   <el-input v-show="editMainQuesFlag[item2.id]" type="textarea" :rows="3" v-model="editMainQues[item2.id]" placeholder="Please input a new subquestion">
@@ -155,12 +154,13 @@ export default {
       })
     },
     deleteMainQues(id) {
-      this.deleteFlag = true
-      this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
-        if (res.status == 200) {
-          this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-
-        }
+      this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
+        this.deleteFlag = true
+        this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
+          if (res.status == 200) {
+            this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+          }
+        })
       })
     },
     editMainQuestion(id,vid) {
