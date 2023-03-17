@@ -219,7 +219,9 @@ public interface ProjectMapper extends BaseMapper<Project> {
         if (queryAction.getBusinessScenario() != null) {
             wrapper.eq(Project::getBusinessScenario, queryAction.getBusinessScenario());
         }
-        wrapper.eq(Project::isArchived, queryAction.isArchived());
+        if (queryAction.getArchived() != null) {
+            wrapper.eq(Project::isArchived, queryAction.getArchived());
+        }
 
         wrapper.and(ownerQueryWrapper -> {
             if (projectEmpty && groupEmpty) {

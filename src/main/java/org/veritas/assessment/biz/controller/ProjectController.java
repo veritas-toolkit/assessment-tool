@@ -117,7 +117,7 @@ public class ProjectController {
     public Pageable<ProjectDto> listProject(
             @Parameter(hidden = true) User operator,
             @RequestParam(name = "keyword", required = false) String keywordString,
-            @RequestParam(name = "archived", required = false, defaultValue = "false") boolean archived,
+            @RequestParam(name = "archived", required = false, defaultValue = "false") Boolean archived,
             @RequestParam(name = "businessScenario", required = false) Integer businessScenarioCode,
             @RequestParam(name = "createdByMe", required = false, defaultValue = "false") boolean createdByMe,
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
@@ -131,9 +131,6 @@ public class ProjectController {
         }
         action.setPage(page);
         action.setPageSize(pageSize);
-
-
-
         Pageable<Project> pageable = projectService.findProjectPageable(operator, action);
         return projectDtoConverter.convertFrom(pageable);
     }

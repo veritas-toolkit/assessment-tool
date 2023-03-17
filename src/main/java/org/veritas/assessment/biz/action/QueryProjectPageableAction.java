@@ -20,7 +20,7 @@ public class QueryProjectPageableAction {
 
     private BusinessScenarioEnum businessScenario;
 
-    private boolean archived;
+    private Boolean archived;
 
     private int page = 1;
 
