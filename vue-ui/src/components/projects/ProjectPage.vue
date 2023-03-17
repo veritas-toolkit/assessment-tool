@@ -534,7 +534,7 @@ export default {
     },
     beforeUpload(file) {
       return new Promise((resolve, reject) => {
-        return userApi.whomai()
+        return userApi.whoami()
             .then(() => {
               return resolve(true);
             })

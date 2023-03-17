@@ -11,7 +11,7 @@ const userApi = {
             }
         });
     },
-    whomai() {
+    whoami() {
         return request(
             {
                 url: `api/account`,
