@@ -248,7 +248,7 @@ with zipfile.ZipFile(filename, 'r') as zf:
 
 fairness = jsonObject['fairness']
 transparency = jsonObject['transparency']
-features_dict = fairness['features']
+
 
 fairness_init = fairness['fairness_init']
 fair_metric_name = fairness_init['fair_metric_name']
@@ -261,9 +261,10 @@ correlation_matrix = fairness['correlation_matrix']
 class_distribution = fairness['class_distribution']
 class_distribution_list = []
 class_distribution_label = []
-for key in class_distribution:
-    class_distribution_list.append(class_distribution[key])
-    class_distribution_label.append(key)
+if class_distribution is not None:
+    for key in class_distribution:
+        class_distribution_list.append(class_distribution[key])
+        class_distribution_label.append(key)
 weighted_confusion_matrix = fairness['weighted_confusion_matrix']
 
 plot_weighted_confusion_matrix(weighted_confusion_matrix, ['Negative', 'Positive'], ['Negative', 'Positive'], zf_name)
@@ -284,25 +285,32 @@ if correlation_matrix:
 # plot perf dynamic
 if perf_dynamic is not None:
     plot_perf_dynamic(perf_dynamic['threshold'], perf_dynamic['perf'], perf_dynamic['selection_rate'], zf_name)
-for key in features_dict:
-    fair_metric_name = features_dict[key]['tradeoff']['fair_metric_name']
-    perf_metric_name = features_dict[key]['tradeoff']['perf_metric_name']
-    fair_metric_name = re.sub('_', ' ', fair_metric_name)
-    perf_metric_name = re.sub('_', ' ', perf_metric_name)
-    th_a = features_dict[key]['tradeoff']['th_x']
-    th_b = features_dict[key]['tradeoff']['th_y']
-    perf = np.array(features_dict[key]['tradeoff']['perf'])
-    fair = np.array(features_dict[key]['tradeoff']['fair'])
-    best_th = features_dict[key]['tradeoff']['max_perf_single_th'][0]
-    feature_distribution_list = []
-    feature_distribution_label = []
-    for k in features_dict[key]['feature_distribution']:
-        feature_distribution_list.append(features_dict[key]['feature_distribution'][k])
-        feature_distribution_label.append(k)
-    # plot feature_distribution
-    plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
-    # plot contour
-    # plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
+# features
+features_dict = fairness['features']
+if features_dict is not None:
+    for key in features_dict:
+        feature = features_dict[key]
+        tradeoff = feature['tradeoff']
+        if tradeoff is None:
+            continue
+        fair_metric_name = tradeoff['fair_metric_name']
+        perf_metric_name = tradeoff['perf_metric_name']
+        fair_metric_name = re.sub('_', ' ', fair_metric_name)
+        perf_metric_name = re.sub('_', ' ', perf_metric_name)
+        th_a = tradeoff['th_x']
+        th_b = tradeoff['th_y']
+        perf = np.array(tradeoff['perf'])
+        fair = np.array(tradeoff['fair'])
+        best_th = tradeoff['max_perf_single_th'][0]
+        feature_distribution_list = []
+        feature_distribution_label = []
+        for k in feature['feature_distribution']:
+            feature_distribution_list.append(features_dict[key]['feature_distribution'][k])
+            feature_distribution_label.append(k)
+        # plot feature_distribution
+        plot_piechart(feature_distribution_list, feature_distribution_label, zf_name, key)
+        # plot contour
+        # plot_contour(zf_name, key, fair_metric_name, perf_metric_name)
 
 # transparency
 if transparency is not None:
