@@ -4,6 +4,17 @@ import {pl, tr} from "timeago.js/lib/lang";
 
 
 const projectApi = {
+    create(projectCreateDto) {
+        return request({
+            url: `api/project/new`,
+            method: 'post',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            data: {
+                ...projectCreateDto
+            }
+        })
+
+    },
     detail(projectId) {
         return request({
             url: `api/project/${projectId}/detail`,

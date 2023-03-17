@@ -39,7 +39,12 @@
               <el-input @input="getProjectList" placeholder="Search your project here" prefix-icon="el-icon-search" v-model="projectKeyword"></el-input>
             </el-col>
             <el-col v-show="permissionList.indexOf('project:create') != -1" style="width: 260px">
-              <div class="creProj BarlowMedium" @click="createProjectVisible = true" style="cursor: pointer"><i class="el-icon-plus"></i><span>Create project</span></div>
+<!--              <div class="creProj BarlowMedium" @click="createProjectVisible = true" style="cursor: pointer"><i class="el-icon-plus"></i><span>Create project</span></div>-->
+              <div class="creProj BarlowMedium" @click="$refs.createProjectDialog.open()"
+                   style="cursor: pointer">
+                <i class="el-icon-plus"></i>
+                <span>Create project2</span>
+              </div>
             </el-col>
           </el-row>
           <el-row :gutter="20" style="margin-top: 6px">
@@ -114,97 +119,6 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="createProjectVisible" width="548px">
-      <template slot="title"><span class="dialogTitle">New project</span></template>
-<!--      <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">-->
-<!--        <el-form-item class="BarlowMedium" label="Project name" prop="name">-->
-<!--          <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item class="BarlowMedium" label="Project description" prop="description">-->
-<!--          <el-input type="textarea" :rows="3" placeholder="Please input project description here" v-model="projectForm.description"></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item class="login" label="Business scenario" prop="businessScenario">-->
-<!--          <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">-->
-<!--            <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">-->
-<!--          <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">-->
-<!--            <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-      <el-tabs v-model="activeNewProjectName" @tab-click="handleClickProject">
-        <el-tab-pane label="New project" name="create">
-          <!--create project form-->
-          <el-form class="createProject" :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
-            <el-form-item class="BarlowMedium" label="Project name" prop="name">
-              <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Project description" prop="description">
-              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="projectForm.description"></el-input>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-              <el-select clearable v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
-                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="projectForm.businessScenario || projectForm.businessScenario===0">
-              <el-select clearable v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
-                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
-              <el-checkbox disabled v-model="projectForm.principleGeneric">Generic</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleFairness">Fairness</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleEA">Ethics & Accountability</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="projectForm.principleTransparency">Transparency</el-checkbox>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane label="Create from existing project" name="copy">
-          <!--Create from existing project-->
-          <div class="form-label">Existing project</div>
-          <el-autocomplete
-              class="inline-input"
-              clearable
-              v-model="selectExistingProject"
-              :fetch-suggestions="querySearch"
-              placeholder="Please input a existing project name"
-              @select="handleSelect">
-            <i class="el-icon-search el-input__icon" slot="suffix"></i>
-          </el-autocomplete>
-          <el-form v-show="createExistFlag" class="createProject" :rules="existingProjectFormRules" ref="existingProjectFormRefs" label-position="top" label="450px" :model="existingProjectForm">
-            <el-form-item class="BarlowMedium" label="Business scenario" prop="businessScenario">
-              <el-select disabled v-model="existingProjectForm.businessScenario" placeholder="Please choose a business scenario">
-                <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId" v-show="existingProjectForm.businessScenario || existingProjectForm.businessScenario===0">
-              <el-select clearable v-model="existingProjectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
-                <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Assess Principle" prop="principleGeneric">
-              <el-checkbox disabled v-model="existingProjectForm.principleGeneric">Generic</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleFairness">Fairness</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleEA">Ethics & Accountability</el-checkbox>
-              <el-checkbox style="margin-left: 8px" v-model="existingProjectForm.principleTransparency">Transparency</el-checkbox>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Project name" prop="name">
-              <el-input placeholder="Please input a project name" v-model="existingProjectForm.name"></el-input>
-            </el-form-item>
-            <el-form-item class="BarlowMedium" label="Project description" prop="description">
-              <el-input type="textarea" :rows="3" placeholder="Please input project description" v-model="existingProjectForm.description"></el-input>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-      </el-tabs>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="createProjectVisible = false" class="BlackBorder BarlowMedium">Cancel</el-button>
-        <el-button type="primary" @click="createProject" class="GreenBC BarlowMedium">Create</el-button>
-      </span>
-    </el-dialog>
     <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="addMemberVisible" width="548px">
       <template slot="title"><span class="dialogTitle">Invite member</span></template>
       <el-input @input="getUserList" clearable style="margin: 10px 0px 16px 0px" placeholder="Search by keyword" prefix-icon="el-icon-search" v-model="keyword"></el-input>
@@ -247,12 +161,22 @@
         <el-button class="GreenBC" @click="editGroupInfo">Edit</el-button>
       </span>
     </el-dialog>
+    <!--create project-->
+    <create-project-dialog ref="createProjectDialog"
+                           @created="onProjectCreated">
+    </create-project-dialog>
+
   </div>
 </template>
 
 <script>
+  import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
+
   export default {
     name: "GroupPage",
+    components: {
+      CreateProjectDialog,
+    },
     data() {
       return {
         createExistFlag: false,
@@ -352,6 +276,14 @@
       this.getCreateTemplateList()
     },
     methods: {
+      onProjectCreated(newProject) {
+        this.$router.push({
+          path:'/projectPage',
+          query: {
+            id: newProject.id
+          }
+        })
+      },
       handleSelect(item) {
         if (item) {
           this.createExistFlag = true
