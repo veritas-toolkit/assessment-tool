@@ -490,7 +490,7 @@
             }
           })
         } else if(this.activeName == 'third') {
-          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
             if (res.status == 200) {
               this.projectList = res.data.records
               this.total = res.data.total
@@ -514,7 +514,7 @@
             }
           })
         } else if(this.activeName == 'third') {
-          this.$http.get('/api/project',{params: {'keyword': this.keyword,createdByMe:true,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
+          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario,archived:true}}).then(res => {
             if (res.status == 200) {
               this.projectList = res.data.records
               this.total = res.data.total
