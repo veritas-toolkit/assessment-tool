@@ -35,11 +35,11 @@
                 placement="top-start"
                 width="400"
                 trigger="click">
-              <Notifications></Notifications>
+              <Notifications @getNotLen="getNotLen"></Notifications>
               <div class="not-box" slot="reference">
                 <img src="../../assets/projectPic/notification.png" alt="">
                 <span class="BarlowBold">Notifications</span>
-                <div>6</div>
+                <div>{{notLen}}</div>
               </div>
             </el-popover>
           </div>
@@ -86,6 +86,7 @@ export default {
       addSubQuesFlag: false,
       editFlag: false,
       type: '',
+      notLen: '',
     }
   },
   created() {
@@ -97,6 +98,9 @@ export default {
     }
   },
   methods: {
+    getNotLen(item) {
+      this.notLen = item
+    },
     updateValue(data) {
       this.addSubQuesFlag = data
     },
