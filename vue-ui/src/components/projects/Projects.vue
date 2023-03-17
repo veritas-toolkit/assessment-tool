@@ -162,6 +162,7 @@
               clearable
               v-model="selectExistingProject"
               :fetch-suggestions="querySearch"
+              :debounce=1
               placeholder="Please input a existing project name"
               @select="handleSelect">
               <i class="el-icon-search el-input__icon" slot="suffix"></i>
@@ -217,6 +218,8 @@
 </template>
 
 <script>
+  import projectApi from "@/api/projectApi";
+
   export default {
     name: "Projects",
     data() {
@@ -302,12 +305,18 @@
     },
     methods: {
       querySearch(queryString, cb) {
-        let projects = []
-        this.projectList.map(item => {
-          item.value = item.name
-          projects.push(item)
+        projectApi.fetchAllByKeyword(queryString).then(projects => {
+          projects.map(project => {
+            let owner_name;
+            if (project['userOwner']) {
+              owner_name = project['userOwner'].username;
+            } else {
+              owner_name = project['groupOwner'].name;
+            }
+            project.value = owner_name + " / " + project.name;
+          })
+          cb(projects)
         })
-        cb(projects);
       },
       handleSelect(item) {
         if (item) {

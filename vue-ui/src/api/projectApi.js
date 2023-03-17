@@ -1,5 +1,6 @@
 import request from "@/api/request";
 import Router from '@/router'
+import {pl, tr} from "timeago.js/lib/lang";
 
 
 const projectApi = {
@@ -8,6 +9,38 @@ const projectApi = {
             url: `api/project/${projectId}/detail`,
             method: 'get'
         });
+    },
+    async fetchAllByKeyword(keyword) {
+        let page = 1;
+        let pageCount = 2;
+        let projectList = [];
+        let archived = false;
+        while (page < pageCount) {
+            await request({
+                url: `api/project`,
+                method: 'get',
+                params: {
+                    keyword: keyword,
+                    archived: archived,
+                    page: page,
+                    pageSize: 100,
+                }
+            }).then(response => {
+                console.log(response.data)
+                projectList.push(...response.data.records);
+                page = response.data.page;
+                pageCount = response.data.pageCount;
+                if (page >= pageCount) {
+                    if (archived === false) {
+                        page = 1;
+                        pageCount = 2;
+                        archived = true;
+                    }
+
+                }
+            });
+        }
+        return projectList;
     },
     getMemberList(projectId) {
         return request({
