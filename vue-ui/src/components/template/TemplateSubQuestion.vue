@@ -102,10 +102,12 @@ export default {
       })
     },
     deleteSubQues(id) {
-      this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/${id}`).then(res => {
-        if (res.status == 200) {
-          this.subQuestionList = res.data.subQuestionList
-        }
+      this.$confirm('Confirm delete?',{type: 'warning'}).then(() => {
+        this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/${id}`).then(res => {
+          if (res.status == 200) {
+            this.subQuestionList = res.data.subQuestionList
+          }
+        })
       })
     },
     writeSubQues(id,vid) {
