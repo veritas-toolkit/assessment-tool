@@ -188,6 +188,12 @@ export default {
                   answer: ''
                 }
               }
+              if (res.data.subList[i].newQuestion == null) {
+                this.diffSummary.subList[i].newQuestion = {
+                  question: '',
+                  answer: ''
+                }
+              }
             }
           }
           if (res.data.basedQuestion) {
@@ -197,7 +203,14 @@ export default {
             this.mainBasedQuestion.question = ''
             this.mainBasedQuestion.answer = ''
           }
-          this.mainNewQuestion = res.data.newQuestion
+          if (res.data.newQuestion) {
+            this.mainNewQuestion = res.data.newQuestion
+          } else {
+            this.mainNewQuestion.serial = ''
+            this.mainNewQuestion.question = ''
+            this.mainNewQuestion.answer = ''
+          }
+
         }
       })
     },
