@@ -169,7 +169,8 @@ export default {
         questionnaireTemplateId: null,
       },
       existingProjectForm: {
-        businessScenario: '',
+        copyFromProjectId: null,
+        businessScenario: null,
         principleGeneric: true,
         principleFairness: false,
         principleEA: false,
@@ -297,7 +298,7 @@ export default {
       this.$http.get(`/api/project/${item.id}`).then(res => {
         if (res.status == 200) {
           let projectInfo = res.data
-          console.log(projectInfo.businessScenario)
+          this.existingProjectForm.copyFromProjectId = projectInfo.id
           this.existingProjectForm.businessScenario = projectInfo.businessScenario
           this.existingProjectForm.principleGeneric = projectInfo.principleGeneric
           this.existingProjectForm.principleFairness = projectInfo.principleFairness
@@ -358,6 +359,7 @@ export default {
                   this.$message.success('Create successfully')
                   this.$refs.existingProjectFormRefs.resetFields()
                   this.getProjectList()
+                  this.$emit("created", res.data)
                 }
               })
             } else {
