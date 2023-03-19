@@ -304,14 +304,8 @@ export default {
           this.existingProjectForm.principleTransparency = projectInfo.principleTransparency
           this.existingProjectForm.name = projectInfo.name
           this.existingProjectForm.description = projectInfo.description
-          this.$http.get('/api/system/questionnaire_template', {params: {'businessScenario': projectInfo.businessScenario}}).then(res => {
-            if (res.status == 200) {
-              this.createTemplateList = res.data
-            }
-          })
         }
       })
-      // this.selectExistingProject = item.id
     },
     createProject() {
       if (this.activeNewProjectName == 'create') {
