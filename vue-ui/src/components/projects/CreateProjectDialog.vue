@@ -331,7 +331,6 @@ export default {
                 if (res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.projectFormRefs.resetFields()
-                  // this.getProjectList()
                   this.$emit("created", res.data)
                 }
               })
@@ -342,7 +341,6 @@ export default {
                 if (res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.projectFormRefs.resetFields()
-                  // this.getProjectList()
                   this.$emit("created", res.data)
                 }
               })
@@ -361,7 +359,6 @@ export default {
                 if (res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.existingProjectFormRefs.resetFields()
-                  this.getProjectList()
                   this.$emit("created", res.data)
                 }
               })
@@ -372,7 +369,6 @@ export default {
                 if (res.status == 201) {
                   this.$message.success('Create successfully')
                   this.$refs.existingProjectFormRefs.resetFields()
-                  // this.getProjectList()
                   this.$emit("created", res.data)
                 }
               })
