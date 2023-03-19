@@ -38,7 +38,6 @@ public interface QuestionCommentReadLogMapper extends BaseMapper<QuestionComment
 
     @Cacheable(key = "'u_' + #userId + '_p_' + #projectId")
     default Map<Long, QuestionCommentReadLog> findLog(int userId, int projectId) {
-        System.out.println("called, start");
         LambdaQueryWrapper<QuestionCommentReadLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(QuestionCommentReadLog::getUserId, userId);
         wrapper.eq(QuestionCommentReadLog::getProjectId, projectId);
@@ -47,9 +46,9 @@ public interface QuestionCommentReadLogMapper extends BaseMapper<QuestionComment
         if (list == null || list.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<Long, QuestionCommentReadLog> map =  list.stream().collect(Collectors.toMap(QuestionCommentReadLog::getQuestionId, e -> e));
-        System.out.println("called, end");
-        return map;
+        Map<Long, QuestionCommentReadLog> map =  list.stream()
+                .collect(Collectors.toMap(QuestionCommentReadLog::getQuestionId, e -> e));
+        return Collections.unmodifiableMap(map);
     }
 
     @CacheEvict(key = "'u_' + #readLog.userId + '_p_' + #readLog.projectId")
