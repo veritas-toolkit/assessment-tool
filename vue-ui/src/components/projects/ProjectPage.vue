@@ -358,8 +358,6 @@ export default {
         }
         if (res.data.projectRole) {
           this.permissionList = this.permissionList.concat(res.data.projectRole.permissionList)
-        } else {
-          this.permissionList = []
         }
         this.fairnessAssessmentVisible = true
         this.projectDetail = res.data

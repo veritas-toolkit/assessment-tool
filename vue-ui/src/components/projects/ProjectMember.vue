@@ -89,21 +89,44 @@ export default {
     },
 
     canChangeRole(member) {
+      if (member['organizationType'] === "group") {
+        return false;
+      }
       if (!this.has_manage_members_permission) {
         return false;
       }
-      // 不能修改自己的角色
+      if (member.userId === this.project['userOwnerId']) {
+        return false;
+      }
+      if (this.lastOwner(member)) {
+        return false;
+      }
       return true;
     },
     canDeleteMember(member) {
+      if (member['organizationType'] === "group") {
+        return false;
+      }
       if (!this.has_manage_members_permission) {
         return false;
       }
-      // 除了creator ，都可以修改删除自己
+      if (member.userId === this.project['userOwnerId']) {
+        return false;
+      }
+      if (this.lastOwner(member)) {
+        return false;
+      }
       return true;
+    },
+    lastOwner(member) {
+      if (member.type === "OWNER") {
+        let ownerCount = this.projectMemberList.filter(m => {return m.type === "OWNER"}).length;
+        if (ownerCount <= 1) {
+          return true;
+        }
+      }
+      return false;
     }
-
-
   },
   watch: {
     'project': function (newProject, oldVal) {
