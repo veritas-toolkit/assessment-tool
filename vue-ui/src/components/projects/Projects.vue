@@ -132,53 +132,13 @@
     },
     data() {
       return {
-        selectExistingProject: '',
         activeName: 'first',
         activeNewProjectName: 'create',
         createProjectVisible: false,
         keyword: '',
         searchByBusinessScenario: '',
-        projectForm: {
-          name: '',
-          description: '',
-          businessScenario: '',
-          principleGeneric: true,
-          principleFairness: false,
-          principleEA: false,
-          principleTransparency: false,
-          ownerType: '',
-          questionnaireTemplateId: '',
-        },
-        existingProjectForm: {
-          businessScenario: '',
-          principleGeneric: true,
-          principleFairness: false,
-          principleEA: false,
-          principleTransparency: false,
-          questionnaireTemplateId: '',
-          name: '',
-          description: '',
-          ownerType: '',
-        },
-        projectFormRules: {
-          name: [{ required: true, trigger: 'blur' },],
-          description: [{ required: true, trigger: 'blur' },],
-          businessScenario: [{ required: true, trigger: 'blur' },],
-          questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
-          principleGeneric: [{ required: true, message: 'principle is required', trigger: 'blur' },],
-          ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
-        },
-        existingProjectFormRules: {
-          businessScenario: [{ required: true, trigger: 'blur' },],
-          principleGeneric: [{ required: true, trigger: 'blur' },],
-          questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
-          name: [{ required: true, trigger: 'blur' },],
-          description: [{ required: true, trigger: 'blur' },],
-          ownerType: [{ required: true, message: 'owner is required', trigger: 'blur' },],
-        },
         groupList: [],
         businessScenarioList: [],
-        createTemplateList: [],
         ownerTypeList: [],
         projectList: [],
         myProjectList: [],
@@ -196,20 +156,11 @@
         this.keyword = ''
         this.getProjectList()
       },
-      'projectForm.businessScenario':function () {
-        this.getCreateTemplateList()
-      },
-      'selectExistingProject': function() {
-        if (!this.selectExistingProject) {
-          this.createExistFlag = false
-        }
-      },
     },
     created() {
       this.getProjectList()
       sessionStorage.setItem('projectId', null)
       this.resetSetItem('projectId', null);
-      this.getBusinessScenarioList()
     },
     methods: {
       onProjectCreated(newProject) {
@@ -221,45 +172,6 @@
           }
         })
       },
-      querySearch(queryString, cb) {
-        projectApi.fetchAllByKeyword(queryString).then(projects => {
-          projects.map(project => {
-            let owner_name;
-            if (project['userOwner']) {
-              owner_name = project['userOwner'].username;
-            } else {
-              owner_name = project['groupOwner'].name;
-            }
-            project.value = owner_name + " / " + project.name;
-          })
-          cb(projects)
-        })
-      },
-      handleSelect(item) {
-        if (item) {
-          this.createExistFlag = true
-        }
-        this.$http.get(`/api/project/${item.id}`).then(res => {
-          if (res.status == 200) {
-            let projectInfo = res.data
-            console.log(projectInfo.businessScenario)
-            this.existingProjectForm.businessScenario = projectInfo.businessScenario
-            this.existingProjectForm.principleGeneric = projectInfo.principleGeneric
-            this.existingProjectForm.principleFairness = projectInfo.principleFairness
-            this.existingProjectForm.principleEA = projectInfo.principleEA
-            this.existingProjectForm.principleTransparency = projectInfo.principleTransparency
-            this.existingProjectForm.name = projectInfo.name
-            this.existingProjectForm.description = projectInfo.description
-            this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':projectInfo.businessScenario}}).then(res => {
-              if(res.status == 200) {
-                this.createTemplateList = res.data
-              }
-            })
-          }
-        })
-        // this.selectExistingProject = item.id
-        console.log(item);
-      },
       handleSizeChange(val) {
         this.pageSize = val
         this.getProjectList()
@@ -267,12 +179,6 @@
       handleCurrentChange(val) {
         this.page = val
         this.getProjectList()
-      },
-      createProjectShow() {
-        this.getCreateTemplateList()
-        this.getGroupList()
-        this.getWhoAmI()
-        this.createProjectVisible = true
       },
       handleClick(tab, event) {
         this.activeName = tab.name
@@ -282,28 +188,7 @@
       },
       getBusinessScenarioList() {
         this.$http.get('/api/system/business_scenario').then(res => {
-          if(res.status == 200) {
-            this.businessScenarioList = res.data
-          }
-        })
-      },
-      getCreateTemplateList() {
-        this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':this.projectForm.businessScenario}}).then(res => {
-          if(res.status == 200) {
-            this.createTemplateList = res.data
-          }
-        })
-      },
-      getGroupList() {
-        let val = {}
-        this.ownerTypeList = []
-        this.$http.get('/api/group/owned-by-me').then(res => {
-          if (res.status == 200) {
-            this.groupList = res.data
-            val.label = 'Groups'
-            val.options = res.data
-            this.ownerTypeList.push(val)
-          }
+          this.businessScenarioList = res.data
         })
       },
       // DateFormat
@@ -393,7 +278,15 @@
       },
       getProjectList() {
         if (this.activeName == 'first') {
-          this.$http.get('/api/project',{params: {'keyword': this.keyword,page:this.page,pageSize:this.pageSize,businessScenario:this.searchByBusinessScenario}}).then(res => {
+          this.$http.get('/api/project',
+              {
+                params: {
+                  'keyword': this.keyword,
+                  page:this.page,
+                  pageSize:this.pageSize,
+                  businessScenario:this.searchByBusinessScenario
+                }
+              }).then(res => {
             if (res.status == 200) {
               this.projectList = res.data.records
               this.total = res.data.total
