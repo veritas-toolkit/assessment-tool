@@ -49,18 +49,7 @@
           </el-row>
           <el-row :gutter="20" style="margin-top: 6px">
             <el-col v-for="(item,index) in projectList" :span="6">
-              <el-card class="box-card" @click.native="projectPage(item)">
-                <div slot="header" class="boxCardHeader">
-                  <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
-                  <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
-                  <div class="projName oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
-                </div>
-                <div style="padding: 20px">
-                  <div class="progress-text">{{ item.assessmentProgress.completed }}/{{ item.assessmentProgress.count }}</div>
-                  <el-progress :percentage="item.assessmentProgress.completed / item.assessmentProgress.count*100" color="#78BED3" :show-text="false"></el-progress>
-                </div>
-              </el-card>
+              <project-card :project="item" :business-scenario-list="businessScenarioList"/>
             </el-col>
           </el-row>
           <div class="block">
@@ -171,11 +160,13 @@
 
 <script>
   import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
+  import ProjectCard from "@/components/projects/ProjectCard.vue";
 
   export default {
     name: "GroupPage",
     components: {
       CreateProjectDialog,
+      ProjectCard
     },
     data() {
       return {
@@ -277,6 +268,8 @@
     },
     methods: {
       onProjectCreated(newProject) {
+        console.log("created")
+        this.getProjectList()
         this.$router.push({
           path:'/projectPage',
           query: {
