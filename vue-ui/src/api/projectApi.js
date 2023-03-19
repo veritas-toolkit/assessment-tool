@@ -53,6 +53,16 @@ const projectApi = {
         }
         return projectList;
     },
+    fetchPageable(param) {
+        return request({
+            url: ``,
+            method: `get`,
+            params: {
+                ...param
+            }
+        })
+
+    },
     getMemberList(projectId) {
         return request({
             url: `api/project/${projectId}/member`,
