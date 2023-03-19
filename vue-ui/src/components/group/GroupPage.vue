@@ -43,7 +43,7 @@
               <div class="creProj BarlowMedium" @click="$refs.createProjectDialog.open()"
                    style="cursor: pointer">
                 <i class="el-icon-plus"></i>
-                <span>Create project2</span>
+                <span>Create project</span>
               </div>
             </el-col>
           </el-row>
