@@ -1,6 +1,7 @@
 <template>
   <!--create project-->
   <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="dialogVisible" width="480px"
+             :before-close="close"
              append-to-body>
     <template slot="title"><span class="dialogTitle">Create project</span></template>
     <!--tabs-->
@@ -227,7 +228,18 @@ export default {
     async close() {
       // confirm/
       // clean
-      this.dialogVisible = false;
+      this.$confirm("Cancel creation project?",
+          {
+            type: "warning",
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes'
+          })
+          .then(result => {
+            this.dialogVisible = false;
+            this.$refs.projectFormRefs.resetFields();
+            this.$refs.existingProjectFormRefs.resetFields();
+          })
+          .catch(_ => {})
     },
     handleClickProject(tab, event) {
       this.activeNewProjectName = tab.name
