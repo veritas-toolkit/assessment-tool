@@ -57,8 +57,8 @@
                   <span>Edited on {{dateFormat(item.lastEditedTime)}}</span>
                 </div>
                 <div style="padding: 20px">
-                  <div class="progress-text">{{ item.assessmentProgres.completed }}/{{ item.assessmentProgres.count }}</div>
-                  <el-progress :percentage="item.assessmentProgres.completed / item.assessmentProgres.count*100" color="#78BED3" :show-text="false"></el-progress>
+                  <div class="progress-text">{{ item.assessmentProgress.completed }}/{{ item.assessmentProgress.count }}</div>
+                  <el-progress :percentage="item.assessmentProgress.completed / item.assessmentProgress.count*100" color="#78BED3" :show-text="false"></el-progress>
                 </div>
               </el-card>
             </el-col>
