@@ -27,7 +27,7 @@
             <el-select clearable v-model="projectForm.questionnaireTemplateId"
                        placeholder="Please choose a questionnaire template"
                        no-data-text="Please choose a business scenario first."
-                       :disabled="!!this.projectForm.questionnaireTemplateId">
+                       :disabled="createTemplateList === null || createTemplateList.length === 0">
               <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name"
                          :value="item.templateId"></el-option>
             </el-select>
@@ -208,12 +208,12 @@ export default {
       }
     },
     'projectForm.businessScenario': function () {
-      console.log('projectForm.businessScenario: ' + this.projectForm.businessScenario)
       if (this.projectForm.businessScenario) {
         this.getCreateTemplateList()
       } else {
         this.createTemplateList = [];
       }
+      this.projectForm.questionnaireTemplateId = null;
     },
   },
   methods: {
@@ -223,13 +223,11 @@ export default {
       this.getCreateTemplateList();
       this.getGroupList();
       this.dialogVisible = true;
-      console.log("open")
     },
-    close() {
-      // confirm
+    async close() {
+      // confirm/
       // clean
       this.dialogVisible = false;
-      console.log("close")
     },
     handleClickProject(tab, event) {
       this.activeNewProjectName = tab.name
@@ -314,7 +312,6 @@ export default {
         }
       })
       // this.selectExistingProject = item.id
-      console.log(item);
     },
     createProject() {
       if (this.activeNewProjectName == 'create') {
