@@ -83,11 +83,17 @@
               </div>
               <div style="display: flex;align-items: center">
                 <div>
-                  <el-select @change="changeMemberRole(item)" v-model="item.type">
-                    <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
+                  <el-select :disabled="item.userId === projectInfo.userOwnerId"
+                             @change="changeMemberRole(item)"
+                             v-model="item.type">
+<!--                  <el-select :disabled="item.id === projectInfo.userOwnerId || true" @change="changeMemberRole(item)" v-model="item.type">-->
+                    <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"/>
                   </el-select>
                 </div>
-                <el-button class="deleteMember" @click="deleteMember(item.userId)" icon="el-icon-delete-solid"></el-button>
+                <el-button :disabled="item.userId === projectInfo.userOwnerId"
+                           class="deleteMember"
+                           @click="deleteMember(item.userId)"
+                           icon="el-icon-delete-solid"/>
               </div>
             </div>
           </div>
