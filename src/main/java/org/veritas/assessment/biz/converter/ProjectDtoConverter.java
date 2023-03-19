@@ -66,7 +66,7 @@ public class ProjectDtoConverter implements Converter<ProjectDto, Project> {
         }
         QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(project.getId());
         ProjectAssessmentProgressDto progressDto = new ProjectAssessmentProgressDto(project, questionnaireVersion);
-        projectDto.setAssessmentProgres(progressDto);
+        projectDto.setAssessmentProgress(progressDto);
         return projectDto;
     }
 }
