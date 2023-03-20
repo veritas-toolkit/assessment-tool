@@ -68,12 +68,7 @@ export default {
 
     fetch_all_users() {
       userApi.getUserByPrefix('').then(res => {
-        // let list = res.data;
-        // list.splice(list.findIndex(user => user.id === account.id), 1);
-        // this.userList = list;
-        console.log("account: ", this.account);
         this.userList = res.data.filter(user => {
-          console.log("user id: ", user.id, ", account.id:", this.account.id);
           return user.id !== this.account.id
         });
       });
