@@ -277,7 +277,6 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), current));
 
         BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
-        assert businessScenario != null;
         modelMap.put("businessScenario", businessScenario.getName());
         return modelMap;
     }

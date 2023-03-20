@@ -38,10 +38,12 @@ public class QuestionnaireDao {
 
         log.debug("insert record count: questionnaire[{}], meta[{}], node[{}], question[{}]",
                 result, metaCount, nodeCount, questionCount);
-
-        assert result == 1;
-        assert metaCount == nodeCount;
-        assert metaCount == questionCount;
+        if (result != 1 || metaCount != nodeCount || metaCount != questionCount) {
+            log.warn("questionnaire: {}", result);
+            log.warn("question meta: {}", metaCount);
+            log.warn("question node: {}", nodeCount);
+            log.warn("question version: {}", questionCount);
+        }
     }
 
     // 根据 project 加载最新的

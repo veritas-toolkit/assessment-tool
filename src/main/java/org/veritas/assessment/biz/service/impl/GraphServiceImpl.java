@@ -142,15 +142,20 @@ public class GraphServiceImpl implements GraphService {
         } catch (Exception exception) {
             log.warn("exception", exception);
         }
-        assert filePathList != null;
+        if (filePathList == null || filePathList.isEmpty()) {
+            log.warn("Python plot failed.");
+            filePathList = Collections.emptyList();
+        }
+
         for (String filePath : filePathList) {
             String filename = FilenameUtils.getName(filePath);
             for (ImageEnum imageEnum : ImageEnum.values()) {
                 if (imageEnum.is(filename)) {
                     String url = imageEnum.put(container, prefix, filename);
-                    log.debug("image url [{}]: {}", imageEnum.name, url);
+                    if (log.isDebugEnabled()) {
+                        log.debug("image url [{}]: {}", imageEnum.name, url);
+                    }
                 }
-
             }
         }
         return container;

@@ -383,7 +383,10 @@ public class Fairness {
                     break;
                 }
             }
-            assert feature != null;
+            if (feature == null) {
+                log.warn("Not found the feature.");
+                return Optional.empty();
+            }
             List<Object> list = this.getFeatureImportance().get(feature);
             if (list == null || list.size() < 4) {
                 log.warn("");
@@ -393,10 +396,6 @@ public class Fairness {
             }
         }
 
-        // fair to fair
-        // fair to unfair
-        // unfair to fair
-        // unfair to unfair
         @JsonIgnore
         public boolean isToFair(String fairnessChangeDescription) {
             if (StringUtils.isEmpty(fairnessChangeDescription)) {
