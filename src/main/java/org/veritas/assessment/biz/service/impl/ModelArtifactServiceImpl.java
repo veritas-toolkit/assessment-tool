@@ -81,7 +81,7 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             return objectMapper.readValue(json, JsonModel.class);
         } catch (Exception exception) {
             log.warn("Cannot parse the json file.", exception);
-            throw new ErrorParamException("Cannot parse the json file.");
+            throw new ErrorParamException("Server cannot parse the json file. Please check your file.");
         }
     }
 
