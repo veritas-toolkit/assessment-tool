@@ -20,16 +20,19 @@
     <!--main tabs-->
     <div style="margin-top: 10px">
       <div>
-        <el-select @change="getProjectsByBusSce" clearable v-model="searchByBusinessScenario"
-                   placeholder="Business scenario" class="search-business">
-          <el-option
-              v-for="item in businessScenarioList"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-          </el-option>
-        </el-select>
-        <el-tabs class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
+        <div style="display: flex;justify-content: space-between">
+          <div></div>
+          <el-select @change="getProjectsByBusSce" clearable v-model="searchByBusinessScenario"
+                     placeholder="Business scenario" class="search-business">
+            <el-option
+                v-for="item in businessScenarioList"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+            </el-option>
+          </el-select>
+        </div>
+        <el-tabs style="margin-top: -40px" class="BarlowMedium" v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="All" name="first">
             <el-row :gutter="20" style="margin-top: 6px;margin-bottom: 6px">
               <el-col v-for="(item,index) in projectList" :span="6">
@@ -392,5 +395,8 @@ export default {
   color: #FFF;
   font-size: 14px;
   //line-height: 24px;
+}
+.project-card {
+  padding: 0;
 }
 </style>
