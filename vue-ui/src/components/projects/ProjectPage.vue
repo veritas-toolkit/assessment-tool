@@ -28,7 +28,7 @@
               <span>Edit project</span>
             </div>
             <div v-show="showEditProjectButton && showEditQuestionnaireButton"
-                class="divide_line">
+                 class="divide_line">
             </div>
             <div v-show="showEditQuestionnaireButton"
                  class="editProject BarlowMedium" :style="archived?'pointer-events: none;':''"
@@ -37,7 +37,7 @@
               <span>Edit questionnaire</span>
             </div>
             <div v-show="showEditQuestionnaireButton && showDeleteProjectButton"
-                class="divide_line"></div>
+                 class="divide_line"></div>
             <div v-show="showDeleteProjectButton"
                  class="deleteProject BarlowMedium"
                  @click="deleteProjectInfo" style="cursor: pointer">
@@ -63,7 +63,7 @@
           <div style="margin-top: 16px">
             <div v-show="has_permission(PermissionType.PROJECT_UPLOAD_JSON)">
               <div class="artifacts">Model artifacts</div>
-<!--              <div class="file-accepted">only .JSON file accepted</div>-->
+              <!--              <div class="file-accepted">only .JSON file accepted</div>-->
               <!--upload JSON File-->
               <div style="display: flex;align-items:center;justify-content: space-between">
                 <div style="width: 420px">
@@ -95,7 +95,8 @@
                 </div>
                 <div class="file-info" v-if="jsonInfoVisible">
                   <div style="display: flex">
-                    <img style="width: 40px;height: 40px;margin: 0px 16px" src="../../assets/projectPic/medium.svg" alt="">
+                    <img style="width: 40px;height: 40px;margin: 0px 16px" src="../../assets/projectPic/medium.svg"
+                         alt="">
                     <div>
                       <div id="click-text">{{ jsonInfo.filename }}</div>
                       <div id="json-text">{{ dateFormat(jsonInfo.uploadTime) }}</div>
@@ -103,8 +104,6 @@
                   </div>
                   <div style="margin-right: 16px;cursor: pointer">
                     <img src="../../assets/projectPic/download.svg" alt="" @click="downloadJsonFile">
-<!--                    <el-button size="mini" icon="el-icon-download" circle plain style="margin-left: 10px"-->
-<!--                               ></el-button>-->
                   </div>
                 </div>
               </div>
@@ -119,7 +118,9 @@
                 <div class="progressLabel">
                   {{ item.completed }}/{{ item.count }}
                 </div>
-                <el-progress :percentage="item.completed/item.count*100" color="#78BED3" :show-text="false"></el-progress>
+                <el-progress :percentage="item.completed/item.count*100"
+                             color="#78BED3"
+                             :show-text="false"/>
               </el-card>
             </div>
             <div style="display: flex;align-items: center;">
@@ -137,7 +138,7 @@
                 <span>Preview</span>
               </div>
 
-              <div class="fairnessButton" v-if="!archived" @click="openExportDialog" > <!--v-show="fairnessAssessmentVisible"-->
+              <div class="fairnessButton" v-if="!archived" @click="openExportDialog">
                 <img src="../../assets/projectPic/new_export.png" alt="">
                 <span>Export</span>
               </div>
@@ -172,16 +173,23 @@
                     v-model="editProjectForm.description" :disabled="archived"/>
         </el-form-item>
         <el-form-item class="login" disabled label="Business scenario" prop="businessScenario">
-          <el-select disabled v-model="editProjectForm.businessScenario" placeholder="Please choose a business scenario">
+          <el-select disabled v-model="editProjectForm.businessScenario"
+                     placeholder="Please choose a business scenario">
             <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name"
                        :value="item.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="login" label="Assess Principle" prop="principleGeneric">
           <el-checkbox disabled v-model="editProjectForm.principleGeneric">Generic</el-checkbox>
-          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleFairness">Fairness</el-checkbox>
-          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleEA">Ethics & Accountability</el-checkbox>
-          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleTransparency">Transparency</el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleFairness">
+            Fairness
+          </el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleEA">Ethics &
+            Accountability
+          </el-checkbox>
+          <el-checkbox :disabled="archived" style="margin-left: 8px" v-model="editProjectForm.principleTransparency">
+            Transparency
+          </el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer" style="display: flex;justify-content: space-between">
@@ -205,7 +213,7 @@ import ProjectMember from "@/components/projects/ProjectMember";
 import ProjectVersionHistory from "@/components/projects/ProjectVersionHistory";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
-import userApi from "@/api/userApi";
+import {fa} from "timeago.js/lib/lang";
 
 export default {
   name: "ProjectPage",
@@ -217,11 +225,11 @@ export default {
   data() {
     return {
       principleMap: {
-        "G" : "Generic",
-        "F" : "Fairness",
-        "EA" : "Ethics & Accountability",
-        "T" : "Transparency"
-  },
+        "G": "Generic",
+        "F": "Fairness",
+        "EA": "Ethics & Accountability",
+        "T": "Transparency"
+      },
       projectId: this.$route.query.id,
       businessScenarioList: [],
       projectInfo: null,
@@ -514,7 +522,7 @@ export default {
       })
     },
     questionnaire() {
-      this.$router.push({path: '/questionnaire', query: {id: this.projectId,permissionList:this.permissionList}})
+      this.$router.push({path: '/questionnaire', query: {id: this.projectId, permissionList: this.permissionList}})
     },
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})
@@ -530,57 +538,172 @@ export default {
     handleFailed() {
       this.$message.error('Upload failed')
     },
-    beforeUpload(file) {
-      return new Promise((resolve, reject) => {
-        return userApi.whoami()
+    async beforeUpload2(file) {
+      if (!file.name.endsWith(".json2")) {
+        let a = await this.$alert("xxxx");
+        console.log("a: " + a)
+        return false;
+      } else {
+        console.log("yes, json")
+      }
+      const reader = new FileReader();
+      reader.onload = (res) => {
+        console.log("yes, loaded")
+        const jsonContent = res.target.result;
+        let jsonModel = null;
+        try {
+          jsonModel = JSON.parse(jsonContent);
+        } catch (e) {
+          return this.$alert("xxx").then(() => {
+            return false;
+          }).catch(() => {
+            return false;
+          })
+        }
+        let fairness = jsonModel['fairness'];
+        let transparency = jsonModel['transparency'];
+        let g = this.projectPrinciple.principleGeneric;
+        let f = this.projectPrinciple.principleFairness;
+        let t = this.projectPrinciple.principleTransparency;
+        return this.$confirm("message", "title",
+            {
+              type: 'warning',
+              cancelButtonText: 'cancel',
+              confirmButtonClass: 'Continue upload'
+            })
             .then(() => {
-              return resolve(true);
+              return true;
             })
             .catch(() => {
-              return reject(false);
+              return false;
             });
+      }
+      reader.onerror((error) => {
+        return false;
+      })
+      reader.readAsText(file);
+      console.log("done")
+      return true;
+    },
+    beforeUpload(file) {
+      return new Promise(async (resolve, reject) => {
         const reader = new FileReader();
-        if (file.name.includes(".json")) {
-          reader.onload = (res) => {
-            const jsonContent = res.target.result;
-            try {
-              const jsonModel = JSON.parse(jsonContent);
-              if (jsonModel['fairness'] == null && this.projectPrinciple.principleFairness) {
-                // console.log("fairness is null")
-                // this.$message.warning("Your project contains fairness, but not in the json file")
-                return this.$confirm('Your project contains fairness, but not in the json file, continue?', {
-                  type: 'warning'
-                }).then(() => {
-                  return resolve(true);
-                }).catch(() => {
-                  return reject(false);
-                });
-              }
-              if (jsonModel['transparency'] == null  && this.projectPrinciple.principleTransparency) {
-                // console.log("transparency is null")
-                //this.$message.warning("Your project contains transparency, but not in the json file")
-                return this.$confirm('Your project contains transparency, but not in the json file, continue?', {
-                  type: 'warning'
-                }).then(() => {
-                  return resolve(true);
-                }).catch(() => {
-                  return reject(false);
-                })
-              }
-            } catch (e) {
-              // console.log("error");
-              return reject(false);
-            }
-            return resolve(true);
-          };
-          reader.onerror = (err) => {
-            return reject(false);
-          }
-          reader.readAsText(file);
-        } else {
-          this.$message.error("This is not a json file.");
+        if (!file.name.endsWith(".json")) {
+          await this.$alert("This is not a json file.");
+          return reject("You should upload json file.");
         }
-        return true;
+        let g = this.projectPrinciple.principleGeneric;
+        let f = this.projectPrinciple.principleFairness;
+        let t = this.projectPrinciple.principleTransparency;
+        reader.onload = async (res) => {
+          const jsonContent = res.target.result;
+          let jsonModel = null;
+          try {
+            jsonModel = JSON.parse(jsonContent);
+          } catch (e) {
+            await this.$alert("This is not a json file.");
+            return reject("Parse file failed.")
+          }
+          let fairness = jsonModel['fairness'];
+          let transparency = jsonModel['transparency'];
+          let onlyTransparency = !fairness && transparency;
+          let onlyFairness = fairness && !transparency;
+          let bothFT = fairness && transparency;
+          let neitherFT = !fairness && !transparency;
+
+          if ((g && f && t) && bothFT) {
+            return resolve(true);
+          } else if ((g && f && !t) && onlyFairness) {
+            return resolve(true);
+          }
+
+          if (neitherFT) {
+            return this.$confirm(
+                "The model artifact data does not cover the principle you selected, please check further.",
+                "Upload failed.",
+                {
+                  type: 'error',
+                  cancelButtonText: 'cancel',
+                  confirmButtonText: 'Continue upload',
+                  showConfirmButton: false,
+                })
+                .then(() => {
+                  return reject(false)
+                })
+                .catch(() => {
+                  return reject(false)
+                })
+          } else if (onlyTransparency) {
+            if (!t) {
+              return this.$confirm(
+                  "The model artifact data does not cover the principle you selected, please check further.",
+                  "Upload failed.",
+                  {
+                    type: 'error',
+                    cancelButtonText: 'cancel',
+                    confirmButtonText: 'Continue upload',
+                    showConfirmButton: false,
+                  })
+                  .then(() => {
+                    return reject(false)
+                  })
+                  .catch(() => {
+                    return reject(false)
+                  })
+            } else if (g || f) {
+              return this.$confirm(
+                  "The principles covered by model artifact data differ from the selected principles. Please check further.",
+                  "Upload failed.",
+                  {
+                    type: 'warning',
+                    cancelButtonText: 'cancel',
+                    confirmButtonText: 'Continue upload',
+                  })
+                  .then(() => {
+                    return resolve(true)
+                  })
+                  .catch(() => {
+                    return reject(false)
+                  });
+            }
+          } else if (onlyFairness) {
+            return this.$confirm(
+                "The principles covered by model artifact data differ from the selected principles. Please check further.",
+                "Upload failed.",
+                {
+                  type: 'warning',
+                  cancelButtonText: 'cancel',
+                  confirmButtonText: 'Continue upload',
+                })
+                .then(() => {
+                  return resolve(true)
+                })
+                .catch(() => {
+                  return reject(false)
+                });
+          } else {
+            return this.$confirm(
+                "The principles covered by model artifact data differ from the selected principles. Please check further.",
+                "Upload failed.",
+                {
+                  type: 'warning',
+                  cancelButtonText: 'cancel',
+                  confirmButtonText: 'Continue upload',
+                })
+                .then(() => {
+                  return resolve(true)
+                })
+                .catch(() => {
+                  return reject(false)
+                });
+          }
+        }
+
+
+        reader.onerror = (err) => {
+          return reject(false);
+        }
+        reader.readAsText(file);
       })
     },
     downloadJsonFile() {
@@ -716,20 +839,20 @@ export default {
             let pdfUrl = window.URL.createObjectURL(blob)
             window.open(pdfUrl)
           }).catch(err => {
-            if (err.response.config.responseType === "blob") {
-              let data = err.response.data
-              let fileReader = new FileReader()
-              fileReader.onload = function () {
-                let jsonData = JSON.parse(this.result)
-                Vue.prototype.$message.error(jsonData.message)
-              };
-              fileReader.readAsText(data)
-            }
-          })
+        if (err.response.config.responseType === "blob") {
+          let data = err.response.data
+          let fileReader = new FileReader()
+          fileReader.onload = function () {
+            let jsonData = JSON.parse(this.result)
+            Vue.prototype.$message.error(jsonData.message)
+          };
+          fileReader.readAsText(data)
+        }
+      })
     },
     archiveProject() {
       this.$http.post(`/api/project/${this.projectId}/archive`).then(res => {
-        if(res.status == 200) {
+        if (res.status == 200) {
           this.$message.success('Archive successfully')
           this.editProjectVisible = false
           this.getProjectInfo()
@@ -738,7 +861,7 @@ export default {
     },
     unarchiveProject() {
       this.$http.post(`/api/project/${this.projectId}/unarchive`).then(res => {
-        if(res.status == 200) {
+        if (res.status == 200) {
           this.$message.success('Unarchive successfully')
           this.editProjectVisible = false
           this.getProjectInfo()
@@ -895,12 +1018,14 @@ export default {
   padding: 0px 8px;
   text-align: center;
   border-radius: 14px;
+
   > div {
     color: #FFF;
     font-size: 14px;
     line-height: 24px;
   }
 }
+
 .archivedStyle {
   flex-shrink: 0;
   width: auto;
@@ -911,6 +1036,7 @@ export default {
   padding: 0px 8px;
   text-align: center;
   border-radius: 14px;
+
   > div {
     color: #FFF;
     font-size: 14px;
@@ -1040,15 +1166,18 @@ export default {
   padding: 8px 12px;
   border-radius: 4px;
   margin-right: 12px;
+
   > img {
     width: 24px;
     height: 24px;
   }
+
   > span {
     margin-left: 8px;
     font-size: 16px;
   }
 }
+
 .archivedButton {
   cursor: not-allowed;
   pointer-events: none;
@@ -1058,10 +1187,12 @@ export default {
   padding: 8px 12px;
   border-radius: 4px;
   margin-right: 12px;
+
   > img {
     width: 24px;
     height: 24px;
   }
+
   > span {
     margin-left: 8px;
     font-size: 16px;
@@ -1135,25 +1266,30 @@ export default {
   border-radius: 4px;
   color: #FFF;
 }
+
 .upload-div {
   padding: 16px;
   border-radius: 4px;
   display: flex;
   align-items: center;
 }
+
 .upload-icon {
   margin-right: 16px;
   width: 40px;
   height: 40px;
 }
+
 #click-text {
   font-size: 16px;
   font-family: BarlowBold;
 }
+
 #json-text {
   font-size: 14px;
   font-family: BarlowMedium;
 }
+
 .file-info {
   width: 600px;
   display: flex;
@@ -1165,6 +1301,7 @@ export default {
   border-radius: 4px;
   border: 1px solid #D5D8DD;
 }
+
 .box-card {
   width: 25%;
   margin-bottom: 12px;
