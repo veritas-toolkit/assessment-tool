@@ -213,7 +213,6 @@ import ProjectMember from "@/components/projects/ProjectMember";
 import ProjectVersionHistory from "@/components/projects/ProjectVersionHistory";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
-import {fa} from "timeago.js/lib/lang";
 
 export default {
   name: "ProjectPage",
@@ -455,7 +454,7 @@ export default {
           this.$http.post(`/api/project/${this.projectId}`, this.editProjectForm).then(res => {
             if (res.status === 200) {
               this.$message.success('Edit successfully')
-              // this.getProjectDetail()
+              this.getProjectDetail()
               this.getProjectInfo()
             }
             this.editProjectVisible = false
@@ -527,63 +526,13 @@ export default {
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})
     },
-    // upload json file
-    // submitUpload() {
-    //   this.$refs.upload.submit()
-    // },
+
     handleSuccess() {
       this.$message.success('Upload successfully')
       this.getProjectDetail()
     },
     handleFailed() {
       this.$message.error('Upload failed')
-    },
-    async beforeUpload2(file) {
-      if (!file.name.endsWith(".json2")) {
-        let a = await this.$alert("xxxx");
-        console.log("a: " + a)
-        return false;
-      } else {
-        console.log("yes, json")
-      }
-      const reader = new FileReader();
-      reader.onload = (res) => {
-        console.log("yes, loaded")
-        const jsonContent = res.target.result;
-        let jsonModel = null;
-        try {
-          jsonModel = JSON.parse(jsonContent);
-        } catch (e) {
-          return this.$alert("xxx").then(() => {
-            return false;
-          }).catch(() => {
-            return false;
-          })
-        }
-        let fairness = jsonModel['fairness'];
-        let transparency = jsonModel['transparency'];
-        let g = this.projectPrinciple.principleGeneric;
-        let f = this.projectPrinciple.principleFairness;
-        let t = this.projectPrinciple.principleTransparency;
-        return this.$confirm("message", "title",
-            {
-              type: 'warning',
-              cancelButtonText: 'cancel',
-              confirmButtonClass: 'Continue upload'
-            })
-            .then(() => {
-              return true;
-            })
-            .catch(() => {
-              return false;
-            });
-      }
-      reader.onerror((error) => {
-        return false;
-      })
-      reader.readAsText(file);
-      console.log("done")
-      return true;
     },
     beforeUpload(file) {
       return new Promise(async (resolve, reject) => {
