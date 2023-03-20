@@ -618,7 +618,7 @@ export default {
                   })
             } else if (g || f) {
               return this.$confirm(
-                  "The principles covered by model artifact data differ from the selected principles. Please check further.",
+                  "Related data in some of the selected principles is not available. Run evaluate( ) function in Diagnosis Tool for autofill.",
                   "Upload failed.",
                   {
                     type: 'warning',
