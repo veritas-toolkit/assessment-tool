@@ -63,6 +63,12 @@ RUN groupadd -g 1000 veritas &&\
     yum clean all
 
 # copy file
+COPY --from=build --chown=veritas:veritas /opt/veritas/bin /opt/veritas/bin
+COPY --from=build --chown=veritas:veritas /opt/veritas/py /opt/veritas/py
+WORKDIR /opt/veritas
+RUN find /opt/veritas && /opt/veritas/bin/install.sh && echo "Install python & lib sussess"
+
+
 COPY --from=build --chown=veritas:veritas /opt/veritas /opt/veritas
 COPY --from=build /usr/local/bin/gosu /usr/local/bin/gosu
 COPY --from=build /tmp/sqlite/sqlite3 /usr/local/bin/sqlite3
@@ -70,8 +76,8 @@ COPY --from=build /tmp/sqlite/sqlite3 /usr/local/bin/sqlite3
 # install application
 WORKDIR /opt/veritas
 RUN cp -r /opt/veritas/config /opt/veritas/.default_config &&\
-    bin/install.sh &&\
     echo "Success"
+    #bin/install.sh &&\
     #chmod +x /usr/local/bin/gosu &&\
 
 # for running
