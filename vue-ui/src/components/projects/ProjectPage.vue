@@ -531,8 +531,25 @@ export default {
       this.$message.success('Upload successfully')
       this.getProjectDetail()
     },
-    handleFailed() {
-      this.$message.error('Upload failed')
+    async handleFailed(error) {
+      let data = error.message;
+      let json = null;
+      if (data) {
+        json = JSON.parse(data);
+      }
+      if (data && json && json.message) {
+        await this.$confirm(
+            json.message,
+            "Upload failed.",
+            {
+              type: 'error',
+              cancelButtonText: 'cancel',
+              confirmButtonText: 'OK',
+              showCancelButton: false,
+            });
+      } else {
+        this.$message.error('Upload failed')
+      }
     },
     beforeUpload(file) {
       return new Promise(async (resolve, reject) => {
