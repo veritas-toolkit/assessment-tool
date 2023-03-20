@@ -81,7 +81,7 @@ export default {
   //margin-left: 10px;
   margin-top: 10px;
   margin-bottom: 12px;
-  padding: 12px;
+  padding: 0;
 }
 .boxCardHeader {
   > span {
