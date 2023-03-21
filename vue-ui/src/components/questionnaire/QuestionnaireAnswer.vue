@@ -270,6 +270,9 @@ export default {
     getPlotData(plotImg) {
       let plotFetch = {}
       plotFetch.modelArtifactVid = this.modelArtifactVersionId
+      if (this.modelArtifactVersionId == null) {
+        return
+      }
       plotFetch.imgId = plotImg.id
       plotFetch.imgSrc = plotImg.src
 

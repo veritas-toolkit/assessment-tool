@@ -188,7 +188,7 @@ export default {
       compareFlag: false,
       creator: {},
       questionnaireVid: '',
-      modelArtifactVersionId: 0,
+      modelArtifactVersionId: '',
       projNotLen: '',
       suggestVersionDict: {},
       diffNum: {
@@ -280,7 +280,7 @@ export default {
           this.questionnaireVid = res.data.questionnaireVid
           this.principleList = Object.keys(res.data.principles)
           if (!res.data.modelArtifactVersionId) {
-            this.modelArtifactVersionId = 0
+            this.modelArtifactVersionId = null
           } else {
             this.modelArtifactVersionId = res.data.modelArtifactVersionId
           }
