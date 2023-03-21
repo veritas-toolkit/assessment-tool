@@ -1,9 +1,11 @@
 <template>
   <div style="height: 100%">
-    <el-container :style="isCollapse?'height: calc(100% - 3px);display: flex;flex-direction: column':'height: calc(100% - 2px);display: flex;flex-direction: column'">
+    <el-container
+        :style="isCollapse?'height: calc(100% - 3px);display: flex;flex-direction: column':'height: calc(100% - 2px);display: flex;flex-direction: column'">
       <el-header height="64px">
         <div class="title BarlowBold">
-          <img class="backPic" src="../../assets/groupPic/back.png" alt="" @click="$router.back()" alt="" style="cursor: pointer">
+          <img class="backPic" src="../../assets/groupPic/back.png" alt="" @click="$router.back()" alt=""
+               style="cursor: pointer">
           <!--<router-link :to="{path:'/projectPage',query: {id:projectId}}"><img class="backPic" src="../../assets/groupPic/back.png" alt=""></router-link>-->
           <span>Project</span>
         </div>
@@ -12,25 +14,25 @@
             <el-radio-button v-show="this.principleList.indexOf('G') != -1" label="Generic">
               Generic
               <div class="fairness-diff-count" v-if="compareFlag && diffNum.G > 0">
-                <span>{{ diffNum.G}}</span>
+                <span>{{ diffNum.G }}</span>
               </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('F') != -1" label="Fairness">
               Fairness
               <div class="fairness-diff-count" v-if="compareFlag && diffNum.F > 0">
-                <span>{{ diffNum.F}}</span>
+                <span>{{ diffNum.F }}</span>
               </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('EA') != -1" label="Ethics & Accountability">
               Ethics & Accountability
               <div class="fairness-diff-count" v-if="compareFlag && diffNum.EA > 0">
-                <span>{{ diffNum.EA}}</span>
+                <span>{{ diffNum.EA }}</span>
               </div>
             </el-radio-button>
             <el-radio-button v-show="this.principleList.indexOf('T') != -1" label="Transparency">
               Transparency
-              <div class="fairness-diff-count" v-if="compareFlag && diffNum.T > 0" >
-                <span>{{ diffNum.T}}</span>
+              <div class="fairness-diff-count" v-if="compareFlag && diffNum.T > 0">
+                <span>{{ diffNum.T }}</span>
               </div>
             </el-radio-button>
           </el-radio-group>
@@ -48,18 +50,26 @@
       </el-header>
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
-          <el-aside :width="isCollapse? '72px':'400px'">
-            <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList" :defaultId="defaultId" :menuData="menuData" :principle="principle" :projectId="projectId" :isCollapse="isCollapse"></QuestionnaireMenu>
-          </el-aside>
-          <el-main :style="openCompare?'display:flex':''">
-<!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
-            <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId" v-show="!compareFlag" :projectId="projectId" :questionId="questionId" style="overflow-y: auto"></QuestionnaireAnswer>
-            <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse" :compareVersionTime="compareVersionTime" :creator="creator" :permissionList="permissionList" :compareFlag="compareFlag" :questionnaireVid="questionnaireVid" :projectId="projectId" :questionId="questionId"></QuestionnaireCompareAnswer>
-          </el-main>
+        <el-aside :width="isCollapse? '72px':'400px'">
+          <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList" :defaultId="defaultId"
+                             :menuData="menuData" :principle="principle" :projectId="projectId"
+                             :isCollapse="isCollapse"></QuestionnaireMenu>
+        </el-aside>
+        <el-main :style="openCompare?'display:flex':''">
+          <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
+          <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId"
+                               v-show="!compareFlag" :projectId="projectId" :questionId="questionId"
+                               style="overflow-y: auto"></QuestionnaireAnswer>
+          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"
+                                      :compareVersionTime="compareVersionTime" :creator="creator"
+                                      :permissionList="permissionList" :compareFlag="compareFlag"
+                                      :questionnaireVid="questionnaireVid" :projectId="projectId"
+                                      :questionId="questionId"></QuestionnaireCompareAnswer>
+        </el-main>
       </el-container>
       <el-footer style="height: 64px;">
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
-          <div class="notification-collapse"  v-if="!isCollapse">
+          <div class="notification-collapse" v-if="!isCollapse">
             <el-popover
                 placement="top-start"
                 width="400"
@@ -78,7 +88,8 @@
           <div class="collapse-right" @click="isCollapse=false" v-if="isCollapse">
             <img src="../../assets/projectPic/chevron-right.svg" alt="">
           </div>
-          <div class="footer-right BarlowMedium draft-popover"  :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
+          <div class="footer-right BarlowMedium draft-popover"
+               :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
             <el-popover
                 class=""
                 placement="top-start"
@@ -87,37 +98,42 @@
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
-                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box"
+                         :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
-                        <div>{{item.creator.username}}</div>
+                        <div>{{ item.creator.username }}</div>
                       </div>
-                      <div class="draft-right">{{item.createdTime|changeTime}}</div>
+                      <div class="draft-right">{{ item.createdTime|changeTime }}</div>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
-                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box" :style="index==0?'':'border-top:1px solid #D5D8DD'">
+                    <div v-for="(item,index) in compareList"
+                         @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box"
+                         :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
-                        <div>{{item.creator.username}}</div>
+                        <div>{{ item.creator.username }}</div>
                       </div>
-                      <div class="draft-right">{{item.createdTime|changeTime}}</div>
+                      <div class="draft-right">{{ item.createdTime|changeTime }}</div>
                     </div>
                   </el-tab-pane>
                 </el-tabs>
               </div>
-              <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">Compare</div>
+              <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">
+                Compare
+              </div>
             </el-popover>
-<!--            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>-->
+            <!--            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>-->
             <div style="display: flex">
-<!--              <div class="footer-prev">-->
-<!--                <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">-->
-<!--                Prev-->
-<!--              </div>-->
-<!--              <div class="footer-next">-->
-<!--                <img class="arrow" src="../../assets/projectPic/arrow-down.svg" alt="">-->
-<!--                Next-->
-<!--              </div>-->
+              <!--              <div class="footer-prev">-->
+              <!--                <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">-->
+              <!--                Prev-->
+              <!--              </div>-->
+              <!--              <div class="footer-next">-->
+              <!--                <img class="arrow" src="../../assets/projectPic/arrow-down.svg" alt="">-->
+              <!--                Next-->
+              <!--              </div>-->
             </div>
           </div>
         </div>
@@ -162,10 +178,10 @@ export default {
       defaultId: '',
       menuData: [],
       principleMap: {
-        "Generic" : "G",
-        "Fairness" : "F",
-        "Ethics & Accountability" : "EA",
-        "Transparency" : "T"
+        "Generic": "G",
+        "Fairness": "F",
+        "Ethics & Accountability": "EA",
+        "Transparency": "T"
       },
       draftList: [],
       compareFlag: false,
@@ -200,8 +216,8 @@ export default {
       }
     },
     'compareFlag': function () {
-      if(this.compareFlag) {
-        this.compare(this.questionnaireVid,this.creator,this.compareVersionTime)
+      if (this.compareFlag) {
+        this.compare(this.questionnaireVid, this.creator, this.compareVersionTime)
       } else {
         this.getQuestionnaireMenu()
       }
@@ -262,7 +278,7 @@ export default {
         if (res.status == 200) {
           this.questionnaireVid = res.data.questionnaireVid
           this.principleList = Object.keys(res.data.principles)
-          if(!res.data.modelArtifactVersionId) {
+          if (!res.data.modelArtifactVersionId) {
             this.modelArtifactVersionId = 0
           } else {
             this.modelArtifactVersionId = res.data.modelArtifactVersionId
@@ -282,20 +298,20 @@ export default {
     },
     getDiffVersion(compareType) {
       if (compareType == 'exportedOnly') {
-        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{exportedOnly: true}}).then(res => {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {exportedOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse()
             let comList = []
             this.draftList.map(item => {
               // if (item.questionnaireVid !== this.questionnaireVid) {
-                comList.push(item)
+              comList.push(item)
               // }
             })
             this.compareList = comList
           }
         })
       } else if (compareType == 'draftOnly') {
-        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,{params:{draftOnly: true}}).then(res => {
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {draftOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse().slice(0, 10)
             let comList = []
@@ -311,12 +327,12 @@ export default {
       }
 
     },
-    compare(questionnaireVid,creator,compareVersionTime) {
+    compare(questionnaireVid, creator, compareVersionTime) {
       this.compareFlag = true
       this.creator = creator
       this.compareVersionTime = compareVersionTime
       this.questionnaireVid = questionnaireVid.toString()
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`, {params: {'based': questionnaireVid}}).then(res => {
         if (res.status == 200) {
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           this.diffNum.G = res.data.principleAssessments.G.diffCount
@@ -329,7 +345,7 @@ export default {
     switchPrincipleCompare(questionnaireVid) {
       this.compareFlag = true
       this.questionnaireVid = questionnaireVid.toString()
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,{params:{'based':questionnaireVid}}).then(res => {
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`, {params: {'based': questionnaireVid}}).then(res => {
         if (res.status == 200) {
           if (this.principle == 'Fairness') {
             this.questionId = res.data.principleAssessments[this.principleMap[this.principle]].stepList[1].mainQuestionList[0].id.toString()
@@ -365,22 +381,26 @@ export default {
   align-items: center;
   border-bottom: 2px solid #E6E6E6;
 }
+
 .backPic {
   width: 24px;
   height: 24px;
   margin-left: 24px;
   margin-right: 8px;
 }
+
 .title {
   height: 64px;
   display: flex;
   align-items: center;
+
   > div {
     font-size: 20px;
     font-weight: bold;
     color: #000;
   }
 }
+
 #preview {
   cursor: pointer;
   padding: 8px 12px;
@@ -388,6 +408,7 @@ export default {
   border-radius: 4px;
   margin-right: 12px;
 }
+
 #export {
   cursor: pointer;
   padding: 8px 12px;
@@ -396,6 +417,7 @@ export default {
   color: #FFFFFF;
   margin-right: 24px;
 }
+
 #endComSty {
   cursor: pointer;
   padding: 8px 12px;
@@ -403,6 +425,7 @@ export default {
   border-radius: 4px;
   margin-right: 24px;
 }
+
 .notification-collapse {
   display: flex;
   justify-content: space-between;
@@ -410,20 +433,24 @@ export default {
   background-color: #F2F5F7;
   line-height: 64px;
 }
+
 .not-box {
   display: flex;
   align-items: center;
   margin-left: 24px;
-  >img {
+
+  > img {
     width: 24px;
     height: 24px;
   }
-  >span {
+
+  > span {
     margin-left: 8px;
     font-size: 16px;
     color: #333333;
   }
-  >div {
+
+  > div {
     margin-left: 8px;
     text-align: center;
     width: 24px;
@@ -433,36 +460,42 @@ export default {
     color: #FFFFFF;
   }
 }
+
 .collapse-box {
   position: relative;
   cursor: pointer;
   width: 72px;
   border-left: 1px solid #D7D9DB;
   text-align: center;
-  >img {
+
+  > img {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     width: 40px;
     height: 40px;
   }
 }
+
 .footer-right {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .footer-text {
   cursor: pointer;
   padding: 8px 12px;
   background-color: #EDF2F6;
   border-radius: 4px;
 }
+
 .arrow {
   width: 24px;
   height: 24px;
 }
+
 .footer-prev {
   cursor: pointer;
   padding: 5px 12px 5px 8px;
@@ -471,16 +504,18 @@ export default {
   display: flex;
   align-items: center
 }
+
 .footer-next {
   cursor: pointer;
   padding: 5px 12px 5px 8px;
   background-color: #EDF2F6;
   border-radius: 4px;
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
   margin-left: 12px;
   margin-right: 24px
 }
+
 .collapse-right {
   height: 64px;
   display: flex;
@@ -489,12 +524,14 @@ export default {
   width: 72px;
   background-color: #F2F5F7;
   line-height: 64px;
-  >img {
+
+  > img {
     margin: auto;
     width: 40px;
     height: 40px;
   }
 }
+
 .draft-box {
   height: 48px;
   display: flex;
@@ -502,25 +539,30 @@ export default {
   justify-content: space-between;
 
 }
+
 .draft-left {
   display: flex;
   align-items: center;
+
   > img {
     width: 32px;
     height: 32px;
   }
+
   > div {
     font-size: 16px;
     font-family: BarlowBold;
     margin-left: 8px;
   }
 }
+
 .fairness-diff-count {
   margin-left: 8px;
   width: 16px;
   height: 16px;
   border-radius: 8px;
   background-color: #FCB215;
+
   > span {
     font-family: BarlowBold;
     color: #FFFFFF;
