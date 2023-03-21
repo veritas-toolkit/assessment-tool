@@ -22,7 +22,9 @@
         </el-select>
       </el-form-item>
       <el-form-item class="login" label="Report message" prop="message">
-        <el-input placeholder="Please input a report message" v-model="exportPdfForm.message"></el-input>
+        <el-input placeholder="Please input a report message"
+                  v-model="exportPdfForm.message"
+                  @keyup.enter.native="exportPdf"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
