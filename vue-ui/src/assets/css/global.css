@@ -227,7 +227,6 @@ html, body, #app {
     text-align: left;
 }
 .el-upload-dragger {
-    margin-top: 8px;
     width: 500px;
     height: 74px;
     text-align: left;

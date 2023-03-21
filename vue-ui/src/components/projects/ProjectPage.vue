@@ -62,7 +62,7 @@
         <el-tab-pane label="Assessment" name="first">
           <div style="margin-top: 16px">
             <div v-show="has_permission(PermissionType.PROJECT_UPLOAD_JSON)">
-              <div class="artifacts">Model artifacts</div>
+              <div class="artifacts" style="margin-bottom: 12px">Model artifacts</div>
               <!--              <div class="file-accepted">only .JSON file accepted</div>-->
               <!--upload JSON File-->
               <div style="display: flex;align-items:center;justify-content: space-between">
