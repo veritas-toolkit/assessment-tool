@@ -6,33 +6,35 @@
              id="export-dialog"
              width="548px"
              append-to-body>
-    <div v-if="latestVersion" style="margin-top: 4px">Latest Version:
-      <span>{{ latestVersion }}</span>
+    <div id="export-div">
+      <div v-if="latestVersion" style="margin-top: 4px">Latest Version:
+        <span>{{ latestVersion }}</span>
+      </div>
+      <el-form :rules="exportPdfFormRules" ref="exportPdfFormRefs" label-position="top" label="450px"
+               id="export-form"
+               :model="exportPdfForm">
+        <el-form-item class="login" label="Report version" prop="version">
+          <el-select v-model="exportPdfForm.version" filterable allow-create default-first-option
+                     placeholder="Please choose or input a report version">
+            <el-option
+                v-for="item in suggestVersionList"
+                :key="item"
+                :label="item"
+                :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="login" label="Report message" prop="message">
+          <el-input placeholder="Please input a report message"
+                    v-model="exportPdfForm.message"
+                    @keyup.enter.native="exportPdf"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button class="BlackBorder" @click="close()">Cancel</el-button>
+          <el-button id="export-button" class="GreenBC" @click="exportPdf">Export</el-button>
+      </span>
     </div>
-    <el-form :rules="exportPdfFormRules" ref="exportPdfFormRefs" label-position="top" label="450px"
-             id="export-form"
-             :model="exportPdfForm">
-      <el-form-item class="login" label="Report version" prop="version">
-        <el-select v-model="exportPdfForm.version" filterable allow-create default-first-option
-                   placeholder="Please choose or input a report version">
-          <el-option
-              v-for="item in suggestVersionList"
-              :key="item"
-              :label="item"
-              :value="item">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item class="login" label="Report message" prop="message">
-        <el-input placeholder="Please input a report message"
-                  v-model="exportPdfForm.message"
-                  @keyup.enter.native="exportPdf"/>
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-        <el-button class="BlackBorder" @click="close()">Cancel</el-button>
-        <el-button id="export-button" class="GreenBC" @click="exportPdf">Export</el-button>
-    </span>
   </el-dialog>
 </template>
 
@@ -105,7 +107,7 @@ export default {
     exportPdf() {
       let loading = this.$loading(
           {
-            target: "#export-button",
+            target: "#export-div",
             spinner: 'el-icon-loading',
           });
       projectApi.exportReport(this.projectId, this.exportPdfForm)
@@ -126,6 +128,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.dialog-footer {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: right;
+}
 
 </style>
