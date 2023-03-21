@@ -3,12 +3,14 @@
              class="BarlowMedium"
              :visible.sync="dialogVisible"
              @close="close()"
+             id="export-dialog"
              width="548px"
              append-to-body>
     <div v-if="latestVersion" style="margin-top: 4px">Latest Version:
       <span>{{ latestVersion }}</span>
     </div>
     <el-form :rules="exportPdfFormRules" ref="exportPdfFormRefs" label-position="top" label="450px"
+             id="export-form"
              :model="exportPdfForm">
       <el-form-item class="login" label="Report version" prop="version">
         <el-select v-model="exportPdfForm.version" filterable allow-create default-first-option
@@ -29,8 +31,8 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
         <el-button class="BlackBorder" @click="close()">Cancel</el-button>
-        <el-button class="GreenBC" @click="exportPdf">Export</el-button>
-      </span>
+        <el-button id="export-button" class="GreenBC" @click="exportPdf">Export</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -101,15 +103,24 @@ export default {
           });
     },
     exportPdf() {
+      let loading = this.$loading(
+          {
+            target: "#export-button",
+            spinner: 'el-icon-loading',
+          });
       projectApi.exportReport(this.projectId, this.exportPdfForm)
           .then(res => {
             let createdReport = res.data;
             this.$emit('exported', createdReport);
-          }).then(() => {
-        this.exportPdfForm.version = null;
-        this.exportPdfForm.message = '';
-        this.close();
-      })
+          })
+          .then(() => {
+            this.exportPdfForm.version = null;
+            this.exportPdfForm.message = '';
+            this.close();
+          })
+          .finally(() => {
+            loading.close();
+          })
     }
   }
 }
