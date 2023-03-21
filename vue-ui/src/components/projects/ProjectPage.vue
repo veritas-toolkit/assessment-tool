@@ -589,8 +589,8 @@ export default {
                 "Upload failed.",
                 {
                   type: 'error',
-                  cancelButtonText: 'cancel',
-                  confirmButtonText: 'Continue upload',
+                  cancelButtonText: 'Cancel',
+                  confirmButtonText: 'Continue',
                   showConfirmButton: false,
                 })
                 .then(() => {
@@ -603,11 +603,11 @@ export default {
             if (!t) {
               return this.$confirm(
                   "The model artifact data does not cover the principle you selected, please check further.",
-                  "Upload failed.",
+                  "Upload",
                   {
                     type: 'error',
                     cancelButtonText: 'cancel',
-                    confirmButtonText: 'Continue upload',
+                    confirmButtonText: 'Continue',
                     showConfirmButton: false,
                   })
                   .then(() => {
@@ -619,11 +619,11 @@ export default {
             } else if (g || f) {
               return this.$confirm(
                   "Related data in some of the selected principles is not available. Run evaluate( ) function in Diagnosis Tool for autofill.",
-                  "Upload failed.",
+                  "Upload",
                   {
                     type: 'warning',
-                    cancelButtonText: 'cancel',
-                    confirmButtonText: 'Continue upload',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonText: 'Continue',
                   })
                   .then(() => {
                     return resolve(true)
@@ -635,11 +635,11 @@ export default {
           } else if (onlyFairness) {
             return this.$confirm(
                 "The principles covered by model artifact data differ from the selected principles. Please check further.",
-                "Upload failed.",
+                "Upload",
                 {
                   type: 'warning',
-                  cancelButtonText: 'cancel',
-                  confirmButtonText: 'Continue upload',
+                  cancelButtonText: 'Cancel',
+                  confirmButtonText: 'Continue',
                 })
                 .then(() => {
                   return resolve(true)
@@ -650,11 +650,11 @@ export default {
           } else {
             return this.$confirm(
                 "The principles covered by model artifact data differ from the selected principles. Please check further.",
-                "Upload failed.",
+                "Upload",
                 {
                   type: 'warning',
-                  cancelButtonText: 'cancel',
-                  confirmButtonText: 'Continue upload',
+                  cancelButtonText: 'Cancel',
+                  confirmButtonText: 'Continue',
                 })
                 .then(() => {
                   return resolve(true)
