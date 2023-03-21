@@ -1,12 +1,16 @@
 <template>
   <el-card class="box-card" @click.native="gotoProjectPage">
     <div slot="header" class="boxCardHeader">
+      <div style="display: flex;justify-content: space-between;margin-top: 8px">
+        <div></div>
+        <div class="businessScenarioStyle BarlowMedium">{{ businessScenarioName }}</div>
+      </div>
+
       <div class="owner oneLine">
         {{ ownerName }}
       </div>
       <div class="projName oneLine BarlowBold">
         <span> {{ project['name'] }} </span>
-<!--        <span class="businessScenarioStyle"> {{ businessScenarioName }} </span>-->
       </div>
       <span>Edited on {{ project['lastEditedTime']|changeTime }}</span>
     </div>
@@ -105,19 +109,14 @@ export default {
 
 }
 .businessScenarioStyle {
-  flex-shrink: 0;
-  width: auto;
-  //display: flex !important;
-  //margin-left: 16px;
-  //height: 24px;
-  //float: right;
+  display: flex;
+  align-items: center;
+  margin-right: -12px;
   background-color: #78BED3;
-  padding: 0px 8px;
-  text-align: center !important;
+  padding: 0px 8px 2px 8px;
   border-radius: 14px;
   color: #FFF;
   font-size: 14px;
-  //line-height: 24px;
 }
 .progress-text {
   margin-top: -10px;
@@ -125,7 +124,10 @@ export default {
   font-weight: bold;
   font-family: BarlowBold;
 }
+</style>
 
-
-
+<style lang="less">
+.box-card .el-card__header {
+  padding-top: 0px;
+}
 </style>
