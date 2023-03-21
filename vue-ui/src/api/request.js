@@ -25,15 +25,27 @@ service.interceptors.response.use(
     function(response) {
         return response
     },
-    function(err) {
-        if (err.response.status === 401) {
+    function (err) {
+        let httpStatus = err.response.status;
+        if (httpStatus === 401) {
             const notLoginPage = router.currentRoute.path !== "/login";
             if (notLoginPage) {
                 return router.replace({
-                    path:"/login",
+                    path: "/login",
                     query: {redirect: router.currentRoute.fullPath}
                 })
             }
+        } else if (httpStatus === 403) {
+            // todo show message, only once
+            return router.replace({
+                path: "/home",
+            })
+        } else if (500 <= httpStatus && httpStatus <= 599) {
+            let message = err.response.data.message;
+            if (!message) {
+                message = "Server error.";
+            }
+            Vue.prototype.$message.error(message);
         } else {
             if (err.response.config.responseType !== "blob") {
                 Vue.prototype.$message.error(err.response.data.message)
