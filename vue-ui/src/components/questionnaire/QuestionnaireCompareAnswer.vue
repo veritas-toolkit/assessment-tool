@@ -169,6 +169,11 @@ export default {
         this.getQuesDiffData()
       }
     },
+    'compareFlag': function() {
+      if (this.compareFlag) {
+        this.getQuesDiffData()
+      }
+    },
     'questionId': function () {
       if (this.compareFlag) {
         this.getQuesDiffData()

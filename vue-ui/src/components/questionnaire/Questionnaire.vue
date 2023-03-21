@@ -98,7 +98,8 @@
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
-                    <div v-for="(item,index) in compareList" @click="compare(item.questionnaireVid)" class="draft-box"
+                    <div v-for="(item,index) in compareList"
+                         @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box"
                          :style="index==0?'':'border-top:1px solid #D5D8DD'">
                       <div class="draft-left">
                         <img src="../../assets/groupPic/Avatar.png" alt="">
