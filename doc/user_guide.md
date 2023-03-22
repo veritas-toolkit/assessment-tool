@@ -56,7 +56,13 @@ To edit project's basic info, first navigate to the main page of the project.
 1. Navigate to white **...** button.
 2. Expand the **Edit project** section and click it, this opens the **Edit project** dialog.
 
-On the **Edit project** dialog, you can change **project name** and **project description**, and also select new **business scenario**.
+
+**Archive project**
+
+1. Navigate to white **...** button.
+2. Click **Edit project** section, this opens the **Edit project** dialog.
+3. Click **Archive** button.
+
 
 **Upload model artifacts**
 
