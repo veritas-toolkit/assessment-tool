@@ -122,7 +122,14 @@ export default {
       menuList: this.menuData,
       editMainQuesFlag: {},
       editMainQues: {},
-      deleteFlag: false
+      deleteFlag: false,
+      stepMap: {
+        'Principles to Practice' : 0,
+        'Defining System Context and Design' : 1,
+        'Prepare and Input Data' : 2,
+        'Build and Validate' : 3,
+        'Deploy and Monitor' : 4,
+      }
     }
   },
   created() {
@@ -159,6 +166,21 @@ export default {
         this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
           if (res.status == 200) {
             this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
+            let pId = ''
+            if (this.menuList[this.stepMap[this.activeName]].mainQuestionList.length>0) {
+              pId = this.menuList[this.stepMap[this.activeName]].mainQuestionList[0].id
+            }
+            if (pId) {
+              this.$emit("getId",pId)
+            } else {
+              for (let i=0 ;i< this.menuList.length;i++) {
+                if (this.menuList[i].mainQuestionList.length > 0) {
+                  this.activeName = this.menuList[i].step
+                  this.$emit("getId",this.menuList[i].mainQuestionList[0].id)
+                  break
+                }
+              }
+            }
           }
         })
       })
