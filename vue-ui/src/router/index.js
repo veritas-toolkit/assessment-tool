@@ -53,7 +53,7 @@ const router = new VueRouter({
     {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
     {path: '/test', component: MenuQuestionaire},
-    {path: '/questionnaire', component: Questionnaire},
+    {path: '/questionnaire', name:'questionnaire', component: Questionnaire},
     {path: '/questionnaireHistory', component: QuestionnaireHistory},
     {path: '/template', component: Template},
     {path: '/adminTemplate',component:AdminTemplate}

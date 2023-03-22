@@ -174,7 +174,7 @@ export default {
       compareTab: 'exportedOnly',
       openCompare: false,
       projectId: this.$route.query.id,
-      permissionList: this.$route.query.permissionList,
+      permissionList: null,
       questionId: '',
       defaultId: '',
       menuData: [],
@@ -205,7 +205,7 @@ export default {
     this.getQuestionnaireMenu()
     // console.log('pid',this.projectId)
     sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
-    // console.log('plist',this.permissionList)
+    this.permissionList = this.$route.params.permissionList;
   },
 
   watch: {

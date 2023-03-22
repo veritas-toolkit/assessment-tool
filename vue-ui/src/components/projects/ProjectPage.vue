@@ -521,7 +521,15 @@ export default {
       })
     },
     questionnaire() {
-      this.$router.push({path: '/questionnaire', query: {id: this.projectId, permissionList: this.permissionList}})
+      this.$router.push({
+        name: 'questionnaire',
+        query: {
+          id: this.projectId,
+        },
+        params: {
+          permissionList: this.permissionList
+        }
+      });
     },
     questionnaireHistory(projectId, versionId) {
       this.$router.push({path: '/assessmentToolHistory', query: {projectId: projectId, versionId: versionId}})
