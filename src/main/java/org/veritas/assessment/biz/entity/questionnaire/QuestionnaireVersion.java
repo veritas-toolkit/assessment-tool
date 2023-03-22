@@ -377,7 +377,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         Objects.requireNonNull(questionId);
         QuestionNode toDelete = this.findMainQuestionById(questionId);
         if (toDelete == null) {
-            throw new IllegalRequestException("The question not existing.");
+            throw new NotFoundException("The question not existing.");
         }
         List<QuestionNode> list = new ArrayList<>(this.getMainQuestionNodeList().size());
         for (QuestionNode questionNode : this.getMainQuestionNodeList()) {
@@ -399,8 +399,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         List<QuestionNode> currentMainList = this.find(principle, step);
 
         List<QuestionNode> newOrderedList = new ArrayList<>(currentMainList.size());
-
-        int serialOfPrinciple = 1;
+        if (currentMainList.isEmpty()) {
+            throw new NotFoundException("Not found the questions.");
+        }
+        int serialOfPrinciple = currentMainList.get(0).getSerialOfPrinciple();
         for (Long questionId : newOrderQuestionIdList) {
             Optional<QuestionNode> optional = currentMainList.stream()
                     .filter(q -> Objects.equals(q.getQuestionId(), questionId))
@@ -415,7 +417,7 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
             }
         }
         if (newOrderedList.size() != currentMainList.size()) {
-            throw new HasBeenModifiedException("Some questions have been added.");
+            throw new HasBeenModifiedException("Some new questions have been added.");
         }
         this.mainQuestionNodeList = this.mainQuestionNodeList.stream().sorted().collect(Collectors.toList());
     }
