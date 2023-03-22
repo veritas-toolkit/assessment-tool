@@ -83,7 +83,7 @@ public class ProjectQuestionnaireEditController {
     @PostMapping("/question/new")
     public QuestionnaireTocWithMainQuestionDto addMainQuestion(@Parameter(hidden = true) User operator,
                                                                @PathVariable("projectId") Integer projectId,
-                                                               @RequestBody QuestionAddDto dto) {
+                                                               @Valid @RequestBody QuestionAddDto dto) {
         Project project = projectService.findProjectById(projectId);
         dto.setProjectId(projectId);
         AddMainQuestionAction action = dto.toAction();
