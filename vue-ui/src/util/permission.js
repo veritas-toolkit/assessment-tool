@@ -1,4 +1,9 @@
 function permissionCheck(permissionList, target_permission) {
+    if (!permissionList) {
+        return false;
+    } else if (permissionList.length === 0) {
+        return false;
+    }
     let permission = target_permission;
     if (permission instanceof PermissionType) {
         permission = target_permission.getName();

@@ -188,7 +188,7 @@ export default {
       compareFlag: false,
       creator: {},
       questionnaireVid: '',
-      modelArtifactVersionId: '',
+      modelArtifactVersionId: null,
       projNotLen: '',
       suggestVersionDict: {},
       diffNum: {
@@ -199,13 +199,29 @@ export default {
       },
       compareList: [],
       compareVersionTime: '',
+      projectDetail: null,
     }
   },
-  created() {
+  async created() {
     this.getQuestionnaireMenu()
     // console.log('pid',this.projectId)
     sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
-    this.permissionList = this.$route.params.permissionList;
+    if (this.$route.params.permissionList && this.$route.params.permissionList.length > 0) {
+      console.log("pl" + this.$route.params.permissionList)
+      this.permissionList = this.$route.params.permissionList;
+    } else {
+      await projectApi.detail(this.projectId)
+          .then(response => {
+            this.projectDetail = response.data;
+          });
+      this.permissionList = [];
+      if (this.projectDetail.groupRole) {
+        this.permissionList = this.permissionList.concat(this.projectDetail.groupRole.permissionList)
+      }
+      if (this.projectDetail.projectRole) {
+        this.permissionList = this.permissionList.concat(this.projectDetail.projectRole.permissionList)
+      }
+    }
   },
 
   watch: {

@@ -159,6 +159,7 @@ export default {
     },
     modelArtifactVersionId: {
       type: Number,
+      required: false
     }
   },
   created() {
