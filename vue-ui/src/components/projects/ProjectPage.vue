@@ -540,10 +540,24 @@ export default {
       this.getProjectDetail()
     },
     async handleFailed(error) {
+      console.log("error")
+      console.log(error)
+      if (error.status === 401) {
+        this.$message.error("Please sign in to the system.")
+        return this.$router.replace({
+          path: "/login",
+          query: {redirect: this.$route.fullPath}
+        })
+      }
       let data = error.message;
       let json = null;
       if (data) {
-        json = JSON.parse(data);
+        try {
+          json = JSON.parse(data);
+        } catch (e) {
+          console.log("Not a json file.")
+          json = null;
+        }
       }
       if (data && json && json.message) {
         await this.$confirm(
