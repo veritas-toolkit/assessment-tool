@@ -31,20 +31,32 @@ We recommend using **Google Chrome** to access the system. The system support 50
 
 To view project list, you should select **Menu > Projects**.
 
-* The dashboard displays a list of **all** projects by default, sorted by last updated date.
+* The dashboard displays a list of **all** projects by default, sorted by last updated date. And you can filter all the projects through the business scenario in the upper right corner.
 * To view projects you create, click **Created by me**.
+* In the **Archived** tab, you can see all the archived projects that you are a member of.
 * In the **keyword** field, you can search the projects you want.
 * Below you can view the project by selecting the **page number**, and the **total** number of projects has also been displayed.
 
 **Create Project**
 
-1. Click the menu **Projects**, and then in your dashboard, click the **Create project** button. This opens the **New assessment project** dialog.
-2. On the **New assessment project** dialog, you should provide the following information:
-    * The name of your project in the **Project Name** field.
-    * The **Project Description** field enables you to enter a description for your project's dashboard, which helps others understand what your project is about.
-    * Select the **Business Scenario** which contains credit scoring & customer marketing.
-    * In the **Questionnaire Template** field, using one of the available template.
-    * Select the owner of the project, User or group can be chosen in this **Owner** field.
+1. Click the menu **Projects**, and then in your dashboard, click the **Create project** button. This opens the **Create project** dialog.
+2. There are two ways to create project on the **Create project** dialog:
+   * **Create new project**
+
+      you should provide the following information:
+
+      * The name of your project in the **Project Name** field.
+      * The **Project Description** field enables you to enter a description for your project's dashboard, which helps others understand what your project is about.
+      * Select the **Business Scenario** which contains base classification, base regression, credit score, customer marketing & predictive underwriting.
+      * In the **Questionnaire Template** field, using an available template for the selected business scenario.
+      * Select the **Assess Principle** from the FEAT principles. Note that generic is required.
+      * Select the owner of the project, User or group can be chosen in this **Owner** field.
+   * **Create from existing project**
+     * Search and select a existing project (including archived projects) name that you want to create from in the **Existing project**. 
+      
+         Business scenario, questionnaire, and selected principles to assess will be copied. Note that you can only copy questionnaire from existing project under the same business scenario, and the questionnaire copied is the latest version of the project.
+      
+     * The project name, project description and owner can be edited as you need. 
 3. Click **Create** button.
 
 #### Project main page
@@ -56,7 +68,8 @@ To edit project's basic info, first navigate to the main page of the project.
 1. Navigate to white **...** button.
 2. Expand the **Edit project** section and click it, this opens the **Edit project** dialog.
 
-On the **Edit project** dialog, you can change **project name** and **project description**, and also select new **business scenario**.
+On the **Edit project** dialog, you can change **Project name**, **Project description** and **Assess Principle**. Besides, archive function is offered here. You can use this function to make the project read-only.
+
 
 **Upload model artifacts**
 
