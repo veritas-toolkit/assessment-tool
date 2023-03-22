@@ -71,6 +71,13 @@ export default {
       return null;
     },
     completePercentage() {
+      const progress = this.project['assessmentProgress'];
+      if (!progress) {
+        return 0;
+      }
+      if (progress.count === 0) {
+        return 0;
+      }
       return this.project['assessmentProgress'].completed / this.project['assessmentProgress'].count * 100;
     }
 
