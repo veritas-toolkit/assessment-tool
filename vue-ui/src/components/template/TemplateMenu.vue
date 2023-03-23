@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;background-color: #F2F2F2">
     <el-collapse class="BarlowBold" v-model="activeName" accordion>
-      <el-menu :default-active="defaultId" class="myMenu" unique-opened active-text-color="#78BED3"
+      <el-menu :default-active="activeMenuIndex" class="myMenu" unique-opened active-text-color="#78BED3"
                @select="handleSelect">
         <div class="main-question" v-for="(item1,index1) in menuList" :key="index1">
           <el-collapse-item :name="item1.step" :style="index1 == 0? 'margin-top: 6px;':''">
@@ -102,11 +102,15 @@ export default {
         }
       }
       // console.log('this.menuList',this.menuList)
+    },
+    "activeMenuIndex": function () {
+      console.log("activeMenuIndex: " + this.activeMenuIndex)
     }
   },
   data() {
     return {
       activeName: 'Principles to Practice',
+      activeMenuIndex: this.defaultId,
       stepPic: {
         '0': require('../../assets/questionnairePic/portfolio.svg'),
         '1': require('../../assets/questionnairePic/department.svg'),
@@ -172,6 +176,7 @@ export default {
           this.$set(this.editMainQuesFlag, res.data.question.id.toString(), false)
           this.$set(this.editMainQues, res.data.question.id.toString(), res.data.question.question)
           this.addMainQuesFlag[stepNo] = false
+          this.activeMenuIndex = res.data.question.id;
         }
       })
     },
@@ -181,20 +186,20 @@ export default {
         this.$http.delete(`/api/project/${this.projectId}/questionnaire/edit/question/${id}`).then(res => {
           if (res.status == 200) {
             this.menuList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-            let pId = ''
+            let questionId = null;
             if (this.menuList[this.stepMap[this.activeName]].mainQuestionList.length > 0) {
-              pId = this.menuList[this.stepMap[this.activeName]].mainQuestionList[0].id
-            }
-            if (pId) {
-              this.$emit("getId", pId)
+              questionId = this.menuList[this.stepMap[this.activeName]].mainQuestionList[0].id
             } else {
               for (let i = 0; i < this.menuList.length; i++) {
                 if (this.menuList[i].mainQuestionList.length > 0) {
                   this.activeName = this.menuList[i].step
-                  this.$emit("getId", this.menuList[i].mainQuestionList[0].id)
-                  break
+                  questionId = this.menuList[i].mainQuestionList[0].id
                 }
               }
+            }
+            if (questionId) {
+              this.$emit("getId", questionId);
+              this.activeMenuIndex = questionId;
             }
           }
         })
