@@ -18,7 +18,7 @@ public class QuestionReorderDto {
     @NotNull(message = "The principle cannot be null.")
     private Principle principle;
 
-    @NotNull(message = "The step cannot be null.")
+    @NotNull(message = "The assessment step cannot be null.")
     private AssessmentStep step;
 
     private List<Long> questionIdList;
