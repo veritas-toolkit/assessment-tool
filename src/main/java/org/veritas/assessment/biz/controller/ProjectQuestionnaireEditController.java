@@ -128,6 +128,10 @@ public class ProjectQuestionnaireEditController {
         if (!Objects.equals(questionId, dto.getQuestionId())) {
             throw new IllegalRequestException("The question IDs are different.");
         }
+        dto.setQuestion(StringUtils.trimToEmpty(dto.getQuestion()));
+        if (StringUtils.isEmpty(dto.getQuestion())) {
+            throw new IllegalRequestException("The question content should not be empty.");
+        }
         EditMainQuestionAction action = new EditMainQuestionAction();
         action.setProjectId(projectId);
         action.setQuestionId(questionId);
@@ -147,10 +151,6 @@ public class ProjectQuestionnaireEditController {
     public QuestionnaireTocDto reorder(@Parameter(hidden = true) User operator,
                                        @PathVariable("projectId") Integer projectId,
                                        @Valid @RequestBody QuestionReorderDto dto) {
-        Principle principle = dto.getPrinciple();
-        if (principle == null) {
-            throw new IllegalRequestException();
-        }
         Project project = projectService.findProjectById(projectId);
         dto.setProjectId(projectId);
         QuestionnaireVersion questionnaire = questionnaireService.reorderQuestion(operator, projectId,
@@ -211,6 +211,9 @@ public class ProjectQuestionnaireEditController {
         Project project = projectService.findProjectById(projectId);
         if (project == null) {
             throw new NotFoundException("The project not found.");
+        }
+        if (StringUtils.isEmpty(dto.getQuestion())) {
+            throw new IllegalRequestException("The question content should not be empty.");
         }
         EditSubQuestionAction action = new EditSubQuestionAction();
         action.setProjectId(projectId);

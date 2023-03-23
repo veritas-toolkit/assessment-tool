@@ -95,6 +95,19 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return subList;
     }
 
+    public QuestionNode getSub(Long subQuestionId) {
+        Objects.requireNonNull(subQuestionId);
+        if (this.isSub()) {
+            throw new IllegalStateException();
+        }
+        for (QuestionNode sub : this.getSubList()) {
+            if (Objects.equals(sub.getQuestionId(), subQuestionId)) {
+                return sub;
+            }
+        }
+        return null;
+    }
+
     public void setSubList(List<QuestionNode> subList) {
         if (subList == null || subList.isEmpty()) {
             this.subList = Collections.emptyList();

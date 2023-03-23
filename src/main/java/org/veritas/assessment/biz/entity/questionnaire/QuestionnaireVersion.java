@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.beans.BeanUtils;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.veritas.assessment.biz.action.AddSubQuestionAction;
 import org.veritas.assessment.biz.action.DeleteSubQuestionAction;
 import org.veritas.assessment.biz.action.EditAnswerAction;
@@ -309,7 +307,10 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
     public void editMainQuestion(@Valid EditMainQuestionAction action, Supplier<Long> idSupplier) {
         QuestionNode mainNode = this.findNodeByQuestionId(action.getQuestionId());
         if (mainNode == null) {
-            throw new NotFoundException("Not found the main question.");
+            throw new NotFoundException("Not found the question.");
+        }
+        if (!Objects.equals(mainNode.getQuestionVid(), action.getBasedQuestionVid())) {
+            throw new IllegalRequestException("The question has been modified.");
         }
         QuestionNode node = mainNode.editQuestionContent(action.getQuestion(), action.getOperator(),
                 this.createdTime, idSupplier);
@@ -359,9 +360,16 @@ public class QuestionnaireVersion implements Comparable<QuestionnaireVersion> {
         if (mainNode == null) {
             throw new NotFoundException("Not found the main question.");
         }
-        QuestionNode subNode = mainNode.editSub(action.getOperator(), action.getSubQuestionId(),
+        QuestionNode subNode = mainNode.getSub(action.getSubQuestionId());
+        if (subNode == null) {
+            throw new NotFoundException("Not found the question.");
+        }
+        if (!Objects.equals(subNode.getQuestionId(), action.getSubQuestionId())) {
+            throw new IllegalRequestException("The question answer has been modified.");
+        }
+        QuestionNode newSubNode = mainNode.editSub(action.getOperator(), action.getSubQuestionId(),
                 action.getSubQuestion(), this.createdTime, idSupplier);
-        this.modifyActionNodeList.add(subNode);
+        this.modifyActionNodeList.add(newSubNode);
     }
 
     public void reorderSubQuestion(@Valid ReorderSubQuestionAction action) {

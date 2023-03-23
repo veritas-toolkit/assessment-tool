@@ -12,12 +12,13 @@ import java.util.List;
 
 @Data
 public class QuestionEditDto {
-    @NotNull
+    @NotNull(message = "Bad request.")
     private Long questionId;
 
-    @NotNull
+    @NotNull(message = "Bad request.")
     private Long basedQuestionVid;
 
-    @NotNull
+    @NotNull(message = "The question content should not be empty.")
+    @NotEmpty(message = "The question content should not be empty.")
     private String question;
 }

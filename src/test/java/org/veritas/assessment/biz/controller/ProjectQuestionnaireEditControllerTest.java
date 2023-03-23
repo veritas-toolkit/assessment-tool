@@ -34,13 +34,18 @@ import org.veritas.assessment.biz.constant.AssessmentStep;
 import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionAddDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionEditDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocWithMainQuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.SubQuestionEditDto;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -97,9 +102,9 @@ class ProjectQuestionnaireEditControllerTest {
         QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
         Long questionId = questionnaireVersion.getMainQuestionNodeList().get(0).getQuestionId();
         MvcResult mvcResult = mockMvc.perform(
-                delete("/api/project/{projectId}/questionnaire/edit/question/{questionId}",
-                        projectDto.getId(), questionId)
-                        .with(user("1").roles("ADMIN", "USER")))
+                        delete("/api/project/{projectId}/questionnaire/edit/question/{questionId}",
+                                projectDto.getId(), questionId)
+                                .with(user("1").roles("ADMIN", "USER")))
                 .andDo(print()).andExpect(status().is2xxSuccessful())
                 .andReturn();
         assertNotNull(mvcResult.getResponse().getContentAsString());
@@ -118,5 +123,126 @@ class ProjectQuestionnaireEditControllerTest {
         });
     }
 
+    @Test
+    void testEditMainQuestion_emptyFailed() throws Exception {
+        ProjectDto projectDto = projectControllerTestUtils.createProject();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+
+        QuestionNode firstNode = questionnaireVersion.getMainQuestionNodeList().get(0);
+        Long questionId = firstNode.getQuestionId();
+        QuestionEditDto dto = new QuestionEditDto();
+        dto.setQuestionId(questionId);
+        dto.setBasedQuestionVid(firstNode.getQuestionVid());
+        dto.setQuestion("         ");
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/project/{projectId}/questionnaire/edit/question/{questionId}",
+                                projectDto.getId(), questionId)
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print()).andExpect(status().is4xxClientError())
+                .andReturn();
+        assertNotNull(mvcResult.getResponse().getContentAsString());
+        assertTrue(StringUtils.contains(mvcResult.getResponse().getContentAsString(),
+                "should not be empty"));
+    }
+
+    @Test
+    void testEditMainQuestion_hasBennModifiedFailed() throws Exception {
+        ProjectDto projectDto = projectControllerTestUtils.createProject();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+
+        QuestionNode firstNode = questionnaireVersion.getMainQuestionNodeList().get(0);
+        Long questionId = firstNode.getQuestionId();
+        QuestionEditDto dto = new QuestionEditDto();
+        dto.setQuestionId(questionId);
+        dto.setBasedQuestionVid(firstNode.getQuestionVid() - 200);
+        dto.setQuestion("something new.");
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/project/{projectId}/questionnaire/edit/question/{questionId}",
+                                projectDto.getId(), questionId)
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print()).andExpect(status().is4xxClientError())
+                .andReturn();
+        assertNotNull(mvcResult.getResponse().getContentAsString());
+        assertTrue(StringUtils.contains(mvcResult.getResponse().getContentAsString(),
+                "The question has been modified."));
+    }
+
+    @Test
+    void testEditMainQuestion_success() throws Exception {
+        ProjectDto projectDto = projectControllerTestUtils.createProject();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+
+        QuestionNode firstNode = questionnaireVersion.getMainQuestionNodeList().get(0);
+        Long questionId = firstNode.getQuestionId();
+        QuestionEditDto dto = new QuestionEditDto();
+        dto.setQuestionId(questionId);
+        dto.setBasedQuestionVid(firstNode.getQuestionVid());
+        String NEW_QUESTION_CONTENT = "xxxx new question";
+        dto.setQuestion(NEW_QUESTION_CONTENT);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/project/{projectId}/questionnaire/edit/question/{questionId}",
+                                projectDto.getId(), questionId)
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        assertNotNull(mvcResult.getResponse().getContentAsString());
+        QuestionnaireTocWithMainQuestionDto returnObj =
+                objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                        new TypeReference<QuestionnaireTocWithMainQuestionDto>() {
+                        });
+        log.info("question: {}", returnObj);
+        assertNotNull(returnObj);
+
+        QuestionnaireVersion newVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+        QuestionNode newFirst = newVersion.getMainQuestionNodeList().get(0);
+        assertEquals(NEW_QUESTION_CONTENT, newFirst.getQuestionVersion().getContent());
+    }
+
+
+    @Test
+    void testEditSubQuestion_success() throws Exception {
+        ProjectDto projectDto = projectControllerTestUtils.createProject();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+
+
+        QuestionNode mainNode = questionnaireVersion.getMainQuestionNodeList().stream()
+                .filter(node -> !node.getSubList().isEmpty())
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+        QuestionNode subNode = mainNode.getSubList().get(0);
+        Long questionId = mainNode.getQuestionId();
+        Long subQuestionId = subNode.getQuestionId();
+
+        SubQuestionEditDto dto = new SubQuestionEditDto();
+        dto.setQuestionId(subNode.getQuestionId());
+        dto.setBasedQuestionVid(subNode.getQuestionVid());
+        String NEW_QUESTION_CONTENT = "xxxx new question";
+        dto.setQuestion(NEW_QUESTION_CONTENT);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/project/{projectId}/questionnaire/edit/question/{questionId}/sub/{subQuestionId}",
+                                projectDto.getId(), questionId, subQuestionId)
+                                .with(user("1").roles("ADMIN", "USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        assertNotNull(mvcResult.getResponse().getContentAsString());
+        QuestionDto returnObj =
+                objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                        new TypeReference<QuestionDto>() {
+                        });
+        log.info("question: {}", returnObj);
+        assertNotNull(returnObj);
+
+        QuestionnaireVersion newVersion = questionnaireService.findLatestQuestionnaire(projectDto.getId());
+        QuestionNode newSub = newVersion.findNodeByQuestionId(subQuestionId);
+        assertEquals(NEW_QUESTION_CONTENT, newSub.getQuestionVersion().getContent());
+    }
 
 }
