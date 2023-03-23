@@ -20,6 +20,7 @@
       </div>
     </div>
     <el-input v-show="addSubQuesFlag" style="margin-top: 24px" type="textarea" :rows="3" v-model="addSubQues"
+              @blur="saveDraft"
               placeholder="Please input a new subquestion">
     </el-input>
     <div v-show="addSubQuesFlag" style="display: flex;justify-content: right">
@@ -31,6 +32,8 @@
 </template>
 
 <script>
+import {createNamespacedHelpers} from "vuex";
+
 export default {
   name: "TemplateSubQuestion",
   props: {
@@ -56,7 +59,20 @@ export default {
       subQuestionList: [],
       editSubQuesFlag: {},
       editSubQues: {},
+      subQuestionDrafts: {}
     }
+  },
+  computed: {
+    currentDraft() {
+      let draft = this.subQuestionDrafts[this.questionId];
+      if (draft) {
+        return draft;
+      } else {
+        return "";
+      }
+
+    },
+
   },
   watch: {
     'questionId': function () {
@@ -64,17 +80,30 @@ export default {
         this.getSubQuestion()
         this.$emit('updateFlag', false)
       }
+      this.addSubQues = this.currentDraft;
     },
     'editFlag': function () {
       if (this.editFlag) {
         this.getSubQuestion()
         this.$emit('getEditFlag', false)
       }
+    },
+    'addSubQuesFlag': function () {
+    //   if (this.addSubQuesFlag) {
+    //     this.addSubQues = this.subQuestionDrafts[this.questionId];
+    //   }
+    //   console.log("addSubQuesFlag: " + this.addSubQuesFlag)
+    //   console.log(this.subQuestionDrafts)
     }
   },
   created() {
   },
+
   methods: {
+    saveDraft() {
+      console.log("save.....")
+      this.subQuestionDrafts[this.questionId] = this.addSubQues;
+    },
     getSubQuestion() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/question/${this.questionId}`).then(res => {
         if (res.status == 200) {
@@ -95,11 +124,13 @@ export default {
     addSubQuestion() {
       let newSubQues = {}
       newSubQues.beforeQuestionId = null;
-      newSubQues.question = this.addSubQues
+      // newSubQues.question = this.addSubQues
+      newSubQues.question = this.subQuestionDrafts[this.questionId];
       this.$http.post(`/api/project/${this.projectId}/questionnaire/edit/question/${this.questionId}/sub/new`, newSubQues).then(res => {
         if (res.status == 200) {
           this.subQuestionList = res.data.subQuestionList
           this.addSubQues = ''
+          this.subQuestionDrafts[this.questionId] = '';
           this.$emit('updateFlag', false)
         }
       })
