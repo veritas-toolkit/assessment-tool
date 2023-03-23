@@ -31,6 +31,7 @@ import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.biz.entity.jsonmodel.Transparency;
 import org.veritas.assessment.biz.service.GraphService;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.system.config.VeritasProperties;
 
 import java.io.File;
@@ -161,29 +162,39 @@ public class GraphServiceImpl implements GraphService {
         return container;
     }
 
-    private List<String> callPython(String filePath) throws Exception {
+    private List<String> callPython(String filePath) {
 
-        log.warn("filePath: {}", filePath);
-        ProcessBuilder builder = new ProcessBuilder(
-                veritasProperties.getPythonCommand(),
-                "py/plot.py",
-                filePath);
-        builder.redirectErrorStream(false);
-        StopWatch stopWatch = StopWatch.createStarted();
-        Process process = builder.start();
+        try {
+            log.warn("filePath: {}", filePath);
+            ProcessBuilder builder = new ProcessBuilder(
+                    veritasProperties.getPythonCommand(),
+                    "py/plot.py",
+                    filePath);
+            builder.redirectErrorStream(false);
+            StopWatch stopWatch = StopWatch.createStarted();
+            Process process = builder.start();
 
-        String result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
-        log.info("stdout:\n{}", result);
-        String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-        log.warn("stderr:\n{}", stderr);
-        stopWatch.stop();
-        log.info("process time: {}", stopWatch);
-        if (!StringUtils.isEmpty(result)) {
-            return objectMapper.readValue(result,
-                    new TypeReference<List<String>>() {
-                    });
+            String result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+            log.info("stdout:\n{}", result);
+            String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
+            log.warn("stderr:\n{}", stderr);
+            stopWatch.stop();
+            log.info("process time: {}", stopWatch);
+            if (!StringUtils.isEmpty(result)) {
+                return objectMapper.readValue(result,
+                        new TypeReference<List<String>>() {
+                        });
+            }
+        } catch (Exception exception) {
+            if (veritasProperties.isTestProfileActive()) {
+                throw new RuntimeException("Call python command failed.", exception);
+            } else {
+                log.error("Failed to call python plot.py", exception);
+                throw new IllegalRequestException("Failed to parse json file");
+            }
+
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private enum ImageEnum {
