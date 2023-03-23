@@ -29,7 +29,7 @@
                     </div>
                   </div>
                   <div class="ques-content" v-show="!isCollapse">{{ mainQuestion.question }}
-                    <span :class="mainQuestion['editType']" v-show="isUnmodified(mainQuestion)">
+                    <span :class="mainQuestion.editType" v-show="!isUnmodified(mainQuestion)">
                       {{ mainQuestion['editType'] }}
                     </span>
                   </div>
@@ -109,6 +109,9 @@ export default {
     isUnmodified(mainQuestion) {
       return mainQuestion && mainQuestion['editType'] === "Unmodified";
     }
+  },
+  computed: {
+
   }
 }
 </script>
