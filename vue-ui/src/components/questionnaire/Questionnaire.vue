@@ -40,7 +40,7 @@
         <div id="endComSty" class="BarlowMedium" @click="compareFlag=false" v-if="compareFlag">End comparison</div>
         <div style="display: flex" class="BarlowMedium" v-if="!compareFlag">
           <div id="preview" @click="previewPdf">Preview</div>
-          <div id="export" @click="openExportDialog">Export</div>
+          <div id="export" v-show="project.archived !== true" @click="openExportDialog">Export</div>
           <export-report-dialog
               ref="exportDialog"
               :projectId="projectId"
@@ -56,8 +56,7 @@
                              :isCollapse="isCollapse"></QuestionnaireMenu>
         </el-aside>
         <el-main :style="openCompare?'display:flex':''">
-          <!--            <QuestionnaireAnswer v-if="openCompare" style="border-right: 1px solid #D5D8DD;overflow-y: auto"></QuestionnaireAnswer>-->
-          <QuestionnaireAnswer :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId"
+          <QuestionnaireAnswer :archived="project.archived" :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId"
                                v-show="!compareFlag" :projectId="projectId" :questionId="questionId"
                                style="overflow-y: auto"></QuestionnaireAnswer>
           <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"
@@ -125,16 +124,7 @@
                 Compare
               </div>
             </el-popover>
-            <!--            <div @click="openCompare=true" style="border: 1px solid red">open compare</div>-->
             <div style="display: flex">
-              <!--              <div class="footer-prev">-->
-              <!--                <img class="arrow" src="../../assets/projectPic/arrow-up.svg" alt="">-->
-              <!--                Prev-->
-              <!--              </div>-->
-              <!--              <div class="footer-next">-->
-              <!--                <img class="arrow" src="../../assets/projectPic/arrow-down.svg" alt="">-->
-              <!--                Next-->
-              <!--              </div>-->
             </div>
           </div>
         </div>
@@ -199,29 +189,30 @@ export default {
       },
       compareList: [],
       compareVersionTime: '',
-      projectDetail: null,
+      projectDetail: {},
+      project: {},
     }
   },
-  async created() {
+  created() {
     this.getQuestionnaireMenu()
     // console.log('pid',this.projectId)
     sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
-    if (this.$route.params.permissionList && this.$route.params.permissionList.length > 0) {
-      console.log("pl" + this.$route.params.permissionList)
-      this.permissionList = this.$route.params.permissionList;
-    } else {
-      await projectApi.detail(this.projectId)
-          .then(response => {
-            this.projectDetail = response.data;
-          });
-      this.permissionList = [];
-      if (this.projectDetail.groupRole) {
-        this.permissionList = this.permissionList.concat(this.projectDetail.groupRole.permissionList)
-      }
-      if (this.projectDetail.projectRole) {
-        this.permissionList = this.permissionList.concat(this.projectDetail.projectRole.permissionList)
-      }
-    }
+    // if (this.$route.params.permissionList && this.$route.params.permissionList.length > 0) {
+    //   console.log("pl" + this.$route.params.permissionList)
+    //   this.permissionList = this.$route.params.permissionList;
+    // }
+    projectApi.detail(this.projectId)
+        .then(response => {
+          this.projectDetail = response.data;
+          this.permissionList = [];
+          if (this.projectDetail.groupRole) {
+            this.permissionList = this.permissionList.concat(this.projectDetail.groupRole.permissionList)
+          }
+          if (this.projectDetail.projectRole) {
+            this.permissionList = this.permissionList.concat(this.projectDetail.projectRole.permissionList)
+          }
+          this.project = this.projectDetail.project;
+        });
   },
 
   watch: {
@@ -387,6 +378,14 @@ export default {
         window.open(pdfUrl)
       })
     },
+  },
+  computed: {
+    projectArchived() {
+      if (this.project) {
+        return this.project.archived === true;
+      }
+      return false;
+    }
   }
 }
 </script>

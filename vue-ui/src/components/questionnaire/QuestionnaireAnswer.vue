@@ -8,7 +8,7 @@
           {{ answerDict.question }}
         </div>
         <div style="display: flex">
-          <img @click="mainQuesEcho(answerDictId)" v-show="has_permission(PermissionType.PROJECT_INPUT_ANSWER)" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
+          <img @click="mainQuesEcho(answerDictId)" v-show="canInputAnswer" class="subQues-edit" src="../../assets/questionnairePic/edit.svg" alt="">
           <el-popover
               placement="left-start"
               width="400"
@@ -61,7 +61,7 @@
             {{ item.question }}
           </div>
           <div style="display: flex">
-            <img @click="subQuesEcho(item.id)" v-show="has_permission(PermissionType.PROJECT_INPUT_ANSWER)" class="subQues-edit"
+            <img @click="subQuesEcho(item.id)" v-show="canInputAnswer" class="subQues-edit"
                  src="../../assets/questionnairePic/edit.svg" alt="">
             <el-popover
                 placement="left-start"
@@ -145,6 +145,10 @@ export default {
   name: "QuestionnaireAnswer",
   components: { editor },
   props: {
+    archived: {
+      type: Boolean,
+      required: false
+    },
     permissionList: {
       type: Array,
       required: false
@@ -160,7 +164,8 @@ export default {
     modelArtifactVersionId: {
       type: Number,
       required: false
-    }
+    },
+
   },
   created() {
     this.getFullComment()
@@ -214,6 +219,15 @@ export default {
       commentCount: {},
       PermissionType:PermissionType
     }
+  },
+  computed: {
+    canInputAnswer() {
+      if (this.archived) {
+        console.log("archived")
+        return false;
+      }
+      return  permissionCheck(this.permissionList, PermissionType.PROJECT_INPUT_ANSWER);
+    },
   },
   methods: {
     has_permission(target_permission) {
