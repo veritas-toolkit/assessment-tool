@@ -177,7 +177,7 @@ export function permutationImportanceOptionData(data) {
                 //x轴的文字改为竖版显示
                 formatter: function (value) {
                     if (value.length > 4) {
-                        return `${value.slice(0, 9)}...`;
+                        return `${value.slice(0, 8)}...`;
                     }
                     return value;
                 },
@@ -454,10 +454,10 @@ export function twoLineOptionData(data) {
     let threshold = data.threshold
     let selection_rate = data.selection_rate
     let perf = data.perf
-    let perfMax = Math.max.apply(null, perf).toFixed(2);
-    let perfMin = Math.min.apply(null, perf).toFixed(2);
-    let selectionRateMax = Math.max.apply(null, selection_rate).toFixed(2);
-    let selectionRateMin = Math.min.apply(null, selection_rate).toFixed(2);
+    let perfMax = Math.ceil(Math.max.apply(null, perf)*100)/100;
+    let perfMin = Math.floor(Math.min.apply(null, perf)*100)/100;
+    let selectionRateMax = Math.ceil(Math.max.apply(null, selection_rate)*100)/100;
+    let selectionRateMin = Math.floor(Math.min.apply(null, selection_rate)*100)/100;
     let dataList1 = []
     let dataList2 = []
     for (let i=0;i<perf.length;i++) {
