@@ -35,7 +35,11 @@ service.interceptors.response.use(
         if (err.response) {
             httpStatus = err.response.status;
         }
-        if (httpStatus === 401) {
+        if (!httpStatus) {
+            if (err.request.config.responseType !== "blob") {
+                Vue.prototype.$message.error(err.response.data.message)
+            }
+        } else if (httpStatus === 401) {
             const notLoginPage = router.currentRoute.path !== "/login";
             if (notLoginPage) {
                 return router.replace({
@@ -48,6 +52,12 @@ service.interceptors.response.use(
             return router.replace({
                 path: "/home",
             })
+        } else if (httpStatus >= 400 && httpStatus <=499) {
+            let message = err.response.data.message;
+            if (!message) {
+                message = "Bad Request.";
+            }
+            Vue.prototype.$message.error(message);
         } else if (500 <= httpStatus && httpStatus <= 599) {
             let message = err.response.data.message;
             if (!message) {
@@ -55,9 +65,7 @@ service.interceptors.response.use(
             }
             Vue.prototype.$message.error(message);
         } else if (httpStatus){
-            if (err.request.config.responseType !== "blob") {
-                Vue.prototype.$message.error(err.response.data.message)
-            }
+            Vue.prototype.$message.error("Error");
         }
         return Promise.reject(err)
     }
