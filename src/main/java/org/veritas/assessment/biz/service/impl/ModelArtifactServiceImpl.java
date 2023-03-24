@@ -54,6 +54,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -224,7 +225,19 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
                     if (permutation == null || permutation.getScore() == null) {
                         return PlotDataDto.none();
                     }
-                    dto.setData(permutation.getScore());
+                    List<Transparency.PermutationScore> scoreList = permutation.getScore();
+                    scoreList = scoreList.stream()
+                            .sorted((a, b) -> {
+                                if (a.getScore() == null) {
+                                    return -1;
+                                } else if (b.getScore() == null) {
+                                    return 1;
+                                } else {
+                                    return a.getScore().compareTo(b.getScore());
+                                }
+                            })
+                            .collect(Collectors.toList());
+                    dto.setData(scoreList);
                     dto.setType(PlotTypeEnum.H_BAR);
                     if (StringUtils.isEmpty(permutation.getTitle())) {
                         dto.setName("Permutation Importance");
