@@ -75,9 +75,11 @@ import org.veritas.assessment.system.service.GroupService;
 import org.veritas.assessment.system.service.RoleService;
 import org.veritas.assessment.system.service.UserService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -346,7 +348,7 @@ public class ProjectController {
     @Operation(summary = "Download the model artifact file(json).")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     @GetMapping("/{projectId}/modelArtifact/download")
-    public HttpEntity<String> downloadJson(@PathVariable("projectId") Integer projectId) {
+    public void downloadJson(@PathVariable("projectId") Integer projectId, HttpServletResponse response) throws IOException {
         ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
         if (modelArtifact == null) {
             throw new NotFoundException(String.format("project[%d] haven't uploaded any model artifacts.", projectId));
@@ -356,12 +358,18 @@ public class ProjectController {
         } catch (IOException exception) {
             throw new NotFoundException("File not found or deleted.");
         }
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-        header.set(HttpHeaders.CONTENT_DISPOSITION,
+
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=" + modelArtifact.getFilename().replace(" ", "_"));
-        header.setContentLength(modelArtifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
-        return new HttpEntity<>(modelArtifact.getJsonContent(), header);
+        response.setContentLength(modelArtifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
+        try (OutputStream outputStream = response.getOutputStream();
+             InputStream inputStream = IOUtils.toInputStream(modelArtifact.getJsonContent(), StandardCharsets.UTF_8)) {
+            IOUtils.copy(inputStream, outputStream);
+        } catch (IOException exception) {
+            log.error("copy failed", exception);
+            throw new IOException("Download model artifact failed.");
+        }
     }
 
     @Operation(summary = "Upload the image of the project's report.")

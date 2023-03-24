@@ -119,7 +119,8 @@ public class ProjectVersionController {
             throw new NotFoundException("File not found or deleted.");
         }
         HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
+//        header.setContentType(MediaType.APPLICATION_JSON);
+        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         header.set(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=" + artifact.getFilename().replace(" ", "_"));
         header.setContentLength(artifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
