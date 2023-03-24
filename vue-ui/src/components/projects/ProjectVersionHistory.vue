@@ -55,7 +55,7 @@ export default {
             {type: "warning"})
         return
       }
-      projectApi.downloadHistoryJsonFile(reportHistory.projectId, reportHistory['versionIdOfProject'])
+      projectApi.fetchHistoryJsonInfo(reportHistory.projectId, reportHistory['versionIdOfProject'])
           .then(response => {
             let modelArtifactDto = response.data;
 
