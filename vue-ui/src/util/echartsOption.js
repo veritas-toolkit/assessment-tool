@@ -173,11 +173,11 @@ export function permutationImportanceOptionData(data) {
             },
             axisLabel: {
                 interval: 0, //强制文字产生间隔
-                rotate:0, //倾斜多少度
-                //x轴的文字改为竖版显示
+                rotate: 0, //倾斜多少度
+                // x轴的文字改为竖版显示
                 formatter: function (value) {
-                    if (value.length > 4) {
-                        return `${value.slice(0, 8)}...`;
+                    if (value.length > 12) {
+                        return `${value.slice(0, 10)}...`;
                     }
                     return value;
                 },
