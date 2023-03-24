@@ -15,7 +15,7 @@ The following confusion matrix applies to binary classification.
         <tr>
             <th> </th>
             <th>Positive(Actual)</th>
-            <th>Negative(Actual)</td>
+            <th>Negative(Actual)</th>
         </tr>
         </thead>
         <tbody>
