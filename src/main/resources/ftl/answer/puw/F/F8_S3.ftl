@@ -25,9 +25,9 @@ and after (LOCO model) dropping each feature (LOCO model - baseline model).
             <tbody>
             <#list feature.featureImportance as i_key, i_value>
                 <tr>
-                    <td>${i_key}</td>
+                    <td class = "fea_imp">${i_key}</td>
                     <#list i_value as element>
-                        <td>${element}</td>
+                        <td class = "fea_imp">${element}</td>
                     </#list>
                 </tr>
             </#list>

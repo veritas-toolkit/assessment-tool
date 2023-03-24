@@ -14,7 +14,7 @@
                 <tbody>
                 <#list feature.fairMetricValueListMap as metricName, valueList>
                     <tr <#if fairness.isFairMetric(metricName)> class="fair_metric_row"</#if>>
-                        <td class="metric_name">${metricName}</td>
+                        <td class="fair_metric_name">${metricName}</td>
                         <td class="metric_value">${feature.faireMetricValueFormat(valueList)}</td>
                     </tr>
                 </#list>

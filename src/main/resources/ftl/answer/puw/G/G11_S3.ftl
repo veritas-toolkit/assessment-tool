@@ -18,8 +18,8 @@
     <tbody>
     <#list fairness.perfMetricValues as metricName, valueList>
         <tr <#if fairness.isPerfMetric(metricName) == true> class="perf_metric_row"</#if>>
-            <td>${metricName}</td>
-            <td>${valueList[0]} +/- ${valueList[1]}</td>
+            <td class = "perf_metric_name">${metricName}</td>
+            <td class = "metric_value">${valueList[0]} +/- ${valueList[1]}</td>
         </tr>
     </#list>
     </tbody>

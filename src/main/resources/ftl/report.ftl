@@ -342,13 +342,23 @@ ul li {
 }
 .answer table tbody tr.fair_metric_row {
     color: red;
+    text-align: center;
 }
 
-.answer table td.metric_name {
+.answer table td.fair_metric_name {
     text-align: left;
 }
+
+.answer table td.perf_metric_name {
+    text-align: center;
+}
+
 .answer table td.metric_value {
     text-align: right;
+}
+
+.answer table td.fea_imp {
+    text-align: center;
 }
 
 /** project title */
