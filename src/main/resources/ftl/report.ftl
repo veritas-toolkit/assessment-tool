@@ -310,6 +310,7 @@ ul li {
 }
 
 .answer table thead {
+    text-align: center;
     color: white;
     background: rgb(2, 18, 77);
 }
@@ -325,12 +326,16 @@ ul li {
     padding: 5px 15px;
     text-align: center;
 }
-/*
-.answer table tbody tr td:first-child {
-    color: white;
-    background: grey;
+
+.answer table tbody td {
+    text-align: left;
 }
-*/
+.answer table tbody td.td_title {
+    text-align: center;
+}
+.answer table tbody td.td_number {
+    text-align: right;
+}
 
 .answer table tbody tr.perf_metric_row {
     color: red;

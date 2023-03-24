@@ -16,14 +16,17 @@ Prioritisation scores serve to prioritise resources and optimise for higher prio
 
 <div class="table_box">
     <table border="1">
+        <thead>
         <tr>
             <th>Principles</th>
             <th>Commitment</th>
             <th>Priority</th>
             <th>How to measure(Specifications)</th>
         </tr>
+        </thead>
+        <tbody>
         <tr>
-            <td rowspan="2">Inclusive culture</td>
+            <td class="td_title" rowspan="2">Inclusive culture</td>
             <td rowspan="2">People or groups of people should have their voice heard and opinion considered</td>
             <td rowspan="2"> </td>
             <td>Percentage of customer feedback to which the bank responded</td>
@@ -31,28 +34,20 @@ Prioritisation scores serve to prioritise resources and optimise for higher prio
         <tr>
             <td>Number of implemented initiatives arising from the customers’ feedback</td>
         </tr>
-
         <tr>
-
-            <td rowspan="3">Non-discrimination</td>
+            <td class="td_title" rowspan="3">Non-discrimination</td>
             <td>Minimal or no unintended bias for different groups</td>
             <td> </td>
             <td>Number of documented incidents of unintended bias</td>
         </tr>
-
         <tr>
-
-            <td rowspan="2">No discrimination based on personal attributes e.g.,race, gender,nationality.</td>
+            <td  class="td_title" rowspan="2">No discrimination based on personal attributes e.g.,race, gender,nationality.</td>
             <td rowspan="2"> </td>
             <td>Percentage of personal attributes used in the model that are justified</td>
         </tr>
-
-
         <tr>
             <td>Percentage of personal attributes that have a fairness value above the acceptable threshold</td>
-
         </tr>
-
-
+        </tbody>
     </table>
 </div>
