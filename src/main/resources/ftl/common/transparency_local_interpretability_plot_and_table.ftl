@@ -1,7 +1,7 @@
 <#list transparency.modelList as modelInfo>
     <#assign modelId = modelInfo.id>
     <#if modelInfo.localInterpretabilityList??>
-        <div>Local interpretability for model: ${modelId}</div>
+        <h3>Local interpretability for model: ${modelId}</h3>
         <#list modelInfo.localInterpretabilityList as localInterpretability>
             <#assign localInterpretabilityId = localInterpretability.id>
             <#if localInterpretability.plotDisplay != true>

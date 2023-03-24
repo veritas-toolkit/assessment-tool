@@ -1,5 +1,5 @@
 
-<h4>Permutation Importance</h4>
+<h2>Permutation Importance</h2>
 <div>
     The permutation feature importance measures the decrease in model score when a single feature is randomly shuffled
     while keeping other features constant. A large decrease in model score indicates a relative large contribution of the feature.
@@ -10,14 +10,14 @@
 
 <#include "../../../common/transparency_permutation_importance_plot.ftl">
 
-<h4>Partial Dependence Plot</h4>
+<h2>Partial Dependence Plot</h2>
 <div>
   Partial dependence plot shows how the predicted outcome changes with the selected feature.
 </div>
 
 <#include "../../../common/transparency_partial_dependence_plot.ftl">
 
-<h4>Global Interpretability Based on SHAP</h4>
+<h2>Global Interpretability Based on SHAP</h2>
 
 <div>
     At a global level, the collective SHAP values show how much each predictor contributes, either positively or negatively, to the target variable.
@@ -30,7 +30,7 @@
 <#--summary plot or table-->
 <#include "../../../common/transparency_global_interpretability_plot_and_table.ftl">
 
-<h4>Local Interpretability Based on SHAP</h4>
+<h2>Local Interpretability Based on SHAP</h2>
 
 <div>
     At a local level, each observation gets its own set of SHAP values. Shown in red are the variables that pushing the predictions higher,
