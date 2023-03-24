@@ -13,7 +13,7 @@ The following confusion matrix applies to binary classification.
     </div>
     <table>
         <thead>
-        <tr>
+        <tr style="color:#ffffff">
             <td> </td>
             <td>Positive(Actual)</td>
             <td>Negative(Actual)</td>
