@@ -224,11 +224,12 @@ export function correlationMatrixOptionData(data) {
     let temp = []
     for (let i=0; i< dataValue.length; i++) {
         for (let j=0; j< dataValue[i].length; j++) {
-            temp.push([i,j,dataValue[i][j].toFixed(2)])
+            temp.push([i,j,dataValue[i][j].toFixed(4)])
         }
     }
     let option = {
         tooltip: {
+            // trigger: 'none',
             position: 'top'
         },
         grid: {
@@ -245,18 +246,19 @@ export function correlationMatrixOptionData(data) {
             nameTextStyle: {
                 fontSize: 16,
             },
+            triggerEvent: true,
             axisLabel: {
                 interval: 0, //强制文字产生间隔
                 rotate:20, //倾斜多少度
                 //x轴的文字改为竖版显示
                 formatter: function (value) {
-                    if (value.length > 4) {
-                        return `${value.slice(0, 10)}...`;
+                    if (value.length > 20) {
+                        return `${value.slice(0, 20)}...`;
                     }
                     return value;
                 },
                 textStyle: {
-                    fontSize: 16
+                    fontSize: 10
                 }
             }
         },
@@ -264,21 +266,21 @@ export function correlationMatrixOptionData(data) {
             type: 'category',
             data: nameListRe,
             align: 'center',
-
             splitArea: {
                 show: true
             },
             nameTextStyle: {
                 fontSize: 16,
             },
+            triggerEvent: true,
             axisLabel: {
                 interval: 0, //强制文字产生间隔
                 textStyle: {
-                    fontSize: 16
+                    fontSize: 10
                 },
                 formatter: function (value) {
-                    if (value.length > 4) {
-                        return `${value.slice(0, 10)}...`;
+                    if (value.length > 16) {
+                        return `${value.slice(0, 16)}...`;
                     }
                     return value;
                 }
