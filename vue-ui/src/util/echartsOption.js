@@ -38,7 +38,7 @@ export function waterfallOptionData(data) {
 
     let option = {
         title: {
-            text: 'Local Interpretability Water Plot',
+          //  text: 'Local Interpretability Water Plot',
             left: 'center',
             textStyle: {
                 fontSize: 24
@@ -147,7 +147,7 @@ export function permutationImportanceOptionData(data) {
     })
     let option = {
         title: {
-            text: 'Permutation Importance',
+            text: 'Permutation Importance Plot based on |Metric_old-Metric_new|',
             left: 'center',
             textStyle: {
                 fontSize: 24

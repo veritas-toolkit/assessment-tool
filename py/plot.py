@@ -199,6 +199,7 @@ def plot_permutation_importance(zf_name, feature_score_list, title=None, footnot
     for feature_score in feature_score_list:
         features.append(feature_score['feature'])
         importance.append(feature_score['score'])
+    importance = list(reversed(importance))
     plt.figure(figsize=(15, 10))
     plt.xticks(fontsize=18)
     plt.yticks(fontsize=18)
