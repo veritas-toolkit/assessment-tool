@@ -695,6 +695,14 @@ export default {
       })
     },
     downloadJsonFile() {
+      let url = `/api/project/${this.projectId}/modelArtifact/download`;
+      let filename = this.jsonInfo.filename;
+      if (!filename) {
+        filename = 'data.json'
+      }
+      window.open(url, filename)
+    },
+    downloadJsonFile2() {
       this.$http({
         url: `/api/project/${this.projectId}/modelArtifact/download`,
         method: 'get',

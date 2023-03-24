@@ -57,34 +57,14 @@ export default {
       }
       projectApi.downloadHistoryJsonFile(reportHistory.projectId, reportHistory['versionIdOfProject'])
           .then(response => {
-            let blob = new Blob([response.data], {type: "application/octet-stream;charset=utf-8"});
-            if (window.navigator.msSaveBlob) {
-              try {
-                window.navigator.msSaveBlob(blob, modelArtifact.filename)
-              } catch (e) {
+            let modelArtifactDto = response.data;
 
-              }
-            } else {
-              let Temp = document.createElement('a')
-              Temp.href = window.URL.createObjectURL(blob)
-
-              let headerLine = response.headers['content-disposition'];
-              if (!headerLine) {
-                headerLine = response.headers['Content-Disposition']
-              }
-              let filename;
-              if (headerLine) {
-                filename = headerLine.split('filename=')[1].split(';')[0]
-              }
-              if (!filename) {
-                filename = 'data.json'
-              }
-              Temp.download = filename
-              document.body.appendChild(Temp)
-              Temp.click()
-              document.body.removeChild(Temp)
-              window.URL.revokeObjectURL(Temp.href)
+            let href = `/api/project/${reportHistory.projectId}/history/${reportHistory['versionIdOfProject']}/modelArtifact/download`;
+            let filename = modelArtifactDto.filename
+            if (!filename) {
+              filename = "data.json"
             }
+            window.open(href, filename);
           })
     },
     questionnaireHistory: async function (reportHistory) {
