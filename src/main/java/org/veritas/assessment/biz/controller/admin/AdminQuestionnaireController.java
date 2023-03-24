@@ -127,6 +127,11 @@ public class AdminQuestionnaireController {
                                                           @PathVariable("templateId") Integer templateId,
                                                           @PathVariable("questionId") Integer questionId,
                                                           @Valid @RequestBody TemplateQuestionEditDto dto) {
+        String content = StringUtils.trimToEmpty(dto.getContent());
+        if (StringUtils.isEmpty(content)) {
+            throw new IllegalRequestException("The question content should not be empty.");
+        }
+        dto.setContent(content);
         TemplateQuestionnaire questionnaire =
                 service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
         TemplateQuestion question = questionnaire.findQuestion(dto.getMainQuestionId());
@@ -138,6 +143,12 @@ public class AdminQuestionnaireController {
                                                  @PathVariable("templateId") Integer templateId,
                                                  @PathVariable("questionId") Integer questionId,
                                                  @Valid @RequestBody TemplateQuestionEditDto dto) {
+        String content = StringUtils.trimToEmpty(dto.getContent());
+        if (StringUtils.isEmpty(content)) {
+            throw new IllegalRequestException("The question content should not be empty.");
+        }
+        dto.setContent(content);
+
         TemplateQuestionnaire questionnaire =
                 service.updateQuestionContent(operator, templateId, dto.getId(), dto.getContent());
         TemplateQuestion question = questionnaire.findQuestion(questionId);
