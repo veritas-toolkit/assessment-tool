@@ -12,6 +12,7 @@
       </div>
       <el-form :rules="exportPdfFormRules" ref="exportPdfFormRefs" label-position="top" label="450px"
                id="export-form"
+
                :model="exportPdfForm">
         <el-form-item class="login" label="Report version" prop="version">
           <el-select v-model="exportPdfForm.version" filterable allow-create default-first-option
@@ -40,6 +41,7 @@
 
 <script>
 import projectApi from "@/api/projectApi";
+import {ca} from "timeago.js/lib/lang";
 
 export default {
   name: "ExportReportDialog",
@@ -104,7 +106,17 @@ export default {
             this.suggestVersionList = suggestionVersionList;
           });
     },
-    exportPdf() {
+    async exportPdf() {
+
+      try {
+        let validate = await this.$refs.exportPdfFormRefs.validate();
+        if (!validate) {
+          return false;
+        }
+      } catch (e) {
+        console.error(e)
+        return false;
+      }
       let loading = this.$loading(
           {
             target: "#export-div",
@@ -123,6 +135,33 @@ export default {
           .finally(() => {
             loading.close();
           })
+    },
+    exportPdf2() {
+      this.$refs.exportPdfFormRefs.validate(val => {
+        console.log("validate")
+        console.log(val)
+        if (!val) {
+          return;
+        }
+        let loading = this.$loading(
+            {
+              target: "#export-div",
+              spinner: 'el-icon-loading',
+            });
+        projectApi.exportReport(this.projectId, this.exportPdfForm)
+            .then(res => {
+              let createdReport = res.data;
+              this.$emit('exported', createdReport);
+            })
+            .then(() => {
+              this.exportPdfForm.version = null;
+              this.exportPdfForm.message = '';
+              this.close();
+            })
+            .finally(() => {
+              loading.close();
+            })
+      })
     }
   }
 }
