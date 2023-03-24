@@ -116,6 +116,7 @@ const projectApi = {
             url: `/api/project/${projectId}/history/${versionId}/modelArtifact/download`,
             method: 'get',
             responseType: "blob",
+            timeout: 30 * 60 * 1000,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
     },

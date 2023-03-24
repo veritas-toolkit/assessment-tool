@@ -62,6 +62,7 @@ export default {
               try {
                 window.navigator.msSaveBlob(blob, modelArtifact.filename)
               } catch (e) {
+
               }
             } else {
               let Temp = document.createElement('a')

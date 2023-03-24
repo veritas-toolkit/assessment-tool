@@ -699,9 +699,10 @@ export default {
         url: `/api/project/${this.projectId}/modelArtifact/download`,
         method: 'get',
         responseType: "blob",
+        timeout: 30 * 60 * 1000,
         headers: {'Content-Type': 'application/json; charset=UTF-8'}
       }).then(res => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           let blob = new Blob([res.data], {type: "application/octet-stream;charset=utf-8"});
           if (window.navigator.msSaveBlob) {
             try {
@@ -723,47 +724,11 @@ export default {
           }
         }
       }).catch(err => {
+        console.error("download failed.")
+        console.error(err.code)
+        console.error(err.message)
+        console.error(err.stack)
         return err
-      })
-    },
-    downloadHistoryJsonFile(projectId, versionId) {
-      this.$http({
-        url: `/api/project/${projectId}/history/${versionId}/modelArtifact/download`,
-        method: 'get',
-        responseType: "blob",
-        headers: {'Content-Type': 'application/json; charset=UTF-8'}
-      }).then(res => {
-        if (res.status == 200) {
-          let blob = new Blob([res.data], {type: "application/octet-stream;charset=utf-8"});
-          if (window.navigator.msSaveBlob) {
-            try {
-              window.navigator.msSaveBlob(blob, this.jsonInfo.filename)
-            } catch (e) {
-            }
-          } else {
-            let Temp = document.createElement('a')
-            Temp.href = window.URL.createObjectURL(blob)
-            if (this.jsonInfo.filename) {
-              Temp.download = this.jsonInfo.filename
-            } else {
-              Temp.download = 'data.json'
-            }
-            document.body.appendChild(Temp)
-            Temp.click()
-            document.body.removeChild(Temp)
-            window.URL.revokeObjectURL(Temp.href)
-          }
-        }
-      }).catch(err => {
-        if (err.response.config.responseType == "blob") {
-          let data = err.response.data
-          let fileReader = new FileReader()
-          fileReader.onload = function () {
-            let jsonData = JSON.parse(this.result)
-            Vue.prototype.$message.error(jsonData.message)
-          };
-          fileReader.readAsText(data)
-        }
       })
     },
     previewPdf() {
