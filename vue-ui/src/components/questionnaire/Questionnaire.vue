@@ -56,8 +56,12 @@
                              :isCollapse="isCollapse"></QuestionnaireMenu>
         </el-aside>
         <el-main :style="openCompare?'display:flex':''">
-          <QuestionnaireAnswer :archived="project.archived" :permissionList="permissionList" :modelArtifactVersionId="modelArtifactVersionId"
-                               v-show="!compareFlag" :projectId="projectId" :questionId="questionId"
+          <QuestionnaireAnswer :archived="project.archived"
+                               :permissionList="permissionList"
+                               :modelArtifactVersionId="modelArtifactVersionId"
+                               v-show="!compareFlag"
+                               :projectId="projectId"
+                               :questionId="questionId"
                                style="overflow-y: auto"></QuestionnaireAnswer>
           <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"
                                       :compareVersionTime="compareVersionTime" :creator="creator"
@@ -283,13 +287,13 @@ export default {
     },
     getQuestionnaireMenu() {
       this.$http.get(`/api/project/${this.projectId}/questionnaire/toc`).then(res => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           this.questionnaireVid = res.data.questionnaireVid
           this.principleList = Object.keys(res.data.principles)
-          if (!res.data.modelArtifactVersionId) {
-            this.modelArtifactVersionId = null
-          } else {
+          if (res.data.modelArtifactVersionId) {
             this.modelArtifactVersionId = res.data.modelArtifactVersionId
+          } else {
+            this.modelArtifactVersionId = null
           }
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           let stepList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
@@ -305,7 +309,7 @@ export default {
       })
     },
     getDiffVersion(compareType) {
-      if (compareType == 'exportedOnly') {
+      if (compareType === 'exportedOnly') {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {exportedOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse()
@@ -318,7 +322,7 @@ export default {
             this.compareList = comList
           }
         })
-      } else if (compareType == 'draftOnly') {
+      } else if (compareType === 'draftOnly') {
         this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {draftOnly: true}}).then(res => {
           if (res.status == 200) {
             this.draftList = res.data.records.reverse().slice(0, 10)

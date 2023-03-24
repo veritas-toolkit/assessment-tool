@@ -277,7 +277,7 @@ export default {
           plotImg.id = Math.ceil(Math.random()*999999999).toString()+'_plot';
         }
         // get echarts option data
-        this.getPlotData(plotImg)
+        this.getPlotData(plotImg);
         // plotImg.remove();
       }
       return el.innerHTML
@@ -286,6 +286,8 @@ export default {
       let plotFetch = {}
       plotFetch.modelArtifactVid = this.modelArtifactVersionId
       if (this.modelArtifactVersionId == null) {
+
+        console.error("modelArtifactVersionId is null")
         return
       }
       plotFetch.imgId = plotImg.id
@@ -294,22 +296,22 @@ export default {
       this.$nextTick(() => {
         let optionData = {}
         this.$http.post(`/api/project/${this.projectId}/plot`,plotFetch).then(res => {
-          if (res.status == 200) {
-            if (res.data.type == 'none') {
+          if (res.status === 200) {
+            if (res.data.type === 'none') {
               optionData = null
-            } else if (res.data.type == 'curve') {
+            } else if (res.data.type === 'curve') {
               optionData = curveOptionData(res.data.data)
-            } else if (res.data.type == 'two_line') {
+            } else if (res.data.type === 'two_line') {
               optionData = twoLineOptionData(res.data.data)
-            } else if (res.data.type == 'pie') {
+            } else if (res.data.type === 'pie') {
               optionData = pieOptionData(res.data.data)
-            } else if (res.data.type == 'confusion_matrix') {
+            } else if (res.data.type === 'confusion_matrix') {
               optionData = confusionMatrixOptionData(res.data.data)
-            } else if (res.data.type == 'correlation_matrix') {
+            } else if (res.data.type === 'correlation_matrix') {
               optionData = correlationMatrixOptionData(res.data.data)
-            } else if (res.data.type == 'permutation_importance') {
+            } else if (res.data.type === 'permutation_importance') {
               optionData = permutationImportanceOptionData(res.data.data)
-            } else if (res.data.type == 'waterfall') {
+            } else if (res.data.type === 'waterfall') {
               optionData = waterfallOptionData(res.data.data)
             } else {
               optionData = null;
