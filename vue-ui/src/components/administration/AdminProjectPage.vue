@@ -47,6 +47,9 @@
         </div>
       </div>
       <div style="display: flex;justify-content: flex-end">
+        <el-button class="GreenBC" @click="archive" style="margin-top: 8px; margin-right: 20px" v-if="!archived">Archive</el-button>
+        <el-button class="GreenBC" @click="unarchive" style="margin-top: 8px; margin-right: 20px" v-if="archived">Unarchive</el-button>
+
         <div class="editDiv BarlowMedium" @click="doSaveProjInfo" style="margin-top: 8px">Save</div>
       </div>
       <div class="divide_line"></div>
@@ -251,6 +254,21 @@
             })
           }
         })
+      },
+      archive() {
+        this.$http.post(`/api/admin/project/${this.projectId}/archive`)
+            .then(response => {
+              this.$message.success('Archive successfully')
+              this.getProjectInfo()
+            })
+      },
+      unarchive() {
+        this.$http.post(`/api/admin/project/${this.projectId}/unarchive`)
+            .then(response => {
+              this.$message.success('Unarchive successfully')
+              this.getProjectInfo()
+            })
+
       },
       getProjectMember() {
         this.$http.get(`/api/admin/project/${this.projectId}/member`).then(res => {
