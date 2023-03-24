@@ -233,6 +233,7 @@ export function correlationMatrixOptionData(data) {
             position: 'top'
         },
         grid: {
+            containLabel: true,
             height: '80%',
             width: '80%',
             top: '10%'
@@ -279,8 +280,8 @@ export function correlationMatrixOptionData(data) {
                     fontSize: 10
                 },
                 formatter: function (value) {
-                    if (value.length > 16) {
-                        return `${value.slice(0, 16)}...`;
+                    if (value.length > 20) {
+                        return `${value.slice(0, 20)}...`;
                     }
                     return value;
                 }
