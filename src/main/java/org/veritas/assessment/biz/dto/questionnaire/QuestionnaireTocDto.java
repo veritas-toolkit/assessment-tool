@@ -140,6 +140,7 @@ public class QuestionnaireTocDto {
         private Long vid;
 
         private String step;
+        private String principle;
         // F5
         private String serial;
         // Have you documented how are these impacts being mitigated?
@@ -151,6 +152,7 @@ public class QuestionnaireTocDto {
             this.serial = questionNode.serial();
 
             this.step = questionNode.getStep().getDescription();
+            this.principle = questionNode.getPrinciple().getFullname();
 
             if (questionNode.getQuestionVersion() != null) {
                 this.question = questionNode.getQuestionVersion().getContent();
