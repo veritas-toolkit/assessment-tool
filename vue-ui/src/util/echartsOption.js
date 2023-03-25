@@ -9,6 +9,8 @@ export function waterfallOptionData(data) {
     let feature_list = []
     let row_data = []
     let data_list = []
+    const efx = data.efx;
+    const fx = data.fx;
 
     feature_info.map(item => {
         if (item.Value == null) {
@@ -49,15 +51,48 @@ export function waterfallOptionData(data) {
             axisPointer: {
                 type: 'shadow'
             },
-            // formatter: function (value) {
-            //     return value.toFixed(2);
-            // },
+            formatter: function (params) {
+                const positive = `
+                    <div style='margin:0px;color:${params[1].color};'>
+                        <span>Shap:</span>
+                        <span style='text-align: right;font-weight: bold;float: right;margin-left:10px'>
+                          ${params[1].data}
+                        </span>
+                    </div>
+                `;
+                const negative = `
+                    <div style='margin:0px;color:${params[2].color};'>
+                        <span>Shap:</span>
+                        <span style='text-align: right;font-weight: bold;float: right;margin-left:10px'>
+                          ${params[2].data === '-' ? '-' : 0 - params[2].data}
+                        </span>
+                    </div>
+                `;
+                const isPositive = params[1].data !== '-'
+                const shapDiv = isPositive ? positive : negative;
+                const value = params[1].data !== '-' ? Number(params[0].data) + Number(params[1].data) : params[0].data
+
+                return `
+                    <div style="font-weight: bold;">${params[0].name}</div>
+                    <div style='margin:0px;'>
+                        <span style=''>Value:</span>
+                        <span style='text-align: right;font-weight: bold;float: right;margin-left:10px'>
+                            ${value.toFixed(5)}
+                        </span>
+                    </div>
+                    ${shapDiv}
+                    `;
+                },
+
         },
         grid: {
             left: '3%',
             right: '4%',
             bottom: '3%',
             containLabel: true
+        },
+        label: {
+
         },
         xAxis: {
             type: 'value',
@@ -79,7 +114,7 @@ export function waterfallOptionData(data) {
         },
         series: [
             {
-                name: 'Placeholder',
+                name: 'Value',
                 type: 'bar',
                 stack: 'Total',
                 silent: true,
@@ -103,7 +138,7 @@ export function waterfallOptionData(data) {
                 data: data_list
             },
             {
-                // name: 'Income',
+                // name: 'Positive',
                 type: 'bar',
                 stack: 'Total',
                 itemStyle: {
@@ -118,7 +153,7 @@ export function waterfallOptionData(data) {
                 data: plus_list,
             },
             {
-                // name: 'Expenses',
+                // name: 'Negative',
                 type: 'bar',
                 stack: 'Total',
                 itemStyle: {
@@ -129,9 +164,48 @@ export function waterfallOptionData(data) {
                 label: {
                     show: true,
                     position: 'inside',
+                    formatter: function(value, index) {
+                        return '-' + value.data;
+                    }
                 },
-
                 data: minus_list,
+            },
+            {
+                name: 'exf',
+                type: 'scatter',
+                data: [
+                    [efx, 0],
+                ],
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    offset: [0, 50],
+                    formatter: function (data) {
+                        return 'E[f(x)] = ' + data.value[0].toFixed(5);
+                        // return `
+                        // <div>
+                        //     <span style="color:black; font-weight: bold">E[f(x)] </spans>
+                        //     <span style="color=grey;"> = ${data.value[0].toFixed(5)}</span>
+                        // </div>
+                        // `;
+                    }
+                }
+            },
+            {
+                name: 'fx',
+                type: 'scatter',
+                data: [
+                    // [fx, feature_list.length - 1],
+                    [fx, feature_list.length - 1],
+                ],
+                label: {
+                    show: true,
+                    position: 'top',
+                    offset: [0, -50],
+                    formatter: function (data) {
+                        return 'f(x) = ' + data.value[0].toFixed(5);
+                    }
+                }
             }
         ]
     };
