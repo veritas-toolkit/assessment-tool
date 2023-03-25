@@ -130,7 +130,7 @@ public class QuestionnaireDao {
             wrapper.eq(QuestionnaireVersion::getExported, false);
         }
 
-        wrapper.orderByAsc(QuestionnaireVersion::getVid);
+        wrapper.orderByDesc(QuestionnaireVersion::getVid);
         Page<QuestionnaireVersion> p = new Page<>();
         p.setCurrent(page);
         p.setSize(pageSize);
