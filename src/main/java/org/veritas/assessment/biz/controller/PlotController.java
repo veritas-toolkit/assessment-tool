@@ -45,8 +45,13 @@ public class PlotController {
                 log.warn("load model artifact failed", e);
                 return PlotDataDto.none();
             }
-            return modelArtifactService.findPlotData(modelArtifact,
+            PlotDataDto dto = modelArtifactService.findPlotData(modelArtifact,
                     plotFetchDto.getImgId(), plotFetchDto.getImgClass(), plotFetchDto.getImgSrc());
+            if (dto.getData() == null) {
+                return PlotDataDto.none();
+            } else {
+                return dto;
+            }
         } catch (Exception exception) {
             log.error("fetch plot failed.project [{}], param:{}", projectId, plotFetchDto, exception);
             return PlotDataDto.none();
