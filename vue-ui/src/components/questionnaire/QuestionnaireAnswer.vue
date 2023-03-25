@@ -343,8 +343,13 @@ export default {
           echarts.dispose(echartsDiv)
           //let myChart = echarts.init(document.getElementById(plotImg.id+'_plot'));
           let myChart = echarts.init(echartsDiv);
-          myChart.setOption(optionData);
-          img.remove();
+          try {
+            myChart.setOption(optionData);
+            img.remove();
+          } catch (e) {
+            console.error(e)
+            echartsDiv.remove();
+          }
           return true;
         })
         })
