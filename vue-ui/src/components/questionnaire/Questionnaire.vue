@@ -51,9 +51,10 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside :width="isCollapse? '72px':'400px'">
-          <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList" :defaultId="defaultId"
+          <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList"
                              :menuData="menuData" :principle="principle" :projectId="projectId"
-                             :isCollapse="isCollapse"></QuestionnaireMenu>
+                             :default-question = "currentQuestion"
+                             :isCollapse="isCollapse"/>
         </el-aside>
         <el-main :style="openCompare?'display:flex':''">
           <QuestionnaireAnswer :archived="project.archived"
@@ -146,6 +147,7 @@ import ProjectNotifications from "@/components/comment/ProjectNotifications";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
 import Vue from "vue";
+import sl from "element-ui/src/locale/lang/sl";
 
 export default {
   name: "Questionnaire",
@@ -170,7 +172,6 @@ export default {
       projectId: this.$route.query.id,
       permissionList: null,
       questionId: '',
-      defaultId: '',
       menuData: [],
       principleMap: {
         "Generic": "G",
@@ -195,17 +196,19 @@ export default {
       compareVersionTime: '',
       projectDetail: {},
       project: {},
+      currentQuestion: {},
+      toc: {},
     }
   },
-  created() {
-    this.getQuestionnaireMenu()
+  async created() {
+    await this.getQuestionnaireMenu()
     // console.log('pid',this.projectId)
     sessionStorage.setItem('projectId', JSON.stringify(this.projectId.toString()))
     // if (this.$route.params.permissionList && this.$route.params.permissionList.length > 0) {
     //   console.log("pl" + this.$route.params.permissionList)
     //   this.permissionList = this.$route.params.permissionList;
     // }
-    projectApi.detail(this.projectId)
+    await projectApi.detail(this.projectId)
         .then(response => {
           this.projectDetail = response.data;
           this.permissionList = [];
@@ -217,6 +220,48 @@ export default {
           }
           this.project = this.projectDetail.project;
         });
+    const currentQuestionSerial = this.$route.query.q;
+    let currentQuestion = null;
+    let firstQuestion = null;
+
+    for (const principle in this.toc.principleAssessments) {
+      const principleAssessment = this.toc.principleAssessments[principle]
+      let stepList = principleAssessment.stepList
+      if (!stepList || stepList.length === 0) {
+        continue;
+      }
+      for (const step of stepList) {
+        const mainList = step.mainQuestionList;
+        if (!mainList || mainList.length === 0) {
+          continue;
+        }
+        if (!firstQuestion) {
+          firstQuestion = mainList[0];
+          if (!currentQuestionSerial) {
+            break;
+          }
+        }
+        if (currentQuestionSerial) {
+          for (const main of mainList) {
+            if (main.serial === currentQuestionSerial) {
+              currentQuestion = main;
+              break;
+            }
+          }
+        }
+        if (currentQuestion) {
+          break;
+        }
+      }
+    }
+
+    if (!currentQuestion) {
+      currentQuestion = firstQuestion;
+    }
+    this.currentQuestion = currentQuestion;
+    this.principle = currentQuestion.principle;
+    this.questionId = currentQuestion.id;
+    console.log("questionnaire this.currentQuestion: \n" + JSON.stringify(this.currentQuestion, null, 4));
   },
 
   watch: {
@@ -295,16 +340,9 @@ export default {
           } else {
             this.modelArtifactVersionId = null
           }
+          this.toc = res.data;
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          let stepList = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-          for (let stepIndex = 0; stepIndex < stepList.length; ++stepIndex) {
-            let step = stepList[stepIndex];
-            if (step.mainQuestionList != null && step.mainQuestionList.length > 0) {
-              this.questionId = step.mainQuestionList[0].id.toString()
-              break
-            }
-          }
-          this.defaultId = this.questionId.toString()
+
         }
       })
     },

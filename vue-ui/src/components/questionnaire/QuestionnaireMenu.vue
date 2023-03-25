@@ -1,22 +1,24 @@
 <template>
   <div style="height: 100%;background-color: #F2F2F2;transition: all .5s">
-    <el-collapse :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeName" accordion>
-      <el-menu :default-active="defaultId" class="myMenu" unique-opened active-text-color="#78BED3">
+    <el-collapse ref="collapse" :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeStep" accordion>
+      <el-menu class="myMenu" unique-opened active-text-color="#78BED3"
+               :default-active="activeQuestion" >
         <div class="main-question" v-for="(step, stepIndex) in menuData" :key="stepIndex">
           <el-collapse-item :disabled="step.mainQuestionList.length === 0"
                             :class="isCollapse ? 'myCollapseContent' : ''" :name="step.step"
                             :style="stepIndex === 0? 'margin-top: 6px;':''">
             <!-- Step -->
             <template slot="title" class="BarlowBold">
-              <div class="step-box">
+              <div class="step-box" :class="{'grey': step.mainQuestionList.length === 0}">
                 <img class="step-pic" :style="isCollapse?'':'margin-right: 12px;'" :src="stepPic[step.serialNo]" alt="">
                 <span class="collapse-step" v-show="!isCollapse">{{ step.step }}</span>
               </div>
             </template>
             <el-menu-item class="BarlowMedium" v-for="(mainQuestion, mainQuestionIndex) in step.mainQuestionList"
-                          :key="mainQuestion.id"
+                          :key="mainQuestion.serial"
+                          :name="mainQuestion.serial"
                           @click="clickMainQuestion(mainQuestion)"
-                          :index="mainQuestion.id.toString()">
+                          :index="mainQuestion.serial">
               <!-- Main Question -->
               <template slot="title">
                 <div class="ques-list">
@@ -48,30 +50,23 @@
 export default {
   name: "QuestionnaireMenu",
   props: {
-    principle: {
-      type: String,
-      required: true
-    },
     isCollapse: {
       type: Boolean,
-      required: true
-    },
-    projectId: {
-      type: String,
       required: true
     },
     menuData: {
       type: Array,
       required: true
     },
-    defaultId: {
-      type: String,
-      required: true
+    defaultQuestion: {
+      type: Object,
+      required: false,
     }
   },
   data() {
     return {
-      activeName: 'Principles to Practice',
+      activeStep: 'Principles to Practice',
+      activeQuestion: '',
       stepPic: {
         '0': require('../../assets/questionnairePic/portfolio.svg'),
         '1': require('../../assets/questionnairePic/department.svg'),
@@ -79,36 +74,55 @@ export default {
         '3': require('../../assets/questionnairePic/issues.svg'),
         '4': require('../../assets/questionnairePic/screen.svg')
       },
-      currentMainQuestion: null
+      currentMainQuestion: {}
     }
   },
   watch: {
     "currentMainQuestion": function () {
-      // this.activeName = this.currentMainQuestion.
 
+      // console.log("activeQuestion: " + this.activeQuestion)
+      // console.log("activeStep: " + this.activeStep)
+    },
+    "defaultQuestion": function () {
+      if (this.defaultQuestion) {
+        this.currentMainQuestion = this.defaultQuestion;
+        this.activeQuestion = this.defaultQuestion.serial;
+        this.activeStep = this.defaultQuestion.step;
+      }
     }
-
-  },
-  mounted() {
-    this.$nextTick(() => {
-      let list = this.$el.querySelectorAll(".vertical-line-box");
-      console.log("length_1: " + list.length)
-      let list2 = this.$el.getElementsByClassName("vertical-line-box");
-      console.log("length_2: " + list2.length)
-    })
 
   },
   created() {
-
+    if (this.defaultQuestion) {
+      this.currentMainQuestion = this.defaultQuestion;
+    }
+    // console.log("created");
+    // console.log("activeQuestion: " + this.activeQuestion)
+    // console.log("activeStep: " + this.activeStep)
   },
   methods: {
     clickMainQuestion(mainQuestion) {
+      // console.log("mainQuestion:\n" + JSON.stringify(mainQuestion, null, 4))
+      // console.log("this.currentMainQuestion:\n" + JSON.stringify(this.currentMainQuestion, null, 4))
+      if (this.currentMainQuestion === mainQuestion || this.currentMainQuestion.serial === mainQuestion.serial) {
+        return
+      }
       this.currentMainQuestion = mainQuestion;
+      let query = {...this.$route.query}
+      query.q = mainQuestion.serial
+      try {
+        this.$router.replace({ query: query })
+      } catch (e) {
+        console.error(e)
+      }
       this.$emit("getId", mainQuestion.id)
+      this.$emit("selectQuestion", mainQuestion);
     },
     isUnmodified(mainQuestion) {
       return mainQuestion && mainQuestion['editType'] === "Unmodified";
-    }
+    },
+
+
   },
   computed: {
 
@@ -148,6 +162,9 @@ export default {
     width: 24px;
     height: 24px;
   }
+}
+.grey {
+  color: #A0A0A0;
 }
 
 .ques-list {
