@@ -53,7 +53,7 @@
         <el-aside :width="isCollapse? '72px':'400px'">
           <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList"
                              :menuData="menuData" :principle="principle" :projectId="projectId"
-                             :default-question = "currentQuestion"
+                             :default-question="currentQuestion"
                              :isCollapse="isCollapse"/>
         </el-aside>
         <el-main :style="openCompare?'display:flex':''">
@@ -96,32 +96,55 @@
                :style="isCollapse? 'width: calc(100% - 72px)':'width: calc(100% - 400px)'">
             <el-popover
                 class=""
+                ref="compare-popover"
                 placement="top-start"
                 width="480"
+                height="500"
                 trigger="click">
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
                   <el-tab-pane label="Exported Version" name="exportedOnly">
-                    <div v-for="(item,index) in compareList"
-                         @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box"
-                         :style="index==0?'':'border-top:1px solid #D5D8DD'">
-                      <div class="draft-left">
-                        <img src="../../assets/groupPic/Avatar.png" alt="">
-                        <div>{{ item.creator.username }}</div>
-                      </div>
-                      <div class="draft-right">{{ item.createdTime|changeTime }}</div>
-                    </div>
+                    <el-table height="300" width="800" :data="exportedHistoryList"
+                              @row-click="table_compare"
+                              @cell-mouse-enter="loadExportedHistory">
+                      <el-table-column width="auto" label="Name">
+                        <template slot-scope="scope">
+                          <div class="draft-left">
+                            <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
+                            <div>{{ scope.row.creator.fullName }}</div>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column min-width="100" label="Created">
+                        <template slot-scope="scope">
+                          <div class="draft-right">
+                            <div>{{ scope.row.createdTime | changeTime }}</div>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column width="auto" property="message" label="Message"/>
+                    </el-table>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
-                    <div v-for="(item,index) in compareList"
-                         @click="compare(item.questionnaireVid,item.creator,item.createdTime)" class="draft-box"
-                         :style="index==0?'':'border-top:1px solid #D5D8DD'">
-                      <div class="draft-left">
-                        <img src="../../assets/groupPic/Avatar.png" alt="">
-                        <div>{{ item.creator.username }}</div>
-                      </div>
-                      <div class="draft-right">{{ item.createdTime|changeTime }}</div>
-                    </div>
+                    <el-table height="300" width="800" :data="draftHistoryList" @row-click="table_compare"
+                              @cell-mouse-enter="loadDraftHistory">
+                      <el-table-column width="auto" label="Name">
+                        <template slot-scope="scope">
+                          <div class="draft-left">
+                            <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
+                            <div>{{ scope.row.creator.fullName }}</div>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column min-width="100" label="Created">
+                        <template slot-scope="scope">
+                          <div class="draft-right">
+                            <div>{{ scope.row.createdTime | changeTime }}</div>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column width="auto" property="message" label="Message"/>
+                    </el-table>
                   </el-tab-pane>
                 </el-tabs>
               </div>
@@ -179,7 +202,6 @@ export default {
         "Ethics & Accountability": "EA",
         "Transparency": "T"
       },
-      draftList: [],
       compareFlag: false,
       creator: {},
       questionnaireVid: '',
@@ -192,7 +214,20 @@ export default {
         EA: '',
         T: '',
       },
-      compareList: [],
+      exportedHistoryList: [],
+      draftHistoryList: [],
+      exportedHistoryPage: {
+        page: 0,
+        pageSize: 20,
+        pageCount: 1,
+        total: 0,
+      },
+      draftHistoryPage: {
+        page: 0,
+        pageSize: 20,
+        pageCount: 1,
+        total: 0,
+      },
       compareVersionTime: '',
       projectDetail: {},
       project: {},
@@ -348,41 +383,74 @@ export default {
     },
     getDiffVersion(compareType) {
       if (compareType === 'exportedOnly') {
-        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {exportedOnly: true}}).then(res => {
-          if (res.status == 200) {
-            this.draftList = res.data.records.reverse()
-            let comList = []
-            this.draftList.map(item => {
-              // if (item.questionnaireVid !== this.questionnaireVid) {
-              comList.push(item)
-              // }
-            })
-            this.compareList = comList
-          }
-        })
-      } else if (compareType === 'draftOnly') {
-        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`, {params: {draftOnly: true}}).then(res => {
-          if (res.status == 200) {
-            this.draftList = res.data.records.reverse().slice(0, 10)
-            let comList = []
-            this.draftList.map(item => {
-              if (item.questionnaireVid !== this.questionnaireVid) {
-                comList.push(item)
+        if (this.exportedHistoryPage.page >= this.exportedHistoryPage.pageCount) {
+          return;
+        }
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,
+            {
+              params: {
+                exportedOnly: true,
+                page: this.exportedHistoryPage.page + 1,
+                pageSize: this.exportedHistoryPage.pageSize,
               }
             })
-            this.compareList = comList
-          }
-          // console.log(compareType)
-        })
+            .then(res => {
+              let index = this.exportedHistoryList.length;
+              for (let record of res.data.records) {
+                record.index = index;
+                ++index;
+              }
+              this.exportedHistoryList = this.exportedHistoryList.concat(res.data.records);
+              this.exportedHistoryPage.page = res.data.page
+              this.exportedHistoryPage.pageSize = res.data.pageSize
+              this.exportedHistoryPage.pageCount = res.data.pageCount
+              this.exportedHistoryPage.total = res.data.total
+            })
+      } else if (compareType === 'draftOnly') {
+        if (this.draftHistoryPage.page >= this.draftHistoryPage.pageCount) {
+          return;
+        }
+        this.$http.get(`/api/project/${this.projectId}/questionnaire/history`,
+            {
+              params: {
+                draftOnly: true,
+                page: this.draftHistoryPage.page + 1,
+                pageSize: this.draftHistoryPage.pageSize,
+              }
+            })
+            .then(res => {
+              let index = this.draftHistoryList.length;
+              for (let record of res.data.records) {
+                record.index = index;
+                ++index;
+              }
+              this.draftHistoryList = this.draftHistoryList.concat(res.data.records);
+              this.draftHistoryPage.page = res.data.page
+              this.draftHistoryPage.pageSize = res.data.pageSize
+              this.draftHistoryPage.pageCount = res.data.pageCount
+              this.draftHistoryPage.total = res.data.total
+            });
       }
 
     },
+    table_compare(row, column, event) {
+      this.compare(row.questionnaireVid, row.creator, row.compareVersionTime)
+    },
     compare(questionnaireVid, creator, compareVersionTime) {
-      this.compareFlag = true
+
+      console.log("this.toc.questionnaireVid: " + this.toc.questionnaireVid)
+      console.log("this.questionnaireVid: " + this.questionnaireVid)
+      console.log("questionnaireVid: " + questionnaireVid)
+      if (this.toc.questionnaireVid === questionnaireVid) {
+        this.$message.warning("Current Version");
+        return
+      }
+      this.compareFlag = true;
       this.creator = creator
       this.compareVersionTime = compareVersionTime
-      this.questionnaireVid = questionnaireVid.toString()
-      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`, {params: {'based': questionnaireVid}}).then(res => {
+      this.questionnaireVid = questionnaireVid
+      this.$http.get(`/api/project/${this.projectId}/questionnaire/compare/toc`,
+          {params: {'based': questionnaireVid}}).then(res => {
         if (res.status == 200) {
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
           this.diffNum.G = res.data.principleAssessments.G.diffCount
@@ -391,6 +459,19 @@ export default {
           this.diffNum.T = res.data.principleAssessments.T.diffCount
         }
       })
+      this.$refs["compare-popover"].doClose();
+    },
+    loadExportedHistory(row, column, cell, event) {
+      let left = this.exportedHistoryList.length - row.index;
+      if (left < 5) {
+        this.getDiffVersion("draftOnly");
+      }
+    },
+    loadDraftHistory(row, column, cell, event) {
+      let left = this.draftHistoryList.length - row.index;
+      if (left < 5) {
+        this.getDiffVersion("draftOnly");
+      }
     },
     switchPrincipleCompare(questionnaireVid) {
       this.compareFlag = true
