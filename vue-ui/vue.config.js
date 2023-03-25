@@ -2,14 +2,19 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8001',
-        // target: 'http://47.93.16.216:8001/',
+        target: 'http://localhost:8001',
         changeOrigin: true,
+        ws: true,
         pathRewrite: {
           '^/api': '/api'
-        }
-      }
-    }
+        },
+      },
+    },
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+    },
+    // disableHostCheck: true,
   },
   publicPath: './',
   outputDir: 'dist',
