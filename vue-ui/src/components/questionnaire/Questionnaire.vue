@@ -51,7 +51,13 @@
       <!--flex-direction: column; overflow-y: auto-->
       <el-container style="flex: 1;overflow-y: auto">
         <el-aside :width="isCollapse? '72px':'400px'">
-          <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList"
+          <QuestionnaireMenu v-show="!compareFlag"
+                             @getId="getQuestionId" :permissionList="permissionList"
+                             :menuData="menuData" :principle="principle" :projectId="projectId"
+                             :defaultQuestionSerial="currentQuestion.serial"
+                             :isCollapse="isCollapse"/>
+          <QuestionnaireCompareMenu v-show="compareFlag"
+                             @getId="getQuestionId" :permissionList="permissionList"
                              :menuData="menuData" :principle="principle" :projectId="projectId"
                              :defaultQuestionSerial="currentQuestion.serial"
                              :isCollapse="isCollapse"/>
@@ -159,10 +165,12 @@ import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
 import Vue from "vue";
 import Notification from "@/components/comment/Notification.vue";
+import QuestionnaireCompareMenu from "@/components/questionnaire/QuestionnaireCompareMenu.vue";
 
 export default {
   name: "Questionnaire",
   components: {
+    QuestionnaireCompareMenu,
     Notification,
     QuestionnaireMenu,
     QuestionnaireAnswer,
@@ -253,7 +261,7 @@ export default {
     this.currentQuestion = currentQuestion;
     this.principle = currentQuestion.principle;
     this.questionId = currentQuestion.id;
-    console.log("questionnaire this.currentQuestion: \n" + JSON.stringify(this.currentQuestion, null, 4));
+    console.log("questionnaire created this.currentQuestion: \n" + JSON.stringify(this.currentQuestion, null, 4));
   },
 
   watch: {
@@ -335,8 +343,8 @@ export default {
         const q = this.findQuestionInToc(selectedQuestionId)
         if (q != null) {
           console.log("q:" + JSON.stringify(q, null, 4))
-          this.questionId = selectedQuestionId;
           this.principle = q.principle;
+          this.questionId = selectedQuestionId;
           // this.$set("currentQuestion", q)
           this.currentQuestion = q
           // this.$set(this.currentQuestion,"_questionId", selectedQuestionId)
@@ -379,7 +387,6 @@ export default {
           }
           this.toc = res.data;
           this.menuData = res.data.principleAssessments[this.principleMap[this.principle]].stepList
-
         }
       })
     },
