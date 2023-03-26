@@ -40,7 +40,7 @@ docker run -d \
 
 
 
-We recommend creating volumes for the following directories:
+We **recommend** creating volumes for the following directories:
 
 * `/opt/veritas/file`: data files, such as database, uploaded json files and generated images
 * `/opt/veritas/config`: config files.
@@ -53,8 +53,6 @@ docker run -d \
 	-v $PWD/file:/opt/veritas/file \
 	-v $PWD/log:/opt/veritas/log \
 	-v $PWD/config:/opt/veritas/config \
-	-c 4 \
-	-m 4g \
 	--stop-timeout 3600 \
 	veritastool/veritas-assessment-tool:latest
 ```
