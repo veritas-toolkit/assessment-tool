@@ -23,7 +23,10 @@ import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.QuestionComment;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.system.entity.Group;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.GroupService;
@@ -46,6 +49,9 @@ public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto
     @Lazy
     private ProjectService projectService;
 
+    @Autowired
+    private QuestionnaireService questionnaireService;
+
     @Override
     public QuestionCommentDto convertFrom(QuestionComment comment) {
         Objects.requireNonNull(comment, "The arg[comment] cannot be null.");
@@ -58,6 +64,12 @@ public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto
         dto.setComment(comment.getComment());
         dto.setCreatedTime(comment.getCreatedTime());
         dto.setReferCommentId(comment.getReferCommentId());
+
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(comment.getProjectId());
+        QuestionNode main = questionnaire.findMainQuestionById(comment.getMainQuestionId());
+        if (main != null) {
+            dto.setMainQuestionSerial(main.serial());
+        }
 
         if (comment.getUserId() != null) {
             User user = userService.findUserById(comment.getUserId());

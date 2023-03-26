@@ -37,6 +37,8 @@ public class QuestionCommentDto {
 
     private Long mainQuestionId;
 
+    private String mainQuestionSerial;
+
     // main question content.
     private String mainQuestion;
 
