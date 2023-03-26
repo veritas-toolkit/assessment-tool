@@ -20,6 +20,9 @@
 Prerequisites: Docker is required. See [the official installation documentation](https://docs.docker.com/get-docker/).
 
 Get the lasted docker image of veritas-assessment-tool.
+
+See [The image on dockerhub](https://hub.docker.com/r/veritastool/veritas-assessment-tool).
+
 ```bash
 docker pull veritastool/veritas-assessment-tool
 ```
@@ -59,7 +62,7 @@ docker run -d \
 
 ### Install on OS
 
-1. Download the veritas assessment tool release package(assessment-tool.zip).
+1. Download the veritas-assessment-tool install file from [release package](https://github.com/veritas-toolkit/assessment-tool/releases).
 2. Unzip `unzip veritas-assessment-tool.zip`
 3. Install python lib
 4. Start
