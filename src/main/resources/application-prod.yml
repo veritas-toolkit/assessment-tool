@@ -9,7 +9,7 @@ spring:
     banner-mode: off
     allow-circular-references: true
   datasource:
-    url: 'jdbc:sqlite:file/db/sqlite.db'
+    url: 'jdbc:sqlite:file/db/sqlite.db?journal_mode=WAL'
     driver-class-name: 'org.sqlite.JDBC'
     hikari:
       connection-timeout: 30000
@@ -32,7 +32,6 @@ spring:
     template-loader-path: classpath:/ftl/
   session:
     store-type: none
-#    store-type: jdbc
     jdbc:
       initialize-schema: always
   flyway:
@@ -54,11 +53,11 @@ spring:
 
 springdoc:
   api-docs:
-#    enabled: false
+    enabled: true
     path: '/api-docs'
   swagger-ui:
-    enabled: false
-    path: '/swagger-ui-custom.html'
+    enabled: true
+    path: '/swagger-ui.html'
 
 mybatis:
   configuration:

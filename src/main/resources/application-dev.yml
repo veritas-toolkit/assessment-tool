@@ -3,13 +3,16 @@ server:
   compression:
     enabled: true
   shutdown: graceful
+  servlet:
+    session:
+      timeout: 24H
 
 spring:
   main:
     banner-mode: off
     allow-circular-references: true
   datasource:
-    url: 'jdbc:sqlite:file/db/sqlite.db'
+    url: 'jdbc:sqlite:file/db/sqlite.db?journal_mode=WAL'
     driver-class-name: 'org.sqlite.JDBC'
     hikari:
       connection-timeout: 30000
@@ -45,6 +48,7 @@ spring:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
+
   web:
     resources:
       static-locations: classpath:/static
@@ -54,11 +58,11 @@ spring:
 
 springdoc:
   api-docs:
-#    enabled: false
+    enabled: true
     path: '/api-docs'
   swagger-ui:
-    enabled: false
-    path: '/swagger-ui-custom.html'
+    enabled: true
+    path: '/swagger-ui.html'
 
 mybatis:
   configuration:
