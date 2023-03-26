@@ -258,10 +258,12 @@ export default {
     if (!currentQuestion) {
       currentQuestion = this.tocMainQuestionList[0];
     }
-    this.currentQuestion = currentQuestion;
-    this.principle = currentQuestion.principle;
-    this.questionId = currentQuestion.id;
-    console.log("questionnaire created this.currentQuestion: \n" + JSON.stringify(this.currentQuestion, null, 4));
+    if (currentQuestion) {
+      this.currentQuestion = currentQuestion;
+      this.principle = currentQuestion.principle;
+      this.questionId = currentQuestion.id;
+      console.log("questionnaire created this.currentQuestion: \n" + JSON.stringify(this.currentQuestion, null, 4));
+    }
   },
 
   watch: {
