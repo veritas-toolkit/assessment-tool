@@ -16,10 +16,9 @@
 
 package org.veritas.assessment.biz.service;
 
-import org.veritas.assessment.biz.entity.JsonModel;
+import org.veritas.assessment.biz.dto.PlotDataDto;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactValue;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModel;
 import org.veritas.assessment.common.exception.FileSystemException;
 
 import java.io.IOException;
@@ -36,12 +35,11 @@ public interface ModelArtifactService {
 
     ModelArtifact findCurrent(Integer projectId);
 
-    ModelArtifactVersion createNewVersionIfUpdated(Integer projectId);
+    ModelArtifact findByVersionId(Integer versionId);
 
-    ModelArtifactVersion findLatestVersion(Integer projectId);
+    void loadContent(ModelArtifact modelArtifact) throws IOException;
 
-    ModelArtifactVersion findByVersionId(Integer versionId);
+    PlotDataDto findPlotData(ModelArtifact modelArtifact, String imgId, String imgClass, String imgSrc);
 
-    <T extends ModelArtifactValue> void loadContent(T modelArtifact) throws IOException;
 
 }

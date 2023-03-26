@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/action/chevron-left</title>
+    <defs>
+        <path d="M9.00502525,10.9949747 L13.5979185,6.40208153 C13.9845178,6.0154822 14.6113191,6.0154822 14.9979185,6.40208153 C15.3845178,6.78868085 15.3845178,7.4154822 14.9979185,7.80208153 L11.0979185,11.7020815 L14.9979185,15.6020815 C15.3845178,15.9886809 15.3845178,16.6154822 14.9979185,17.0020815 C14.6113191,17.3886809 13.9845178,17.3886809 13.5979185,17.0020815 L9.00502525,12.4091883 C8.61450096,12.018664 8.61450096,11.385499 9.00502525,10.9949747 L9.00502525,10.9949747 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/action/chevron-left" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Shape" fill="#FFFFFF" xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>

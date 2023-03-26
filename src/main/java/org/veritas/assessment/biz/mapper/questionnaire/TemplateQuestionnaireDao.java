@@ -1,78 +1,135 @@
-/*
- * Copyright 2021 MAS Veritas
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.veritas.assessment.biz.mapper.questionnaire;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestion;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
-import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 @Slf4j
-public class TemplateQuestionnaireDao extends QuestionnaireValueDao<TemplateQuestion, TemplateQuestionnaire> {
-    @Autowired
-    private TemplateQuestionnaireMapper questionnaireMapper;
-
+public class TemplateQuestionnaireDao {
     @Autowired
     private TemplateQuestionMapper questionMapper;
 
-    @Override
-    protected QuestionnaireValueMapper<TemplateQuestionnaire> getQuestionnaireMapper() {
-        return questionnaireMapper;
+    @Autowired
+    private TemplateQuestionnaireMapper questionnaireMapper;
+
+    public void save(TemplateQuestionnaire templateQuestionnaire) {
+        questionnaireMapper.insert(templateQuestionnaire);
+        questionMapper.saveAll(templateQuestionnaire.getMainQuestionList());
     }
 
-    @Override
-    protected QuestionValueMapper<TemplateQuestion> getQuestionMapper() {
-        return questionMapper;
+    public void updateBasicInfo(TemplateQuestionnaire templateQuestionnaire) {
+        int result = questionnaireMapper.updateBasicInfo(templateQuestionnaire);
+        if (result == 0) {
+            log.warn("update template questionnaire[{}] failed.", templateQuestionnaire.getId());
+        }
     }
 
-    public List<TemplateQuestionnaire> findTemplateList() {
-        return questionnaireMapper.findTemplateList();
+    public List<TemplateQuestionnaire> findAll() {
+        List<TemplateQuestionnaire> list = questionnaireMapper.findAll();
+        for (TemplateQuestionnaire questionnaire : list) {
+            List<TemplateQuestion> questionList = questionMapper.findByTemplateId(questionnaire.getId());
+            questionnaire.addAllQuestionList(questionList);
+        }
+        return list;
     }
 
-    public int deleteById(Integer templateId) {
-        return questionnaireMapper.deleteById(templateId);
+    public Pageable<TemplateQuestionnaire> findTemplatePageable(String prefix, String keyword,
+                                                                Integer businessScenario, int page, int pageSize) {
+        return questionnaireMapper.findTemplatePageable(prefix, keyword, businessScenario, page, pageSize);
     }
 
-    public Pageable<TemplateQuestionnaire> findTemplatePageable(String prefix, String keyword, int page, int pageSize) {
-        Pageable<TemplateQuestionnaire> pageable =
-                questionnaireMapper.findTemplatePageable(prefix, keyword, page, pageSize);
-        pageable.getRecords().forEach(questionnaire -> {
-            List<TemplateQuestion> questionList = getQuestionMapper().findByQuestionnaireId(questionnaire.questionnaireId());
-            questionnaire.addQuestions(questionList);
-        });
-        return pageable;
+    public List<TemplateQuestionnaire> findAllWithoutQuestion() {
+        return questionnaireMapper.findAll();
     }
 
-    public int updateBasicInfo(Integer templateId, String name, String description) {
-        int result = questionnaireMapper.updateBasicInfo(templateId, name, description);
-        if (result < 0) {
-            throw new IllegalStateException(
-                    String.format("Database update return value less than zero, value:[%d].", result));
-        } else if (result == 0) {
-            log.warn("There is not questionnaire template[{}]", templateId);
-            throw new NotFoundException(String.format("There is not questionnaire template[%d]", templateId));
+    public TemplateQuestionnaire findById(int templateId) {
+        TemplateQuestionnaire questionnaire = questionnaireMapper.selectById(templateId);
+        if (questionnaire == null) {
+            return null;
+        }
+        List<TemplateQuestion> questionList = questionMapper.findByTemplateId(questionnaire.getId());
+        questionnaire.addAllQuestionList(questionList);
+        return questionnaire;
+    }
+
+    public List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
+        return questionnaireMapper.findByBusinessScenario(businessScenarioEnum);
+    }
+
+    public void delete(Integer templateId) {
+        questionnaireMapper.deleteById(templateId);
+        LambdaQueryWrapper<TemplateQuestion> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TemplateQuestion::getTemplateId, templateId);
+        questionMapper.delete(wrapper);
+    }
+
+    // update question
+    public int updateQuestionContent(TemplateQuestionnaire questionnaire, TemplateQuestion question) {
+        questionnaireMapper.updateEditInfo(questionnaire);
+        int result = questionMapper.updateContent(question);
+        if (result == 0) {
+            log.warn("update content failed, [{}]", question);
         }
         return result;
     }
+
+    public int addMainQuestion(TemplateQuestionnaire questionnaire, TemplateQuestion toAdd) {
+        questionnaireMapper.updateEditInfo(questionnaire);
+        int result = questionMapper.saveAll(Collections.singletonList(toAdd));
+        questionMapper.updateStructureInfo(questionnaire.findMainQuestionListByPrinciple(toAdd.getPrinciple()));
+        return result;
+    }
+
+    public int addSubQuestion(TemplateQuestionnaire questionnaire,
+                              TemplateQuestion mainQuestion,
+                              TemplateQuestion toAddSub) {
+        questionnaireMapper.updateEditInfo(questionnaire);
+        int result = questionMapper.insert(toAddSub);
+        questionMapper.updateStructureInfo(mainQuestion);
+        return result;
+    }
+
+    public int deleteMainQuestion(TemplateQuestionnaire templateQuestionnaire, TemplateQuestion toDelete) {
+        questionnaireMapper.updateEditInfo(templateQuestionnaire);
+        int result = questionMapper.deleteById(toDelete.getId());
+        for (TemplateQuestion sub : toDelete.getSubList()) {
+            result += questionMapper.deleteById(sub.getId());
+        }
+        questionMapper.updateStructureInfo(templateQuestionnaire.allQuestionList());
+        return result;
+    }
+
+    public int deleteSubQuestion(TemplateQuestionnaire templateQuestionnaire, Integer questionId, Integer subQuestionId) {
+        questionnaireMapper.updateEditInfo(templateQuestionnaire);
+        int result = questionMapper.deleteById(subQuestionId);
+        TemplateQuestion main = templateQuestionnaire.findQuestion(questionId);
+        questionMapper.updateStructureInfo(main.getSubList());
+        return result;
+    }
+
+    public int updateStructure(TemplateQuestionnaire questionnaire) {
+        int result = questionnaireMapper.updateEditInfo(questionnaire);
+        result += questionMapper.updateStructureInfo(questionnaire.getMainQuestionList());
+        return result > 0 ? 1: 0;
+    }
+
+    public int updateStructure(TemplateQuestionnaire questionnaire, Integer mainQuestionId) {
+        int result = questionnaireMapper.updateEditInfo(questionnaire);
+        TemplateQuestion main = questionnaire.findQuestion(mainQuestionId);
+        if (main != null) {
+            result += questionMapper.updateStructureInfo(main);
+        }
+        return result > 0 ? 1: 0;
+    }
+
 
 }

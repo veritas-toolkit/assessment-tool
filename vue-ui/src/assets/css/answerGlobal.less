@@ -1,0 +1,81 @@
+.sub-ques-ans, .sub-ans  {
+        /*color: yellow;*/
+    .image_box {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        page-break-inside: avoid;
+    }
+    .image_title {
+        margin-top: auto;
+        text-align: center;
+    }
+    img {
+        width: 60%;
+        min-width: 400px;
+        display: block;
+        margin-top: auto;
+        margin-left: auto;
+        margin-right: auto;
+        page-break-inside: avoid;
+    }
+    img.pie {
+        width: 40%;
+        min-width: 400px;
+    }
+    img.partial_dependence_plot {
+        width: 40%;
+        min-width: 400px;
+    }
+    img.img_local_interpretability {
+        width: 60%;
+        min-width: 400px;
+    }
+}
+
+
+/** table */
+.sub-ques-ans, .sub-ans   {
+    .table_box {
+        margin-top: 40px;
+        text-align: center;
+    }
+    table {
+        margin: 10px auto;
+        border-spacing: 0;
+    }
+
+    th {
+        padding: 5px 15px;
+        border-top: 2pt solid rgb(2, 18, 77);
+        border-bottom: 1pt solid rgb(2, 18, 77);
+        background: rgb(2, 18, 77);
+        color: white;
+    }
+    td {
+        border-bottom: 0.2pt dashed rgb(2, 18, 77);
+        padding: 5px 15px;
+        text-align: center;
+    }
+    .table_box table thead {
+        background: rgb(2, 18, 77);
+    }
+    .table_box table th {
+        color: white;
+    }
+
+
+    table tbody tr.perf_metric_row {
+        color: red;
+    }
+    table tbody tr.fair_metric_row {
+        color: red;
+    }
+
+    table td.metric_name {
+        text-align: left;
+    }
+    table td.metric_value {
+        text-align: right;
+    }
+
+}

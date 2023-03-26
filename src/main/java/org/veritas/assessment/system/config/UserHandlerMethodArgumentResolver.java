@@ -16,6 +16,7 @@
 
 package org.veritas.assessment.system.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,9 +27,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
+import java.util.regex.Pattern;
+
+@Slf4j
 public class UserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final UserService userService;
+
+    private final Pattern allNumberPattern = Pattern.compile("\\d+");
 
     public UserHandlerMethodArgumentResolver(UserService userService) {
         this.userService = userService;
@@ -49,7 +55,10 @@ public class UserHandlerMethodArgumentResolver implements HandlerMethodArgumentR
             return null;
         }
         String username = authentication.getName();
-//        return userService.findUserByUsernameOrEmail(username);
-        return userService.findUserById(Integer.parseInt(username));
+        if (allNumberPattern.matcher(username).matches()) {
+            return userService.findUserById(Integer.parseInt(username));
+        } else {
+            return userService.findUserByUsernameOrEmail(username);
+        }
     }
 }

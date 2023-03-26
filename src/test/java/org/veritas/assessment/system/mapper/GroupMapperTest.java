@@ -64,10 +64,11 @@ class GroupMapperTest {
         for (Group group : groupList) {
 //            log.info("group: {}", group);
             Group g = groupMapper.findById(group.getId());
+            log.info("group added: {}", group);
+            log.info("group find:  {}", g);
             assertEquals(group.getId(), g.getId());
             assertEquals(group.getName(), g.getName());
             assertEquals(group.getDescription(), g.getDescription());
-            log.info("group: {}", groupMapper.findById(group.getId()));
         }
     }
 

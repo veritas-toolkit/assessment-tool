@@ -47,9 +47,9 @@ public class ProjectReport {
 
     private String message;
 
-    private Integer modelArtifactVersionId;
+    private Integer modelArtifactVid;
 
-    private Integer questionnaireVersionId;
+    private Long questionnaireVid;
 
     private String pdfPath;
 }

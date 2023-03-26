@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -55,6 +57,11 @@ public class VeritasProperties {
 
     private String pythonCommand;
 
+    private boolean lazyLoadPython = false;
+
+    @Autowired
+    private Environment environment;
+
     @PostConstruct
     public void init() throws Exception {
         File dir = new File(filePath);
@@ -70,11 +77,20 @@ public class VeritasProperties {
             }
         }
 
-
-        pythonCommandTest();
+        if (!lazyLoadPython) {
+            loadPythonCommand();
+        }
     }
 
-    private void pythonCommandTest() throws Exception {
+    public String getPythonCommand() {
+        if (StringUtils.isEmpty(pythonCommand)) {
+            loadPythonCommand();
+        }
+        return pythonCommand;
+    }
+
+
+    private void loadPythonCommand() {
         if (StringUtils.isEmpty(this.pythonCommand)) {
             String defaultPython3 = this.getDefaultPython3();
             if (StringUtils.isEmpty(defaultPython3)) {
@@ -116,9 +132,11 @@ public class VeritasProperties {
             Process process = builder.start();
             String stdout = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
             String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-            log.debug("command:[{}], stdout:[{}], stderr:[{}]", command, stdout, stderr);
-            log.debug("stdout: {}", stdout);
-            log.debug("stderr: {}", stderr);
+            if (log.isDebugEnabled()) {
+                log.debug("command: {}", command);
+                log.debug("stdout: {}", StringUtils.removeEnd(stdout, "\n"));
+                log.debug("stderr: {}", StringUtils.removeEnd(stderr, "\n"));
+            }
             return StringUtils.startsWith(stdout, "Python 3");
         } catch (Exception exception) {
             log.debug("command:[{}] failed.", command, exception);
@@ -148,6 +166,19 @@ public class VeritasProperties {
             FileUtils.forceMkdir(dir);
         }
         return dir;
+    }
+
+    public boolean isTestProfileActive() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        if (activeProfiles == null || activeProfiles.length == 0) {
+            return false;
+        }
+        for (String profile : activeProfiles) {
+            if (StringUtils.equalsIgnoreCase(profile, "test")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

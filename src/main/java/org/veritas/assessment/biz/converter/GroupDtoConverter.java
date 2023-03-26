@@ -30,11 +30,6 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class GroupDtoConverter implements Converter<GroupDto, Group> {
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private GroupService groupService;
 
     @Override
     public GroupDto convertFrom(Group group) {

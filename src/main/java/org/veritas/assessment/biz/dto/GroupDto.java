@@ -39,10 +39,4 @@ public class GroupDto {
     private Date createdTime;
 
     private Date lastModifiedTime;
-
-    public Group toEntity() {
-        Group group = new Group();
-        BeanUtils.copyProperties(this, group);
-        return group;
-    }
 }

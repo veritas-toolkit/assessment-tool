@@ -10,15 +10,19 @@
     </el-header>
     <el-main>
       <!--login-->
-      <el-card v-show="logIn" shadow="always">
+      <el-card style="padding: 20px" v-show="logIn" shadow="always">
         <div class="cardTitle BarlowBold">Sign in to Veritas Assessment Tool</div>
         <!--login form-->
         <el-form :rules="loginFormRules" ref="loginFormRefs" label-position="top" label="450px" :model="loginForm">
           <el-form-item class="login BarlowMedium" label="Username or email" prop="username">
-            <el-input v-model="loginForm.username" prefix-icon="el-icon-s-custom"></el-input>
+            <el-input v-model="loginForm.username" prefix-icon="el-icon-s-custom"
+                      @keyup.enter.native="signIn">
+            </el-input>
           </el-form-item>
           <el-form-item class="login BarlowMedium" label="Password" prop="password">
-            <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-s-cooperation"></el-input>
+            <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-s-cooperation"
+                      @keyup.enter.native="signIn">
+            </el-input>
           </el-form-item>
         </el-form>
         <!--checkbox&forget password-->
@@ -38,7 +42,7 @@
         <div v-show="registerAble" class="signUp BarlowMedium" style="cursor: pointer" @click="signCreateTrans"><span>Create your account</span></div>
       </el-card>
       <!--create account-->
-      <el-card v-show="createAccount" shadow="always">
+      <el-card style="padding: 20px" v-show="createAccount" shadow="always">
         <div class="cardTitle BarlowBold">Create your account</div>
         <!--login form-->
         <el-form :rules="createFormRules" ref="createFormRefs" label-position="top" label="450px" :model="createForm">
@@ -132,9 +136,19 @@
         this.$refs.loginFormRefs.validate(val => {
           if (val) {
             this.$http.post('/api/login',this.loginForm).then(res => {
-              if (res.status == 200) {
-                this.$router.push('/home')
+              if (res.status === 200) {
+                if (this.$route.query.redirect != null) {
+                  this.$router.replace(this.$route.query.redirect)
+                } else {
+                  this.$router.push('/home')
+                }
               }
+            }).catch(err => {
+              let message = err.response.data.message;
+              if (!message) {
+                  message = 'Login failed.'
+              }
+              this.$message.error(message)
             })
           }
         })

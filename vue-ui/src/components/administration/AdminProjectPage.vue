@@ -8,10 +8,14 @@
     <!--body part-->
     <div style="margin-left: 40px">
       <div class="title-box BarlowBold">
-        <span class="oneLine">
+        <span class="oneLine" style="display: flex;align-items: center">
           <span v-if="projectInfo.userOwner">{{projectInfo.userOwner.username}}</span>
           <span v-else-if="projectInfo.groupOwner">{{projectInfo.groupOwner.name}}</span>
-          / {{projectInfo.name}}</span>
+          / {{projectInfo.name}}
+          <span class="archivedStyle oneLine" v-if="archived">
+          <div>Archived</div>
+          </span>
+        </span>
         <div style="display: flex;align-items: center">
           <!--<div class="editDiv" @click="editProjectVisible = true">Edit</div>-->
           <div class="deleteDiv oneLine" @click="deleteProjectInfo">Delete</div>
@@ -32,10 +36,20 @@
           <div style="margin-bottom: 4px">Project name</div>
           <el-input style="margin-bottom: 16px" v-model="saveProjInfoName"></el-input>
           <div style="margin-bottom: 4px">Project description</div>
-          <el-input type="textarea" :rows="5" v-model="saveProjInfoDescription"></el-input>
+          <el-input type="textarea" :rows="2" v-model="saveProjInfoDescription"></el-input>
+          <div style="margin-bottom: 10px;margin-top: 16px">Principles</div>
+          <el-checkbox-group v-model="principleList">
+            <el-checkbox label="principleGeneric" disabled>Generic</el-checkbox>
+            <el-checkbox label="principleFairness">Fairness</el-checkbox>
+            <el-checkbox label="principleEA">Ethics & Accountability</el-checkbox>
+            <el-checkbox label="principleTransparency">Transparency</el-checkbox>
+          </el-checkbox-group>
         </div>
       </div>
       <div style="display: flex;justify-content: flex-end">
+        <el-button class="GreenBC" @click="archive" style="margin-top: 8px; margin-right: 20px" v-if="!archived">Archive</el-button>
+        <el-button class="GreenBC" @click="unarchive" style="margin-top: 8px; margin-right: 20px" v-if="archived">Unarchive</el-button>
+
         <div class="editDiv BarlowMedium" @click="doSaveProjInfo" style="margin-top: 8px">Save</div>
       </div>
       <div class="divide_line"></div>
@@ -72,11 +86,17 @@
               </div>
               <div style="display: flex;align-items: center">
                 <div>
-                  <el-select @change="changeMemberRole(item)" v-model="item.type">
-                    <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"></el-option>
+                  <el-select :disabled="item.userId === projectInfo.userOwnerId"
+                             @change="changeMemberRole(item)"
+                             v-model="item.type">
+<!--                  <el-select :disabled="item.id === projectInfo.userOwnerId || true" @change="changeMemberRole(item)" v-model="item.type">-->
+                    <el-option v-for="item in memberTypeList" :key="item.type" :label="item.label" :value="item.type"/>
                   </el-select>
                 </div>
-                <el-button class="deleteMember" @click="deleteMember(item.userId)" icon="el-icon-delete-solid"></el-button>
+                <el-button :disabled="item.userId === projectInfo.userOwnerId"
+                           class="deleteMember"
+                           @click="deleteMember(item.userId)"
+                           icon="el-icon-delete-solid"/>
               </div>
             </div>
           </div>
@@ -145,7 +165,9 @@
           name: '',
           description: '',
           businessScenario: '',
-        }
+        },
+        principleList: ['principleGeneric'],
+        archived: false,
       }
     },
     created() {
@@ -187,6 +209,15 @@
       doSaveProjInfo() {
         this.saveProjInfo.name = this.saveProjInfoName
         this.saveProjInfo.description = this.saveProjInfoDescription
+        if (this.principleList.indexOf('principleFairness') != -1) {
+          this.saveProjInfo.principleFairness = true
+        } else {this.saveProjInfo.principleFairness = false}
+        if (this.principleList.indexOf('principleEA') != -1) {
+          this.saveProjInfo.principleEA = true
+        } else {this.saveProjInfo.principleEA = false}
+        if (this.principleList.indexOf('principleTransparency') != -1) {
+          this.saveProjInfo.principleTransparency = true
+        } else {this.saveProjInfo.principleTransparency = false}
         this.$http.post(`/api/admin/project/${this.projectId}`,this.saveProjInfo).then(res => {
           if (res.status == 200) {
             this.$message.success('Save successfully')
@@ -224,6 +255,21 @@
           }
         })
       },
+      archive() {
+        this.$http.post(`/api/admin/project/${this.projectId}/archive`)
+            .then(response => {
+              this.$message.success('Archive successfully')
+              this.getProjectInfo()
+            })
+      },
+      unarchive() {
+        this.$http.post(`/api/admin/project/${this.projectId}/unarchive`)
+            .then(response => {
+              this.$message.success('Unarchive successfully')
+              this.getProjectInfo()
+            })
+
+      },
       getProjectMember() {
         this.$http.get(`/api/admin/project/${this.projectId}/member`).then(res => {
           if (res.status == 200) {
@@ -260,12 +306,16 @@
       },
       getProjectInfo() {
         this.$http.get(`/api/admin/project/${this.projectId}`).then(res => {
+          this.archived = res.data.archived
           this.projectInfo = res.data
           this.saveProjInfo = res.data
           this.saveProjInfoName = res.data.name
           this.saveProjInfoDescription = res.data.description
           this.createdTime = this.dateFormat(res.data.createdTime)
           this.lastEditedTime = this.dateFormat(res.data.lastEditedTime)
+          if (res.data.principleFairness) {this.principleList.push('principleFairness')}
+          if (res.data.principleEA) {this.principleList.push('principleEA')}
+          if (res.data.principleTransparency) {this.principleList.push('principleTransparency')}
         })
       },
       dateFormat(date) {
@@ -414,4 +464,21 @@
     border: 1px solid;
     border-radius: 4px;
   }
+  .archivedStyle {
+    flex-shrink: 0;
+    width: auto;
+    display: flex !important;
+    margin-left: 16px;
+    height: 24px;
+    background-color: #FCB215;
+    padding: 0px 8px;
+    text-align: center;
+    border-radius: 14px;
+    > div {
+      color: #FFF;
+      font-size: 14px;
+      line-height: 24px;
+    }
+  }
+
 </style>

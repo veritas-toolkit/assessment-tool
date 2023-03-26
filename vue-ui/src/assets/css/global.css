@@ -86,6 +86,7 @@ html, body, #app {
 .GreenBC {
   background-color: #78BED3 !important;
   border: 0px;
+    color: #FFFFFF;
 }
 .oneLine{
   overflow: hidden;
@@ -122,6 +123,7 @@ html, body, #app {
 .el-collapse-item__header {
     border-bottom: none;
 }
+
 .el-pagination {
     margin-top: 16px;
     text-align: center;
@@ -141,4 +143,215 @@ html, body, #app {
 }
 .el-notification {
     box-shadow:  0 2px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* ————————————————————————collapseMenu style—————————————————————— */
+.el-menu {
+  border-right: none;
+}
+.collapseMenu .el-submenu__title:hover {
+  background-color: transparent;
+}
+.collapseMenu .el-submenu__title {
+  padding: 0 12px;
+}
+
+.collapseMenu.el-collapse {
+  border-top: none;
+}
+.collapseMenu .el-collapse-item__header {
+  background-color: transparent;
+  padding: 0 12px;
+}
+.collapseMenu .el-collapse-item__wrap {
+  background-color: transparent;
+  padding: 0 8px;
+}
+.collapseMenu .el-collapse-item__content {
+  padding-bottom: 8px;
+}
+/* .menu-item.myCollapse title-txt {
+  visibility: hidden;
+} */
+.menu-item.myCollapse .el-collapse-item__header {
+  justify-content: center;
+  /* transition: justify-content .7s ease-in .5s; */
+}
+.menu-item.myCollapse .el-collapse-item__arrow.el-icon-arrow-right{
+  display: none;
+  /* visibility: hidden; */
+}
+.menu-item.myCollapse .el-collapse-item__wrap .content {
+  display: none;
+  /* visibility: hidden; */
+}
+/* .menu-item .el-collapse-item__arrow.el-icon-arrow-right{
+  transition: visibility .3s;
+}
+.menu-item .el-collapse-item__wrap .content {
+  transition: visibility .3s;
+} */
+/* ————————————————————————collapseMenu style end—————————————————————— */
+.el-steps--simple {
+    width: 100px;
+    margin: auto;
+    padding: 0;
+    border-radius: 4px;
+    background: #FFFFFF;
+}
+.el-step.is-simple .el-step__icon {
+    width: 10px;
+    height: 10px;
+    font-size: 10px;
+}
+.el-step__head.is-finish {
+    color: #78BED3;
+    border-color: #78BED3;
+}
+.el-step.is-simple .el-step__arrow::after, .el-step.is-simple .el-step__arrow::before {
+    content: none;
+    display: inline-block;
+    position: absolute;
+    height: 15px;
+    width: 1px;
+    background: #C0C4CC;
+}
+.GreyBC {
+    background-color: #F5F7F9 !important;
+    border: 0px;
+}
+.el-autocomplete {
+    width: 100%;
+}
+.el-upload {
+    text-align: left;
+}
+.el-upload-dragger {
+    width: 500px;
+    height: 74px;
+    text-align: left;
+}
+.el-card__body {
+    padding: 0;
+}
+.system-style .el-card__body {
+    padding: 20px;
+}
+.principle-group .el-radio-button__inner {
+    padding: 7px 12px !important;
+    background-color: #EDF2F6;
+}
+.principle-group .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    background: #78BED3;
+    border-color: #78BED3;
+}
+.principle-group.el-radio-group {
+    background-color: #EDF2F6;
+}
+.el-footer {
+    border-top: 1px solid #D7D9DB;
+    padding: 0;
+}
+.el-collapse-item__header {
+    border-bottom: none;
+    border-radius: 8px;
+    padding: 0px 12px;
+}
+.el-collapse-item__header.is-active {
+    border-bottom: none;
+    border-radius: 8px 8px 0px 0px;
+    padding: 0px 12px;
+}
+.el-collapse-item__content {
+    padding-bottom: 6px;
+}
+.el-collapse-item__wrap {
+    border-radius: 0px 0px 8px 8px;
+}
+.myMenu .el-menu-item {
+    padding-left: 0 !important;
+}
+.myMenu .el-collapse-item.is-disabled .el-collapse-item__header {
+    color: #303133;
+}
+.myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right:before {
+    content: none;
+}
+.myCollapseContent .el-collapse-item__arrow.el-icon-arrow-right {
+    margin: 0px;
+}
+.createProject .el-checkbox__inner {
+    display: none;
+}
+.createProject .el-checkbox__label {
+    padding: 5px 12px;
+    background: #F2F4F7;
+    border-radius: 20px;
+}
+.createProject .el-checkbox {
+    margin-right: 0;
+}
+.createProject .el-checkbox__input.is-disabled+span.el-checkbox__label {
+    background: #78BED3;
+    border-radius: 20px;
+    opacity: 0.65;
+    color: #FFFFFF;
+    padding: 5px 12px;
+}
+.createProject .el-checkbox__input.is-checked+.el-checkbox__label {
+    color: #FFFFFF;
+    background: #78BED3;
+}
+.el-menu-item {
+    padding: 0;
+}
+p {
+    display: block;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.draft-popover .el-popover {
+    padding: 0 !important;
+}
+.draft-popover .el-tabs__item.is-active {
+    color: #78BED3;
+}
+.draft-popover .el-tabs__active-bar {
+    background-color: #78BED3;
+}
+.principle-group .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    display: flex;
+    align-items: center;
+}
+.principle-group .el-radio-button__inner {
+    display: flex;
+    align-items: center;
+}
+.el-upload-dragger {
+    width: 420px;
+}
+.upload-demo .el-upload-list__item-name {
+    display: none;
+}
+.upload-demo .el-upload-list__item .el-icon-upload-success {
+    display: none;
+}
+.upload-demo .el-progress-bar__outer {
+    margin-top: -26px;
+}
+.search-business {
+    margin-right: -30px;
+    z-index: 1;
+    width: 200px;
+    height: 38px;
+    right: 24px;
+    font-family: BarlowMedium;
+}
+.search-business .el-input__inner{
+    border: none;
+    background-color: #FFFFFF;
+    display: flex !important;
+    justify-content: right;
 }

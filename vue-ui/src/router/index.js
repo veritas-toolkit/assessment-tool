@@ -17,6 +17,12 @@ import EditTemplate from "../components/questionnaire/EditTemplate";
 import AssessmentToolHistory from "../components/questionnaire/AssessmentToolHistory";
 import GroupProjectPage from "../components/group/GroupProjectPage";
 import AdminTemplatePage from "../components/administration/AdminTemplatePage";
+import Questionnaire from "@/components/questionnaire/Questionnaire";
+import QuestionnaireHistory from "@/components/questionnaireHistory/QuestionnaireHistory";
+
+import MenuQuestionaire from "../components/MenuQuestionaire";
+import Template from "@/components/template/Template";
+import AdminTemplate from "@/components/adminTemplate/AdminTemplate";
 
 Vue.use(VueRouter)
 
@@ -46,6 +52,11 @@ const router = new VueRouter({
     {path: '/assessmentToolHistory', component: AssessmentToolHistory},
     {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
+    {path: '/test', component: MenuQuestionaire},
+    {path: '/questionnaire', name:'questionnaire', component: Questionnaire},
+    {path: '/questionnaireHistory', component: QuestionnaireHistory},
+    {path: '/template', component: Template},
+    {path: '/adminTemplate',component:AdminTemplate}
   ]
 })
 

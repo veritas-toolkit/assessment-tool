@@ -76,26 +76,18 @@ public class AdminSystemController {
     }
 
     private static final String GIT_VERSION_FILE_PATH = "/git-version.json";
-    private static final String versionInfo;
 
-    static {
+    @RequestMapping(path = "/version", method = RequestMethod.GET,
+            produces = "application/json; charset=UTF-8")
+    public String getGitVersion() {
         String json;
         try (InputStream is = new ClassPathResource(GIT_VERSION_FILE_PATH).getInputStream()) {
             json = IOUtils.toString(is, StandardCharsets.UTF_8);
         } catch (IOException exception) {
             log.warn("can not read git version info file[{}].", GIT_VERSION_FILE_PATH,
                     exception);
-            json = "{}";
-        }
-        versionInfo = json;
-    }
-
-    @RequestMapping(path = "/version", method = RequestMethod.GET,
-            produces = "application/json; charset=UTF-8")
-    public String getGitVersion() {
-        if (StringUtils.isEmpty(versionInfo)) {
             throw new NotFoundException("Not found version information.");
         }
-        return versionInfo;
+        return json;
     }
 }

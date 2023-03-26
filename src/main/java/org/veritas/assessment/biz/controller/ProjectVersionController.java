@@ -27,20 +27,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.biz.converter.QuestionnaireTocDtoConverter;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
-import org.veritas.assessment.biz.dto.QuestionnaireDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestionnaire;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -56,8 +60,6 @@ public class ProjectVersionController {
     @Autowired
     private ProjectReportService reportService;
 
-    @Autowired
-    private ProjectVersionQuestionnaireService questionnaireService;
 
     // {versionId}/report
     @Operation(summary = "Download the report.")
@@ -91,7 +93,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifactVersion artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVid());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }
@@ -107,7 +109,7 @@ public class ProjectVersionController {
         if (report == null) {
             throw new NotFoundException("Not found the report of the project.");
         }
-        ModelArtifactVersion artifact = modelArtifactService.findByVersionId(report.getModelArtifactVersionId());
+        ModelArtifact artifact = modelArtifactService.findByVersionId(report.getModelArtifactVid());
         if (artifact == null) {
             throw new NotFoundException("Not found the model artifact of the report.");
         }
@@ -117,27 +119,41 @@ public class ProjectVersionController {
             throw new NotFoundException("File not found or deleted.");
         }
         HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
+//        header.setContentType(MediaType.APPLICATION_JSON);
+        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         header.set(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=" + artifact.getFilename().replace(" ", "_"));
         header.setContentLength(artifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
         return new HttpEntity<>(artifact.getJsonContent(), header);
     }
 
+    @Autowired
+    private QuestionnaireService questionnaireService;
+
+    @Autowired
+    private QuestionnaireTocDtoConverter questionnaireTocDtoConverter;
+
+    @Autowired
+    private UserService userService;
+
+    @Deprecated
     @Operation(summary = "Find the questionnaire of the report.")
     @GetMapping("/questionnaire")
-    public QuestionnaireDto<ProjectVersionQuestion, ProjectVersionQuestionnaire> findQuestionnaire(
+    public QuestionnaireTocDto findQuestionnaire(
             @PathVariable("projectId") Integer projectId,
             @PathVariable("versionIdOfProject") Integer projectVersionId) {
         ProjectReport report = reportService.findReport(projectId, projectVersionId);
         if (report == null) {
             throw new NotFoundException("Not found report of the project.");
         }
-        ProjectVersionQuestionnaire questionnaire =
-                questionnaireService.findByVersionId(report.getQuestionnaireVersionId());
-        if (questionnaire == null) {
-            throw new NotFoundException("Not the questionnaire.");
+        Long vid = report.getQuestionnaireVid();
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findByQuestionnaireVid(vid);
+        if (!Objects.equals(projectId, questionnaireVersion.getProjectId())) {
+            throw new NotFoundException("Not fount the questionnaire in current project.");
         }
-        return new QuestionnaireDto<>(questionnaire);
+        Project project = projectService.findProjectById(projectId);
+        User user = userService.findUserById(questionnaireVersion.getCreatorUserId());
+//        return questionnaireTocDtoConverter.convertFrom(questionnaireVersion);
+        return new QuestionnaireTocDto(questionnaireVersion, project, user);
     }
 }

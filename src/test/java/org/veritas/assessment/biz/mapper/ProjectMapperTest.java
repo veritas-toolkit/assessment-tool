@@ -24,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.metadata.Pageable;
 
@@ -32,7 +34,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Slf4j
@@ -48,20 +54,20 @@ class ProjectMapperTest {
         for (int i = 0; i < 10; i++) {
             Project project = new Project();
             project.setUserOwnerId(2);
-            project.setName("name_" + i);
+            project.setName("name_user_own_" + i);
             project.setDescription("description_" + i);
             project.setCreatorUserId(2);
-            project.setBusinessScenario(5);
+            project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
             project.setLastEditedTime(new Date());
             projectMapper.addProject(project);
         }
         for (int i = 0; i < 20; i++) {
             Project project = new Project();
             project.setGroupOwnerId(1);
-            project.setName("name_" + i);
+            project.setName("name_group_own_" + i);
             project.setDescription("description_" + i);
             project.setCreatorUserId(2);
-            project.setBusinessScenario(5);
+            project.setBusinessScenario(BusinessScenarioEnum.PUW.getCode());
             project.setLastEditedTime(new Date());
             projectMapper.addProject(project);
         }
@@ -75,12 +81,31 @@ class ProjectMapperTest {
         project.setName("name_" + i);
         project.setDescription("description_" + i);
         project.setCreatorUserId(2);
-        project.setBusinessScenario(5);
+        project.setBusinessScenario(4);
         project.setLastEditedTime(new Date());
+        project.setPrincipleFairness(true);
+
         int result = projectMapper.addProject(project);
         assertEquals(1, result);
 //        projectMapper.addProject(project);
-        log.info("table: {}", jdbcTemplate.queryForList("select * from vat_project"));
+        log.info("table: {}", jdbcTemplate.queryForList("select * from vat2_project"));
+    }
+
+    @Test
+    void testFindProjectPageable_byQueryActionSuccess() {
+        this.init();
+        QueryProjectPageableAction action = new QueryProjectPageableAction();
+//        action.setKeyWordsString("use group");
+//        List<Integer> projectIdList = Arrays.asList(1, 2);
+//        List<Integer> groupIdList = Arrays.asList(3, 1);
+
+        List<Integer> projectIdList = null;
+        List<Integer> groupIdList = null;
+
+
+        Pageable<Project> pageable = projectMapper.findProjectPageable(projectIdList, groupIdList, action);
+        log.info("pageable: {}", pageable);
+        log.info("records: {}", pageable.getRecords());
     }
 
     @Test
@@ -111,7 +136,7 @@ class ProjectMapperTest {
 //        List<Integer> projectIds = Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> projectIds = null;
         List<Integer> groupIds = Arrays.asList(1, 2, 3, 4, 5);
-        String keyWord = "me_2";
+        String keyWord = "group";
         List<Project> list = projectMapper.findProjectList(projectIds, groupIds, null, keyWord);
         log.info("list size: {}", list.size());
         log.info("list: {}", list);

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+set -e
 cd $(dirname $0)/../target || exit
 
 mkdir -p file/db

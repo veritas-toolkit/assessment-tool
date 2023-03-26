@@ -44,8 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureCache
-//@ExtendWith(SpringExtension.class)
-//@WebMvcTest(AdminSystemController.class)
 class AdminSystemControllerTest {
 
     ObjectMapper objectMapper = new ObjectMapper();

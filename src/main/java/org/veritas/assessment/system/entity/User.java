@@ -47,7 +47,7 @@ public class User implements Serializable {
      */
     private String fullName;
     /**
-     * email of user. email can be used to login.
+     * email of user. email can be used to sign in.
      */
     private String email;
     /**
@@ -82,6 +82,7 @@ public class User implements Serializable {
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date lastLoginTime;
 
+    private boolean finishedUserGuide = false;
     /**
      * The account is locked.
      */

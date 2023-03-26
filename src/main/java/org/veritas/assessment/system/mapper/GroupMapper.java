@@ -140,7 +140,6 @@ public interface GroupMapper extends BaseMapper<Group> {
         return selectCount(wrapper);
     }
 
-    @Deprecated
     default Pageable<Group> findGroupPageable(String prefix, String keyword, int page, int pageSize) {
         LambdaQueryWrapper<Group> wrapper = new LambdaQueryWrapper<>();
 

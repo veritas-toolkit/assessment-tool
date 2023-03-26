@@ -38,9 +38,11 @@
               <div class="firstText"><span>{{ item.name.substring(0, 1) }}</span></div>
               <div class="nameDesc oneLine">
                 <div class="oneLine">
-                  <span v-if="item.userOwner">{{item.userOwner.username}}</span>
-                  <span v-else-if="item.groupOwner">{{item.groupOwner.name}}</span>
-                  / {{ item.name }}</div>
+                  <span v-if="item['userOwner']">{{item['userOwner'].username}}</span>
+                  <span v-else-if="item['groupOwner']">{{item['groupOwner'].name}}</span>
+                  / {{ item.name }}
+                  <span class="archivedStyle" v-if="item.archived"> Archived </span>
+                </div>
                 <span>{{ item.description }}</span>
               </div>
             </div>
@@ -66,7 +68,8 @@
               <div class="nameDesc oneLine">
                 <div class="oneLine" style="display: flex;align-items: center">
                   <div>{{item.fullName}}</div>
-                  <div v-show="item.locked" class="locked-style">locked</div>
+                  <div v-if="item.admin" class="admin-style">Admin</div>
+                  <div v-if="item.locked" class="locked-style">Locked</div>
                 </div>
                 <span>{{item.email}}</span>
               </div>
@@ -184,14 +187,13 @@ export default {
     activeName: function () {
       this.page = 1
       this.keyword = ''
-      if (this.activeName == 'first') {
+      if (this.activeName === 'first') {
         this.getProjectList()
-      } else if (this.activeName == 'second') {
+      } else if (this.activeName === 'second') {
         this.getGroupList()
-      } else if (this.activeName == 'third') {
+      } else if (this.activeName === 'third') {
         this.getUserList()
-      }
-      else if (this.activeName == 'fourth') {
+      } else if (this.activeName === 'fourth') {
         this.getTemplateList()
       }
     }
@@ -358,7 +360,7 @@ export default {
       this.$router.push({path:'/adminUserPage',query: {userId:item.id}})
     },
     adminTemplatePage(item) {
-      this.$router.push({path:'/adminTemplatePage',query: {templateId:item.templateId}})
+      this.$router.push({path:'/adminTemplate',query: {templateId:item.templateId}})
     },
     createUser() {
       this.$router.push({path:'/createUser'})
@@ -474,6 +476,15 @@ export default {
     background-color: #F48200;
     border-radius: 12px;
   }
+  .admin-style {
+    font-size: 14px;
+    margin-left: 12px;
+    padding: 0px 4px;
+    font-weight: 400;
+    color: #FFF;
+    background-color: #78BED3;
+    border-radius: 12px;
+  }
   .system-style {
     margin: 20px 10px 16px 10px;
     border-shaow: none !important;
@@ -488,5 +499,18 @@ export default {
     margin-top: 8px;
     font-size: 14px;
     color: #909399;
+  }
+  .archivedStyle {
+    flex-shrink: 0;
+    width: auto;
+    margin-left: 2px;
+    height: 24px;
+    background-color: #FCB215;
+    padding: 2px 8px;
+    text-align: center;
+    border-radius: 8px;
+    color: #FFF !important;
+    font-size: 12px;
+    line-height: 24px;
   }
 </style>
