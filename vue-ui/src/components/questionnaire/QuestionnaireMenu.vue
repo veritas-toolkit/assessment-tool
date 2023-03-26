@@ -59,7 +59,8 @@ export default {
     },
     defaultQuestionSerial: {
       type: String,
-      default: ''
+      required: false,
+      default: null,
     },
 
   },
@@ -84,21 +85,36 @@ export default {
         return;
       }
       this.active(this.defaultQuestionSerial)
+    },
+    menuData: function () {
+      console.log('watch menuData')
+      this.updateActive();
     }
 
   },
   created() {
-    if (this.defaultQuestionSerial) {
-      this.active(this.defaultQuestionSerial)
-    }
-    if (!this.activeQuestionSerial) {
-      if (this.allQuestionList.length > 0) {
-        const first = this.allQuestionList[0];
-        this.active(first.serial)
-      }
-    }
+    // if (this.defaultQuestionSerial) {
+    //   this.activeQuestionSerial = this.defaultQuestionSerial;
+    //   this.active(this.defaultQuestionSerial)
+    // }
+    // if (!this.activeQuestionSerial) {
+    //   if (this.allQuestionList.length > 0) {
+    //     const first = this.allQuestionList[0];
+    //     this.active(first.serial)
+    //   }
+    // }
+    this.updateActive();
   },
   methods: {
+    updateActive() {
+      if (this.activeQuestionSerial) {
+        this.active(this.activeQuestionSerial);
+      } else if (this.defaultQuestionSerial) {
+        this.active(this.defaultQuestionSerial)
+      } else {
+        this.active(this.firstQuestion)
+      }
+    },
     clickMainQuestion(mainQuestion) {
       // console.log("mainQuestion:\n" + JSON.stringify(mainQuestion, null, 4))
       // console.log("this.currentMainQuestion:\n" + JSON.stringify(this.currentMainQuestion, null, 4))
@@ -106,6 +122,7 @@ export default {
         return
       }
       this.currentMainQuestion = mainQuestion;
+      this.activeQuestionSerial = mainQuestion.serial;
       let query = {...this.$route.query}
       query.q = mainQuestion.serial
       try {
@@ -120,15 +137,19 @@ export default {
       return mainQuestion && mainQuestion['editType'] === "Unmodified";
     },
     active(serial) {
+      if (!serial) {
+        return;
+      }
       const question = this.allQuestionList.find(q => {
         return q.serial === serial;
-      })
+      });
       if (question) {
-        console.log(question)
+        console.log("question\n" + JSON.stringify(question))
         this.activeStep = question.step;
         this.activeQuestionSerial = question.serial;
         this.currentMainQuestion = question;
-        // this.$refs.menu.openMenu(question.serial)
+        this.$refs.menu.openMenu(0, [question.serial])
+        console.log('call open menu' + question.serial)
       }
     },
 
@@ -143,6 +164,13 @@ export default {
         }
       }
       return all;
+    },
+    firstQuestion() {
+      if (this.allQuestionList.length > 0) {
+        return this.allQuestionList[0];
+      } else {
+        return null;
+      }
     }
 
   }

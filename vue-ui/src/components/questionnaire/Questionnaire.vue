@@ -270,6 +270,7 @@ export default {
         this.switchPrincipleCompare(this.questionnaireVid)
       } else {
         this.getQuestionnaireMenu()
+        this.menuData = this.toc.principleAssessments[this.principleMap[this.principle]].stepList;
       }
     },
     'compareFlag': function () {
@@ -365,7 +366,7 @@ export default {
     },
     findQuestionInToc(questionId) {
       const q = this.tocMainQuestionList.find(main => {
-        return main.questionId = questionId;
+        return main.id === questionId;
       })
       if (!q) {
         console.error("Not found the question:" + questionId)
