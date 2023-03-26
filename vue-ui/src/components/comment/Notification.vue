@@ -4,6 +4,7 @@
       placement="bottom"
       height="880"
       width="700"
+      @show="onShow"
       trigger="click">
     <el-tabs v-model="selectedTab" @tab-click="handleTabClick">
       <el-tab-pane label="All" name="all">
@@ -35,7 +36,7 @@
                   @cell-mouse-enter="">
           <!--                  :show-header="false"-->
           <el-table-column width="100" prop="userFullName" label="Name"/>
-          <el-table-column width="100" max-width="200" label="Question">
+          <el-table-column width="80" label="Question">
             <template slot-scope="scope">
               <div>
                 {{ scope.row['mainQuestionSerial'] }}
@@ -109,12 +110,16 @@ export default {
     }
     this.getUnreadCommentByProject();
     this.getUnreadComment();
-    console.log("notification created.")
   },
 
   methods: {
     doToggle() {
       this.$refs.notification_popover.doToggle();
+    },
+    onShow() {
+      // console.warn("notification show")
+      // this.getUnreadCommentByProject();
+      // this.getUnreadComment();
     },
     handleTabClick() {
 
