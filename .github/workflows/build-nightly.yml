@@ -1,18 +1,14 @@
 name: Build Nightly
 
 on:
-#  push:
-#    branches:
-#      - feature/*
-  workflow_run:
-    workflows: ["Unit Test"]
+  push:
     branches:
-      - feature/*
-      - release/*
-      - develop
-      - master
-    types:
-      - completed
+      - feature
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .github/workflows/unit-test.yml
+      - doc/**
 
 jobs:
   docker-image-build:
