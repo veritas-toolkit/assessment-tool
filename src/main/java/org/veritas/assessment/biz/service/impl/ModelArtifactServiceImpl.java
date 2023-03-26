@@ -73,7 +73,11 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
     public void init() {
         objectMapper.enable(JsonParser.Feature.ALLOW_YAML_COMMENTS);
         objectMapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (veritasProperties.isTestProfileActive()) {
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        } else {
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        }
     }
 
     @Override

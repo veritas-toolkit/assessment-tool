@@ -6,7 +6,6 @@ on:
       - feature/*
       - release/*
       - develop
-      - master
     paths-ignore:
       - README.md
       - LICENSE

@@ -75,7 +75,7 @@ public class Transparency {
     public static class SummaryPlotFeature {
         @JsonProperty("Feature_name")
         private String feature;
-        @JsonProperty("Mean|shap|")
+        @JsonProperty("mean(|shap|)")
         private BigDecimal meanOfAbsoluteValueOfShap;
     }
 
