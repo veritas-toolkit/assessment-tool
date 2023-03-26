@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.veritas.assessment.common.exception.AbstractVeritasException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,6 +92,22 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         message.setMessage(throwable.getMessage());
         return message;
     }
+
+    @ExceptionHandler(AbstractVeritasException.class)
+    public ErrorMessage handleAbstractVeritasException(AbstractVeritasException throwable,
+                                                                       HttpServletRequest request,
+                                                                       HttpServletResponse response)
+            throws Exception {
+        log.warn("Unknown exception", throwable);
+        ResponseStatus status = AnnotatedElementUtils.findMergedAnnotation(throwable.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        if (status != null && status.code() != null) {
+            httpStatus = status.code();
+        }
+        response.setStatus(httpStatus.value());
+        return new ErrorMessage(httpStatus, throwable.getMessage());
+    }
+
 
     @ExceptionHandler(Throwable.class)
     public ErrorMessage handleException(Throwable throwable, HttpServletRequest request, HttpServletResponse response)
@@ -241,7 +258,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 }
             }
             this.setError(reason);
-            this.setMessage(throwable.getMessage());
+            this.setMessage("Internal error.");
         }
     }
 

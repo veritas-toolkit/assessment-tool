@@ -21,16 +21,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.converter.TemplateQuestionnaireBasicDtoConverter;
-import org.veritas.assessment.biz.dto.TemplateQuestionnaireBasicDto;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.dto.BusinessScenarioDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.SystemService;
 import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.system.service.SystemConfigService;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -39,23 +43,26 @@ public class SystemController {
 
     @Autowired
     TemplateQuestionnaireService templateQuestionnaireService;
-    @Autowired
-    TemplateQuestionnaireBasicDtoConverter questionnaireBasicDtoConverter;
 
     @Autowired
     private SystemService systemService;
 
     @Autowired
+    private TemplateQuestionnaireBasicDtoConverter questionnaireBasicDtoConverter;
+
+    @Autowired
     private SystemConfigService systemConfigService;
 
     @GetMapping("/business_scenario")
-    public List<BusinessScenario> getBizScenarioList() {
-        return systemService.findAllBusinessScenarioList();
+    public List<BusinessScenarioDto> getBizScenarioList() {
+        return Arrays.stream(BusinessScenarioEnum.values()).map(BusinessScenarioDto::new).collect(Collectors.toList());
     }
 
     @GetMapping("/questionnaire_template")
-    public List<TemplateQuestionnaireBasicDto> templateQuestionnaireList() {
-        List<TemplateQuestionnaire> list = templateQuestionnaireService.findTemplateList();
+    public List<TemplateQuestionnaireBasicDto> templateQuestionnaireList(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "businessScenario", required = false) Integer businessScenario) {
+        List<TemplateQuestionnaire> list = templateQuestionnaireService.findByKeywordAndBiz(keyword, businessScenario);
         if (list == null || list.isEmpty()) {
             log.error("There is no questionnaire template.");
         }

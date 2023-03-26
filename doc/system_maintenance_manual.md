@@ -2,8 +2,8 @@
 ![logo](./.img/logo.png)
 ## Development
 
-* Web Framework: Vue 2.6.14
-* Server: Python 3.6+, Java 8, Spring Boot 2.4.10
+* Web Framework: Vue 2.7.*
+* Server: Python 3.8+, Java 8, Spring Boot 2.7.*
 * Database: sqlite 3.34.0
 
 ## Deployment
@@ -12,14 +12,22 @@
 
 * __OS:__ CentOS, Ubuntu, or other Linux
 * __CPU / RAM:__ 2 CPU & 2G RAM at least, 4 CPU & 4G RAM __recommended__
+
+#### Install On OS
 * __JRE:__ JRE(Java Runtime Environment) 8 is required.
 * __Python:__ Python 3.8+
+
+#### Install On Docker
+* __Docker__: Docker Engine 20+
 
 ### Install on Docker (Recommended)
 
 Prerequisites: Docker is required. See [the official installation documentation](https://docs.docker.com/get-docker/).
 
 Get the lasted docker image of veritas-assessment-tool.
+
+See [The image on dockerhub](https://hub.docker.com/r/veritastool/veritas-assessment-tool).
+
 ```bash
 docker pull veritastool/veritas-assessment-tool
 ```
@@ -37,7 +45,7 @@ docker run -d \
 
 
 
-We recommend creating volumes for the following directories:
+We **recommend** creating volumes for the following directories:
 
 * `/opt/veritas/file`: data files, such as database, uploaded json files and generated images
 * `/opt/veritas/config`: config files.
@@ -50,8 +58,6 @@ docker run -d \
 	-v $PWD/file:/opt/veritas/file \
 	-v $PWD/log:/opt/veritas/log \
 	-v $PWD/config:/opt/veritas/config \
-	-c 4 \
-	-m 4g \
 	--stop-timeout 3600 \
 	veritastool/veritas-assessment-tool:latest
 ```
@@ -59,7 +65,7 @@ docker run -d \
 
 ### Install on OS
 
-1. Download the veritas assessment tool release package(assessment-tool.zip).
+1. Download the veritas-assessment-tool install file from [release package](https://github.com/veritas-toolkit/assessment-tool/releases).
 2. Unzip `unzip veritas-assessment-tool.zip`
 3. Install python lib
 4. Start

@@ -19,7 +19,6 @@ package org.veritas.assessment.biz.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,177 +28,133 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.veritas.assessment.biz.converter.QuestionCommentDtoConverter;
-import org.veritas.assessment.biz.dto.QuestionCommentCreateDto;
-import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.dto.QuestionnaireForProjectDto;
-import org.veritas.assessment.biz.entity.QuestionCommentReadLog;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
-import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.biz.action.EditAnswerAction;
+import org.veritas.assessment.biz.converter.QuestionnaireRecordDtoConverter;
+import org.veritas.assessment.biz.dto.UserSimpleDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionAnswerInputDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireRecordDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
+import org.veritas.assessment.biz.dto.questionnaire.SimpleQuestionDto;
+import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.NotFoundException;
+import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.UserService;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.TreeMap;
 
 @RestController
 @Slf4j
 @RequestMapping("/project/{projectId}/questionnaire")
 public class ProjectQuestionnaireController {
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
+    private UserService userService;
 
     @Autowired
-    private QuestionCommentDtoConverter commentDtoConverter;
+    private QuestionnaireService questionnaireService;
 
+    @Autowired
+    QuestionnaireRecordDtoConverter questionnaireRecordDtoConverter;
 
-    @Operation(summary = "Get the project's questionnaire.")
+    @Operation(summary = "Find the project's questionnaire history list.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    @GetMapping("")
-    public QuestionnaireForProjectDto<ProjectQuestion, ProjectQuestionnaire> findQuestionnaire(
+    @GetMapping("/history")
+    public Pageable<QuestionnaireRecordDto> findHistory(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @RequestParam(name = "onlyWithFirstAnswer", defaultValue = "false") boolean onlyWithFirstAnswer
+            @RequestParam(name = "mainQuestionId", required = false) Long mainQuestionId,
+            @RequestParam(name = "exportedOnly", required = false, defaultValue = "false") Boolean exportedOnly,
+            @RequestParam(name = "draftOnly", required = false, defaultValue = "false") Boolean draftOnly,
+            @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
+            @RequestParam(name = "pageSize", defaultValue = "20", required = false) Integer pageSize
     ) {
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
-        if (questionnaire == null) {
-            throw new NotFoundException("Not found the project's questionnaire. Please check the project's scenario.");
-        }
-        if (onlyWithFirstAnswer) {
-            final String NO_CONTENT = " ";
-            boolean isFirst = true;
-            for (ProjectQuestion question : questionnaire.getQuestions()) {
-                if (isFirst) {
-                    isFirst = false;
-                    continue;
-                }
-                if (!StringUtils.isEmpty(question.getAnswer())) {
-                    question.setAnswer(NO_CONTENT);
-                }
-                for (ProjectQuestion subQuestion : question.getSubQuestions()) {
-                    if (!StringUtils.isEmpty(subQuestion.getAnswer())) {
-                        subQuestion.setAnswer(NO_CONTENT);
-                    }
-                }
-            }
-        }
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
-        Map<Integer, List<QuestionCommentDto>> map =
-                toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
-        return new QuestionnaireForProjectDto<>(questionnaire, map);
+        Pageable<QuestionnaireVersion> page2 = questionnaireService.findHistory(projectId, exportedOnly,
+                draftOnly, page, pageSize);
+
+        return questionnaireRecordDtoConverter.convertFrom(page2);
     }
 
-    @Operation(summary = "Get answer of question, including sub question's answers.")
-    @GetMapping(path = "/question/{questionId}")
+    // latest questionnaire table of contents.
+    @Operation(summary = "Fetch project latest questionnaire table of contents.")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public ProjectQuestion findProjectQuestion(
+    @GetMapping("/toc")
+    public QuestionnaireTocDto findLatestToc(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Integer questionId) {
-        ProjectQuestionnaire questionnaire = questionnaireService.findQuestionnaireById(projectId);
-        ProjectQuestion projectQuestion = questionnaire.findQuestionById(questionId);
-        if (projectQuestion == null) {
-            throw new NotFoundException("Not found the question");
+            @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid) {
+        QuestionnaireVersion q = null;
+        if (questionnaireVid == null) {
+            q = questionnaireService.findLatestQuestionnaire(projectId);
+        } else {
+            q = questionnaireService.findByQuestionnaireVid(questionnaireVid);
         }
-        return projectQuestion;
+        if (q == null || !Objects.equals(projectId, q.getProjectId())) {
+            throw new NotFoundException("Not found the questionnaire in current project.");
+        }
+        Project project = projectService.findProjectById(projectId);
+        User user = userService.findUserById(q.getCreatorUserId());
+        UserSimpleDto userSimpleDto = new UserSimpleDto(user);
+        return new QuestionnaireTocDto(q, project, userSimpleDto);
+    }
+
+
+    @Operation(summary = "Fetch main question with all subs.")
+    @GetMapping(path = "/question/{questionId}")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public QuestionDto findProjectQuestion(
+            @Parameter(hidden = true) User operator,
+            @PathVariable("projectId") Integer projectId,
+            @PathVariable("questionId") Long questionId,
+            @RequestParam(name = "questionnaireVid", required = false) Long questionnaireVid) {
+        QuestionnaireVersion questionnaire;
+        if (questionnaireVid == null) {
+            questionnaire = questionnaireService.findLatestQuestionnaire(projectId);
+        } else {
+            questionnaire = questionnaireService.findByQuestionnaireVid(questionnaireVid);
+        }
+        if (questionnaire == null) {
+            throw new NotFoundException("Not found the questionnaire.");
+        }
+        QuestionNode questionNode = questionnaire.findMainQuestionById(questionId);
+        if (questionNode == null) {
+            throw new NotFoundException("Not found the question in current project.");
+        }
+        return new QuestionDto(questionNode);
     }
 
     @Operation(summary = "Update answer of question, including sub question's answers.")
     @RequestMapping(path = "/answer", method = {RequestMethod.PUT, RequestMethod.POST})
     @PreAuthorize("hasPermission(#projectId, 'project', 'input answer')")
-    public ProjectQuestion editAnswer(@Parameter(hidden = true) User operator,
-                                      @PathVariable("projectId") Integer projectId,
-                                      @RequestBody ProjectQuestion projectQuestion) {
-        projectQuestion.configQuestionnaireId(projectId);
-        return questionnaireService.editAnswer(projectId, projectQuestion);
+    public SimpleQuestionDto editAnswer(@Parameter(hidden = true) User operator,
+                                        @PathVariable("projectId") Integer projectId,
+                                        @Valid @RequestBody @NotNull QuestionAnswerInputDto dto) {
+        Objects.requireNonNull(dto);
+        Objects.requireNonNull(dto.getQuestionId());
+        Long questionId = dto.getQuestionId();
+        EditAnswerAction action = new EditAnswerAction();
+        action.setActionTime(new Date());
+        action.setOperator(operator);
+        action.setProjectId(projectId);
+        action.setBasedQuestionVid(dto.getBasedQuestionVid());
+        action.setQuestionId(dto.getQuestionId());
+        action.setAnswer(dto.getAnswer());
+
+        QuestionnaireVersion questionnaire = questionnaireService.editAnswer(operator, projectId, action);
+        QuestionNode questionNode = questionnaire.findNodeByQuestionId(questionId);
+        return new SimpleQuestionDto(questionNode);
     }
 
-    @Operation(summary = "Add a comment on the question.")
-    @RequestMapping(path = "/comment", method = {RequestMethod.PUT, RequestMethod.POST})
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public List<QuestionCommentDto> addComment(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestBody QuestionCommentCreateDto dto) {
-        ProjectQuestionComment comment = dto.toEntity(operator.getId(), projectId);
-        questionnaireService.addComment(comment);
-
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByQuestionId(comment.getQuestionId());
-        return commentDtoConverter.convertFrom(list);
-
-    }
-
-    @Operation(summary = "Find comment by project.")
-    @GetMapping(path = "/comment")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public Map<Integer, List<QuestionCommentDto>> findCommentListByProject(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId) {
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByProjectId(projectId);
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
-        return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
-    }
-
-
-    @Operation(summary = "Find comment by project or question.")
-    @GetMapping(path = "/question/{questionId}/comment")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public Map<Integer, List<QuestionCommentDto>> findCommentListByQuestionId(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Integer questionId) {
-        List<ProjectQuestionComment> list = questionnaireService.findCommentListByQuestionId(questionId);
-        for (ProjectQuestionComment comment : list) {
-            if (!Objects.equals(projectId, comment.getProjectId())) {
-                throw new ErrorParamException(String.format(
-                        "The question[%d] does not belong to the project[%d]", questionId, projectId));
-            }
-        }
-        Map<Integer, QuestionCommentReadLog> commentReadLogMap =
-                questionnaireService.findCommentReadLog(operator.getId(), projectId);
-        Optional<Integer> optional = list.stream().map(ProjectQuestionComment::getId).max(Integer::compareTo);
-        if (optional.isPresent()) {
-            Integer commentId = optional.get();
-            questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
-        }
-        return toMapList(commentDtoConverter.convertFrom(list, e -> e.fillHasRead(commentReadLogMap)));
-    }
-
-    @Operation(summary = "Mark the comment read.")
-    @RequestMapping(path = "/question/{questionId}/comment/{commentId}/read",
-            method = {RequestMethod.POST, RequestMethod.PUT})
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public void markCommentRead(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @PathVariable("questionId") Integer questionId,
-            @PathVariable("commentId") Integer commentId) {
-        questionnaireService.updateCommentReadLog(operator.getId(), projectId, questionId, commentId);
-    }
-
-
-    private Map<Integer, List<QuestionCommentDto>> toMapList(List<QuestionCommentDto> dtoList) {
-        if (dtoList == null || dtoList.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Map<Integer, List<QuestionCommentDto>> map = new TreeMap<>();
-        for (QuestionCommentDto dto : dtoList) {
-            List<QuestionCommentDto> qDtoList = map.computeIfAbsent(dto.getQuestionId(), k -> new ArrayList<>());
-            qDtoList.add(dto);
-        }
-        return map;
-    }
 
 }

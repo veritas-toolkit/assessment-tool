@@ -9,14 +9,14 @@
     </div>
     <div class="action_box">
       <div>
-        <el-select :disabled="!canChangeRole" v-model="currentRole"
+        <el-select :disabled="!canChangeRole || archived" v-model="currentRole"
                    @change="changeRole">
           <el-option v-for="role in roleList" :key="role.type" :label="role.label" :value="role.type"></el-option>
         </el-select>
       </div>
-      <el-button :disabled="!canDelete" class="deleteMember"
+      <el-button :disabled="!canDelete || archived" class="deleteMember"
                  @click="deleteMember()"
-                 icon="el-icon-delete-solid">
+                 icon="el-icon-delete-solid" style="margin-left: 8px">
       </el-button>
     </div>
   </div>
@@ -30,7 +30,8 @@ export default {
   props: {
     "member": {type: Object, required: true},
     "canChangeRole": {type: Boolean, required: false, default: false},
-    "canDelete": {type: Boolean, required: false, default: false}
+    "canDelete": {type: Boolean, required: false, default: false},
+    'archived': {type: Boolean, required: false, default: false},
   },
   data() {
     return {

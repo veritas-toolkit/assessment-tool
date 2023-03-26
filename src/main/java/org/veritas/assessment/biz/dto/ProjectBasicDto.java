@@ -21,10 +21,12 @@ import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.system.dto.BasicDtoInterface;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
 public class ProjectBasicDto implements BasicDtoInterface<Project> {
+    @NotNull
     private Integer id;
 
     @NotBlank
@@ -33,7 +35,17 @@ public class ProjectBasicDto implements BasicDtoInterface<Project> {
     @NotBlank
     private String description;
 
-    private Integer businessScenario;
+    @NotNull
+    private Boolean principleGeneric;
+
+    @NotNull
+    private Boolean principleFairness;
+
+    @NotNull
+    private Boolean principleEA;
+
+    @NotNull
+    private Boolean principleTransparency;
 
 
     public Project toEntity(Integer creator) {
@@ -41,9 +53,11 @@ public class ProjectBasicDto implements BasicDtoInterface<Project> {
         project.setId(id);
         project.setName(name);
         project.setDescription(description);
-        project.setBusinessScenario(this.businessScenario);
         Date now = new Date();
         project.setLastEditedTime(now);
+        project.setPrincipleFairness(this.principleFairness);
+        project.setPrincipleEA(this.principleEA);
+        project.setPrincipleTransparency(this.principleTransparency);
         return project;
     }
 }

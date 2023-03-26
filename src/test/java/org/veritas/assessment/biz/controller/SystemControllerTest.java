@@ -28,8 +28,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.dto.TemplateQuestionnaireBasicDto;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.dto.BusinessScenarioDto;
+import org.veritas.assessment.biz.dto.questionnaire.TemplateQuestionnaireBasicDto;
 
 import java.util.List;
 
@@ -60,8 +60,8 @@ class SystemControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<BusinessScenario> list = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                new TypeReference<List<BusinessScenario>>() {
+        List<BusinessScenarioDto> list = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<BusinessScenarioDto>>() {
                 });
         assertNotNull(list);
         assertNotEquals(0, list.size());

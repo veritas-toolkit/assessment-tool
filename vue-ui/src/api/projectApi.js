@@ -1,11 +1,68 @@
 import request from "@/api/request";
 import Router from '@/router'
-// import Vue from "vue";
-// import axios from "axios"
+import {pl, tr} from "timeago.js/lib/lang";
 
-// const request = Vue.prototype.$http.create({    timeout: 5000})
 
 const projectApi = {
+    create(projectCreateDto) {
+        return request({
+            url: `api/project/new`,
+            method: 'post',
+            headers: {'Content-Type': 'application/json; charset=UTF-8'},
+            data: {
+                ...projectCreateDto
+            }
+        })
+
+    },
+    detail(projectId) {
+        return request({
+            url: `api/project/${projectId}/detail`,
+            method: 'get'
+        });
+    },
+    async fetchAllByKeyword(keyword) {
+        let page = 1;
+        let pageCount = 2;
+        let projectList = [];
+        let archived = false;
+        while (page < pageCount) {
+            await request({
+                url: `api/project`,
+                method: 'get',
+                params: {
+                    keyword: keyword,
+                    archived: archived,
+                    page: page,
+                    pageSize: 100,
+                }
+            }).then(response => {
+                console.log(response.data)
+                projectList.push(...response.data.records);
+                page = response.data.page;
+                pageCount = response.data.pageCount;
+                if (page >= pageCount) {
+                    if (archived === false) {
+                        page = 1;
+                        pageCount = 2;
+                        archived = true;
+                    }
+
+                }
+            });
+        }
+        return projectList;
+    },
+    fetchPageable(param) {
+        return request({
+            url: ``,
+            method: `get`,
+            params: {
+                ...param
+            }
+        })
+
+    },
     getMemberList(projectId) {
         return request({
             url: `api/project/${projectId}/member`,
@@ -59,6 +116,7 @@ const projectApi = {
             url: `/api/project/${projectId}/history/${versionId}/modelArtifact/download`,
             method: 'get',
             responseType: "blob",
+            timeout: 30 * 60 * 1000,
             headers: {'Content-Type': 'application/json; charset=UTF-8'}
         })
     },

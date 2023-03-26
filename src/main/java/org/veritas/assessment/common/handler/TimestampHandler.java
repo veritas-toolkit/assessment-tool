@@ -32,7 +32,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class TimestampHandler extends BaseTypeHandler<Date> {
-    private static final String JAVA_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+//    private static final String JAVA_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String JAVA_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";
     private static final TimeZone UTC_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     public TimestampHandler() {
@@ -54,7 +55,8 @@ public class TimestampHandler extends BaseTypeHandler<Date> {
             return null;
         }
         try {
-            DateFormat dateFormat = new SimpleDateFormat(JAVA_DATE_FORMAT);
+            String format = StringUtils.substring(JAVA_DATE_FORMAT, 0, dateString.length());
+            DateFormat dateFormat = new SimpleDateFormat(format);
             dateFormat.setTimeZone(UTC_TIMEZONE);
             return dateFormat.parse(dateString);
         } catch (ParseException exception) {

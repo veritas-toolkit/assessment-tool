@@ -22,13 +22,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.LastOwnerRoleException;
@@ -65,8 +64,9 @@ class GroupServiceImplTest {
     private User admin;
 
     private User test1;
+
     @Autowired
-    private CacheManager cacheManager;
+    private TemplateQuestionnaireService templateQuestionnaireService;
 
     @BeforeEach
     public void init() {
@@ -75,12 +75,7 @@ class GroupServiceImplTest {
         assertNotNull(this.admin);
         assertNotNull(this.test1);
 
-        for(String name : cacheManager.getCacheNames()){
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
+
     }
 
     @Test
@@ -196,7 +191,7 @@ class GroupServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
         project.setBusinessScenario(1);
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         assertThrows(ErrorParamException.class, () -> {
             groupService.delete(group.getId(), false);
@@ -216,7 +211,7 @@ class GroupServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
         project.setBusinessScenario(1);
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         groupService.delete(group.getId(), true);
     }
@@ -247,7 +242,6 @@ class GroupServiceImplTest {
         List<Member> memberList2 = groupService.getMemberList(group.getId());
         assertEquals(1, memberList2.size());
     }
-
 
 
     @Test

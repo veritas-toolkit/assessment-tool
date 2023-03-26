@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface Converter<T, S> {
@@ -37,6 +38,12 @@ public interface Converter<T, S> {
     default T convertFrom(S source, Consumer<T> postAction) {
         T dto = convertFrom(source);
         postAction.accept(dto);
+        return dto;
+    }
+
+    default T convertFrom(S source, BiConsumer<T, S> postAction) {
+        T dto = convertFrom(source);
+        postAction.accept(dto, source);
         return dto;
     }
 
@@ -59,10 +66,45 @@ public interface Converter<T, S> {
         return dtoList;
     }
 
+    default List<T> convertFrom(List<S> sourceList, BiConsumer<T, S> postAction) {
+        if (sourceList == null || sourceList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<T> dtoList = new ArrayList<>(sourceList.size());
+        sourceList.forEach(source -> {
+            dtoList.add(convertFrom(source, postAction));
+        });
+        return dtoList;
+    }
+
+
     default Pageable<T> convertFrom(Pageable<S> sourcePageable) {
         Objects.requireNonNull(sourcePageable, "The arg[sourcePageable] cannot be null.");
         Pageable<T> targetPageable = new Pageable<>();
         List<T> records = convertFrom(sourcePageable.getRecords());
+        targetPageable.setRecords(records);
+        targetPageable.setPage(sourcePageable.getPage());
+        targetPageable.setPageCount(sourcePageable.getPageCount());
+        targetPageable.setPageSize(sourcePageable.getPageSize());
+        targetPageable.setTotal(sourcePageable.getTotal());
+        return targetPageable;
+    }
+
+    default Pageable<T> convertFrom(Pageable<S> sourcePageable, Consumer<T> postAction) {
+        Objects.requireNonNull(sourcePageable, "The arg[sourcePageable] cannot be null.");
+        Pageable<T> targetPageable = new Pageable<>();
+        List<T> records = convertFrom(sourcePageable.getRecords(), postAction);
+        targetPageable.setRecords(records);
+        targetPageable.setPage(sourcePageable.getPage());
+        targetPageable.setPageCount(sourcePageable.getPageCount());
+        targetPageable.setPageSize(sourcePageable.getPageSize());
+        targetPageable.setTotal(sourcePageable.getTotal());
+        return targetPageable;
+    }
+    default Pageable<T> convertFrom(Pageable<S> sourcePageable, BiConsumer<T, S> postAction) {
+        Objects.requireNonNull(sourcePageable, "The arg[sourcePageable] cannot be null.");
+        Pageable<T> targetPageable = new Pageable<>();
+        List<T> records = convertFrom(sourcePageable.getRecords(), postAction);
         targetPageable.setRecords(records);
         targetPageable.setPage(sourcePageable.getPage());
         targetPageable.setPageCount(sourcePageable.getPageCount());

@@ -9,15 +9,18 @@
 }
 
 @page cover {
-    margin-left: 0cm;
-    margin-top: 0cm;
+    margin-left: 0;
+    margin-top: 0;
     background: no-repeat url("ftl/image/cover-background.jpeg");
     background-size: 100% 100%
 }
 
 @page toc {
-    margin-left: 0cm;
-    margin-top: 0cm;
+    margin-left: 0;
+    margin-top: 130pt;
+    @top-left {
+        content: element(toc_title);
+    }
 }
 
 @page report_content {
@@ -99,8 +102,7 @@
 
 
 body {
-    #font-family: 'Times New Roman', Times, serif;
-    font-family: 'Graphik', 'Times New Roman';
+    font-family: 'Graphik', 'Times New Roman', serif;
     font-size: 10.5pt;
     margin: 0;
 }
@@ -135,11 +137,11 @@ body {
     margin-top: -10pt;
     padding-top: 0pt;
     padding-left: 20pt;
-    font: 35pt;
+    font-size: 32pt;
     color: rgb(2, 18, 77);
 }
 #cover_sub_title {
-    font: 18pt;
+    font-size: 18pt;
     text-align: center;
     color: rgb(255, 255, 235);
     background-color: rgb(157, 133, 78);
@@ -171,9 +173,15 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font: 2em;
+    font-size: 2em;
     text-align: center;
     margin-bottom: 1em;
+}
+
+ul li {
+    /*list-style-position: outside;*/
+    /*margin-left: 10pt;*/
+    /*padding-left:50pt;*/
 }
 
 <#-- ******************************************* revision history ****************************** -->
@@ -237,41 +245,39 @@ h1 {
     text-decoration: none;
 }
 #toc_title {
+    position: running(toc_title);
     left: 0;
     top: 0;
-    font: 40px 'Courier New' bold;
+    font-family: 'Courier New', serif;
+    font-size: 40px;
     width: 50%;
     padding: 60px 60px 50px 80px;
-    padding-left: 80px;
     text-align: left;
-    /*
-    margin-bottom: 1em;
-    */
     margin-bottom: 30px;
     background: rgb(215, 229,237);
     color: rgb(2, 18, 77);
     border-bottom-right-radius: 32px;
 }
+
 .toc_first_level {
-    font: 1em;
+    font-size: 1em;
     font-weight: bold;
     margin-top: 1.25em;
     margin-left: 80px;
 }
-.toc_first_level .toc_part {
+.toc_first_level a {
     color: rgb(161, 131, 68);
 }
-.toc_first_level a {
-    color: rgb(2, 18, 77);
-}
+
 .toc_first_level a::after {
     content: leader(' .') target-counter(attr(href), page, decimal)
 }
 .toc_second_level {
-    font: 0.75em;
+    font-size: 0.75em;
+    font-weight: lighter;
     margin-top: 0.75em;
     margin-bottom: 0.75em;
-    padding-left: 2.5em;
+    padding-left: 1.5em;
 }
 .toc_second_level a {
     color: black;
@@ -289,6 +295,10 @@ h1 {
     text-align: center;
     page-break-inside: avoid;
 }
+.answer .table_title {
+    margin-top: auto;
+    text-align: center;
+}
 
 .answer table {
     margin-left: auto;
@@ -300,8 +310,7 @@ h1 {
 }
 
 .answer table thead {
-    #color: black;
-    #background: rgb(215, 229, 237);
+    text-align: center;
     color: white;
     background: rgb(2, 18, 77);
 }
@@ -309,6 +318,8 @@ h1 {
     padding: 5px 15px;
     border-top: 2pt solid rgb(2, 18, 77);
     border-bottom: 1pt solid rgb(2, 18, 77);
+    background: rgb(2, 18, 77);
+    color: white;
 }
 .answer td {
     border-bottom: 0.2pt dashed rgb(2, 18, 77);
@@ -316,24 +327,44 @@ h1 {
     text-align: center;
 }
 
+.answer table tbody td {
+    text-align: left;
+}
+.answer table tbody td.td_title {
+    text-align: center;
+}
+.answer table tbody td.td_number {
+    text-align: right;
+}
+
 .answer table tbody tr.perf_metric_row {
     color: red;
 }
 .answer table tbody tr.fair_metric_row {
     color: red;
+    text-align: center;
 }
 
-.answer table td.metric_name {
+.answer table td.fair_metric_name {
     text-align: left;
 }
+
+.answer table td.perf_metric_name {
+    text-align: center;
+}
+
 .answer table td.metric_value {
     text-align: right;
+}
+
+.answer table td.fea_imp {
+    text-align: center;
 }
 
 /** project title */
 
 #project_name {
-    font: 24px;
+    font-size: 24px;
     text-align:center;
     margin: 20px;
 }
@@ -355,18 +386,18 @@ h1 {
     margin-bottom: 0.5rem;
 }
 #introduction_content {
-    font: 1rem;
+    font-size: 1rem;
     text-indent: 1.5rem;
 }
 
-#part_A {
+#principle_G {
     margin-top: 2.0em;
     page-break-before: avoid;
 }
-.part_title {
+.principle_title {
     font: 35px bold;
     margin-top: 1rem;
-    margin-bottom: rem;
+    margin-bottom: 1rem;
     font-family: 'Roboto Slab', serif;
 }
 
@@ -385,7 +416,7 @@ h1 {
 }
 .main_question_title_box {
     color: white;
-    background-color: rgb(161,131 68);
+    background-color: rgb(161, 131, 68);
     position: relative;
 
     padding: 0.75em;
@@ -403,10 +434,10 @@ h1 {
     float: left;
 }
 .main_question_title {
-    #position: absolute;
-    #top: 50%;
-    #left: 50%;
-    #transform: translate(-50%, -50%);
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
     line-height: 1em;
     text-align: center;
 }
@@ -424,7 +455,7 @@ h1 {
     border-width: thin;
     */
 }
-<#-- -------------------------------------------------------------------------- -->
+<#--215, 229, 237 -------------------------------------------------------------------------- -->
 .main_question_t {
     margin-top: 20pt;
     background-color: rgb(215, 229, 237);
@@ -432,23 +463,23 @@ h1 {
     border-radius: 5pt;
 }
 .main_question_title_box_t {
-
     width: 5%;
     font-size: 18px;
-
 }
+
 .main_question_title_t {
     color: white;
-    background-color: rgb(161,131 68);
+    background-color: rgb(161, 131, 68);
     padding: 0.25em;
     padding-left: 0.5em;
     margin-left: 0.75em;
-    #margin-right: 0.75em;
-    #margin-top: 1.0em;
-    width: 1.5em;
+    /*#margin-right: 0.75em;*/
+    /*#margin-top: 1.0em;*/
+    width: 1.8em;
     height: 1.5em;
     border-radius: 50%;
-    font-size: 18pt;
+    font-size: 12pt;
+    text-align: center;
 }
 
 
@@ -457,43 +488,38 @@ h1 {
     margin-left: 16pt;
     padding: 1.25em 0.25em 1.25em 0.25em;
     color: rgb(27, 69, 122);
-    font-size: 16pt;
+    font-size: 12pt;
 }
 
 .main_answer {
     color: black;
     margin: 10px;
-    text-indent: 1.5em;
+    /*text-indent: 1.5em;*/
 }
 
 .sub_question {
-    #color: goldenrod;
+    /*color: goldenrod;*/
     color: rgb(27, 69, 122);
-    margin-top: 10px;
+    margin-top: 15pt;
+    margin-bottom: 5pt;
 }
 
 .sub_answer {
     color: black;
-    margin: 10px;
-    text-indent: 20px;
+    margin-top: 5pt;
+    /*text-indent: 20px;*/
 }
 .none_answer {
     font-style: italic;
     color: gray;
     margin: 10px;
-    text-indent: 20px;
+    /*text-indent: 20px;*/
 }
 
 .image_box {
     margin-top: 20px;
     margin-bottom: 20px;
     page-break-inside: avoid;
-    /*
-    display: inline-block;
-    -fs-page-break-min-height: 4cm;
-    break-inside: avoid-page;
-    display: flex;
-    */
 }
 .image_title {
     margin-top: auto;
@@ -505,27 +531,33 @@ img {
     margin-top: auto;
     margin-left: auto;
     margin-right: auto;
+    page-break-inside: avoid;
 }
 
 img.pie {
     width: 40%;
 }
-
-
+img.partial_dependence_plot {
+    width: 40%;
+}
 
 </style>
-<title>FEAT Fairness Assessment Report</title>
+<title>FEAT Assessment Report</title>
 
 <bookmarks>
-    <bookmark name="Cover" href="#cover"/>
-    <bookmark name="Revision History" href="#revision_history"/>
-    <bookmark name="Table of Content" href="#toc"/>
+    <bookmark name="Cover" href="#cover"></bookmark>
+    <bookmark name="Revision History" href="#revision_history"></bookmark>
+    <bookmark name="Table of Content" href="#toc"></bookmark>
     <bookmark name="Introduction" href="#introduction"/>
 
-    <#list questionnaire.toPartitionList() as part>
-    <bookmark name="Part ${part.partName}. ${part.partTitle}" href="#part_${part.partName}">
-        <#list part.questionList as question>
-        <bookmark name="${question.title()} ${question.content}" href="#${question.title()}">
+    <#list project.principles() as principle>
+    <bookmark name="${principle.fullname} Principle" href="#principle_${principle.shortName}">
+        <#list questionnaire.steps(principle) as step>
+        <bookmark name="Step ${step.stepSerial}: ${step.description}" href="#principle_${principle.shortName}_step_${step.stepSerial}">
+            <#list questionnaire.findQuestionList(principle, step) as question>
+            <bookmark name="${question.serial()} ${question.content}" href="#${question.serial()}">
+            </bookmark>
+            </#list>
         </bookmark>
         </#list>
     </bookmark>
@@ -535,7 +567,7 @@ img.pie {
 
 <body>
 <div id="header">
-	FEAT Fairness Assessment Report
+	FEAT Assessment Report
 </div>
 <div id="footer">
     Generated by Veritas Toolkit
@@ -548,13 +580,9 @@ img.pie {
 <div id="cover" class="page_only">
     <div id="cover_title">
         <div id="cover_logo_box">
-
-            <#--
-            <img id="cover_logo" align="left" src="ftl/image/favicon.png">
-            -->
         </div>
         <div id="cover_main_title">
-            FEAT Fairness Assessment Report
+            FEAT Assessment Report
         </div>
         <div id="cover_sub_title">
             ${project.name} | ${businessScenario}
@@ -591,21 +619,27 @@ img.pie {
 <div id="toc">
     <div id="toc_title">Table of Contents</div>
 
-    <div class="toc_first_level"><a href="#introduction">Introduction</a></div>
+    <div id="toc_content">
 
-    <#list questionnaire.toPartitionList() as part>
-        <div class="toc_first_level">
-            <a href="#part_${part.partName}"><span class="toc_part">Part ${part.partName}.</span> ${part.partTitle}</a>
-            <#list part.questionList as question>
-            <div class="toc_second_level">
-                <a href="#${question.title()}">
-                    ${question.title()}. ${question.content}
+        <div class="toc_first_level"><a href="#introduction">Introduction</a></div>
+
+        <#list questionnaire.principles() as principle>
+            <div class="toc_first_level">
+                <a href="#principle_${principle.shortName}">
+                    <span class="toc_principle">${principle.fullname} Principle</span>
                 </a>
+                <#list questionnaire.steps(principle) as step>
+                    <#list questionnaire.findQuestionList(principle, step) as question>
+                        <div class="toc_second_level">
+                            <a href="#${question.serial()}">
+                                ${question.serial()}. ${question.content}
+                            </a>
+                        </div>
+                    </#list>
+                </#list>
             </div>
         </#list>
-        </div>
-
-    </#list>
+    </div>
 
 </div>
 
@@ -622,60 +656,63 @@ img.pie {
 
 </div>
 
-<#list questionnaire.toPartitionList() as questionnairePart>
-<div class="question_part chapter" id="part_${questionnairePart.partName}">
-    <div class="part_title">
-            Part ${questionnairePart.partName}. ${questionnairePart.partTitle}
-    </div>
-    <#list questionnairePart.questionList as question>
-    <div class="question" id="${question.title()}">
-        <#--
-		<div class="main_question">
-            <div class="main_question_title_box">
-                <span class="main_question_title">
-                ${question.title()}
-                </span>
-            </div>
-            <div class="main_question_content">${question.content}</div>
+<#list questionnaire.principles() as principle>
+    <div class="question_principle chapter" id="principle_${principle.shortName}">
+        <div class="principle_title" id="${principle.shortName}">
+            ${principle.fullname} Principle
         </div>
-        -->
-
-		<table class="main_question_t" width="100%">
-		    <head>
-                <th class="main_question_title_box_t">
-                    <div class="main_question_title_t">${question.title()}</div>
-                </th>
-                <th class="main_question_content_t">${question.content}</th>
-		    </head>
-        </table>
-
-        <#if (question.answer)??>
-            <div class="answer main_answer">
-                ${question.answer}
+        <#list questionnaire.steps(principle) as step>
+            <div id="principle_${principle.shortName}_step_${step.stepSerial}" class="step_title">
+                Step ${step.stepSerial}: ${step.description}
             </div>
-        </#if>
+            <div>
+                <#list questionnaire.findQuestionList(principle, step) as question>
+<#--                    <div class="main_question_t">-->
+<#--                        <a href="#${question.serial()}">-->
+<#--                            ${question.serial()}. ${question.content}-->
+<#--                        </a>-->
+<#--                    </div>-->
+                    <div class="question" id="${question.serial()}">
 
-        <#list question.subQuestions as sub_question>
-            <div class="sub_question">
-                ${sub_question.content}
-            </div>
+                        <table class="main_question_t" width="100%">
+                            <thead>
+                            <tr>
+                                <td class="main_question_title_box_t">
+                                    <div class="main_question_title_t">${question.serial()}</div>
+                                </td>
+                                <td class="main_question_content_t">${question.content}</td>
+                            </tr>
+                            </thead>
+                        </table>
 
-            <#if (sub_question.answer)??>
-            <div class="answer sub_answer">
-                ${sub_question.answer}
+                        <#if (question.answer)??>
+                            <div class="answer main_answer">
+                                ${question.answer}
+                            </div>
+                        </#if>
+
+                        <#list question.subQuestionList as sub_question>
+                            <div class="sub_question">
+                                ${sub_question.content}
+                            </div>
+
+                            <#if (sub_question.answer)??>
+                                <div class="answer sub_answer">
+                                    ${sub_question.answer}
+                                </div>
+                            <#else>
+                                <div class="none_answer">No specific considerations.</div>
+                            </#if>
+                        </#list>
+                        <#-- if main question does not have answer and subs-->
+                        <#if question.hasAnswer() == false && question.hasSubs() == false>
+                            <div class="none_answer">No specific considerations.</div>
+                        </#if>
+                    </div>
+                </#list>
             </div>
-			<#else>
-				<div class="none_answer">No specific considerations.</div>
-            </#if>
         </#list>
-        <#-- if main question does not have answer and subs-->
-		<#if question.hasAnswer() == false && question.getSubQuestions()?size == 0>
-            <div class="none_answer">No specific considerations.</div>
-		</#if>
     </div>
-
-    </#list>
-</div>
 </#list>
 </div>
 

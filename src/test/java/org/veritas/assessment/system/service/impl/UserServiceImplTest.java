@@ -18,12 +18,9 @@ package org.veritas.assessment.system.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,18 +41,6 @@ class UserServiceImplTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
 
     @Test
     void testRegister_fail() {
@@ -71,7 +56,7 @@ class UserServiceImplTest {
         try {
             userService.register(user);
         } catch (DuplicateException exception) {
-            log.warn("exception", exception);
+            log.warn("exception: {}", exception);
             assertTrue(StringUtils.containsAnyIgnoreCase(exception.getMessage(), "username"));
         }
     }

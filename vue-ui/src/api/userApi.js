@@ -10,6 +10,14 @@ const userApi = {
                 prefix,
             }
         });
+    },
+    whoami() {
+        return request(
+            {
+                url: `api/account`,
+                method: `get`,
+            }
+        )
     }
 
 };

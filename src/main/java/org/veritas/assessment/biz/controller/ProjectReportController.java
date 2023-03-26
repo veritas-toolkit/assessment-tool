@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
+import org.veritas.assessment.biz.converter.ReportHistoryDtoConverter;
 import org.veritas.assessment.biz.dto.ExportReportDto;
 import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.SuggestionVersionDto;
@@ -64,20 +65,16 @@ public class ProjectReportController {
     private ProjectService projectService;
 
     @Autowired
-    private ProjectDtoConverter projectDtoConverter;
-
-    @Autowired
-    private ModelArtifactService modelArtifactService;
-
-    @Autowired
     private ProjectReportService reportService;
+    @Autowired
+    private ReportHistoryDtoConverter reportHistoryDtoConverter;
 
     @Operation(summary = "List all report version.")
     @GetMapping("/list")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     public List<ReportHistoryDto> list(@PathVariable("projectId") Integer projectId) {
         List<ProjectReport> reportList = reportService.findReportHistoryList(projectId);
-        return ReportHistoryDto.copyFrom(reportList);
+        return reportHistoryDtoConverter.convertFrom(reportList);
     }
 
     @Operation(summary = "Preview report through projectId.")
@@ -175,7 +172,7 @@ public class ProjectReportController {
         Project project = projectService.findProjectById(projectId);
         ProjectReport report = reportService.createReport(operator, project, exportReportDto.getVersion(),
                 exportReportDto.getMessage());
-        return ReportHistoryDto.copyFrom(report);
+        return reportHistoryDtoConverter.convertFrom(report);
     }
 
 }

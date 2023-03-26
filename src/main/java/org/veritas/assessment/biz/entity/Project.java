@@ -25,9 +25,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.security.core.parameters.P;
+import org.veritas.assessment.biz.constant.Principle;
 import org.veritas.assessment.common.handler.TimestampHandler;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName(autoResultMap = true)
@@ -46,6 +51,22 @@ public class Project {
 
     private Integer businessScenario;
 
+    @TableField(value = "principle_g")
+    private boolean principleGeneric = DEFAULT_PRINCIPLE_GENERIC;
+
+    @TableField(value = "principle_f")
+    private boolean principleFairness;
+
+    @TableField(value = "principle_ea")
+    private boolean principleEA;
+
+    @TableField(value = "principle_t")
+    private boolean principleTransparency;
+
+    private Integer currentModelArtifactVid;
+
+    private Long currentQuestionnaireVid;
+
     private Integer creatorUserId;
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
@@ -53,6 +74,8 @@ public class Project {
 
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     private Date lastEditedTime;
+
+    private boolean archived = DEFAULT_ARCHIVED;
 
     /**
      * logic delete field flag.
@@ -67,6 +90,10 @@ public class Project {
     @TableField(typeHandler = TimestampHandler.class, jdbcType = JdbcType.VARCHAR)
     @JsonIgnore
     private Date deleteTime = null;
+
+    private static final boolean DEFAULT_PRINCIPLE_GENERIC = true;
+
+    private static final boolean DEFAULT_ARCHIVED = false;
 
     @JsonIgnore
     public boolean isPersonProject() {
@@ -111,5 +138,22 @@ public class Project {
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    public List<Principle> principles() {
+        List<Principle> list = new ArrayList<>();
+        if (this.principleGeneric) {
+            list.add(Principle.G);
+        }
+        if (this.principleFairness) {
+            list.add(Principle.F);
+        }
+        if (this.principleEA) {
+            list.add(Principle.EA);
+        }
+        if (this.principleTransparency) {
+            list.add(Principle.T);
+        }
+        return Collections.unmodifiableList(list);
     }
 }

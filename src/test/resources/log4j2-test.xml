@@ -4,7 +4,7 @@
         <property name="project.dir">./</property>
         <property name="log.dir">${project.dir}/log</property>
         <property name="log.backup">${log.dir}/backup</property>
-        <property name="log.prefix">veritas-assessment-tool</property>
+        <property name="log.prefix">veritas-assessment-tool.test.</property>
         <property name="log.info.suffix">info.log</property>
         <property name="log.error.suffix">error.log</property>
         <property name="pattern.fast">
@@ -47,8 +47,8 @@
     <Loggers>
         <Root level="warn">
             <AppenderRef ref="Console"/>
-<!--            <AppenderRef ref="INFO_LOG"/>-->
-<!--            <AppenderRef ref="ERROR_LOG"/>-->
+            <AppenderRef ref="INFO_LOG"/>
+            <AppenderRef ref="ERROR_LOG"/>
         </Root>
 
         <Logger name="org.veritas.assessment" level="debug" additivity="true"/>

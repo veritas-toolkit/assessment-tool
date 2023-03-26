@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/object/portfolio</title>
+    <defs>
+        <path d="M8.82929429,17 L15.1707057,17 C15.5825421,15.8348076 16.6937812,15 18,15 C19.6568542,15 21,16.3431458 21,18 C21,19.6568542 19.6568542,21 18,21 C16.6937812,21 15.5825421,20.1651924 15.1707057,19 L8.82929429,19 C8.41745788,20.1651924 7.30621883,21 6,21 C4.34314575,21 3,19.6568542 3,18 C3,16.3431458 4.34314575,15 6,15 C7.30621883,15 8.41745788,15.8348076 8.82929429,17 L8.82929429,17 Z M4.5,3 L17.5,3 C18.3284271,3 19,3.67157288 19,4.5 C19,5.32842712 18.3284271,6 17.5,6 L4.5,6 C3.67157288,6 3,5.32842712 3,4.5 C3,3.67157288 3.67157288,3 4.5,3 Z M9.5,9 L19.5,9 C20.3284271,9 21,9.67157288 21,10.5 C21,11.3284271 20.3284271,12 19.5,12 L9.5,12 C8.67157288,12 8,11.3284271 8,10.5 C8,9.67157288 8.67157288,9 9.5,9 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/object/portfolio" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Combined-Shape" fill="#42526E" fill-rule="nonzero" xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/action/add</title>
+    <defs>
+        <path d="M12,3 C12.5522847,3 13,3.44494629 13,3.99339768 L13,11 L20.007,11 C20.5158571,11 20.9359031,11.3828367 20.9933134,11.8826924 L21,12 C21,12.552 20.555,13 20.007,13 L13,13 L13,20.0066023 C13,20.5160523 12.6172798,20.935933 12.1173326,20.9933167 L12,21 C11.4477153,21 11,20.5550537 11,20.0066023 L11,13 L3.993,13 C3.48414286,13 3.06409694,12.6180255 3.00668659,12.1174923 L3,12 C3,11.448 3.445,11 3.993,11 L11,11 L11,3.99339768 C11,3.48394775 11.3827202,3.06406704 11.8826674,3.00668331 L12,3 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/action/add" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Combined-Shape" fill="#42526E" xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>

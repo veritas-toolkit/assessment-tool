@@ -22,16 +22,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.action.EditAnswerAction;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.mapper.ProjectMapper;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ModelInsightService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.IllegalDataException;
+import org.veritas.assessment.common.exception.InternalException;
 import org.veritas.assessment.common.exception.PermissionException;
 import org.veritas.assessment.common.exception.QuotaException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -70,28 +76,56 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ModelInsightService modelInsightService;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
-    @Autowired
     private ModelArtifactService modelArtifactService;
 
+    @Autowired
+    private QuestionnaireService questionnaireService;
 
     @Override
     @Transactional
-    public Project createProject(User operator, Project project, Integer questionnaireTemplateId) {
-        log.info("create project:\n{}", project);
-        Objects.requireNonNull(questionnaireTemplateId);
-        int operatorId = operator.getId();
+    public Project createProject(User operator, Project project, TemplateQuestionnaire template) {
+        Objects.requireNonNull(template);
+        return innerCreateProject(operator, project, template, null);
+    }
+
+    @Override
+    @Transactional
+    public Project createProject(User operator, Project project, Project copyFromProject) {
+        Objects.requireNonNull(copyFromProject);
+        return innerCreateProject(operator, project, null, copyFromProject);
+    }
+
+    /**
+     * Create a new project.
+     * <br/>
+     * <pre>
+     * Steps:
+     *  1. Create basic project.
+     *  2. Grant role and permission for the creator.
+     *  3. Copy questionnaire from questionnaire-template or other project's.
+     * </pre>
+     * @param creator The project's creator. The owner of the project.
+     * @param project
+     * @return
+     */
+    private Project innerCreateProject(User creator, Project project,
+                                       TemplateQuestionnaire template, Project copyFromProject) {
+
+        if (template == null && copyFromProject == null) {
+            throw new IllegalDataException("");
+        }
+        int operatorId = creator.getId();
         long created = projectMapper.numberOfProjectCreatedByUser(operatorId);
-        if (created >= operator.getProjectLimited()) {
-            log.warn("User [{}] has created too much projects[{}].", operator.identification(), created);
+        if (created >= creator.getProjectLimited()) {
+            log.warn("User [{}] has created too much projects[{}].", creator.identification(), created);
             throw new QuotaException("Your quota of project creating is " +
-                    operator.getProjectLimited() +
+                    creator.getProjectLimited() +
                     ", and can't create more project.");
         }
         if (project.isPersonProject()) {
             if (!Objects.equals(project.getOwnerId(), operatorId)) {
                 log.warn("User[{}] want to create a project for user[{}]. rejected!",
-                        operator.identification(), project.getOwnerId());
+                        creator.identification(), project.getOwnerId());
                 throw new ErrorParamException("You cannot create project for other users.");
             }
         } else if (project.isGroupProject()) {
@@ -101,10 +135,10 @@ public class ProjectServiceImpl implements ProjectService {
                 log.warn("The group id[{}] is not exist.", groupId);
                 throw new ErrorParamException(String.format("The group[%d] does not exist.", groupId));
             }
-            boolean permission = roleService.hasPermission(operator, group, PermissionType.PROJECT_CREATE.getAction());
+            boolean permission = roleService.hasPermission(creator, group, PermissionType.PROJECT_CREATE.getAction());
             if (!permission) {
                 log.warn("The user[{}] does not has permission to create a project for the group[{}]",
-                        operator.identification(), group.identification());
+                        creator.identification(), group.identification());
                 throw new ErrorParamException(
                         String.format("You do not have permission create a project for the group[%s]",
                                 group.getName()));
@@ -115,20 +149,27 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setCreatorUserId(operatorId);
-        Date now = new Date();
-        project.setCreatedTime(now);
-        project.setLastEditedTime(now);
+        Date createdTime = new Date();
+        project.setCreatedTime( createdTime);
+        project.setLastEditedTime( createdTime);
+
+
         try {
             projectMapper.addProject(project);
-        } catch (PersistenceException exception) {
+            QuestionnaireVersion questionnaire = null;
+            if (template != null) {
+                questionnaire = questionnaireService.createByTemplate(operatorId, project, createdTime, template);;
+            } else {
+                questionnaire = questionnaireService.copyFrom(operatorId, project, createdTime, copyFromProject);
+            }
+            project.setCurrentQuestionnaireVid(questionnaire.getVid());
+            projectMapper.updateQuestionnaireVid(project);
+
+            questionnaireService.saveNewQuestionnaire(questionnaire);
+            roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
+        } catch (Exception exception) {
             exceptionHandler(exception, project);
         }
-
-        roleService.grantRole(operatorId, ResourceType.PROJECT, project.getId(), RoleType.OWNER);
-
-        questionnaireService.create(project.getId(), questionnaireTemplateId);
-
-
         return project;
     }
 
@@ -144,6 +185,17 @@ public class ProjectServiceImpl implements ProjectService {
         return result;
     }
 
+    @Override
+    @Transactional
+    public int archive(Integer projectId) {
+        return projectMapper.archive(projectId);
+    }
+
+    @Override
+    @Transactional
+    public int unarchive(Integer projectId) {
+        return projectMapper.unarchive(projectId);
+    }
 
     @Override
     @Transactional
@@ -181,8 +233,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project old = projectMapper.findById(project.getId());
         project.setLastEditedTime(new Date());
         try {
-            projectMapper.updateNameAndDescription(old, project);
-        } catch (PersistenceException exception) {
+            projectMapper.updateBasicInfo(old, project);
+        } catch (Exception exception) {
             exceptionHandler(exception, project);
         }
         return this.projectMapper.findById(project.getId());
@@ -284,10 +336,25 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Pageable<Project> findProjectPageable(User operator, QueryProjectPageableAction queryAction) {
+        List<Integer> projectIdList = findResourceIdList(operator.getId(), ResourceType.PROJECT);
+        List<Integer> groupIdList = findResourceIdList(operator.getId(), ResourceType.GROUP);
+        return projectMapper.findProjectPageable(projectIdList, groupIdList, queryAction);
+    }
+
+    @Override
     public Pageable<Project> findProjectPageable(Integer userId, String prefix, String keyword, int page, int pageSize) {
         List<Integer> projectIdList = findResourceIdList(userId, ResourceType.PROJECT);
         List<Integer> groupIdList = findResourceIdList(userId, ResourceType.GROUP);
         return projectMapper.findProjectPageable(projectIdList, groupIdList, prefix, keyword, page, pageSize);
+    }
+
+    @Override
+    public List<Project> findProjectList(Integer userId) {
+        List<Integer> projectIdList = findResourceIdList(userId, ResourceType.PROJECT);
+        List<Integer> groupIdList = findResourceIdList(userId, ResourceType.GROUP);
+        return projectMapper.findProjectList(projectIdList, groupIdList);
     }
 
     @Override
@@ -335,10 +402,12 @@ public class ProjectServiceImpl implements ProjectService {
         modelArtifact.setProjectId(projectId);
         Project project = projectMapper.findById(projectId);
         modelArtifactService.upload(modelArtifact);
-        modelInsightService.autoGenerateAnswer(project, modelArtifact);
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        List<EditAnswerAction> actionList = modelInsightService.insight(project, questionnaireVersion, modelArtifact);
+        questionnaireService.editAnswer(operator, project, actionList, modelArtifact);
     }
 
-    private void exceptionHandler(PersistenceException exception, Project project) {
+    private void exceptionHandler(Exception exception, Project project) {
         if (PersistenceExceptionUtils.isUniqueConstraintException(exception)) {
             log.warn("exception message: {}", exception.getMessage(), exception);
             if (project.isPersonProject()) {
@@ -355,7 +424,7 @@ public class ProjectServiceImpl implements ProjectService {
                         exception);
             }
         } else {
-            throw exception;
+            throw new InternalException("Internal error.", exception);
         }
     }
 

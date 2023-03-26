@@ -30,6 +30,7 @@ import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DeleteUserException;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.InternalException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.exception.UserSecurityException;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -144,7 +145,7 @@ public class UserServiceImpl implements UserService {
         temp.setShouldChangePassword(false);
         try {
             userMapper.addUser(temp);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, null, user.getUsername(), user.getEmail());
         }
         return temp;
@@ -174,7 +175,8 @@ public class UserServiceImpl implements UserService {
             user.setLastLoginTime(null);
             try {
                 userMapper.addUser(user);
-            } catch (PersistenceException exception) {
+//            } catch (PersistenceException exception) {
+            } catch (Exception exception) {
                 exceptionHandler(exception, null, user.getUsername(), user.getEmail());
             }
         }
@@ -212,7 +214,7 @@ public class UserServiceImpl implements UserService {
         }
         try {
             userMapper.modify(oldUser, newUser);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, newUser.getId(), newUser.getUsername(), newUser.getEmail());
         }
         return userMapper.findById(newUser.getId());
@@ -236,7 +238,7 @@ public class UserServiceImpl implements UserService {
         int result = 0;
         try {
             result = userMapper.modifyByAdmin(user);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, user.getId(), user.getUsername(), user.getEmail());
         }
         if (result != 1) {
@@ -304,11 +306,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.findById(user.getId());
     }
 
-    private void exceptionHandler(PersistenceException exception, String username, String email) {
-
+    @Override
+    public void finishUserGuide(User user) {
+        int result = userMapper.finishUserGuide(user);
     }
 
-    private void exceptionHandler(PersistenceException exception, Integer oldId, String username, String email) {
+    private void exceptionHandler(Exception exception, Integer oldId, String username, String email) {
         if (PersistenceExceptionUtils.isUniqueConstraintException(exception)) {
             User user = null;
             User userByUsername = null;
@@ -339,7 +342,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } else {
-            throw exception;
+            throw new InternalException("Add or update user info failed.", exception);
         }
     }
 }
