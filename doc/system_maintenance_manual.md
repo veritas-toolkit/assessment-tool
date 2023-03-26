@@ -2,8 +2,8 @@
 ![logo](./.img/logo.png)
 ## Development
 
-* Web Framework: Vue 2.6.14
-* Server: Python 3.6+, Java 8, Spring Boot 2.4.10
+* Web Framework: Vue 2.7.*
+* Server: Python 3.8+, Java 8, Spring Boot 2.7.*
 * Database: sqlite 3.34.0
 
 ## Deployment
@@ -12,8 +12,13 @@
 
 * __OS:__ CentOS, Ubuntu, or other Linux
 * __CPU / RAM:__ 2 CPU & 2G RAM at least, 4 CPU & 4G RAM __recommended__
+
+#### Install On OS
 * __JRE:__ JRE(Java Runtime Environment) 8 is required.
 * __Python:__ Python 3.8+
+
+#### Install On Docker
+* __Docker__: Docker Engine 20+
 
 ### Install on Docker (Recommended)
 
