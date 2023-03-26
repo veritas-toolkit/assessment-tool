@@ -36,17 +36,8 @@
       <el-footer style="height: 64px;">
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
           <div class="notification">
-            <el-popover
-                placement="top-start"
-                width="400"
-                trigger="click">
-              <ProjectNotifications @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
-              <div class="not-box" slot="reference">
-                <img src="../../assets/projectPic/notification.png" alt="">
-                <span class="BarlowBold">Notifications</span>
-                <div>{{ projNotLen }}</div>
-              </div>
-            </el-popover>
+            <Notification ref="notification" :project-id="projectId" :force-show-question="true"/>
+>
           </div>
           <div class="footer-right BarlowMedium draft-popover" style="width: calc(100% - 400px)">
             <div style="display: flex;justify-content: right">
@@ -63,18 +54,16 @@
 </template>
 
 <script>
-import Notifications from "@/components/comment/Notifications";
 import TemplateMenu from "@/components/template/TemplateMenu";
 import TemplateSubQuestion from "@/components/template/TemplateSubQuestion";
-import ProjectNotifications from "@/components/comment/ProjectNotifications";
+import Notification from "@/components/comment/Notification.vue";
 
 export default {
   name: "Template",
   components: {
-    Notifications,
+    Notification,
     TemplateMenu,
     TemplateSubQuestion,
-    ProjectNotifications
   },
 
   data() {

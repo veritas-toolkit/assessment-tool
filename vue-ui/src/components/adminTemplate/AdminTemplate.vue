@@ -31,17 +31,7 @@
       <el-footer style="height: 64px;">
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
           <div class="notification">
-            <el-popover
-                placement="top-start"
-                width="400"
-                trigger="click">
-              <Notifications @getNotLen="getNotLen"></Notifications>
-              <div class="not-box" slot="reference">
-                <img src="../../assets/projectPic/notification.png" alt="">
-                <span class="BarlowBold">Notifications</span>
-                <div>{{notLen}}</div>
-              </div>
-            </el-popover>
+            <Notification ref="notification" :force-show-question="true"/>
           </div>
           <div class="footer-right BarlowMedium draft-popover"  style="width: calc(100% - 400px)">
             <div style="display: flex;justify-content: right" v-show="type != 'SYSTEM'">
@@ -58,16 +48,15 @@
 </template>
 
 <script>
-import Notifications from "@/components/comment/Notifications";
 import AdminTemplateMenu from "@/components/adminTemplate/AdminTemplateMenu";
 import AdminTemplateSubQuestion from "@/components/adminTemplate/AdminTemplateSubQuestion";
-
+import Notification from "@/components/comment/Notification.vue";
 export default {
   name: "AdminTemplate",
   components: {
-    Notifications,
     AdminTemplateMenu,
     AdminTemplateSubQuestion,
+    Notification
   },
   data() {
     return {

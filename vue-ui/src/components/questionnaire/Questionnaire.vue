@@ -53,7 +53,7 @@
         <el-aside :width="isCollapse? '72px':'400px'">
           <QuestionnaireMenu @getId="getQuestionId" :permissionList="permissionList"
                              :menuData="menuData" :principle="principle" :projectId="projectId"
-                             :default-question="currentQuestion"
+                             :defaultQuestionSerial="currentQuestion.serial"
                              :isCollapse="isCollapse"/>
         </el-aside>
         <el-main :style="openCompare?'display:flex':''">
@@ -74,17 +74,7 @@
       <el-footer style="height: 64px;">
         <div style="display: flex;width: 100%;justify-content:space-between;align-items: center">
           <div class="notification-collapse" v-if="!isCollapse">
-            <el-popover
-                placement="top-start"
-                width="400"
-                trigger="click">
-              <ProjectNotifications @getProjNotLen="getProjNotLen" :projectId="projectId"></ProjectNotifications>
-              <div class="not-box" slot="reference">
-                <img src="../../assets/projectPic/notification.png" alt="">
-                <span class="BarlowBold">Notifications</span>
-                <div>{{ projNotLen }}</div>
-              </div>
-            </el-popover>
+            <Notification ref="notification" :project-id="projectId" @show-question="showQuestionComment"/>
             <div class="collapse-box" @click="isCollapse=true">
               <img src="../../assets/projectPic/chevron-left.svg" alt="">
             </div>
@@ -164,22 +154,19 @@
 <script>
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
-import Notifications from "@/components/comment/Notifications";
 import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
-import ProjectNotifications from "@/components/comment/ProjectNotifications";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
 import Vue from "vue";
-import sl from "element-ui/src/locale/lang/sl";
+import Notification from "@/components/comment/Notification.vue";
 
 export default {
   name: "Questionnaire",
   components: {
+    Notification,
     QuestionnaireMenu,
     QuestionnaireAnswer,
     QuestionnaireCompareAnswer,
-    Notifications,
-    ProjectNotifications,
     ExportReportDialog,
   },
   mounted() {
@@ -257,41 +244,11 @@ export default {
         });
     const currentQuestionSerial = this.$route.query.q;
     let currentQuestion = null;
-    let firstQuestion = null;
-
-    for (const principle in this.toc.principleAssessments) {
-      const principleAssessment = this.toc.principleAssessments[principle]
-      let stepList = principleAssessment.stepList
-      if (!stepList || stepList.length === 0) {
-        continue;
-      }
-      for (const step of stepList) {
-        const mainList = step.mainQuestionList;
-        if (!mainList || mainList.length === 0) {
-          continue;
-        }
-        if (!firstQuestion) {
-          firstQuestion = mainList[0];
-          if (!currentQuestionSerial) {
-            break;
-          }
-        }
-        if (currentQuestionSerial) {
-          for (const main of mainList) {
-            if (main.serial === currentQuestionSerial) {
-              currentQuestion = main;
-              break;
-            }
-          }
-        }
-        if (currentQuestion) {
-          break;
-        }
-      }
+    if (currentQuestionSerial) {
+      currentQuestion = this.tocMainQuestionList.find(q => {return q.serial === currentQuestionSerial});
     }
-
     if (!currentQuestion) {
-      currentQuestion = firstQuestion;
+      currentQuestion = this.tocMainQuestionList[0];
     }
     this.currentQuestion = currentQuestion;
     this.principle = currentQuestion.principle;
@@ -361,6 +318,51 @@ export default {
     },
     handleCompareClick() {
       this.getDiffVersion(this.compareTab)
+    },
+    showQuestionComment(comment) {
+      console.log("comment:\n" + JSON.stringify(comment, null, 4))
+      const selectedProject = comment['projectId'].toString();
+      const selectedQuestionSerial = comment['mainQuestionSerial'].toString();
+      const selectedQuestionId = comment['mainQuestionId'].toString();
+      console.log(`selected: project ${selectedProject}, question: ${selectedQuestionSerial}`)
+
+      const currentProject = this.projectId === selectedProject;
+      const currentQuestion = this.$route.query['q'] === selectedQuestionSerial;
+      if (currentProject && currentQuestion) {
+        // Yes, do nothing!
+        console.log("same")
+      } else if(currentProject) {
+        const q = this.findQuestionInToc(selectedQuestionId)
+        if (q != null) {
+          console.log("q:" + JSON.stringify(q, null, 4))
+          this.questionId = selectedQuestionId;
+          this.principle = q.principle;
+          // this.$set("currentQuestion", q)
+          this.currentQuestion = q
+          // this.$set(this.currentQuestion,"_questionId", selectedQuestionId)
+          let query = {...this.$route.query}
+          query.q = selectedQuestionSerial
+          this.$router.replace({ query: query })
+        }
+      } else {
+        this.$router.push({
+          path: "/questionnaire",
+          query: {
+            id: selectedProject,
+            q: selectedQuestionSerial
+          }
+        })
+        this.$router.go(0)
+      }
+    },
+    findQuestionInToc(questionId) {
+      const q = this.tocMainQuestionList.find(main => {
+        return main.questionId = questionId;
+      })
+      if (!q) {
+        console.error("Not found the question:" + questionId)
+      }
+      return q;
     },
     getQuestionId(data) {
       this.questionId = data
@@ -508,6 +510,25 @@ export default {
         return this.project.archived === true;
       }
       return false;
+    },
+    tocMainQuestionList() {
+      let all = [];
+      for (const principle in this.toc.principleAssessments) {
+        const principleAssessment = this.toc.principleAssessments[principle]
+        let stepList = principleAssessment.stepList
+        if (!stepList || stepList.length === 0) {
+          continue;
+        }
+        for (const step of stepList) {
+          const mainList = step.mainQuestionList;
+          if (!mainList || mainList.length === 0) {
+            continue;
+          }
+          all = all.concat(step.mainQuestionList)
+        }
+      }
+      console.log("call all")
+      return all;
     }
   }
 }

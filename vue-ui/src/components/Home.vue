@@ -35,6 +35,7 @@
             </el-menu-item>
           </el-menu>
         </div>
+<!--
         <el-popover
             placement="top-start"
             width="400"
@@ -48,7 +49,8 @@
             <div v-if="projectId!=null">{{projNotLen}}</div>
           </div>
         </el-popover>
-
+-->
+        <Notification ref="notification" :project-id="projectId" :force-show-question="true"/>
       </el-aside>
       <!--main area-->
       <el-main>
@@ -131,14 +133,12 @@
 </template>
 
 <script>
-import Notifications from "@/components/comment/Notifications";
-import ProjectNotifications from "@/components/comment/ProjectNotifications";
+import Notification from "@/components/comment/Notification.vue";
 
 export default {
   name: 'Home',
   components: {
-    Notifications,
-    ProjectNotifications
+    Notification,
   },
   data() {
     return {

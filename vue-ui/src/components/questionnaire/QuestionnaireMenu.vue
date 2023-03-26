@@ -2,7 +2,8 @@
   <div style="height: 100%;background-color: #F2F2F2;transition: all .5s">
     <el-collapse ref="collapse" :style="isCollapse?'width:fit-content':''" class="BarlowBold" v-model="activeStep" accordion>
       <el-menu class="myMenu" unique-opened active-text-color="#78BED3"
-               :default-active="activeQuestion" >
+               ref="menu"
+               :default-active="activeQuestionSerial" >
         <div class="main-question" v-for="(step, stepIndex) in menuData" :key="stepIndex">
           <el-collapse-item :disabled="step.mainQuestionList.length === 0"
                             :class="isCollapse ? 'myCollapseContent' : ''" :name="step.step"
@@ -15,8 +16,6 @@
               </div>
             </template>
             <el-menu-item class="BarlowMedium" v-for="(mainQuestion, mainQuestionIndex) in step.mainQuestionList"
-                          :key="mainQuestion.serial"
-                          :name="mainQuestion.serial"
                           @click="clickMainQuestion(mainQuestion)"
                           :index="mainQuestion.serial">
               <!-- Main Question -->
@@ -58,15 +57,16 @@ export default {
       type: Array,
       required: true
     },
-    defaultQuestion: {
-      type: Object,
-      required: false,
-    }
+    defaultQuestionSerial: {
+      type: String,
+      default: ''
+    },
+
   },
   data() {
     return {
       activeStep: 'Principles to Practice',
-      activeQuestion: '',
+      activeQuestionSerial: null,
       stepPic: {
         '0': require('../../assets/questionnairePic/portfolio.svg'),
         '1': require('../../assets/questionnairePic/department.svg'),
@@ -78,27 +78,25 @@ export default {
     }
   },
   watch: {
-    "currentMainQuestion": function () {
-
-      // console.log("activeQuestion: " + this.activeQuestion)
-      // console.log("activeStep: " + this.activeStep)
-    },
-    "defaultQuestion": function () {
-      if (this.defaultQuestion) {
-        this.currentMainQuestion = this.defaultQuestion;
-        this.activeQuestion = this.defaultQuestion.serial;
-        this.activeStep = this.defaultQuestion.step;
+    "defaultQuestionSerial": function() {
+      console.log('call ----defaultQuestion----')
+      if (this.activeQuestionSerial === this.defaultQuestionSerial) {
+        return;
       }
+      this.active(this.defaultQuestionSerial)
     }
 
   },
   created() {
-    if (this.defaultQuestion) {
-      this.currentMainQuestion = this.defaultQuestion;
+    if (this.defaultQuestionSerial) {
+      this.active(this.defaultQuestionSerial)
     }
-    // console.log("created");
-    // console.log("activeQuestion: " + this.activeQuestion)
-    // console.log("activeStep: " + this.activeStep)
+    if (!this.activeQuestionSerial) {
+      if (this.allQuestionList.length > 0) {
+        const first = this.allQuestionList[0];
+        this.active(first.serial)
+      }
+    }
   },
   methods: {
     clickMainQuestion(mainQuestion) {
@@ -121,10 +119,31 @@ export default {
     isUnmodified(mainQuestion) {
       return mainQuestion && mainQuestion['editType'] === "Unmodified";
     },
+    active(serial) {
+      const question = this.allQuestionList.find(q => {
+        return q.serial === serial;
+      })
+      if (question) {
+        console.log(question)
+        this.activeStep = question.step;
+        this.activeQuestionSerial = question.serial;
+        this.currentMainQuestion = question;
+        // this.$refs.menu.openMenu(question.serial)
+      }
+    },
 
 
   },
   computed: {
+    allQuestionList() {
+      let all = [];
+      for (let step of this.menuData) {
+        if (step['mainQuestionList'] && step.mainQuestionList.length > 0) {
+          all = all.concat(step.mainQuestionList);
+        }
+      }
+      return all;
+    }
 
   }
 }
