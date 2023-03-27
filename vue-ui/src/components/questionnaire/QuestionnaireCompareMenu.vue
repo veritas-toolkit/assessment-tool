@@ -17,6 +17,7 @@
             </template>
             <el-menu-item class="BarlowMedium" v-for="(mainQuestion, mainQuestionIndex) in step.mainQuestionList"
                           @click="clickMainQuestion(mainQuestion)"
+                          :key="mainQuestion.serial"
                           :index="mainQuestion.serial">
               <!-- Main Question -->
               <template slot="title">
