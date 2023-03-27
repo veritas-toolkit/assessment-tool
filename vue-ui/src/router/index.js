@@ -12,8 +12,6 @@ import AdminProjectPage from "../components/administration/AdminProjectPage";
 import AdminGroupPage from "../components/administration/AdminGroupPage";
 import AdminUserPage from "../components/administration/AdminUserPage";
 import CreateUser from "../components/administration/CreateUser";
-import EditTemplate from "../components/questionnaire/EditTemplate";
-import GroupProjectPage from "../components/group/GroupProjectPage";
 import AdminTemplatePage from "../components/administration/AdminTemplatePage";
 import Questionnaire from "@/components/questionnaire/Questionnaire";
 import QuestionnaireHistory from "@/components/questionnaireHistory/QuestionnaireHistory";
@@ -34,7 +32,6 @@ const router = new VueRouter({
       children: [
         {path: '/projects', component: Projects},
         {path: '/projectPage', component: ProjectPage},
-        {path: '/groupProjectPage', component: GroupProjectPage},
         {path: '/group', component: Group},
         {path: '/groupPage', component: GroupPage},
         {path: '/myAccount', component: MyAccount},
@@ -45,7 +42,6 @@ const router = new VueRouter({
         {path: '/createUser', component: CreateUser},
       ]
     },
-    {path: '/editTemplate', component: EditTemplate},
     {path: '/adminTemplatePage', component: AdminTemplatePage},
     {path: '/questionnaire', name:'questionnaire', component: Questionnaire},
     {path: '/questionnaireHistory', component: QuestionnaireHistory},
