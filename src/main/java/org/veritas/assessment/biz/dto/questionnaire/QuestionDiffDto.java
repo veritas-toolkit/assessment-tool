@@ -18,9 +18,11 @@ package org.veritas.assessment.biz.dto.questionnaire;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
+import org.veritas.assessment.biz.util.HtmlCompare;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +32,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
+@Slf4j
 public class QuestionDiffDto {
 
     private QuestionRecordDto basedQuestion;
@@ -51,6 +54,42 @@ public class QuestionDiffDto {
             this.onlyNew(newQuestionNode);
         } else {
             this.compareTwoVersions(basedQuestionNode, newQuestionNode);
+        }
+        this.doCompare();
+    }
+
+    private void doCompare() {
+        String basedQ = basedQuestion != null ? basedQuestion.getQuestion() : "";
+        String newQ = newQuestion != null ? newQuestion.getQuestion() : "";
+        HtmlCompare questionHtmlCompare = new HtmlCompare(basedQ, newQ);
+        if (basedQuestion != null) {
+            basedQuestion.setQuestionHtml(questionHtmlCompare.comparedBasedHtml());
+            if (log.isTraceEnabled()) {
+                log.trace("based question html:\n{}", basedQuestion.getQuestionHtml());
+            }
+        }
+        if (newQuestion != null) {
+            newQuestion.setQuestionHtml(questionHtmlCompare.comparedNewHtml());
+            if (log.isTraceEnabled()) {
+                log.trace("new question html:\n{}", newQuestion.getQuestionHtml());
+            }
+        }
+
+        String basedAns = basedQuestion != null ? basedQuestion.getAnswer() : "";
+        String newAns = newQuestion != null ? newQuestion.getAnswer() : "";
+        HtmlCompare answerCompare = new HtmlCompare(basedAns, newAns);
+
+        if (basedQuestion != null) {
+            basedQuestion.setAnswerHtml(answerCompare.comparedBasedHtml());
+            if (log.isTraceEnabled()) {
+                log.info("based answer html:\n{}", basedQuestion.getAnswerHtml());
+            }
+        }
+        if (newQuestion != null) {
+            newQuestion.setAnswerHtml(answerCompare.comparedNewHtml());
+            if (log.isTraceEnabled()) {
+                log.info("new answer html:\n{}", newQuestion.getAnswerHtml());
+            }
         }
     }
 
@@ -120,15 +159,21 @@ public class QuestionDiffDto {
 
         private String question;
 
+//        private String questionHtml = "<span> Hello word. <span class='add'> some thing </span> <span class='del'> delete somme thing</span> common</span>";
+        private String questionHtml;
+
         private Date questionEditTime;
 
         private UserSimpleDto questionEditUser;
 
         private String answer;
+//        private String answerHtml = "<span> Hello word. <span class='add'> some thing </span> <span class='del'> delete somme thing</span> common</span>";
+        private String answerHtml;
 
         private Date answerEditTime;
 
         private UserSimpleDto answerEditUser;
+
 
         public QuestionRecordDto(QuestionNode questionNode) {
             QuestionVersion questionVersion = questionNode.getQuestionVersion();

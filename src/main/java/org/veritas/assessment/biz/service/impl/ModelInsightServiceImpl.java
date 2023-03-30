@@ -20,6 +20,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -88,6 +90,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                     if (answer == null) {
                         continue;
                     }
+                    Document document = Jsoup.parseBodyFragment(answer);
                     EditAnswerAction action = new EditAnswerAction();
                     action.setProjectId(project.getId());
                     action.setQuestionId(questionNode.getQuestionId());
