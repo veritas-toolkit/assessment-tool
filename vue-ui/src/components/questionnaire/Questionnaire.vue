@@ -70,11 +70,16 @@
                                :projectId="projectId"
                                :questionId="questionId"
                                style="overflow-y: auto"></QuestionnaireAnswer>
-          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"
+<!--          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"-->
+<!--                                      :compareVersionTime="compareVersionTime" :creator="creator"-->
+<!--                                      :permissionList="permissionList" :compareFlag="compareFlag"-->
+<!--                                      :questionnaireVid="questionnaireVid" :projectId="projectId"-->
+<!--                                      :questionId="questionId"></QuestionnaireCompareAnswer>-->
+          <QuestionnaireCompareAnswer2 v-show="compareFlag" :isCollapse="isCollapse"
                                       :compareVersionTime="compareVersionTime" :creator="creator"
                                       :permissionList="permissionList" :compareFlag="compareFlag"
                                       :questionnaireVid="questionnaireVid" :projectId="projectId"
-                                      :questionId="questionId"></QuestionnaireCompareAnswer>
+                                      :questionId="questionId"></QuestionnaireCompareAnswer2>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -161,6 +166,7 @@
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
 import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
+import QuestionnaireCompareAnswer2 from "@/components/questionnaire/QuestionnaireCompareAnswer2";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
 import Vue from "vue";
@@ -175,6 +181,7 @@ export default {
     QuestionnaireMenu,
     QuestionnaireAnswer,
     QuestionnaireCompareAnswer,
+    QuestionnaireCompareAnswer2,
     ExportReportDialog,
   },
   mounted() {
