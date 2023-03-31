@@ -126,6 +126,14 @@ public class QuestionNode implements Comparable<QuestionNode> {
         return this.principle.getShortName() + this.getSerialOfPrinciple();
     }
 
+    public String serialWithSub() {
+        if (this.getSubSerial() == 0) {
+            return this.serial();
+        } else {
+            return this.serial() + "-" + this.getSubSerial();
+        }
+    }
+
     public void configureQuestionnaireVid(Long _questionnaireVid) {
         this.questionnaireVid = _questionnaireVid;
         this.getSubList().forEach(s -> s.configureQuestionnaireVid(_questionnaireVid));

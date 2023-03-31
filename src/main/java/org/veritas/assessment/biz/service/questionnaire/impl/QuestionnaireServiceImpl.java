@@ -24,6 +24,7 @@ import org.veritas.assessment.biz.service.IdGenerateService;
 import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.common.exception.HasBeenModifiedException;
 import org.veritas.assessment.common.exception.IllegalRequestException;
+import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.entity.User;
 
@@ -109,6 +110,14 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
     public QuestionnaireVersion editAnswer(User operator, Integer projectId, EditAnswerAction action) {
         Date now = new Date();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+
+        QuestionNode node = latest.findNodeByQuestionId(action.getQuestionId());
+        if (node == null) {
+            log.warn("project: {}, questionnaire vid:{}, (sub)question id: {} not found",
+                    action.getProjectId(), latest.getVid(), action.getQuestionId());
+            throw new NotFoundException("Not found the question.");
+        }
+
         QuestionnaireVersion current = latest.createNewVersion(operator, now, idGenerateService::nextId);
         Long questionnaireVid = current.getVid();
         boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
@@ -118,6 +127,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         action.setOperator(operator);
         action.setActionTime(now);
         current.editAnswer(action, idGenerateService::nextId);
+        current.setMessage(String.format("Edit [%s]", node.serialWithSub()));
         questionnaireDao.save(current);
         return current;
     }
@@ -140,6 +150,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             action.setActionTime(now);
         });
         current.editAnswer(actionList, idGenerateService::nextId);
+        current.setMessage(String.format("Upload [%s]", modelArtifact.getFilename()));
         questionnaireDao.save(current);
         return current;
     }
@@ -207,6 +218,12 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
         Date now = new Date();
         int projectId = action.getProjectId();
         QuestionnaireVersion latest = questionnaireDao.findLatestQuestionnaire(projectId);
+        QuestionNode node = latest.findMainQuestionById(action.getQuestionId());
+        if (node == null) {
+            log.warn("project: {}, questionnaire vid:{}, (sub)question id: {} not found",
+                    action.getProjectId(), latest.getVid(), action.getQuestionId());
+            throw new NotFoundException("Not found the question.");
+        }
         QuestionnaireVersion current = latest.createNewVersion(action.getOperator(), now, idGenerateService::nextId);
         Long questionnaireVid = current.getVid();
         boolean locked = projectMapper.updateQuestionnaireForLock(projectId, latest.getVid(), questionnaireVid);
@@ -214,6 +231,7 @@ public class QuestionnaireServiceImpl implements QuestionnaireService {
             throw new HasBeenModifiedException("The questionnaire has been modify by others.");
         }
         current.editMainQuestion(action, idGenerateService::nextId);
+        current.setMessage(String.format("Modify [%s] question.", node.serialWithSub()));
         questionnaireDao.save(current);
         return current;
     }
