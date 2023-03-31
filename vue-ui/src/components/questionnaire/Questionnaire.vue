@@ -149,7 +149,7 @@
                   </el-tab-pane>
                 </el-tabs>
               </div>
-              <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">
+              <div class="footer-text" style="margin-left: 24px" @click="handleCompareClick" slot="reference">
                 Compare
               </div>
             </el-popover>
@@ -335,6 +335,12 @@ export default {
       this.projNotLen = item
     },
     handleCompareClick() {
+      this.exportedHistoryPage.page = 0;
+      this.exportedHistoryPage.pageCount = 1;
+      this.exportedHistoryList = [];
+      this.draftHistoryPage.page = 0;
+      this.draftHistoryPage.pageCount = 1;
+      this.draftHistoryList = [];
       this.getDiffVersion(this.compareTab)
     },
     showQuestionComment(comment) {
@@ -482,13 +488,13 @@ export default {
     },
     loadExportedHistory(row, column, cell, event) {
       let left = this.exportedHistoryList.length - row.index;
-      if (left < 5) {
-        this.getDiffVersion("draftOnly");
+      if (left < 15) {
+        this.getDiffVersion("exportedOnly");
       }
     },
     loadDraftHistory(row, column, cell, event) {
       let left = this.draftHistoryList.length - row.index;
-      if (left < 5) {
+      if (left < 15) {
         this.getDiffVersion("draftOnly");
       }
     },
