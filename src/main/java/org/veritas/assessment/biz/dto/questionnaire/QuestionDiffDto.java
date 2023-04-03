@@ -19,6 +19,7 @@ package org.veritas.assessment.biz.dto.questionnaire;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
@@ -39,7 +40,6 @@ public class QuestionDiffDto {
 
     private QuestionRecordDto newQuestion;
 
-    // only consider the question and answer, without subs.
     private boolean diff;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -61,6 +61,12 @@ public class QuestionDiffDto {
     private void doCompare() {
         String basedQ = basedQuestion != null ? basedQuestion.getQuestion() : "";
         String newQ = newQuestion != null ? newQuestion.getQuestion() : "";
+
+        if (basedQuestion == null || newQuestion == null || !basedQuestion.sameSerial(newQuestion)) {
+            basedQ = basedQuestion != null ? basedQuestion.questionContentForCompare() : "";
+            newQ = newQuestion != null ? newQuestion.questionContentForCompare() : "";
+        }
+
         HtmlCompare questionHtmlCompare = new HtmlCompare(basedQ, newQ);
         if (basedQuestion != null) {
             basedQuestion.setQuestionHtml(questionHtmlCompare.comparedBasedHtml());
@@ -120,7 +126,9 @@ public class QuestionDiffDto {
         }
         this.basedQuestion = new QuestionRecordDto(basedQuestionNode);
         this.newQuestion = new QuestionRecordDto(newQuestionNode);
-        this.diff = !Objects.equals(basedQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid());
+//        this.diff = !Objects.equals(basedQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid());
+        this.diff = basedQuestionNode.isSame(newQuestionNode);
+
         if (basedQuestionNode.isSub()) {
             return;
         }
@@ -157,6 +165,8 @@ public class QuestionDiffDto {
 
         private String serial;
 
+        private Integer subSerial;
+
         private String question;
 
 //        private String questionHtml = "<span> Hello word. <span class='add'> some thing </span> <span class='del'> delete somme thing</span> common</span>";
@@ -180,10 +190,28 @@ public class QuestionDiffDto {
             this.questionId = questionNode.getQuestionId();
             this.questionVid = questionVersion.getVid();
             this.serial = questionNode.serial();
+            this.subSerial = questionNode.getSubSerial();
             this.question = questionVersion.getContent();
             this.questionEditTime = questionVersion.getContentEditTime();
             this.answer = questionVersion.getAnswer();
             this.answerEditTime = questionVersion.getAnswerEditTime();
         }
+
+        private String questionContentForCompare() {
+            if (this.subSerial == 0) {
+                return this.serial + ". " + this.question;
+            } else {
+                return this.subSerial + ". " + this.question;
+            }
+        }
+        private boolean sameSerial(QuestionRecordDto other) {
+            if (other == null) {
+                return false;
+            }
+            boolean sameSerial = StringUtils.equals(this.getSerial(), other.getSerial());
+            boolean sameSubSerial = Objects.equals(this.getSubSerial(), other.getSubSerial());
+            return sameSerial && sameSubSerial;
+        }
+
     }
 }

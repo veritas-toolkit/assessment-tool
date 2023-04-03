@@ -351,16 +351,18 @@ public class QuestionNode implements Comparable<QuestionNode> {
             return true;
         }
         if (this.isMain()) {
-            Set<Long> allSubQuestionVidSet = new HashSet<>();
-            allSubQuestionVidSet.addAll(this.subList.stream()
-                    .map(QuestionNode::getQuestionVid)
-                    .collect(Collectors.toSet()));
-            allSubQuestionVidSet.addAll(otherNode.subList.stream()
-                    .map(QuestionNode::getQuestionVid)
-                    .collect(Collectors.toSet()));
-            boolean thisDiff = allSubQuestionVidSet.size() != this.subList.size();
-            boolean newDiff = allSubQuestionVidSet.size() != otherNode.subList.size();
-            return thisDiff || newDiff;
+            boolean sameSubCount = this.getSubList().size() == otherNode.getSubList().size();
+            if (!sameSubCount) {
+                return true;
+            }
+            for (int i = 0; i < this.getSubList().size(); ++i) {
+                QuestionNode thisSub = this.getSubList().get(i);
+                QuestionNode otherSUb = otherNode.getSubList().get(i);
+                boolean sameVid = Objects.equals(thisSub.getQuestionVid(), otherSUb.getQuestionVid());
+                if (!sameVid) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -643,6 +645,37 @@ public class QuestionNode implements Comparable<QuestionNode> {
             return false;
         }
 
+    }
+
+    public boolean isSame(QuestionNode other) {
+        if (other == null) {
+            return false;
+        }
+        boolean sameProject = Objects.equals(this.getProjectId(), other.getProjectId());
+        boolean sameVid = Objects.equals(this.getQuestionVid(), other.getQuestionVid());
+        boolean sameSerial = StringUtils.equals(this.serial(), other.serial());
+        boolean sameSubSerial = Objects.equals(this.getSubSerial(), other.getSubSerial());
+
+        boolean allSame = sameProject && sameVid && sameSerial && sameSubSerial;
+        if (!allSame) {
+            return false;
+        }
+        if (this.isSub()) {
+            return true;
+        }
+
+        boolean sameSubCount = this.getSubList().size() == other.getSubList().size();
+        if (sameSubCount) {
+            return false;
+        }
+        for (int i = 0; i < this.getSubList().size(); ++i) {
+            QuestionNode thisSub = this.getSubList().get(i);
+            QuestionNode otherSUb = other.getSubList().get(i);
+            if (thisSub.isSame(otherSUb)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
