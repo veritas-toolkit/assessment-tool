@@ -69,6 +69,7 @@
                                v-show="!compareFlag"
                                :projectId="projectId"
                                :questionId="questionId"
+                               @updateAnswer="getQuestionnaireMenu()"
                                style="overflow-y: auto"></QuestionnaireAnswer>
 <!--          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"-->
 <!--                                      :compareVersionTime="compareVersionTime" :creator="creator"-->
