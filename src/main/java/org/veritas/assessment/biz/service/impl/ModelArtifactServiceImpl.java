@@ -127,7 +127,8 @@ public class ModelArtifactServiceImpl implements ModelArtifactService {
             saveJsonFile(modelArtifact);
             modelArtifactMapper.add(modelArtifact);
         } else {
-            log.info("The json file is same as before.");
+            modelArtifactMapper.add(modelArtifact);
+            log.warn("The json file is same as before.");
         }
     }
 
