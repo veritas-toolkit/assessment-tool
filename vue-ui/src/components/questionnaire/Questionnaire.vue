@@ -100,7 +100,7 @@
                 ref="compare-popover"
                 placement="top-start"
                 width="480"
-                height="500"
+                height="800"
                 trigger="click">
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
@@ -108,7 +108,7 @@
                     <el-table height="300" width="800" :data="exportedHistoryList"
                               @row-click="table_compare"
                               @cell-mouse-enter="loadExportedHistory">
-                      <el-table-column width="auto" label="Name">
+                      <el-table-column width="100" label="Name">
                         <template slot-scope="scope">
                           <div class="draft-left">
                             <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
@@ -116,20 +116,20 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column min-width="100" label="Created">
+                      <el-table-column width="100" label="Created">
                         <template slot-scope="scope">
                           <div class="draft-right">
                             <div>{{ scope.row.createdTime | changeTime }}</div>
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column width="auto" property="message" label="Message"/>
+                      <el-table-column min-width="250" property="message" label="Message"/>
                     </el-table>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
                     <el-table height="300" width="800" :data="draftHistoryList" @row-click="table_compare"
                               @cell-mouse-enter="loadDraftHistory">
-                      <el-table-column width="auto" label="Name">
+                      <el-table-column width="100" label="Name">
                         <template slot-scope="scope">
                           <div class="draft-left">
                             <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
@@ -137,14 +137,14 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column min-width="100" label="Created">
+                      <el-table-column width="100" label="Created">
                         <template slot-scope="scope">
                           <div class="draft-right">
                             <div>{{ scope.row.createdTime | changeTime }}</div>
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column width="auto" property="message" label="Message"/>
+                      <el-table-column min-width="250" property="message" label="Message" show-overflow-tooltip/>
                     </el-table>
                   </el-tab-pane>
                 </el-tabs>
@@ -420,6 +420,9 @@ export default {
               }
             })
             .then(res => {
+              if (res.data.page !== this.exportedHistoryPage.page + 1) {
+                return;
+              }
               let index = this.exportedHistoryList.length;
               for (let record of res.data.records) {
                 record.index = index;
@@ -444,6 +447,9 @@ export default {
               }
             })
             .then(res => {
+              if (res.data.page !== this.draftHistoryPage.page + 1) {
+                return;
+              }
               let index = this.draftHistoryList.length;
               for (let record of res.data.records) {
                 record.index = index;
