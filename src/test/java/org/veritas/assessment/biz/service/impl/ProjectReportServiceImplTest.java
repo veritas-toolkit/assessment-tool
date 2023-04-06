@@ -2,10 +2,13 @@ package org.veritas.assessment.biz.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
@@ -55,14 +58,13 @@ class ProjectReportServiceImplTest {
         }
     }
     @Test
-    void testCreateReport_success() throws Exception {
+    void testCreateReport_puwSuccess() throws Exception {
         User admin = userMapper.findById(1);
-        Project project = create();
+        Project project = projectServiceTestUtils.create(BusinessScenarioEnum.PUW);
         QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
+        assertNotNull(questionnaire);
         assertNotNull(projectReportService);
-
         String json = JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_PUW);
-
         ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, "unit-test.json");
         // save file out of transaction.
         modelArtifactService.saveJsonFile(modelArtifact);
@@ -70,6 +72,33 @@ class ProjectReportServiceImplTest {
         modelArtifact.setUploadUserId(admin.getId());
         modelArtifact.setUploadTime(new Date());
 
+        projectService.updateModelArtifact(admin, project.getId(), modelArtifact);
+        ProjectReport report = projectReportService.createReport(admin, project, "1.0.0", "V1.0.0");
+        log.info("report: {}", report);
+    }
+
+    @Test
+    public void testCreateReport_success() throws Exception {
+        testCreateReport_success(BusinessScenarioEnum.BASE_REGRESSION, JsonModelTestUtils.EXAMPLE_BR);
+        testCreateReport_success(BusinessScenarioEnum.BASE_CLASSIFICATION, JsonModelTestUtils.EXAMPLE_BC);
+        testCreateReport_success(BusinessScenarioEnum.CREDIT_SCORING, JsonModelTestUtils.EXAMPLE_CS);
+        testCreateReport_success(BusinessScenarioEnum.CUSTOMER_MARKETING, JsonModelTestUtils.EXAMPLE_CM);
+        testCreateReport_success(BusinessScenarioEnum.PUW, JsonModelTestUtils.EXAMPLE_PUW);
+    }
+
+    private void testCreateReport_success(BusinessScenarioEnum businessScenarioEnum, String jsonPath) throws Exception {
+        Project project = projectServiceTestUtils.create(businessScenarioEnum);
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
+        assertNotNull(questionnaire);
+        assertNotNull(projectReportService);
+        String json = JsonModelTestUtils.loadJson(jsonPath);
+
+        ModelArtifact modelArtifact = modelArtifactService.create(project.getId(), json, "unit-test.json");
+        // save file out of transaction.
+        modelArtifactService.saveJsonFile(modelArtifact);
+        User admin = userMapper.findById(1);
+        modelArtifact.setUploadUserId(admin.getId());
+        modelArtifact.setUploadTime(new Date());
         projectService.updateModelArtifact(admin, project.getId(), modelArtifact);
         ProjectReport report = projectReportService.createReport(admin, project, "1.0.0", "V1.0.0");
         log.info("report: {}", report);
