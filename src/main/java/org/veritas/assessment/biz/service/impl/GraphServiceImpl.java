@@ -173,13 +173,25 @@ public class GraphServiceImpl implements GraphService {
             builder.redirectErrorStream(false);
             StopWatch stopWatch = StopWatch.createStarted();
             Process process = builder.start();
+            stopWatch.stop();
+            log.info("process time: {}", stopWatch);
 
             String result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
             log.info("stdout:\n{}", result);
             String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-            log.warn("stderr:\n{}", stderr);
-            stopWatch.stop();
-            log.info("process time: {}", stopWatch);
+            stderr = StringUtils.trimToNull(stderr);
+            if (stderr != null) {
+                log.warn("stderr:\n{}", stderr);
+                if (veritasProperties.isTestProfileActive()) {
+                    throw new IllegalStateException("Call python with stderr output.");
+                }
+            }
+            if (process.exitValue() != 0) {
+                log.error("plot exit with non-zero code.");
+                if (veritasProperties.isTestProfileActive()) {
+                    throw new IllegalStateException("call python failed.");
+                }
+            }
             if (!StringUtils.isEmpty(result)) {
                 return objectMapper.readValue(result,
                         new TypeReference<List<String>>() {
