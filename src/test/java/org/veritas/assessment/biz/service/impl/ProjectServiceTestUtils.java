@@ -60,6 +60,7 @@ public class ProjectServiceTestUtils {
             throw new IllegalStateException("There is no template questionnaire of " + businessScenarioEnum);
         }
         TemplateQuestionnaire templateQuestionnaire = templateQuestionnaireList.get(0);
+        templateQuestionnaire = templateQuestionnaireService.findByTemplateId(templateQuestionnaire.getId());
 
 
         return projectService.createProject(admin, project, templateQuestionnaire);

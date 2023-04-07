@@ -173,13 +173,15 @@ public class GraphServiceImpl implements GraphService {
             builder.redirectErrorStream(false);
             StopWatch stopWatch = StopWatch.createStarted();
             Process process = builder.start();
-            stopWatch.stop();
-            log.info("process time: {}", stopWatch);
 
             String result = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
             log.info("stdout:\n{}", result);
             String stderr = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
             stderr = StringUtils.trimToNull(stderr);
+
+            stopWatch.stop();
+            log.info("create plot time: {}", stopWatch);
+
             if (stderr != null) {
                 log.warn("stderr:\n{}", stderr);
                 if (veritasProperties.isTestProfileActive()) {

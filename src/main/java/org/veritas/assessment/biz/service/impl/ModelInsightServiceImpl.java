@@ -20,8 +20,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -46,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -72,6 +72,7 @@ public class ModelInsightServiceImpl implements ModelInsightService {
         ModelMap modelMap = genModelMap(project, modelArtifact);
         List<QuestionNode> allQuestionList = questionnaireVersion.finAllQuestionNodeList();
         List<EditAnswerAction> actionList = new ArrayList<>();
+        StopWatch stopWatch = StopWatch.createStarted();
         for (QuestionNode questionNode : allQuestionList) {
             if (questionNode.getPrinciple() == Principle.F && jsonModel.getFairness() == null) {
                 log.warn("The json file does not contain fairness info.");
@@ -80,33 +81,46 @@ public class ModelInsightServiceImpl implements ModelInsightService {
                 log.warn("The json file does not contain transparency info.");
                 continue;
             }
-            Template template = freemarkerTemplateService.findTemplate(project.getBusinessScenario(), questionNode);
-            if (template != null) {
-                // write the freemarker output to a StringWriter
-                StringWriter stringWriter = new StringWriter();
-                try {
-                    template.process(modelMap, stringWriter);
-                    String answer = StringUtils.trimToNull(stringWriter.toString());
-                    if (answer == null) {
-                        continue;
-                    }
-                    Document document = Jsoup.parseBodyFragment(answer);
-                    EditAnswerAction action = new EditAnswerAction();
-                    action.setProjectId(project.getId());
-                    action.setQuestionId(questionNode.getQuestionId());
-                    action.setBasedQuestionVid(questionNode.getQuestionVid());
-                    action.setAnswer(answer);
-                    actionList.add(action);
-                } catch (TemplateException | IOException e) {
-                    log.error("freemarker template process filed.", e);
-                    if (veritasProperties.isTestProfileActive()) {
-                        throw new RuntimeException("freemarker template process filed. template: " + template.getName(),
-                                e);
-                    }
-                }
+            EditAnswerAction action = insight(project, modelMap, questionNode);
+            if (action != null) {
+                actionList.add(action);
             }
         }
+        stopWatch.stop();
+        if (log.isDebugEnabled()) {
+            log.debug("insight time: {}ms", stopWatch.getTime(TimeUnit.MILLISECONDS));
+            log.debug("action list size: {}", actionList.size());
+        }
         return Collections.unmodifiableList(actionList);
+    }
+
+    private EditAnswerAction insight(Project project, ModelMap modelMap, QuestionNode questionNode) {
+        Template template = freemarkerTemplateService.findTemplate(project.getBusinessScenario(), questionNode);
+        if (template == null) {
+            return null;
+        }
+        try {
+            StringWriter stringWriter = new StringWriter();
+            template.process(modelMap, stringWriter);
+            String answer = StringUtils.trimToNull(stringWriter.toString());
+            if (answer == null) {
+                return null;
+            }
+            // TODO: 2023/4/7 answer reformat
+            EditAnswerAction action = new EditAnswerAction();
+            action.setProjectId(project.getId());
+            action.setQuestionId(questionNode.getQuestionId());
+            action.setBasedQuestionVid(questionNode.getQuestionVid());
+            action.setAnswer(answer);
+            return action;
+        } catch (TemplateException | IOException e) {
+            log.error("freemarker template process filed.", e);
+            if (veritasProperties.isTestProfileActive()) {
+                throw new RuntimeException("freemarker template process filed. template: " + template.getName(),
+                        e);
+            }
+            return null;
+        }
     }
 
 
