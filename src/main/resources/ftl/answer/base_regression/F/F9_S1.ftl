@@ -1,7 +1,7 @@
 <#--F9.1 What is the primary fairness metric for this use case?-->
 
 <#assign fairnessInit=fairness.fairnessInit>
-<#if fairnessInit.fairMetricNameInput == 'auto'>
+<#if fairnessInit.fairMetricNameInput == 'auto' && fairnessInit.fairImpact?? >
 <div>
     To assess the fairness of ${businessScenario.getName()} model,our priority is to measure ${fairnessInit.fairImpact} ${fairnessInit.fairPriority!""} to the ${fairnessInit.fairConcernDisplay()}group,
     therefore we choose ${fairnessInit.fairMetricName} as primary fairness metric for the assessment.
