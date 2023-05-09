@@ -69,7 +69,7 @@ The pie chart for target label distribution is shown.
 <#--如果reject inference不为null-->
 
 <#assign fairnessInit=fairness.fairnessInit>
-<#if fairnessInit.special_params.num_applicants??>
+<#if fairnessInit.specialParameters?? && fairnessInit.specialParameters.num_applicants?? && fairnessInit.specialParameters.base_default_rate??>
 
 <div>
     In the case of credit scoring, ground truth labels of default/resolve are only available for customers that were approved for a loan.
@@ -95,18 +95,20 @@ The following table shows the number of applicants and base default rates of dif
             <th>Privileged</th>
             <th>Unprivileged</th>
         </tr>
-        <tr>
-            <th>Number of Applicants</td>
-            <td> fairnessInit.special_params.num_applicants.feature_name.get(0)</td>
-            <td> fairness_init.special_param.num_appicants.feature_name.get(1)</td>
-        </tr>
-        <tr>
-            <th>Base Default Rate</th>
-            <td> fairness_init.special_param.base_default_rate.feature_name.get(0)</td>
-            <td> fairness_init.special_param.base_default_rate.feature_name.get(1)</td>
-        </tr>
         </thead>
+        <tbody>
+        <tr>
+            <td>Number of Applicants</td>
+            <td> ${fairnessInit.specialParameters.num_applicants.feature_name.get(0)}</td>
+            <td> ${fairnessInit.specialParameters.num_applicants.feature_name.get(1)}</td>
+        </tr>
+        <tr>
+            <td>Base Default Rate</td>
+            <td> ${fairnessInit.specialParameters.base_default_rate.feature_name.get(0)}</td>
+            <td> ${fairnessInit.specialParameters.base_default_rate.feature_name.get(1)}</td>
+        </tr>
 
+        </tbody>
     </table>
     </div>
 

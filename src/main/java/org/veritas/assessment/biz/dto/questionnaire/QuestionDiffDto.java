@@ -18,9 +18,12 @@ package org.veritas.assessment.biz.dto.questionnaire;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.dto.UserSimpleDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionVersion;
+import org.veritas.assessment.biz.util.HtmlCompare;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,13 +33,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
+@Slf4j
 public class QuestionDiffDto {
 
     private QuestionRecordDto basedQuestion;
 
     private QuestionRecordDto newQuestion;
 
-    // only consider the question and answer, without subs.
     private boolean diff;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -51,6 +54,48 @@ public class QuestionDiffDto {
             this.onlyNew(newQuestionNode);
         } else {
             this.compareTwoVersions(basedQuestionNode, newQuestionNode);
+        }
+        this.doCompare();
+    }
+
+    private void doCompare() {
+        String basedQ = basedQuestion != null ? basedQuestion.getQuestion() : "";
+        String newQ = newQuestion != null ? newQuestion.getQuestion() : "";
+
+        if (basedQuestion == null || newQuestion == null || !basedQuestion.sameSerial(newQuestion)) {
+            basedQ = basedQuestion != null ? basedQuestion.questionContentForCompare() : "";
+            newQ = newQuestion != null ? newQuestion.questionContentForCompare() : "";
+        }
+
+        HtmlCompare questionHtmlCompare = new HtmlCompare(basedQ, newQ);
+        if (basedQuestion != null) {
+            basedQuestion.setQuestionHtml(questionHtmlCompare.comparedBasedHtml());
+            if (log.isTraceEnabled()) {
+                log.trace("based question html:\n{}", basedQuestion.getQuestionHtml());
+            }
+        }
+        if (newQuestion != null) {
+            newQuestion.setQuestionHtml(questionHtmlCompare.comparedNewHtml());
+            if (log.isTraceEnabled()) {
+                log.trace("new question html:\n{}", newQuestion.getQuestionHtml());
+            }
+        }
+
+        String basedAns = basedQuestion != null ? basedQuestion.getAnswer() : "";
+        String newAns = newQuestion != null ? newQuestion.getAnswer() : "";
+        HtmlCompare answerCompare = new HtmlCompare(basedAns, newAns);
+
+        if (basedQuestion != null) {
+            basedQuestion.setAnswerHtml(answerCompare.comparedBasedHtml());
+            if (log.isTraceEnabled()) {
+                log.info("based answer html:\n{}", basedQuestion.getAnswerHtml());
+            }
+        }
+        if (newQuestion != null) {
+            newQuestion.setAnswerHtml(answerCompare.comparedNewHtml());
+            if (log.isTraceEnabled()) {
+                log.info("new answer html:\n{}", newQuestion.getAnswerHtml());
+            }
         }
     }
 
@@ -81,7 +126,9 @@ public class QuestionDiffDto {
         }
         this.basedQuestion = new QuestionRecordDto(basedQuestionNode);
         this.newQuestion = new QuestionRecordDto(newQuestionNode);
-        this.diff = !Objects.equals(basedQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid());
+//        this.diff = !Objects.equals(basedQuestionNode.getQuestionVid(), newQuestionNode.getQuestionVid());
+        this.diff = basedQuestionNode.isSame(newQuestionNode);
+
         if (basedQuestionNode.isSub()) {
             return;
         }
@@ -118,27 +165,53 @@ public class QuestionDiffDto {
 
         private String serial;
 
+        private Integer subSerial;
+
         private String question;
+
+//        private String questionHtml = "<span> Hello word. <span class='add'> some thing </span> <span class='del'> delete somme thing</span> common</span>";
+        private String questionHtml;
 
         private Date questionEditTime;
 
         private UserSimpleDto questionEditUser;
 
         private String answer;
+//        private String answerHtml = "<span> Hello word. <span class='add'> some thing </span> <span class='del'> delete somme thing</span> common</span>";
+        private String answerHtml;
 
         private Date answerEditTime;
 
         private UserSimpleDto answerEditUser;
+
 
         public QuestionRecordDto(QuestionNode questionNode) {
             QuestionVersion questionVersion = questionNode.getQuestionVersion();
             this.questionId = questionNode.getQuestionId();
             this.questionVid = questionVersion.getVid();
             this.serial = questionNode.serial();
+            this.subSerial = questionNode.getSubSerial();
             this.question = questionVersion.getContent();
             this.questionEditTime = questionVersion.getContentEditTime();
             this.answer = questionVersion.getAnswer();
             this.answerEditTime = questionVersion.getAnswerEditTime();
         }
+
+        private String questionContentForCompare() {
+            if (this.subSerial == 0) {
+                return this.serial + ". " + this.question;
+            } else {
+                return this.subSerial + ". " + this.question;
+            }
+        }
+        private boolean sameSerial(QuestionRecordDto other) {
+            if (other == null) {
+                return false;
+            }
+            boolean sameSerial = StringUtils.equals(this.getSerial(), other.getSerial());
+            boolean sameSubSerial = Objects.equals(this.getSubSerial(), other.getSubSerial());
+            return sameSerial && sameSubSerial;
+        }
+
     }
 }

@@ -140,7 +140,7 @@ const projectApi = {
 
     exportReport(projectId, exportReport) {
         return request({
-            url:`/api/project/${projectId}/report/export2`,
+            url:`/api/project/${projectId}/report/export`,
             method: 'post',
             responseType: "json",
             headers: {'Content-Type': 'application/json; charset=UTF-8'},

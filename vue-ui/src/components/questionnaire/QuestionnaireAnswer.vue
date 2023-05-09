@@ -383,6 +383,7 @@ export default {
           this.$message.success('Update successfully!')
           this.editorShow[id] = false
           this.getQuestionnaireAnswer()
+          this.$emit("updateAnswer")
         }
       })
     },

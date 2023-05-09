@@ -13,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 
 public class JsonModelTestUtils {
 
+    public static final String EXAMPLE_BC = "json/model_artifact_base_classification_20230331_1134.json";
+
+    public static final String EXAMPLE_BR = "json/model_artifact_base_regression_20230314_1433.json";
     public static final String EXAMPLE_CS = "json/model_artifact_credit_scoring_20230306_1423.json";
 
     public static final String EXAMPLE_CM = "json/model_artifact_custmr_marketing_20230306_1425.json";

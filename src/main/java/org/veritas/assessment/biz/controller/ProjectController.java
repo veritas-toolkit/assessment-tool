@@ -76,6 +76,8 @@ import org.veritas.assessment.system.service.RoleService;
 import org.veritas.assessment.system.service.UserService;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -277,7 +279,7 @@ public class ProjectController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'manage members')")
     @PutMapping("/{projectId}/member")
     public List<Member> addMemberList(@PathVariable("projectId") Integer projectId,
-                                      @RequestBody List<MembershipDto> membershipDtoList) {
+                                      @Valid @NotEmpty @RequestBody List<MembershipDto> membershipDtoList) {
         Objects.requireNonNull(projectId);
         Objects.requireNonNull(membershipDtoList);
         membershipDtoList.forEach(membershipDto -> {
@@ -300,7 +302,7 @@ public class ProjectController {
     @PostMapping("/{projectId}/member")
     @PreAuthorize("hasPermission(#projectId, 'project', 'manage members')")
     public Member modifyMember(@PathVariable("projectId") Integer projectId,
-                               @RequestBody MembershipDto membershipDto) {
+                               @Valid @RequestBody MembershipDto membershipDto) {
         if (membershipDto.getUserId() == null || membershipDto.getType() == null) {
             throw new ErrorParamException("Params [userId, type] can't be null");
         }

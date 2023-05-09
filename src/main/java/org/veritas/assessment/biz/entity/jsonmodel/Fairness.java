@@ -291,7 +291,7 @@ public class Fairness {
         @JsonProperty(value = "feature_distribution")
         private Map<String, BigDecimal> featureDistributionMap;
         @JsonProperty(value = "fair_metric_values")
-        private Map<String, List<BigDecimal>> fairMetricValueListMap;
+        private Map<String, List<Object>> fairMetricValueListMap;
         @JsonProperty(value = "fairness_conclusion")
         private String fairnessConclusion;
         @JsonProperty(value = "tradeoff")
@@ -300,17 +300,17 @@ public class Fairness {
         @JsonProperty(value = "feature_importance")
         private Map<String, List<Object>> featureImportance;
 
-        public static String faireMetricValueFormat(List<BigDecimal> valueList) {
-            BigDecimal value = BigDecimal.ZERO;
-            BigDecimal range = BigDecimal.ZERO;
-            if (valueList != null) {
-                if (valueList.size() >= 1) {
-                    value = valueList.get(0);
-                }
-                if (valueList.size() >= 2) {
-                    range = valueList.get(1);
+        public static String faireMetricValueFormat(List<Object> valueList) {
+            if (valueList.size() >= 2) {
+                if (valueList.get(0) instanceof BigDecimal && valueList.get(1) instanceof BigDecimal) {
+                    return faireMetricValue((BigDecimal) valueList.get(0), (BigDecimal) valueList.get(1));
                 }
             }
+            return "N/A";
+        }
+        public static String faireMetricValue(BigDecimal value, BigDecimal range) {
+            Objects.requireNonNull(value);
+            Objects.requireNonNull(range);
             DecimalFormat df = new DecimalFormat("#0.000");
             return String.format("%s +/- %s", df.format(value), df.format(range));
         }
@@ -337,7 +337,6 @@ public class Fairness {
                 return BigDecimal.ZERO;
             }
             return max.divide(min, 4, RoundingMode.HALF_UP);
-
         }
 
         // call from ftl
@@ -354,15 +353,15 @@ public class Fairness {
             return ratio.compareTo(threshold) < 0;
         }
 
-        public Optional<BigDecimal> findFairMetricValue(Fairness jsonModel) {
+        public Optional<Object> findFairMetricValue(Fairness fairness) {
             if (fairMetricValueListMap == null || fairMetricValueListMap.isEmpty()) {
                 return Optional.empty();
             }
-            String name = jsonModel.fairnessInit.fairMetricName;
+            String name = fairness.fairnessInit.fairMetricName;
             if (name == null) {
                 return Optional.empty();
             }
-            List<BigDecimal> list = fairMetricValueListMap.get(name);
+            List<Object> list = fairMetricValueListMap.get(name);
             if (list == null || list.isEmpty()) {
                 return Optional.empty();
             }
