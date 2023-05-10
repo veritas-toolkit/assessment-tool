@@ -1,18 +1,14 @@
 name: Build Nightly
 
 on:
-#  push:
-#    branches:
-#      - feature/*
-  workflow_run:
-    workflows: ["Unit Test"]
+  push:
     branches:
-      - feature/*
-      - release/*
-      - develop
-      - master
-    types:
-      - completed
+      - feature
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .github/workflows/unit-test.yml
+      - doc/**
 
 jobs:
   docker-image-build:
@@ -20,31 +16,31 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+        uses: actions/checkout@v3
 
-      - name: branch
-        run: git branch
-
-      - name: Set up JDK1.8
-        uses: actions/setup-java@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3
         with:
-          java-version: 8
           distribution: 'adopt'
+          java-version: '8'
           cache: 'maven'
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.15'
+
+      - name: Setup python env
+        run: bash bin/install.sh && source py/venv/bin/activate
 
       - name: Build with Maven
-        run: ./mvnw -B clean package -ntp && sh bin/release.sh
-#        run: ./mvnw -B clean package -Dmaven.test.skip=true -ntp && sh bin/release.sh
-#        run: ./mvnw -v
+        run: source py/venv/bin/activate && ./mvnw -B clean test package -ntp && bash bin/release.sh
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Cache Docker layers
         uses: actions/cache@v2

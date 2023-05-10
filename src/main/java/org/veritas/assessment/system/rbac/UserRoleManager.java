@@ -17,20 +17,25 @@
 package org.veritas.assessment.system.rbac;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.system.constant.PermissionType;
 import org.veritas.assessment.system.constant.ResourceType;
 import org.veritas.assessment.system.entity.Group;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+@Slf4j
 public class UserRoleManager {
     @Getter
     private final List<UserRole> userRoleList;
@@ -94,6 +99,15 @@ public class UserRoleManager {
                 return true;
             }
         }
+        Set<PermissionType> projectEditSet = new HashSet<>();
+        projectEditSet.add(PermissionType.PROJECT_EDIT);
+        projectEditSet.add(PermissionType.PROJECT_EDIT_QUESTIONNAIRE);
+        projectEditSet.add(PermissionType.PROJECT_UPLOAD_JSON);
+        projectEditSet.add(PermissionType.PROJECT_INPUT_ANSWER);
+        if (project.isArchived() && projectEditSet.contains(permissionType)) {
+            log.warn("The project has been archived, cannot be edited.");
+            throw new IllegalRequestException("The project has been archived. Cannot be edited.");
+        }
         for (UserRole userRole : userRoleList) {
             if (userRole.hasPermission(project, permissionType)) {
                 return true;
@@ -111,5 +125,4 @@ public class UserRoleManager {
         }
         return false;
     }
-
 }

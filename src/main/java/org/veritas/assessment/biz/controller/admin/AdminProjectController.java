@@ -100,6 +100,17 @@ public class AdminProjectController {
         return projectDtoConverter.convertFrom(newProject);
     }
 
+    @Operation(summary = "Admin: Archive the project.")
+    @PostMapping("/{projectId}/archive")
+    public void archiveProject(@PathVariable("projectId") int projectId) {
+        projectService.archive(projectId);
+    }
+    @Operation(summary = "Admin: Unarchive the project.")
+    @PostMapping("/{projectId}/unarchive")
+    public void unarchiveProject(@PathVariable("projectId") int projectId) {
+        projectService.unarchive(projectId);
+    }
+
 
     @Operation(summary = "Admin: list all the members of the project.")
     @GetMapping("/{projectId}/member")

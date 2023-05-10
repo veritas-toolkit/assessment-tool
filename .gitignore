@@ -9,6 +9,7 @@ file/
 
 # python plot
 /python_plot/*.json
+py/__pycache__/
 
 ### STS ###
 .apt_generated

@@ -19,14 +19,10 @@ package org.veritas.assessment.biz.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -66,18 +62,6 @@ class GroupControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private CacheManager cacheManager;
-
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
 
     private GroupDto createGroup(String name) throws Exception {
         GroupCreateDto dto = new GroupCreateDto();
@@ -213,6 +197,7 @@ class GroupControllerTest {
 
     @Autowired
     private GroupService groupService;
+
     @Test
     void testDeleteMember_success() throws Exception {
         GroupDto groupDto = createGroup("for_delete_member");
@@ -228,7 +213,7 @@ class GroupControllerTest {
         assertEquals(3, groupService.getMemberList(groupDto.getId()).size());
 
         MvcResult mvcResult = mockMvc.perform(delete(
-                "/api/group/{groupId}/member/{userId}", groupDto.getId(), 2)
+                        "/api/group/{groupId}/member/{userId}", groupDto.getId(), 2)
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().is2xxSuccessful())

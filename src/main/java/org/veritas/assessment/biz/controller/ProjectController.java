@@ -30,27 +30,40 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
 import org.veritas.assessment.biz.dto.ModelArtifactDto;
 import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.dto.QuestionnaireProgressDto;
-import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.RoleDto;
+import org.veritas.assessment.biz.dto.questionnaire.PrincipleAssessmentProgressDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.biz.service.ImageService;
 import org.veritas.assessment.biz.service.ModelArtifactService;
-import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.ProjectService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
+import org.veritas.assessment.common.exception.IllegalDataException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.ResourceType;
@@ -62,9 +75,13 @@ import org.veritas.assessment.system.service.GroupService;
 import org.veritas.assessment.system.service.RoleService;
 import org.veritas.assessment.system.service.UserService;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -92,21 +109,33 @@ public class ProjectController {
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
-    @Autowired
-    private ProjectReportService reportService;
+    private QuestionnaireService questionnaireService;
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    TemplateQuestionnaireService templateQuestionnaireService;
 
     @Operation(summary = "Get pageable project list which current user can access.")
     @GetMapping("")
     public Pageable<ProjectDto> listProject(
             @Parameter(hidden = true) User operator,
-            @RequestParam(name = "prefix", required = false) String prefix,
-            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "keyword", required = false) String keywordString,
+            @RequestParam(name = "archived", required = false, defaultValue = "false") Boolean archived,
+            @RequestParam(name = "businessScenario", required = false) Integer businessScenarioCode,
+            @RequestParam(name = "createdByMe", required = false, defaultValue = "false") boolean createdByMe,
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
             @RequestParam(name = "pageSize", defaultValue = "20", required = false) Integer pageSize) {
-        Pageable<Project> pageable = projectService.findProjectPageable(operator, prefix, keyword, page, pageSize);
+        QueryProjectPageableAction action = new QueryProjectPageableAction();
+        action.setKeyWordsString(keywordString);
+        action.setArchived(archived);
+        action.setBusinessScenario(BusinessScenarioEnum.ofCode(businessScenarioCode));
+        if (createdByMe) {
+            action.setCreatorUserId(operator.getId());
+        }
+        action.setPage(page);
+        action.setPageSize(pageSize);
+        Pageable<Project> pageable = projectService.findProjectPageable(operator, action);
         return projectDtoConverter.convertFrom(pageable);
     }
 
@@ -122,17 +151,36 @@ public class ProjectController {
         return projectDtoConverter.convertFrom(pageable);
     }
 
+
     @Operation(summary = "Create a project")
-    @PutMapping("/new")
+    @PostMapping("/new")
     @ResponseStatus(code = HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#dto, 'create')")
     public ProjectDto createProject(@Parameter(hidden = true) User operator,
                                     @RequestBody ProjectCreateDto dto) {
-        if (dto.getQuestionnaireTemplateId() == null) {
-            throw new ErrorParamException("Creating project needs questionnaire template id.");
+        if (dto.getQuestionnaireTemplateId() == null && dto.getCopyFromProjectId() == null) {
+            throw new ErrorParamException("Creating project needs questionnaire template id or copy from other project.");
         }
         Project project = dto.toEntity(operator.getId());
-        Project newProject = projectService.createProject(operator, project, dto.getQuestionnaireTemplateId());
+        Integer templateId = dto.getQuestionnaireTemplateId();
+        Integer copyFromProjectId = dto.getCopyFromProjectId();
+        Project newProject = null;
+
+        if (templateId != null) {
+            TemplateQuestionnaire template = templateQuestionnaireService.findByTemplateId(templateId);
+            if (template == null) {
+                throw new NotFoundException("Not found the questionnaire template.");
+            }
+            newProject = projectService.createProject(operator, project, template);
+        } else if (copyFromProjectId != null) {
+            Project old = projectService.findProjectById(copyFromProjectId);
+            if (old == null) {
+                throw new NotFoundException("Not found the project.");
+            }
+            newProject = projectService.createProject(operator, project, old);
+        } else {
+            throw new IllegalDataException("Choose a questionnaire template or copy from other project's questionnaire.");
+        }
         return projectDtoConverter.convertFrom(newProject);
     }
 
@@ -145,6 +193,8 @@ public class ProjectController {
         return projectDtoConverter.convertFrom(project);
     }
 
+
+
     @Operation(summary = "Get the project information.")
     @GetMapping("/{projectId}/detail")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
@@ -152,17 +202,19 @@ public class ProjectController {
                                              @PathVariable("projectId") int projectId) {
         Project project = projectService.findProjectById(projectId);
         ProjectDto projectDto = projectDtoConverter.convertFrom(project);
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(projectId);
-        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
-        List<ReportHistoryDto> list = ReportHistoryDto.copyFrom(reportService.findReportHistoryList(projectId));
+
 
         ProjectDetailDto projectDetailDto = new ProjectDetailDto();
         projectDetailDto.setProject(projectDto);
-        projectDetailDto.setQuestionnaireProgress(new QuestionnaireProgressDto(questionnaire));
+        // FIXME: 2023/1/31 query from the database.
+        QuestionnaireVersion questionnaireVersion = questionnaireService.findLatestQuestionnaire(projectId);
+        projectDetailDto.setProgressList(PrincipleAssessmentProgressDto.from(project, questionnaireVersion));
+
+        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
         if (modelArtifact != null) {
             projectDetailDto.setModelArtifact(new ModelArtifactDto(modelArtifact));
         }
-        projectDetailDto.setReportHistoryList(list);
+
         UserRole userRole = roleService.findUserRole(operator.getId(), ResourceType.PROJECT, projectId);
         if (userRole != null) {
             RoleDto roleDto = new RoleDto(userRole.getRole());
@@ -184,6 +236,20 @@ public class ProjectController {
     @DeleteMapping("/{projectId}")
     public void deleteProject(@PathVariable("projectId") int projectId) {
         projectService.delete(projectId);
+    }
+
+    @Operation(summary = "Archive the project.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'delete')")
+    @PostMapping("/{projectId}/archive")
+    public void archiveProject(@PathVariable("projectId") int projectId) {
+        projectService.archive(projectId);
+    }
+
+    @Operation(summary = "Unarchive the project.")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'delete')")
+    @PostMapping("/{projectId}/unarchive")
+    public void unarchiveProject(@PathVariable("projectId") int projectId) {
+        projectService.unarchive(projectId);
     }
 
     @Operation(summary = "Modify the basic information of the project.")
@@ -213,7 +279,7 @@ public class ProjectController {
     @PreAuthorize("hasPermission(#projectId, 'project', 'manage members')")
     @PutMapping("/{projectId}/member")
     public List<Member> addMemberList(@PathVariable("projectId") Integer projectId,
-                                      @RequestBody List<MembershipDto> membershipDtoList) {
+                                      @Valid @NotEmpty @RequestBody List<MembershipDto> membershipDtoList) {
         Objects.requireNonNull(projectId);
         Objects.requireNonNull(membershipDtoList);
         membershipDtoList.forEach(membershipDto -> {
@@ -236,7 +302,7 @@ public class ProjectController {
     @PostMapping("/{projectId}/member")
     @PreAuthorize("hasPermission(#projectId, 'project', 'manage members')")
     public Member modifyMember(@PathVariable("projectId") Integer projectId,
-                               @RequestBody MembershipDto membershipDto) {
+                               @Valid @RequestBody MembershipDto membershipDto) {
         if (membershipDto.getUserId() == null || membershipDto.getType() == null) {
             throw new ErrorParamException("Params [userId, type] can't be null");
         }
@@ -284,7 +350,7 @@ public class ProjectController {
     @Operation(summary = "Download the model artifact file(json).")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
     @GetMapping("/{projectId}/modelArtifact/download")
-    public HttpEntity<String> downloadJson(@PathVariable("projectId") Integer projectId) {
+    public void downloadJson(@PathVariable("projectId") Integer projectId, HttpServletResponse response) throws IOException {
         ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
         if (modelArtifact == null) {
             throw new NotFoundException(String.format("project[%d] haven't uploaded any model artifacts.", projectId));
@@ -294,12 +360,18 @@ public class ProjectController {
         } catch (IOException exception) {
             throw new NotFoundException("File not found or deleted.");
         }
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-        header.set(HttpHeaders.CONTENT_DISPOSITION,
+
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=" + modelArtifact.getFilename().replace(" ", "_"));
-        header.setContentLength(modelArtifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
-        return new HttpEntity<>(modelArtifact.getJsonContent(), header);
+        response.setContentLength(modelArtifact.getJsonContent().getBytes(StandardCharsets.UTF_8).length);
+        try (OutputStream outputStream = response.getOutputStream();
+             InputStream inputStream = IOUtils.toInputStream(modelArtifact.getJsonContent(), StandardCharsets.UTF_8)) {
+            IOUtils.copy(inputStream, outputStream);
+        } catch (IOException exception) {
+            log.error("copy failed", exception);
+            throw new IOException("Download model artifact failed.");
+        }
     }
 
     @Operation(summary = "Upload the image of the project's report.")

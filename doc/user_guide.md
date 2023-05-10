@@ -24,6 +24,9 @@ We recommend using **Google Chrome** to access the system. The system support 50
 5. Export the report.
 6. Repeat step 2 to step 5 if necessary.
 
+### User Wizard 
+
+At the first login, a user wizard will pop up to guide the users through the main steps to do an assessment. You can either click **skip** or **next**.
 
 ### Project
 
@@ -31,21 +34,37 @@ We recommend using **Google Chrome** to access the system. The system support 50
 
 To view project list, you should select **Menu > Projects**.
 
-* The dashboard displays a list of **all** projects by default, sorted by last updated date.
+* The dashboard displays a list of **all** projects by default, sorted by last updated date. And you can filter all the projects through the business scenario in the upper right corner.
 * To view projects you create, click **Created by me**.
+* In the **Archived** tab, you can see all the archived projects that you are a member of.
 * In the **keyword** field, you can search the projects you want.
 * Below you can view the project by selecting the **page number**, and the **total** number of projects has also been displayed.
 
+##### 
 **Create Project**
 
-1. Click the menu **Projects**, and then in your dashboard, click the **Create project** button. This opens the **New assessment project** dialog.
-2. On the **New assessment project** dialog, you should provide the following information:
-    * The name of your project in the **Project Name** field.
-    * The **Project Description** field enables you to enter a description for your project's dashboard, which helps others understand what your project is about.
-    * Select the **Business Scenario** which contains credit scoring & customer marketing.
-    * In the **Questionnaire Template** field, using one of the available template.
-    * Select the owner of the project, User or group can be chosen in this **Owner** field.
-3. Click **Create** button.
+
+1. Click the menu **Projects**, and then in your dashboard, click the **Create project** button. This opens the **Create project** dialog.
+2. There are two ways to create project on the **Create project** dialog:
+   * **Create new project**
+
+      you should provide the following information:
+
+      * The name of your project in the **Project Name** field.
+      * The **Project Description** field enables you to enter a description for your project's dashboard, which helps others understand what your project is about.
+      * Select the **Business Scenario** which contains base classification, base regression, credit score, customer marketing & predictive underwriting.
+      * In the **Questionnaire Template** field, using an available template for the selected business scenario.
+      * Select the **Assess Principle** from the FEAT principles. Note that generic is required.
+      * Select the owner of the project, User or group can be chosen in this **Owner** field.
+   * **Create from existing project**
+     To create from existing project, first enter the project list page and click **Create project** button.
+
+     1. Select an existing project from the drop-down menu
+     2. Edit **Assess Principle**,**Project name**,**Project Description** as you need.
+     3. Select the owner of the project, User or group can be chosen in this **Owner** field
+     4. Click **Create** button.
+
+
 
 #### Project main page
 
@@ -54,9 +73,16 @@ To view project list, you should select **Menu > Projects**.
 To edit project's basic info, first navigate to the main page of the project.
 
 1. Navigate to white **...** button.
-2. Expand the **Edit project** section and click it, this opens the **Edit project** dialog.
+2. Click **Edit project** section, this opens the **Edit project** dialog. 
+3. On the **Edit project** dialog, you can change **Project name**, **Project description** and **Assess Principle**. 
 
-On the **Edit project** dialog, you can change **project name** and **project description**, and also select new **business scenario**.
+
+**Archive project**
+
+1. Navigate to white **...** button.
+2. Click **Edit project** section, this opens the **Edit project** dialog.
+3. Click **Archive** button.
+
 
 **Upload model artifacts**
 
@@ -95,6 +121,17 @@ To input or edit answer:
 
 Return to the project main page, you can see the fairness assessment progress.
 
+**Comment Notification Panel**
+
+On the left corner of **Project List Page**, **Project Main Page** and **Questionnaire Page**, there is a **Notification Panel** which collects all
+the unread comments which is sorted by time in the descending order.
+
+* Click on **Notifications** button.
+* Select a comment and go to the corresponding question.
+* You can also mark all comment as read.
+* Note that on the **Project List Page**, the **Notification Panel** collects all the comments in all projects, while
+ on **Project Main Page** and **Questionnaire Page**, the **Notification Panel** only collects comments in current project.
+
 **Comment on answer**
 
 Each sub-question has a **comment icon** button, which helps users communicate with each other and also helps them to understand the question.
@@ -131,6 +168,19 @@ When export report is completed, the **Version History** will be displayed.
     * **Model artifacts**: You can get the json file uploaded in the historical version.
     * **Fairness assessment**: It will switch to the edit answer page of the historical version.
     * **Report**: Click it, you will download the historical version pdf report.
+
+**Compare of history versions**
+
+You can compare the differences on both answers and questions. The function allows comparison between versions currently 
+under edition with an exported version or a recent draft. Notice that an **Exported Version** will only 
+be created when you click **Export** button to export the report, while a **Recent Draft** is created each time when there is an update in the answer or question.
+
+To compare with a history version:
+
+1. Enter **Project main page**.
+2. Click on **Edit** button to enter the **Questionnaire Page**.
+3. Click on **Compare** button.
+4. Select a history version in the drop-down menu. Two options are available: **Exported Version** and **Recent Draft**.
 
 **Manage members**
 

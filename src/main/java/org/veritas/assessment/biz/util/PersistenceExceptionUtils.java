@@ -16,16 +16,53 @@
 
 package org.veritas.assessment.biz.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.exceptions.PersistenceException;
+import org.sqlite.SQLiteErrorCode;
+import org.sqlite.SQLiteException;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
+@Slf4j
 public class PersistenceExceptionUtils {
+    private static final Set<SQLiteErrorCode> DUPLICATED_ERROR_CODE_SET;
 
-    public static boolean isUniqueConstraintException(PersistenceException exception) {
+    static {
+        Set<SQLiteErrorCode> set = EnumSet.noneOf(SQLiteErrorCode.class);
+        set.add(SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY);
+        set.add(SQLiteErrorCode.SQLITE_CONSTRAINT_UNIQUE);
+        DUPLICATED_ERROR_CODE_SET = Collections.unmodifiableSet(set);
+    }
+
+
+    public static boolean isUniqueConstraintException(Exception exception) {
+        SQLiteException sqLiteException = find(exception);
+        if (sqLiteException != null) {
+
+            log.warn("sqlite exception", sqLiteException);
+            SQLiteErrorCode sqLiteErrorCode = sqLiteException.getResultCode();
+            return DUPLICATED_ERROR_CODE_SET.contains(sqLiteErrorCode);
+        }
+
         StringBuilder builder = new StringBuilder(exception.getMessage());
         if (exception.getCause() != null) {
             builder.append(" ").append(exception.getCause().getMessage());
         }
         return StringUtils.containsAnyIgnoreCase(builder, "UNIQUE constraint");
+    }
+
+    private static SQLiteException find(Throwable exception) {
+        Throwable throwable = exception;
+        while (throwable != null) {
+            if (throwable instanceof SQLiteException) {
+                return (SQLiteException) throwable;
+            }
+            if (throwable.getCause() != throwable) {
+                throwable = throwable.getCause();
+            }
+        }
+        return null;
     }
 }

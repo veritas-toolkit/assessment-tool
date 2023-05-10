@@ -21,13 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -42,9 +41,10 @@ import org.veritas.assessment.biz.dto.ProjectBasicDto;
 import org.veritas.assessment.biz.dto.ProjectCreateDto;
 import org.veritas.assessment.biz.dto.ProjectDetailDto;
 import org.veritas.assessment.biz.dto.ProjectDto;
-import org.veritas.assessment.biz.entity.JsonModelTest;
 import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.jsonmodel.JsonModelTestUtils;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.RoleType;
 import org.veritas.assessment.system.dto.MembershipDto;
@@ -76,21 +76,15 @@ class ProjectControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    @Lazy
     private ProjectService projectService;
     @Autowired
+    @Lazy
     private UserService userService;
-    @Autowired
-    private CacheManager cacheManager;
 
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
+
+    @Autowired
+    TemplateQuestionnaireService templateQuestionnaireService;
 
     @Test
     void findByKeyword_success() throws Exception {
@@ -102,8 +96,10 @@ class ProjectControllerTest {
         project.setDescription("description");
         project.setUserOwnerId(admin.getId());
         project.setBusinessScenario(1);
+        project.setPrincipleGeneric(true);
+        project.setPrincipleFairness(true);
 
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         MvcResult mvcResult = mockMvc.perform(get("/api/project")
                         .param("keyword", keyword)
@@ -123,13 +119,17 @@ class ProjectControllerTest {
     @Test
     void testCreate_success() throws Exception {
         ProjectCreateDto dto = new ProjectCreateDto();
-        dto.setName("new project");
+        dto.setName("new_project" + RandomStringUtils.randomAlphanumeric(5));
         dto.setUserOwnerId(1);
         dto.setDescription("Description");
         dto.setBusinessScenario(1);
         dto.setQuestionnaireTemplateId(1);
+        dto.setPrincipleGeneric(true);
+        dto.setPrincipleFairness(true);
+        dto.setPrincipleEA(true);
+        dto.setPrincipleTransparency(true);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -153,8 +153,12 @@ class ProjectControllerTest {
         createDto.setDescription("Description");
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
+        createDto.setPrincipleGeneric(true);
+        createDto.setPrincipleFairness(true);
+        createDto.setPrincipleEA(true);
+        createDto.setPrincipleTransparency(true);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -167,11 +171,15 @@ class ProjectControllerTest {
 
         createDto.setDescription("Description_new");
 
+
         ProjectBasicDto basicDto = new ProjectBasicDto();
         basicDto.setId(projectDto.getId());
         basicDto.setName("xxxxxxxxxx");
         basicDto.setDescription("description_");
-        basicDto.setBusinessScenario(2);
+        basicDto.setPrincipleGeneric(true);
+        basicDto.setPrincipleFairness(true);
+        basicDto.setPrincipleEA(true);
+        basicDto.setPrincipleTransparency(true);
 
         mvcResult = mockMvc.perform(post("/api/project/{projectId}", projectDto.getId())
                         .with(user("1").roles("ADMIN", "USER"))
@@ -186,8 +194,25 @@ class ProjectControllerTest {
         assertEquals(basicDto.getId(), projectDto.getId());
         assertEquals(basicDto.getName(), projectDto.getName());
         assertEquals(basicDto.getDescription(), projectDto.getDescription());
-        assertEquals(basicDto.getBusinessScenario(), projectDto.getBusinessScenario());
     }
+
+    @Test
+    void testProjectDetail_success() throws Exception {
+        ProjectDto projectDto = createProject();
+        MvcResult mvcResult = mockMvc
+                .perform(get("/api/project/{projectId}/detail", projectDto.getId())
+                        .with(user("1").roles("ADMIN", "USER")))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        ProjectDetailDto detailDto = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                new TypeReference<ProjectDetailDto>() {
+                });
+        log.info("detail:\n{}",
+                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(detailDto));
+        assertNotNull(detailDto);
+    }
+
 
     @Test
     void testListMember_success() throws Exception {
@@ -204,24 +229,6 @@ class ProjectControllerTest {
         assertEquals(1, list.size());
         assertEquals(projectDto.getCreatorUserId(), list.get(0).getUserId());
     }
-
-    @Test
-    void testDetail_success() throws Exception {
-        ProjectDto projectDto = createProject();
-        MvcResult mvcResult = mockMvc
-                .perform(get("/api/project/{projectId}/detail", projectDto.getId())
-                        .with(user("1").roles("ADMIN", "USER")))
-                .andDo(print()).andExpect(status().is2xxSuccessful())
-                .andReturn();
-        ProjectDetailDto detailDto = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(),
-                new TypeReference<ProjectDetailDto>() {
-                });
-        log.info("detail:\n{}",
-                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(detailDto));
-        assertNotNull(detailDto);
-    }
-
     @Test
     @Sql("/sql/unit_test_user.sql")
     void testAddMember_success() throws Exception {
@@ -247,6 +254,28 @@ class ProjectControllerTest {
                 objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list));
         assertEquals(dtoList.size(), list.size());
     }
+    @Test
+    @Sql("/sql/unit_test_user.sql")
+    void testChangeMember_success() throws Exception {
+        ProjectDto projectDto = createProject();
+        MembershipDto membershipDto = new MembershipDto();
+        membershipDto.setUserId(2);
+        membershipDto.setType(RoleType.DEVELOPER);
+        MvcResult mvcResult = mockMvc
+                .perform(post("/api/project/{projectId}/member", projectDto.getId())
+                        .with(user("1").roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(membershipDto)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        Member member = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<Member>() {
+                });
+        log.info("member :\n{}",
+                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(member));
+        assertEquals(2, member.getUserId());
+        assertEquals(RoleType.DEVELOPER, member.getType());
+    }
 
     private ProjectDto createProject() throws Exception {
         ProjectCreateDto createDto = new ProjectCreateDto();
@@ -255,8 +284,12 @@ class ProjectControllerTest {
         createDto.setDescription("Description");
         createDto.setBusinessScenario(1);
         createDto.setQuestionnaireTemplateId(1);
+        createDto.setPrincipleGeneric(true);
+        createDto.setPrincipleFairness(true);
+        createDto.setPrincipleEA(true);
+        createDto.setPrincipleTransparency(true);
 
-        MvcResult mvcResult = mockMvc.perform(put("/api/project/new")
+        MvcResult mvcResult = mockMvc.perform(post("/api/project/new")
                         .with(user("1").roles("ADMIN", "USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDto)))
@@ -270,11 +303,24 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testJson() throws Exception {
+    public void testAddMember_fail() throws Exception {
+        ProjectDto projectDto = createProject();
+        List<MembershipDto> dtoList = new ArrayList<>();
+        MvcResult mvcResult1 = mockMvc.perform(
+                        put("/api/project/{projectId}/member", projectDto.getId())
+                                .with(user("1").roles("USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dtoList)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+    }
+
+    @Test
+    void testUploadJson_success() throws Exception {
         ProjectDto projectDto = createProject();
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
-                JsonModelTest.loadJson(JsonModelTest.creditScoringUrl).getBytes(StandardCharsets.UTF_8));
+                JsonModelTestUtils.loadJson(JsonModelTestUtils.EXAMPLE_CM).getBytes(StandardCharsets.UTF_8));
         MvcResult mvcResult = mockMvc.perform(
                         MockMvcRequestBuilders.multipart(
                                         "/api/project/{projectId}/modelArtifact", projectDto.getId())
@@ -314,21 +360,21 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testImage() throws Exception {
+    void testUploadImage_success() throws Exception {
         ProjectDto projectDto = createProject();
 
         byte[] imageContent;
-        try(InputStream inputStream = new ClassPathResource("").getInputStream()) {
+        try (InputStream inputStream = new ClassPathResource("").getInputStream()) {
             imageContent = IOUtils.toByteArray(inputStream);
         }
 
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "xxx.png", "", imageContent);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.multipart(
-                         "/api/project/{projectId}/image", projectDto.getId())
-                                .file(imageFile)
-                                .with(user("1").roles("ADMIN", "USER"))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                "/api/project/{projectId}/image", projectDto.getId())
+                        .file(imageFile)
+                        .with(user("1").roles("ADMIN", "USER"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().is2xxSuccessful())
                 .andReturn();
         String url = mvcResult.getResponse().getContentAsString();
@@ -339,7 +385,6 @@ class ProjectControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         assertEquals(imageContent.length, mvcResult2.getResponse().getContentAsByteArray().length);
-
 
     }
 }

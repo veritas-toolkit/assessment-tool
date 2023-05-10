@@ -16,17 +16,14 @@
 
 package org.veritas.assessment.biz.service;
 
+import org.veritas.assessment.biz.action.EditAnswerAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+
+import java.util.List;
 
 public interface ModelInsightService {
 
-    /**
-     * Auto generate the answers of the questionnaire;
-     *
-     * @param project       questionnaire's project
-     * @param modelArtifact artifact
-     */
-    void autoGenerateAnswer(Project project, ModelArtifact modelArtifact);
-
+    List<EditAnswerAction> insight(Project project, QuestionnaireVersion questionnaireVersion, ModelArtifact modelArtifact);
 }

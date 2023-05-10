@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionCommentReadLog {
-    private int userId;
-    private int projectId;
-    private int questionId;
-    private int latestReadCommentId;
+    private Integer userId;
+    private Integer projectId;
+    private Long questionId;
+    private Integer latestReadCommentId;
 }

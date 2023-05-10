@@ -1,42 +1,52 @@
-/*
- * Copyright 2021 MAS Veritas
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.veritas.assessment.biz.mapper.questionnaire;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
+import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.common.metadata.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
-public interface TemplateQuestionnaireMapper extends QuestionnaireValueMapper<TemplateQuestionnaire> {
+public interface TemplateQuestionnaireMapper extends BaseMapper<TemplateQuestionnaire> {
+
+    default List<TemplateQuestionnaire> findAll() {
+        LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(TemplateQuestionnaire::getType);
+        wrapper.orderByAsc(TemplateQuestionnaire::getCreatedTime);
+        return selectList(wrapper);
+    }
+
+    default List<TemplateQuestionnaire> findByBusinessScenario(BusinessScenarioEnum businessScenarioEnum) {
+        LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getBusinessScenario, businessScenarioEnum.getCode());
+        wrapper.orderByDesc(TemplateQuestionnaire::getId);
+        wrapper.orderByAsc(TemplateQuestionnaire::getType);
+        wrapper.orderByAsc(TemplateQuestionnaire::getCreatedTime);
+        return selectList(wrapper);
+    }
+
 
     default Pageable<TemplateQuestionnaire> findTemplatePageable(String prefix, String keyword,
+                                                                 Integer businessScenario,
                                                                  int page, int pageSize) {
         LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(prefix)) {
             wrapper.apply("upper(name) like {0}", StringUtils.upperCase(prefix) + "%");
         }
         if (StringUtils.isNotEmpty(keyword)) {
-            wrapper.apply("upper(name) like {0}", "%" + StringUtils.upperCase(keyword) + "%");
+            String v = "%" + StringUtils.upperCase(keyword) + "%";
+            wrapper.apply("upper(name) like {0} or upper(description) like {1}", v, v);
+        }
+        if (businessScenario != null) {
+            wrapper.eq(TemplateQuestionnaire::getBusinessScenario, businessScenario);
         }
 
         wrapper.orderByDesc(TemplateQuestionnaire::getCreatedTime);
@@ -47,18 +57,21 @@ public interface TemplateQuestionnaireMapper extends QuestionnaireValueMapper<Te
         return Pageable.convert(page1);
     }
 
-
-    default List<TemplateQuestionnaire> findTemplateList() {
-        LambdaQueryWrapper<TemplateQuestionnaire> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByDesc(TemplateQuestionnaire::getCreatedTime);
-        return selectList(wrapper);
+    default int updateBasicInfo(TemplateQuestionnaire templateQuestionnaire) {
+        LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
+        wrapper.set(TemplateQuestionnaire::getName, templateQuestionnaire.getName());
+        wrapper.set(TemplateQuestionnaire::getDescription, templateQuestionnaire.getDescription());
+        wrapper.set(TemplateQuestionnaire::getEditUserId, templateQuestionnaire.getEditUserId());
+        wrapper.set(TemplateQuestionnaire::getEditTime, TimestampHandler.toDbString(templateQuestionnaire.getEditTime()));
+        return this.update(null, wrapper);
     }
 
-    default int updateBasicInfo(Integer templateId, String name, String description) {
+    default int updateEditInfo(TemplateQuestionnaire templateQuestionnaire) {
         LambdaUpdateWrapper<TemplateQuestionnaire> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(TemplateQuestionnaire::getTemplateId, templateId);
-        wrapper.set(TemplateQuestionnaire::getName, name);
-        wrapper.set(TemplateQuestionnaire::getDescription, description);
+        wrapper.eq(TemplateQuestionnaire::getId, templateQuestionnaire.getId());
+        wrapper.set(TemplateQuestionnaire::getEditUserId, templateQuestionnaire.getEditUserId());
+        wrapper.set(TemplateQuestionnaire::getEditTime, TimestampHandler.toDbString(templateQuestionnaire.getEditTime()));
         return update(null, wrapper);
     }
 }

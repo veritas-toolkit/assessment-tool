@@ -365,4 +365,18 @@ public interface UserMapper extends BaseMapper<User> {
         wrapper.set(User::isLocked, user.isLocked());
         return update(null, wrapper);
     }
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#user.id", condition = "#user != null && #user.id != null"),
+                    @CacheEvict(key = "#user.username", condition = "#user != null && #user.username != null"),
+                    @CacheEvict(key = "#user.email", condition = "#user != null && #user.email != null")
+            }
+    )
+    default int finishUserGuide(User user) {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(User::getId, user.getId());
+        wrapper.set(User::isFinishedUserGuide, true);
+        int result = update(null, wrapper);
+        return result;
+    }
 }

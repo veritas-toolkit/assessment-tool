@@ -22,13 +22,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.TemplateQuestionnaireService;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.NotFoundException;
@@ -62,18 +61,9 @@ public class ProjectServiceImplTest {
     private UserMapper userMapper;
     private User admin;
     private Project individualProject;
-    @Autowired
-    private CacheManager cacheManager;
 
-    @BeforeEach
-    public void evictAllCaches() {
-        for (String name : cacheManager.getCacheNames()) {
-            Cache cache = cacheManager.getCache(name);
-            if (cache != null) {
-                cache.clear();
-            }
-        }
-    }
+    @Autowired
+    private TemplateQuestionnaireService templateQuestionnaireService;
 
     @BeforeEach
     public void init() {
@@ -86,7 +76,7 @@ public class ProjectServiceImplTest {
         project.setBusinessScenario(1);
         project.setCreatorUserId(admin.getId());
         project.setUserOwnerId(admin.getId());
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
         this.individualProject = project;
     }
 
@@ -103,7 +93,7 @@ public class ProjectServiceImplTest {
         project.setBusinessScenario(1);
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
         assertEquals(1, projectService.countProjectOfGroup(group.getId()));
 
         List<Project> list = projectService.findByGroupOwnerId(group.getId());
@@ -130,7 +120,7 @@ public class ProjectServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(99999999);
         assertThrows(NotFoundException.class, () -> {
-            projectService.createProject(admin, project, 1);
+            projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
         });
 
     }
@@ -146,7 +136,7 @@ public class ProjectServiceImplTest {
             project.setBusinessScenario(1);
             project.setCreatorUserId(test1.getId());
             project.setUserOwnerId(test1.getId());
-            projectService.createProject(test1, project, 1);
+            projectService.createProject(test1, project, templateQuestionnaireService.findByTemplateId(1));
         }
         Project project = new Project();
         project.setName("test_project_" + test1.getProjectLimited() + 1);
@@ -155,7 +145,7 @@ public class ProjectServiceImplTest {
         project.setCreatorUserId(test1.getId());
         project.setUserOwnerId(test1.getId());
 
-        assertThrows(QuotaException.class, () -> projectService.createProject(test1, project, 1));
+        assertThrows(QuotaException.class, () -> projectService.createProject(test1, project, templateQuestionnaireService.findByTemplateId(1)));
     }
 
     @Test
@@ -172,7 +162,7 @@ public class ProjectServiceImplTest {
 
         assertThrows(ErrorParamException.class, () -> {
             try {
-                projectService.createProject(test1, project, 1);
+                projectService.createProject(test1, project, templateQuestionnaireService.findByTemplateId(1));
             } catch (Throwable throwable) {
                 log.warn("exception", throwable);
                 throw throwable;
@@ -194,7 +184,7 @@ public class ProjectServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> {
             try {
-                projectService.createProject(test1, project, 1);
+                projectService.createProject(test1, project, templateQuestionnaireService.findByTemplateId(1));
             } catch (Throwable throwable) {
                 log.warn("exception", throwable);
                 throw throwable;
@@ -223,7 +213,7 @@ public class ProjectServiceImplTest {
         log.info("new project:\n{}", newProject);
         log.info("=============================================================");
         assertThrows(ErrorParamException.class, () -> {
-            projectService.createProject(testUser, newProject, 1);
+            projectService.createProject(testUser, newProject, templateQuestionnaireService.findByTemplateId(1));
         });
         log.info("new project:\n{}", newProject);
     }
@@ -238,7 +228,7 @@ public class ProjectServiceImplTest {
         project.setCreatorUserId(admin.getId());
         project.setUserOwnerId(admin.getId());
         assertThrows(DuplicateException.class,
-                () -> projectService.createProject(admin, project, 1));
+                () -> projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1)));
     }
 
     @Test
@@ -255,7 +245,7 @@ public class ProjectServiceImplTest {
         project.setBusinessScenario(1);
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         Project project2 = new Project();
         project2.setName("test");
@@ -264,7 +254,7 @@ public class ProjectServiceImplTest {
         project2.setCreatorUserId(admin.getId());
         project2.setGroupOwnerId(group.getId());
         assertThrows(DuplicateException.class,
-                () -> projectService.createProject(admin, project2, 1));
+                () -> projectService.createProject(admin, project2, templateQuestionnaireService.findByTemplateId(1)));
     }
 
     @Test
@@ -275,7 +265,7 @@ public class ProjectServiceImplTest {
         project.setBusinessScenario(1);
         project.setCreatorUserId(admin.getId());
         project.setUserOwnerId(admin.getId());
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
         project.setName("test"); // duplicate
         assertThrows(DuplicateException.class,
@@ -308,7 +298,7 @@ public class ProjectServiceImplTest {
             project.setBusinessScenario(1);
             project.setCreatorUserId(admin.getId());
             project.setGroupOwnerId(group.getId());
-            projectService.createProject(admin, project, 1);
+            projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
             ++count;
         }
         int result = projectService.deleteProjectByGroupOwner(group.getId());
@@ -404,7 +394,7 @@ public class ProjectServiceImplTest {
         project.setBusinessScenario(1);
         project.setCreatorUserId(admin.getId());
         project.setGroupOwnerId(group.getId());
-        projectService.createProject(admin, project, 1);
+        projectService.createProject(admin, project, templateQuestionnaireService.findByTemplateId(1));
 
 
         User test1 = userMapper.findByUsername("test_1");

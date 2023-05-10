@@ -1,3 +1,7 @@
+spring:
+  profiles:
+    active: prod
+---
 server:
   port: 8001
   compression:
@@ -7,15 +11,16 @@ server:
 spring:
   main:
     banner-mode: off
+    allow-circular-references: true
   datasource:
-    url: 'jdbc:sqlite:file/db/sqlite.db'
+    url: 'jdbc:sqlite:file/db/sqlite.db?journal_mode=WAL'
     driver-class-name: 'org.sqlite.JDBC'
     hikari:
       connection-timeout: 30000
       minimum-idle: 1
       maximum-pool-size: 1
       max-lifetime: 360000
-      default-auto-commit: false
+      auto-commit: false
   cache:
     type: jcache
     jcache:
@@ -25,39 +30,38 @@ spring:
   freemarker:
     cache: true
     charset: UTF-8
-    templateEncoding: UTF-8
     check-template-location: true
     content-type: text/html
     suffix: .ftl
     template-loader-path: classpath:/ftl/
   session:
     store-type: none
-#    store-type: jdbc
     jdbc:
       initialize-schema: always
   flyway:
-    enable: true
+    enabled: true
     clean-disabled: false
   jackson:
     time-zone: GMT+8
-  resources:
-    static-locations: classpath:/static
-    cache:
-      period: 3600
   servlet:
     multipart:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
+  web:
+    resources:
+      static-locations: classpath:/static
+      cache:
+        period: 3600
 
 
 springdoc:
   api-docs:
-#    enabled: false
+    enabled: true
     path: '/api-docs'
   swagger-ui:
-#    enabled: false
-#    path: '/swagger-ui-custom.html'
+    enabled: true
+    path: '/swagger-ui.html'
 
 mybatis:
   configuration:
@@ -65,13 +69,13 @@ mybatis:
     local-cache-scope: STATEMENT
 
 mybatis-plus:
-  typeEnumsPackage: org.veritas.assessment.system.constant;org.veritas.assessment.biz.constant
+  #typeEnumsPackage: org.veritas.assessment.system.constant;org.veritas.assessment.biz.constant
   global-config:
     banner: false
     db-config:
       logic-delete-value: 1
       logic-not-delete-value: 0
-      table-prefix: vat_
+      table-prefix: vat2_
 
 management:
   endpoints:

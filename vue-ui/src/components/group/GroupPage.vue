@@ -39,26 +39,22 @@
               <el-input @input="getProjectList" placeholder="Search your project here" prefix-icon="el-icon-search" v-model="projectKeyword"></el-input>
             </el-col>
             <el-col v-show="permissionList.indexOf('project:create') != -1" style="width: 260px">
-              <div class="creProj BarlowMedium" @click="createProjectVisible = true" style="cursor: pointer"><i class="el-icon-plus"></i><span>Create project</span></div>
+<!--              <div class="creProj BarlowMedium" @click="createProjectVisible = true" style="cursor: pointer"><i class="el-icon-plus"></i><span>Create project</span></div>-->
+              <div class="creProj BarlowMedium" @click="$refs.createProjectDialog.open()"
+                   style="cursor: pointer">
+                <i class="el-icon-plus"></i>
+                <span>Create project</span>
+              </div>
             </el-col>
           </el-row>
           <el-row :gutter="20" style="margin-top: 6px">
             <el-col v-for="(item,index) in projectList" :span="6">
-              <el-card class="box-card" @click.native="projectPage(item)">
-                <div slot="header" class="boxCardHeader">
-                  <div class="owner oneLine" v-if="item.userOwner">{{item.userOwner.username}}</div>
-                  <div class="owner oneLine" v-else-if="item.groupOwner">{{item.groupOwner.name}}</div>
-                  <div class="projName1 oneLine BarlowBold">{{item.name}}</div>
-                  <span>Edited at {{dateFormat(item.lastEditedTime)}}</span>
-                </div>
-                <el-tooltip class="item" effect="dark" :content="item.description" placement="top">
-                  <div class="description oneLine"><span class="oneLine">{{item.description}}</span></div>
-                </el-tooltip>
-              </el-card>
+              <project-card :project="item" :business-scenario-list="businessScenarioList"/>
             </el-col>
           </el-row>
           <div class="block">
             <el-pagination
+              hide-on-single-page
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page=page
@@ -112,31 +108,6 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="createProjectVisible" width="548px">
-      <template slot="title"><span class="dialogTitle">New project</span></template>
-      <el-form :rules="projectFormRules" ref="projectFormRefs" label-position="top" label="450px" :model="projectForm">
-        <el-form-item class="BarlowMedium" label="Project name" prop="name">
-          <el-input placeholder="Please input a project name" v-model="projectForm.name"></el-input>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Project description" prop="description">
-          <el-input type="textarea" :rows="3" placeholder="Please input project description here" v-model="projectForm.description"></el-input>
-        </el-form-item>
-        <el-form-item class="login" label="Business scenario" prop="businessScenario">
-          <el-select v-model="projectForm.businessScenario" placeholder="Please choose a business scenario">
-            <el-option v-for="item in businessScenarioList" :key="item.code" :label="item.name" :value="item.code"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="BarlowMedium" label="Questionnaire template" prop="questionnaireTemplateId">
-          <el-select v-model="projectForm.questionnaireTemplateId" placeholder="Please choose a questionnaire template">
-            <el-option v-for="item in createTemplateList" :key="item.templateId" :label="item.name" :value="item.templateId"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="createProjectVisible = false" class="BlackBorder BarlowMedium">Cancel</el-button>
-        <el-button type="primary" @click="createProject" class="GreenBC BarlowMedium">Create</el-button>
-      </span>
-    </el-dialog>
     <el-dialog :close-on-click-modal="false" class="BarlowMedium" :visible.sync="addMemberVisible" width="548px">
       <template slot="title"><span class="dialogTitle">Invite member</span></template>
       <el-input @input="getUserList" clearable style="margin: 10px 0px 16px 0px" placeholder="Search by keyword" prefix-icon="el-icon-search" v-model="keyword"></el-input>
@@ -179,14 +150,29 @@
         <el-button class="GreenBC" @click="editGroupInfo">Edit</el-button>
       </span>
     </el-dialog>
+    <!--create project-->
+    <create-project-dialog ref="createProjectDialog"
+                           @created="onProjectCreated">
+    </create-project-dialog>
+
   </div>
 </template>
 
 <script>
+  import CreateProjectDialog from "@/components/projects/CreateProjectDialog";
+  import ProjectCard from "@/components/projects/ProjectCard.vue";
+
   export default {
     name: "GroupPage",
+    components: {
+      CreateProjectDialog,
+      ProjectCard
+    },
     data() {
       return {
+        createExistFlag: false,
+        selectExistingProject: '',
+        activeNewProjectName: 'create',
         checkList: [],
         userTypeGroup: '',
         userType: '',
@@ -233,14 +219,35 @@
           name: '',
           description: '',
           businessScenario: '',
-          groupOwnerId: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
           questionnaireTemplateId: '',
+        },
+        existingProjectForm: {
+          businessScenario: '',
+          principleGeneric: true,
+          principleFairness: false,
+          principleEA: false,
+          principleTransparency: false,
+          questionnaireTemplateId: '',
+          name: '',
+          description: '',
         },
         projectFormRules: {
           name: [{ required: true, trigger: 'blur' },],
           description: [{ required: true, trigger: 'blur' },],
           businessScenario: [{ required: true, trigger: 'blur' },],
           questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          principleGeneric: [{ required: true, message: 'principle is required', trigger: 'blur' },],
+        },
+        existingProjectFormRules: {
+          businessScenario: [{ required: true, trigger: 'blur' },],
+          principleGeneric: [{ required: true, trigger: 'blur' },],
+          questionnaireTemplateId: [{ required: true, message: 'questionnaireTemplate is required', trigger: 'blur' },],
+          name: [{ required: true, trigger: 'blur' },],
+          description: [{ required: true, trigger: 'blur' },],
         },
         addUserId: [],
         permissionList: [],
@@ -260,13 +267,59 @@
       this.getCreateTemplateList()
     },
     methods: {
+      onProjectCreated(newProject) {
+        console.log("created")
+        this.getProjectList()
+        this.$router.push({
+          path:'/projectPage',
+          query: {
+            id: newProject.id
+          }
+        })
+      },
+      handleSelect(item) {
+        if (item) {
+          this.createExistFlag = true
+        }
+        this.$http.get(`/api/project/${item.id}`).then(res => {
+          if (res.status == 200) {
+            let projectInfo = res.data
+            console.log(projectInfo.businessScenario)
+            this.existingProjectForm.businessScenario = projectInfo.businessScenario
+            this.existingProjectForm.principleGeneric = projectInfo.principleGeneric
+            this.existingProjectForm.principleFairness = projectInfo.principleFairness
+            this.existingProjectForm.principleEA = projectInfo.principleEA
+            this.existingProjectForm.principleTransparency = projectInfo.principleTransparency
+            this.existingProjectForm.name = projectInfo.name
+            this.existingProjectForm.description = projectInfo.description
+            this.$http.get('/api/system/questionnaire_template',{params:{'businessScenario':projectInfo.businessScenario}}).then(res => {
+              if(res.status == 200) {
+                this.createTemplateList = res.data
+              }
+            })
+          }
+        })
+        // this.selectExistingProject = item.id
+        console.log(item);
+      },
+      querySearch(queryString, cb) {
+        let projects = []
+        this.projectList.map(item => {
+          item.value = item.name
+          projects.push(item)
+        })
+        cb(projects);
+      },
+      handleClickProject(tab, event) {
+        this.activeNewProjectName = tab.name
+      },
       getGroupDetail() {
         this.$http.get(`/api/group/${this.groupId}/detail`).then(res => {
           this.permissionList = res.data.groupRole.permissionList
         })
       },
       projectPage(item) {
-        this.$router.push({path:'/groupProjectPage',query: {id:item.id,groupId:this.groupId}})
+        this.$router.push({path:'/projectPage',query: {id:item.id,groupId:this.groupId}})
       },
       addUsersToGroup() {
         let addUserList = []
@@ -301,21 +354,54 @@
           }
         })
       },
+      // createProject() {
+      //   this.$refs.projectFormRefs.validate(val => {
+      //     if (val) {
+      //       this.projectForm.groupOwnerId = this.groupId
+      //       this.$http.put('/api/project/new',this.projectForm).then(res => {
+      //         if (res.status == 201) {
+      //           this.$message.success('Create successfully')
+      //           this.$refs.projectFormRefs.resetFields()
+      //           this.getProjectList()
+      //         }
+      //       })
+      //       this.createProjectVisible = false
+      //     }
+      //   })
+      // },
       createProject() {
-        this.$refs.projectFormRefs.validate(val => {
-          if (val) {
-            this.projectForm.groupOwnerId = this.groupId
-            this.$http.put('/api/project/new',this.projectForm).then(res => {
-              if (res.status == 201) {
-                this.$message.success('Create successfully')
-                this.$refs.projectFormRefs.resetFields()
-                this.getProjectList()
-              }
-            })
-            this.createProjectVisible = false
-          }
-        })
+        if (this.activeNewProjectName == 'create') {
+          this.$refs.projectFormRefs.validate(val => {
+            if (val) {
+              this.projectForm.groupOwnerId = this.groupId
+              this.$http.post('/api/project/new',this.projectForm).then(res => {
+                if(res.status == 201) {
+                  this.$message.success('Create successfully')
+                  this.$refs.projectFormRefs.resetFields()
+                  this.getProjectList()
+                }
+              })
+              this.createProjectVisible = false
+            }
+          })
+        } else if (this.activeNewProjectName == 'copy') {
+          this.$refs.existingProjectFormRefs.validate(val => {
+            if (val) {
+              this.existingProjectForm.groupOwnerId = this.groupId
+              this.$http.post('/api/project/new',this.existingProjectForm).then(res => {
+                if(res.status == 201) {
+                  this.$message.success('Create successfully')
+                  this.$refs.existingProjectFormRefs.resetFields()
+                  this.getProjectList()
+                }
+              })
+              this.createProjectVisible = false
+            }
+          })
+        }
+
       },
+
       addUserToTags(value) {
         if (this.tags.indexOf(value) == -1 && value != '') {
           this.tags.push(value)
@@ -492,7 +578,7 @@
     align-items: center;
   }
   .projName {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: bold;
   }
   .projName1 {
@@ -742,5 +828,33 @@
       margin-left: 8px;
       font-size: 14px;
     }
+  }
+  .progress-text {
+    margin-top: -10px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: BarlowBold;
+  }
+  .form-label {
+    line-height: 40px;
+    float: none;
+    font-size: 14px;
+    color: #aaa;
+    display: flex !important;
+    text-align: left;
+    height: 32px;
+    margin-top: 4px !important;
+    padding: 0 !important;
+  }
+  .generic {
+    background: #78BED3;
+    font-size: 16px;
+    line-height: 16px !important;
+    border-radius: 20px;
+    opacity: 0.65;
+    padding: 0px 12px;
+  }
+  .el-tabs {
+    position: relative;
   }
 </style>

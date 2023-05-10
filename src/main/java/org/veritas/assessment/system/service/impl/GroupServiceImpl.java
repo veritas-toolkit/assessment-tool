@@ -26,6 +26,7 @@ import org.veritas.assessment.biz.service.ProjectService;
 import org.veritas.assessment.biz.util.PersistenceExceptionUtils;
 import org.veritas.assessment.common.exception.DuplicateException;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.InternalException;
 import org.veritas.assessment.common.exception.LastOwnerRoleException;
 import org.veritas.assessment.common.exception.NotFoundException;
 import org.veritas.assessment.common.exception.PermissionException;
@@ -66,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public Group createGroup(User operator, Group group) {
         int operatorId = operator.getId();
-        int created = groupMapper.numberOfGroupCreatedByUser(operatorId);
+        long created = groupMapper.numberOfGroupCreatedByUser(operatorId);
         if (created >= operator.getGroupLimited()) {
             throw new QuotaException("Your quota of creating group is " +
                     operator.getGroupLimited() +
@@ -78,7 +79,7 @@ public class GroupServiceImpl implements GroupService {
         group.setLastModifiedTime(now);
         try {
             groupMapper.addGroup(group);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, group.getName());
         }
 
@@ -94,7 +95,7 @@ public class GroupServiceImpl implements GroupService {
             return;
         }
         if (!force) {
-            int projectCount = projectService.countProjectOfGroup(groupId);
+            long projectCount = projectService.countProjectOfGroup(groupId);
             if (projectCount > 0) {
                 throw new ErrorParamException("The group has projects. You'd better not delete it." +
                         "Or use force delete, it will cause all projects of group to be deleted.");
@@ -124,7 +125,7 @@ public class GroupServiceImpl implements GroupService {
         group.setLastModifiedTime(new Date());
         try {
             groupMapper.update(old, group);
-        } catch (PersistenceException exception) {
+        } catch (Exception exception) {
             exceptionHandler(exception, group.getName());
         }
         return groupMapper.findById(group.getId());
@@ -212,7 +213,6 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    @Deprecated
     public Pageable<Group> findGroupPageable(String prefix, String keyword, int page, int pageSize) {
         return groupMapper.findGroupPageable(prefix, keyword, page, pageSize);
     }
@@ -252,14 +252,14 @@ public class GroupServiceImpl implements GroupService {
     }
 
 
-    private void exceptionHandler(PersistenceException exception, String groupName) {
+    private void exceptionHandler(Exception exception, String groupName) {
         if (PersistenceExceptionUtils.isUniqueConstraintException(exception)) {
             log.warn("exception message: {}", exception.getMessage(), exception);
             throw new DuplicateException(
                     String.format("The group name '%s' has already been used.", groupName),
                     exception);
         } else {
-            throw exception;
+            throw new InternalException("Internal error!", exception);
         }
     }
 }

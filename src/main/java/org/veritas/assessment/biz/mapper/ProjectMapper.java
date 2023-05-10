@@ -26,6 +26,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.handler.TimestampHandler;
 import org.veritas.assessment.common.metadata.Pageable;
@@ -68,13 +69,39 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return update(null, wrapper);
     }
 
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#projectId", condition = "#result == 1"),
+            }
+    )
+    default int archive(int projectId) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+        wrapper.set(Project::isArchived, true);
+        wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(new Date()));
+        return update(null, wrapper);
+    }
+
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#projectId", condition = "#result == 1"),
+            }
+    )
+    default int unarchive(int projectId) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+        wrapper.set(Project::isArchived, false);
+        wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(new Date()));
+        return update(null, wrapper);
+    }
+
 
     @Caching(
             evict = {
                     @CacheEvict(key = "'id_'+#project.id", condition = "#project != null && #project.id != null"),
             }
     )
-    default int updateNameAndDescription(Project old, Project project) {
+    default int updateBasicInfo(Project old, Project project) {
         Objects.requireNonNull(old);
         Objects.requireNonNull(project);
         if (!Objects.equals(old.getId(), project.getId())) {
@@ -92,10 +119,42 @@ public interface ProjectMapper extends BaseMapper<Project> {
         if (StringUtils.isNotEmpty(project.getDescription())) {
             wrapper.set(Project::getDescription, project.getDescription());
         }
-        if (Objects.nonNull(project.getBusinessScenario())) {
-            wrapper.set(Project::getBusinessScenario, project.getBusinessScenario());
-        }
+        wrapper.set(Project::isPrincipleGeneric, project.isPrincipleGeneric());
+        wrapper.set(Project::isPrincipleFairness, project.isPrincipleFairness());
+        wrapper.set(Project::isPrincipleEA, project.isPrincipleEA());
+        wrapper.set(Project::isPrincipleTransparency, project.isPrincipleTransparency());
+
         wrapper.set(Project::getLastEditedTime, TimestampHandler.toDbString(project.getLastEditedTime()));
+        return update(null, wrapper);
+    }
+
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#project.id", condition = "#project != null && #project.id != null"),
+            }
+    )
+    default int updateQuestionnaireVid(Project project) {
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(project.getId());
+        Objects.requireNonNull(project.getCurrentQuestionnaireVid());
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, project.getId());
+        wrapper.set(Project::getCurrentQuestionnaireVid, project.getCurrentQuestionnaireVid());
+        return update(null, wrapper);
+    }
+
+    @Caching(
+            evict = {
+                    @CacheEvict(key = "'id_'+#project.id", condition = "#project != null && #project.id != null"),
+            }
+    )
+    default int updateModelArtifactVid(Project project) {
+        Objects.requireNonNull(project);
+        Objects.requireNonNull(project.getId());
+        Objects.requireNonNull(project.getCurrentModelArtifactVid());
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, project.getId());
+        wrapper.set(Project::getCurrentModelArtifactVid, project.getCurrentModelArtifactVid());
         return update(null, wrapper);
     }
 
@@ -105,13 +164,13 @@ public interface ProjectMapper extends BaseMapper<Project> {
      * @param uid user id
      * @return number of projects created by user.
      */
-    default int numberOfProjectCreatedByUser(int uid) {
+    default long numberOfProjectCreatedByUser(int uid) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getCreatorUserId, uid);
         return selectCount(wrapper);
     }
 
-    default int countByGroupOwner(int groupId) {
+    default long countByGroupOwner(int groupId) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getGroupOwnerId, groupId);
         return selectCount(wrapper);
@@ -129,6 +188,61 @@ public interface ProjectMapper extends BaseMapper<Project> {
         wrapper.eq(Project::getUserOwnerId, userId);
         wrapper.orderByDesc(Project::getLastEditedTime);
         return selectList(wrapper);
+    }
+
+    default Pageable<Project> findProjectPageable(Collection<Integer> projectIds,
+                                                  Collection<Integer> groupIds,
+                                                  QueryProjectPageableAction queryAction) {
+        Objects.requireNonNull(queryAction);
+        boolean projectEmpty = projectIds == null || projectIds.isEmpty();
+        boolean groupEmpty = groupIds == null || groupIds.isEmpty();
+        if (projectEmpty && groupEmpty) {
+            return Pageable.noRecord(queryAction.getPage(), queryAction.getPageSize());
+        }
+        LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
+        if (queryAction.hasKeyWords()) {
+//            LambdaQueryWrapper<Project> inner = new LambdaQueryWrapper<>();
+            wrapper.or().and(inner -> {
+                for (String keyword : queryAction.getKeywords()) {
+                    inner.or().apply("(upper(name) like {0} or upper(description) like {1})",
+                            "%" + StringUtils.upperCase(keyword) + "%",
+                            "%" + StringUtils.upperCase(keyword) + "%");
+                }
+            });
+        }
+        if (queryAction.getCreatorUserId() != null) {
+            wrapper.eq(Project::getCreatorUserId, queryAction.getCreatorUserId());
+        }
+        if (queryAction.getGroupOwnerId() != null) {
+            wrapper.eq(Project::getGroupOwnerId, queryAction.getGroupOwnerId());
+        }
+        if (queryAction.getBusinessScenario() != null) {
+            wrapper.eq(Project::getBusinessScenario, queryAction.getBusinessScenario());
+        }
+        if (queryAction.getArchived() != null) {
+            wrapper.eq(Project::isArchived, queryAction.getArchived());
+        }
+
+        wrapper.and(ownerQueryWrapper -> {
+            if (projectEmpty && groupEmpty) {
+                throw new IllegalArgumentException();
+            } else if (!projectEmpty && !groupEmpty) {
+                ownerQueryWrapper.in(Project::getId, projectIds);
+                ownerQueryWrapper.or(w -> {
+                    w.in(Project::getGroupOwnerId, groupIds);
+                });
+            } else if (projectEmpty) {
+                ownerQueryWrapper.in(Project::getGroupOwnerId, groupIds);
+            } else {
+                ownerQueryWrapper.in(Project::getId, projectIds);
+            }
+        });
+        wrapper.orderByDesc(Project::getLastEditedTime);
+        Page<Project> projectPage = new Page<>();
+        projectPage.setCurrent(queryAction.getPage());
+        projectPage.setSize(queryAction.getPageSize());
+        Page<Project> page1 = selectPage(projectPage, wrapper);
+        return Pageable.convert(page1);
     }
 
     /**
@@ -188,7 +302,17 @@ public interface ProjectMapper extends BaseMapper<Project> {
         return Pageable.convert(page1);
     }
 
-    default int countProjectOfGroup(Integer groupId) {
+    default List<Project> findProjectList(Collection<Integer> projectIds, Collection<Integer> groupIds) {
+        boolean projectEmpty = projectIds == null || projectIds.isEmpty();
+        boolean groupEmpty = groupIds == null || groupIds.isEmpty();
+        if (projectEmpty && groupEmpty) {
+            return Collections.emptyList();
+        }
+        LambdaQueryWrapper<Project> wrapper = queryWrapper(projectIds, groupIds, null, null);
+        return selectList(wrapper);
+    }
+
+    default long countProjectOfGroup(Integer groupId) {
         LambdaQueryWrapper<Project> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Project::getGroupOwnerId, groupId);
         return selectCount(wrapper);
@@ -260,5 +384,15 @@ public interface ProjectMapper extends BaseMapper<Project> {
         projectPage.setSize(pageSize);
         Page<Project> page1 = selectPage(projectPage, wrapper);
         return Pageable.convert(page1);
+    }
+
+    //    default boolean updateQuestionnaireForLock(int projectId, long questionnaireVid, long questionnaireNewVid) {
+    default boolean updateQuestionnaireForLock(int projectId, long questionnaireOldVid, long questionnaireNewVid) {
+        LambdaUpdateWrapper<Project> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Project::getId, projectId);
+        wrapper.eq(Project::getCurrentQuestionnaireVid, questionnaireOldVid);
+        wrapper.set(Project::getCurrentQuestionnaireVid, questionnaireNewVid);
+        int result = update(null, wrapper);
+        return result > 0;
     }
 }

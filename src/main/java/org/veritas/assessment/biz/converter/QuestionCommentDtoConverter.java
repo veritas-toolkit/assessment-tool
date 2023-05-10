@@ -21,31 +21,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.veritas.assessment.biz.dto.QuestionCommentDto;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionComment;
+import org.veritas.assessment.biz.entity.Project;
+import org.veritas.assessment.biz.entity.QuestionComment;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
+import org.veritas.assessment.biz.service.ProjectService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
+import org.veritas.assessment.system.entity.Group;
 import org.veritas.assessment.system.entity.User;
+import org.veritas.assessment.system.service.GroupService;
 import org.veritas.assessment.system.service.UserService;
 
 import java.util.Objects;
 
 @Component
 @Slf4j
-public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto, ProjectQuestionComment> {
+public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto, QuestionComment> {
     @Autowired
     @Lazy
     private UserService userService;
 
+    @Autowired
+    @Lazy
+    private GroupService groupService;
+
+    @Autowired
+    @Lazy
+    private ProjectService projectService;
+
+    @Autowired
+    private QuestionnaireService questionnaireService;
 
     @Override
-    public QuestionCommentDto convertFrom(ProjectQuestionComment comment) {
+    public QuestionCommentDto convertFrom(QuestionComment comment) {
         Objects.requireNonNull(comment, "The arg[comment] cannot be null.");
         QuestionCommentDto dto = new QuestionCommentDto();
         dto.setId(comment.getId());
         dto.setQuestionId(comment.getQuestionId());
+        dto.setMainQuestionId(comment.getMainQuestionId());
         dto.setProjectId(comment.getProjectId());
         dto.setUserId(comment.getUserId());
         dto.setComment(comment.getComment());
         dto.setCreatedTime(comment.getCreatedTime());
         dto.setReferCommentId(comment.getReferCommentId());
+
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(comment.getProjectId());
+        QuestionNode main = questionnaire.findMainQuestionById(comment.getMainQuestionId());
+        if (main != null) {
+            dto.setMainQuestionSerial(main.serial());
+        }
 
         if (comment.getUserId() != null) {
             User user = userService.findUserById(comment.getUserId());
@@ -53,6 +77,20 @@ public class QuestionCommentDtoConverter implements Converter<QuestionCommentDto
                 dto.setUsername(user.getUsername());
                 dto.setUserFullName(user.getFullName());
             }
+        }
+        Project project = null;
+        if (comment.getProject() != null) {
+            project = comment.getProject();
+        } else {
+            project = projectService.findProjectById(comment.getProjectId());
+        }
+        dto.setProjectName(project.getName());
+        if (project.isGroupProject()) {
+            Group group = groupService.findGroupById(project.getGroupOwnerId());
+            dto.setProjectOwner(group.getName());
+        } else {
+            User userOwner = userService.findUserById(project.getUserOwnerId());
+            dto.setProjectOwner(userOwner.getUsername());
         }
         return dto;
     }

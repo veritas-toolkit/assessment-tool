@@ -1,0 +1,177 @@
+{
+    "projectId": 43,
+    "questionnaireVid": 10234,
+    "createdUser": {
+
+    },
+    "createdTime": "",
+
+    "principles": {
+        "G": "Generic",
+        "F": "Fairness",
+        "EA": "Ethics & Accountability",
+        "T": "Transparency"
+    },
+    "principleAssessments": {
+        "G": {
+            "stepList": [
+                {
+                    "serial": 0,
+                    "step": "Principles to Practice",
+                    "mainQuestionList": [
+                        {
+                            "id": 0,
+                            "vid": 21,
+                            "serial": "G1",
+                            "question": "Have you documented."
+                        },
+                        {
+                            "id": 1,
+                            "vid": 21,
+                            "serial": "G1",
+                            "question": "Have you documented key errors, biases or properties present in the data used by\nthe system that may impact the system’s fairness?"
+                        },
+                        {
+                            "id": 2,
+                            "vid": 22,
+                            "serial": "G23",
+                            "question": "Main question, without sub-questions or answers.Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 20,
+                            "vid": 22,
+                            "serial": "G23",
+                            "question": "Main question, without sub-questions or answers.Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 25,
+                            "vid": 22,
+                            "serial": "G23",
+                            "question": "Main question, without sub-questions or answers.Main question, without sub-questions or answers..Main question, without sub-questions or answers..Main question, without sub-questions or answers..Main question, without sub-questions or answers.Main question, without sub-questions or answers."
+                        }
+                    ]
+                },
+                {
+                    "serial": 1,
+                    "step": "Define System Context & Design",
+                    "mainQuestionList": [
+                        {
+                            "id": 3,
+                            "vid": 81,
+                            "serial": "G8",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 4,
+                            "vid": 82,
+                            "serial": "G9",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+
+                },
+                {
+                    "serial": 2,
+                    "step": "Prepare and Input Data",
+                    "mainQuestionList": [
+                        {
+                            "id": 5,
+                            "vid": 81,
+                            "serial": "G8",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 6,
+                            "vid": 82,
+                            "serial": "G9",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+
+                },
+                {
+                    "serial": 3,
+                    "step": "Build & Validate",
+                    "mainQuestionList": [
+                        {
+                            "id": 7,
+                            "vid": 81,
+                            "serial": "G8",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 8,
+                            "vid": 82,
+                            "serial": "G9",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+
+                },
+                {
+                    "serial": 4,
+                    "step": "Deploy & Monitor",
+                    "mainQuestionList": [
+                        {
+                            "id": 9,
+                            "vid": 81,
+                            "serial": "G8",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 10,
+                            "vid": 82,
+                            "serial": "G9",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+
+                }
+
+            ]
+
+        },
+        "F": {
+            "stepList": [
+                {
+                    "serial": 0,
+                    "step": "Principles to Practice",
+                    "mainQuestionList": [
+                        {
+                            "id": 1,
+                            "vid": 21,
+                            "serial": "G1",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 2,
+                            "vid": 22,
+                            "serial": "G2",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+                },
+                {
+                    "serial": 1,
+                    "step": "Define System Context & Design",
+                    "mainQuestionList": [
+                        {
+                            "id": 8,
+                            "vid": 81,
+                            "serial": "G8",
+                            "question": "Main question, without sub-questions or answers."
+                        },
+                        {
+                            "id": 8,
+                            "vid": 82,
+                            "serial": "G9",
+                            "question": "Main question, without sub-questions or answers."
+                        }
+                    ]
+
+                }
+
+            ]
+        }
+    }
+}

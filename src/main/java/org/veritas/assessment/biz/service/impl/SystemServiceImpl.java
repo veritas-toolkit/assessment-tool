@@ -17,24 +17,12 @@
 package org.veritas.assessment.biz.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.veritas.assessment.biz.entity.BusinessScenario;
-import org.veritas.assessment.biz.mapper.BusinessScenarioMapper;
 import org.veritas.assessment.biz.service.SystemService;
-
-import java.util.List;
 
 @Slf4j
 @Service
 public class SystemServiceImpl implements SystemService {
-    @Autowired
-    private BusinessScenarioMapper businessScenarioMapper;
 
-    @Override
-    @Transactional
-    public List<BusinessScenario> findAllBusinessScenarioList() {
-        return businessScenarioMapper.findAll();
-    }
+
 }

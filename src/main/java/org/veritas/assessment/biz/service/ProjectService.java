@@ -16,8 +16,10 @@
 
 package org.veritas.assessment.biz.service;
 
+import org.veritas.assessment.biz.action.QueryProjectPageableAction;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.TemplateQuestionnaire;
 import org.veritas.assessment.common.metadata.Pageable;
 import org.veritas.assessment.system.constant.RoleType;
 import org.veritas.assessment.system.dto.MembershipDto;
@@ -28,9 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ProjectService {
-    Project createProject(User operator, Project project, Integer questionnaireTemplateId);
+    Project createProject(User operator, Project project, TemplateQuestionnaire templateQuestionnaire);
+
+    Project createProject(User operator, Project project, Project copyFromProject);
 
     int delete(Integer projectId);
+    int archive(Integer projectId);
+    int unarchive(Integer projectId);
 
     int deleteProjectByUserOwner(Integer ownerId);
 
@@ -61,12 +67,10 @@ public interface ProjectService {
 
     List<Member> findMemberList(int projectId);
 
+    Pageable<Project> findProjectPageable(User operator, QueryProjectPageableAction queryAction);
     Pageable<Project> findProjectPageable(Integer userId, String prefix, String keyword, int page, int pageSize);
 
-    default Pageable<Project> findProjectPageable(User operator, String prefix, String keyword,
-                                                  int page, int pageSize) {
-        return findProjectPageable(operator.getId(), prefix, keyword, page, pageSize);
-    }
+    List<Project> findProjectList(Integer userId);
 
     Pageable<Project> findProjectPageableByCreator(User user, String prefix, String keyword, int page, int pageSize);
 
@@ -77,7 +81,7 @@ public interface ProjectService {
 
     Pageable<Project> findProjectPageableOfGroup(Integer groupId, String prefix, String keyword, int page, int pageSize);
 
-    int countProjectOfGroup(Integer groupId);
+    long countProjectOfGroup(Integer groupId);
 
     void updateModelArtifact(User operator, Integer projectId, ModelArtifact modelArtifact);
 

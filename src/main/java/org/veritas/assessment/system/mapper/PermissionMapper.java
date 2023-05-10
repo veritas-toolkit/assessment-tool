@@ -26,8 +26,8 @@ import java.util.List;
 interface PermissionMapper extends BaseMapper<Permission> {
 
     @Select("select p.id, p.resource_type, p.name, p.description " +
-            "from vat_permission p " +
-            "left join vat_role_permission rp on rp.permission_id = p.id and rp.role_id = #{roleId}" +
+            "from vat2_permission p " +
+            "left join vat2_role_permission rp on rp.permission_id = p.id and rp.role_id = #{roleId}" +
             "where rp.role_id = #{roleId} " +
             "order by p.id")
     List<Permission> selectByRoleId(@Param("roleId") int roleId);

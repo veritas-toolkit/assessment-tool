@@ -19,12 +19,9 @@ package org.veritas.assessment.biz.service.impl;
 import com.openhtmltopdf.bidi.support.ICUBidiReorderer;
 import com.openhtmltopdf.bidi.support.ICUBidiSplitter;
 import com.openhtmltopdf.extend.FSSupplier;
-import com.openhtmltopdf.latexsupport.LaTeXDOMMutator;
-import com.openhtmltopdf.mathmlsupport.MathMLDrawer;
 import com.openhtmltopdf.pdfboxout.PdfBoxRenderer;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.slf4j.Slf4jLogger;
-import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import com.openhtmltopdf.swing.NaiveUserAgent;
 import com.openhtmltopdf.util.XRLog;
 import freemarker.template.Configuration;
@@ -45,20 +42,17 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.veritas.assessment.biz.entity.BusinessScenario;
+import org.veritas.assessment.biz.constant.BusinessScenarioEnum;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
-import org.veritas.assessment.biz.entity.artifact.ModelArtifactVersion;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectQuestionnaire;
-import org.veritas.assessment.biz.entity.questionnaire.ProjectVersionQuestionnaire;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionValue;
-import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireValue;
+import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
+import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
 import org.veritas.assessment.biz.mapper.ProjectReportMapper;
+import org.veritas.assessment.biz.model.ReportQuestionnaire;
 import org.veritas.assessment.biz.service.ModelArtifactService;
 import org.veritas.assessment.biz.service.ProjectReportService;
 import org.veritas.assessment.biz.service.SystemService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectQuestionnaireService;
-import org.veritas.assessment.biz.service.questionnaire.ProjectVersionQuestionnaireService;
+import org.veritas.assessment.biz.service.questionnaire.QuestionnaireService;
 import org.veritas.assessment.biz.util.Version;
 import org.veritas.assessment.common.exception.ErrorParamException;
 import org.veritas.assessment.common.exception.FileSystemException;
@@ -67,7 +61,17 @@ import org.veritas.assessment.system.config.VeritasProperties;
 import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.UserService;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -94,9 +98,8 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Autowired
     private ProjectReportMapper reportMapper;
     @Autowired
-    private ProjectQuestionnaireService questionnaireService;
-    @Autowired
-    private ProjectVersionQuestionnaireService projectVersionQuestionnaireService;
+    private QuestionnaireService questionnaireService;
+
     @Autowired
     private ModelArtifactService modelArtifactService;
     @Autowired
@@ -109,7 +112,7 @@ public class ProjectReportServiceImpl implements ProjectReportService {
     @Override
     @Transactional
     public String previewReport(Project project) throws IOException {
-        ProjectQuestionnaire questionnaire = questionnaireService.findByProject(project.getId());
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(project.getId());
         ModelMap modelMap = modelMap(project, questionnaire);
         return generateReportHtml(modelMap);
     }
@@ -158,14 +161,16 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         }
 
 
-        ModelArtifactVersion modelArtifactVersion = modelArtifactService.createNewVersionIfUpdated(projectId);
-        ProjectVersionQuestionnaire questionnaire = projectVersionQuestionnaireService.create(projectId);
+        ModelArtifact modelArtifact = modelArtifactService.findCurrent(projectId);
+        QuestionnaireVersion questionnaire = questionnaireService.findLatestQuestionnaire(projectId);
 
         ProjectReport report = new ProjectReport();
         report.setProjectId(projectId);
         report.setCreatorUserId(operator.getId());
-        report.setQuestionnaireVersionId(questionnaire.getVersionId());
-        report.setModelArtifactVersionId(modelArtifactVersion.getVersionId());
+        report.setQuestionnaireVid(questionnaire.getVid());
+        if (modelArtifact != null) {
+            report.setModelArtifactVid(modelArtifact.getVersionId());
+        }
         report.setVersion(versionString);
         report.setMessage(message);
         report.setCreatedTime(new Date());
@@ -182,6 +187,8 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         report.setPdfPath(filePath);
 
         reportMapper.add(report);
+        questionnaireService.updateAsExported(questionnaire.getVid());
+
         return report;
     }
 
@@ -251,20 +258,25 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         return reportMapper.findAllByProjectId(projectId);
     }
 
-
-    private <T extends QuestionValue<T>> ModelMap modelMap(Project project, QuestionnaireValue<T> questionnaire) {
-        return modelMap(project, questionnaire, null);
-
-    }
-
-    private <T extends QuestionValue<T>> ModelMap modelMap(Project project, QuestionnaireValue<T> questionnaire,
-                                                           ProjectReport current) {
+    private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire) {
         ModelMap modelMap = new ModelMap();
         modelMap.put("project", project);
-        modelMap.put("questionnaire", questionnaire);
+        modelMap.put("questionnaire", new ReportQuestionnaire(project, questionnaire));
+        modelMap.put("versionHistoryList", versionHistoryList(project.getId(), null));
+
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
+        modelMap.put("businessScenario", businessScenario.getName());
+        return modelMap;
+    }
+
+    private ModelMap modelMap(Project project, QuestionnaireVersion questionnaire,
+                              ProjectReport current) {
+        ModelMap modelMap = new ModelMap();
+        modelMap.put("project", project);
+        modelMap.put("questionnaire", new ReportQuestionnaire(project, questionnaire));
         modelMap.put("versionHistoryList", versionHistoryList(project.getId(), current));
 
-        BusinessScenario businessScenario = systemService.findBusinessScenarioByCode(project.getBusinessScenario());
+        BusinessScenarioEnum businessScenario = BusinessScenarioEnum.ofCode(project.getBusinessScenario());
         modelMap.put("businessScenario", businessScenario.getName());
         return modelMap;
     }
@@ -307,9 +319,6 @@ public class ProjectReportServiceImpl implements ProjectReportService {
         builder.useUnicodeBidiSplitter(new ICUBidiSplitter.ICUBidiSplitterFactory());
         builder.useUnicodeBidiReorderer(new ICUBidiReorderer());
         builder.defaultTextDirection(PdfRendererBuilder.TextDirection.LTR);
-        builder.useSVGDrawer(new BatikSVGDrawer());
-        builder.useMathMLDrawer(new MathMLDrawer());
-        builder.addDOMMutator(LaTeXDOMMutator.INSTANCE);
         builder.usePDDocument(new PDDocument(MemoryUsageSetting.setupMixed(1000000)));
 
         builder.useFont(

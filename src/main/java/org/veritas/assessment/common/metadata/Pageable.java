@@ -28,19 +28,19 @@ public class Pageable<T> implements Serializable {
     /**
      * All element count including other pages.
      */
-    private long total = 0;
+    private int total = 0;
     /**
      * page size
      */
-    private long pageSize = 10;
+    private int pageSize = 10;
     /**
      * current page number
      */
-    private long page = 1;
+    private int page = 1;
     /**
      * page count
      */
-    private long pageCount;
+    private int pageCount;
 
     /**
      * records of current page.
@@ -49,11 +49,11 @@ public class Pageable<T> implements Serializable {
 
     public static <T> Pageable<T> convert(Page<T> mybatisPlusPage) {
         Pageable<T> pageable = new Pageable<>();
-        pageable.setPageCount(mybatisPlusPage.getPages());
+        pageable.setPageCount((int) mybatisPlusPage.getPages());
         pageable.setRecords(mybatisPlusPage.getRecords());
-        pageable.setPage(mybatisPlusPage.getCurrent());
-        pageable.setPageSize(mybatisPlusPage.getSize());
-        pageable.setTotal(mybatisPlusPage.getTotal());
+        pageable.setPage((int) mybatisPlusPage.getCurrent());
+        pageable.setPageSize((int) mybatisPlusPage.getSize());
+        pageable.setTotal((int) mybatisPlusPage.getTotal());
         return pageable;
     }
 

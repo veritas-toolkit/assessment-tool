@@ -48,30 +48,31 @@ class QuestionCommentReadLogMapperTest {
     @Test
     @SqlGroup(
             value = {
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 3, 4)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 13, 5)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 23, 6)"),
-                    @Sql(statements = "INSERT INTO vat_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 43, 7)")
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 3, 4)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 13, 5)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 23, 6)"),
+                    @Sql(statements = "INSERT INTO vat2_question_comment_read_log (user_id, project_id, question_id, latest_read_comment_id) VALUES (1, 2, 43, 7)")
             }
     )
     void testFind() {
         int userId = 1;
         int projectId = 2;
-        Map<Integer, QuestionCommentReadLog> map = mapper.findLog(userId, projectId);
+        Map<Long, QuestionCommentReadLog> map = mapper.findLog(userId, projectId);
         assertEquals(4, map.size());
-        assertEquals(4, map.get(3).getLatestReadCommentId());
-        Map<Integer, QuestionCommentReadLog> map2 = mapper.findLog(userId, projectId);
-        // use cache, so they are same
+        QuestionCommentReadLog readLog = map.get(3L);
+        assertNotNull(readLog);
+        assertEquals(4, readLog.getLatestReadCommentId());
+        Map<Long, QuestionCommentReadLog> map2 = mapper.findLog(userId, projectId);
         assertEquals(map.hashCode(), map2.hashCode());
     }
 
     @Test
     void testInsertOrUpdate() {
-        QuestionCommentReadLog log1 = new QuestionCommentReadLog(1, 2, 3, 4);
+        QuestionCommentReadLog log1 = new QuestionCommentReadLog(1, 2, 3L, 4);
         int result = mapper.addOrUpdate(log1);
         assertEquals(1, result);
 
-        QuestionCommentReadLog log2 = new QuestionCommentReadLog(1, 2, 3, 5);
+        QuestionCommentReadLog log2 = new QuestionCommentReadLog(1, 2, 3L, 5);
         result = mapper.addOrUpdate(log2);
         assertEquals(1, result);
     }

@@ -18,42 +18,39 @@ package org.veritas.assessment.biz.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.veritas.assessment.biz.entity.artifact.ModelArtifact;
 
-import java.util.Date;
 import java.util.Objects;
 
 @Repository
-@CacheConfig(cacheNames = "modelArtifact")
 public interface ModelArtifactMapper extends BaseMapper<ModelArtifact> {
 
-    @CacheEvict(key = "#modelArtifact.getProjectId()")
-    default int updateOrInsert(ModelArtifact modelArtifact) {
-        Objects.requireNonNull(modelArtifact);
-        Integer projectId = modelArtifact.getProjectId();
-        Objects.requireNonNull(projectId);
-        if (modelArtifact.getUploadTime() == null) {
-            modelArtifact.setUploadTime(new Date());
-        }
-        LambdaQueryWrapper<ModelArtifact> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ModelArtifact::getProjectId, projectId);
-        int count = selectCount(queryWrapper);
-        if (count <= 0) {
-            return insert(modelArtifact);
-        } else {
-            return updateById(modelArtifact);
-        }
+    default int add(ModelArtifact modelArtifact) {
+        return insert(modelArtifact);
     }
 
-    @Cacheable(key = "#projectId", unless = "#result==null")
-    default ModelArtifact findByProjectId(Integer projectId) {
+    default ModelArtifact findByProjectId(int projectId) {
+        LambdaQueryWrapper<ModelArtifact> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ModelArtifact::getProjectId, projectId);
+        wrapper.orderByDesc(ModelArtifact::getVersionId);
+        wrapper.last("limit 1");
+        return selectOne(wrapper);
+    }
+
+    default ModelArtifact findByVersionId(Integer versionId) {
+        Objects.requireNonNull(versionId);
+        LambdaQueryWrapper<ModelArtifact> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ModelArtifact::getVersionId, versionId);
+        return selectOne(wrapper);
+    }
+
+    default ModelArtifact findLatest(Integer projectId) {
         Objects.requireNonNull(projectId);
         LambdaQueryWrapper<ModelArtifact> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ModelArtifact::getProjectId, projectId);
+        wrapper.orderByDesc(ModelArtifact::getVersionId);
+        wrapper.last("limit 1");
         return selectOne(wrapper);
     }
 }

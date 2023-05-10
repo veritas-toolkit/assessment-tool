@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>standard/action/arrow-up</title>
+    <defs>
+        <path d="M11.00125,20 L11.00125,6.414 L5.70725,11.708 C5.31725,12.097 4.68125,12.097 4.29325,11.708 C3.90225,11.319 3.90225,10.683 4.29325,10.294 L11.28825,3.299 C11.29025,3.297 11.29025,3.294 11.29125,3.291 C11.48725,3.097 11.74325,3 12.00125,3 C12.25825,3 12.51425,3.097 12.70925,3.291 C12.71125,3.294 12.71225,3.296 12.71225,3.298 L19.71225,10.297 C19.90525,10.49 20.00225,10.747 20.00225,11.003 C20.00225,11.26 19.90525,11.516 19.71225,11.711 C19.32325,12.1 18.68725,12.1 18.29825,11.711 L12.99925,6.414 L12.99925,20 C12.99925,20.55 12.54925,21 12.00125,21 C11.45125,21 11.00125,20.55 11.00125,20 Z" id="path-1"></path>
+    </defs>
+    <g id="standard/action/arrow-up" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Clip-2" fill="#42526E" xlink:href="#path-1"></use>
+        <g id="↳-🎨Color" mask="url(#mask-2)" fill="#42526E">
+            <polygon id="N500" points="0 24 24 24 24 0 0 0"></polygon>
+        </g>
+    </g>
+</svg>

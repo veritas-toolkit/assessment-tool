@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.veritas.assessment.biz.converter.ProjectDtoConverter;
+import org.veritas.assessment.biz.converter.ReportHistoryDtoConverter;
 import org.veritas.assessment.biz.dto.ExportReportDto;
+import org.veritas.assessment.biz.dto.ReportHistoryDto;
 import org.veritas.assessment.biz.dto.SuggestionVersionDto;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.biz.entity.ProjectReport;
@@ -46,6 +48,7 @@ import org.veritas.assessment.system.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -62,14 +65,17 @@ public class ProjectReportController {
     private ProjectService projectService;
 
     @Autowired
-    private ProjectDtoConverter projectDtoConverter;
-
-    @Autowired
-    private ModelArtifactService modelArtifactService;
-
-    @Autowired
     private ProjectReportService reportService;
+    @Autowired
+    private ReportHistoryDtoConverter reportHistoryDtoConverter;
 
+    @Operation(summary = "List all report version.")
+    @GetMapping("/list")
+    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
+    public List<ReportHistoryDto> list(@PathVariable("projectId") Integer projectId) {
+        List<ProjectReport> reportList = reportService.findReportHistoryList(projectId);
+        return reportHistoryDtoConverter.convertFrom(reportList);
+    }
 
     @Operation(summary = "Preview report through projectId.")
     @GetMapping(path = "/preview", produces = MediaType.TEXT_HTML_VALUE)
@@ -129,29 +135,19 @@ public class ProjectReportController {
         return dto;
     }
 
-    @Operation(summary = "Export report through projectId.")
+    @Operation(summary = "Export report")
     @PostMapping("/export")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public HttpEntity<byte[]> exportPdf(
+    public ReportHistoryDto exportPdf(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
-            @RequestBody @Valid ExportReportDto exportReportDto,
-            HttpServletResponse response) throws IOException {
-        String fileName = "out.pdf";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type");
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "filename=" + fileName);
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-        headers.add(HttpHeaders.PRAGMA, "no-cache");
+            @RequestBody @Valid ExportReportDto exportReportDto)
+            throws IOException {
 
         Project project = projectService.findProjectById(projectId);
         ProjectReport report = reportService.createReport(operator, project, exportReportDto.getVersion(),
                 exportReportDto.getMessage());
-        byte[] content = reportService.loadReportPdf(report);
-        return new HttpEntity<>(content, headers);
+        return reportHistoryDtoConverter.convertFrom(report);
     }
-
 
 }

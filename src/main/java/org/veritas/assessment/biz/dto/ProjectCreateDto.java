@@ -16,27 +16,57 @@
 
 package org.veritas.assessment.biz.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.veritas.assessment.biz.entity.Project;
 import org.veritas.assessment.common.exception.ErrorParamException;
+import org.veritas.assessment.common.exception.IllegalRequestException;
 import org.veritas.assessment.system.dto.BasicDtoInterface;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 public class ProjectCreateDto implements BasicDtoInterface<Project> {
+
+    @Schema(description = "Name of the project.", required = true)
+    @NotEmpty(message = "Project's name cannot be empty.")
     private String name;
 
+    @Schema(description = "Description of the project.", required = true)
+    @NotEmpty(message = "Project's description cannot be empty.")
     private String description;
 
+    @Schema(description = "The owner's user id, if the project belongs to a user.")
     private Integer userOwnerId;
 
+    @Schema(description = "The owner's group id, if the project belongs to a group.")
     private Integer groupOwnerId;
 
+    @Schema(description = "Business scenario of the project.", required = true)
+    @NotNull(message = "Please choose a business scenario.")
     private Integer businessScenario;
 
+    @Schema(description = "Created questionnaire from questionnaire template.")
     private Integer questionnaireTemplateId;
+
+    @Schema(description = "Copy questionnaire from the other project.")
+    private Integer copyFromProjectId;
+
+    @Schema(description = "Assess generic principle.", required = true, defaultValue = "true")
+    private Boolean principleGeneric = true;
+
+    @Schema(description = "Assess fairness principle.", required = true)
+    private Boolean principleFairness;
+
+    @Schema(description = "Assess ethic and accountable principle.", required = true)
+    private Boolean principleEA;
+
+    @Schema(description = "Assess transparency principle.", required = true)
+    private Boolean principleTransparency;
 
     public Project toEntity(Integer creator) {
         if (StringUtils.isEmpty(name)) {
@@ -50,6 +80,9 @@ public class ProjectCreateDto implements BasicDtoInterface<Project> {
         if (!userOwner && !groupOwner) {
             throw new ErrorParamException("One and only one of 'userOwnerId' and 'groupOwnerId' is not empty.");
         }
+        if (Objects.isNull(this.getCopyFromProjectId()) && Objects.isNull(this.getQuestionnaireTemplateId())) {
+            throw new IllegalRequestException("Choose a questionnaire template or project to create questionnaire.");
+        }
         Project project = new Project();
         project.setName(name);
         project.setDescription(description);
@@ -57,6 +90,11 @@ public class ProjectCreateDto implements BasicDtoInterface<Project> {
         project.setCreatorUserId(creator);
         project.setUserOwnerId(userOwnerId);
         project.setGroupOwnerId(groupOwnerId);
+        project.setPrincipleGeneric(this.principleGeneric);
+        project.setPrincipleFairness(this.principleFairness);
+        project.setPrincipleEA(this.principleEA);
+        project.setPrincipleTransparency(this.principleTransparency);
+        project.setArchived(false);
         Date now = new Date();
         project.setCreatedTime(now);
         project.setLastEditedTime(now);
