@@ -197,23 +197,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testListMember_success() throws Exception {
-        ProjectDto projectDto = createProject();
-        MvcResult mvcResult = mockMvc
-                .perform(get("/api/project/{projectId}/member", projectDto.getId())
-                        .with(user("1").roles("ADMIN", "USER")))
-                .andDo(print()).andExpect(status().is2xxSuccessful())
-                .andReturn();
-        List<Member> list = objectMapper.readValue(
-                mvcResult.getResponse().getContentAsString(),
-                new TypeReference<List<Member>>() {
-                });
-        assertEquals(1, list.size());
-        assertEquals(projectDto.getCreatorUserId(), list.get(0).getUserId());
-    }
-
-    @Test
-    void testDetail_success() throws Exception {
+    void testProjectDetail_success() throws Exception {
         ProjectDto projectDto = createProject();
         MvcResult mvcResult = mockMvc
                 .perform(get("/api/project/{projectId}/detail", projectDto.getId())
@@ -229,6 +213,22 @@ class ProjectControllerTest {
         assertNotNull(detailDto);
     }
 
+
+    @Test
+    void testListMember_success() throws Exception {
+        ProjectDto projectDto = createProject();
+        MvcResult mvcResult = mockMvc
+                .perform(get("/api/project/{projectId}/member", projectDto.getId())
+                        .with(user("1").roles("ADMIN", "USER")))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        List<Member> list = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<Member>>() {
+                });
+        assertEquals(1, list.size());
+        assertEquals(projectDto.getCreatorUserId(), list.get(0).getUserId());
+    }
     @Test
     @Sql("/sql/unit_test_user.sql")
     void testAddMember_success() throws Exception {
@@ -253,6 +253,28 @@ class ProjectControllerTest {
         log.info("member list:\n{}",
                 objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list));
         assertEquals(dtoList.size(), list.size());
+    }
+    @Test
+    @Sql("/sql/unit_test_user.sql")
+    void testChangeMember_success() throws Exception {
+        ProjectDto projectDto = createProject();
+        MembershipDto membershipDto = new MembershipDto();
+        membershipDto.setUserId(2);
+        membershipDto.setType(RoleType.DEVELOPER);
+        MvcResult mvcResult = mockMvc
+                .perform(post("/api/project/{projectId}/member", projectDto.getId())
+                        .with(user("1").roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(membershipDto)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        Member member = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<Member>() {
+                });
+        log.info("member :\n{}",
+                objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(member));
+        assertEquals(2, member.getUserId());
+        assertEquals(RoleType.DEVELOPER, member.getType());
     }
 
     private ProjectDto createProject() throws Exception {
@@ -281,7 +303,20 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testJson() throws Exception {
+    public void testAddMember_fail() throws Exception {
+        ProjectDto projectDto = createProject();
+        List<MembershipDto> dtoList = new ArrayList<>();
+        MvcResult mvcResult1 = mockMvc.perform(
+                        put("/api/project/{projectId}/member", projectDto.getId())
+                                .with(user("1").roles("USER"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dtoList)))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+    }
+
+    @Test
+    void testUploadJson_success() throws Exception {
         ProjectDto projectDto = createProject();
         MockMultipartFile jsonFile = new MockMultipartFile(
                 "file", "xxx.json", "application/json",
@@ -325,7 +360,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testImage() throws Exception {
+    void testUploadImage_success() throws Exception {
         ProjectDto projectDto = createProject();
 
         byte[] imageContent;
@@ -350,7 +385,6 @@ class ProjectControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         assertEquals(imageContent.length, mvcResult2.getResponse().getContentAsByteArray().length);
-
 
     }
 }

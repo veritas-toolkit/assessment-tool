@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.veritas.assessment.biz.dto.ProjectDto;
 import org.veritas.assessment.biz.dto.questionnaire.QuestionAnswerInputDto;
+import org.veritas.assessment.biz.dto.questionnaire.QuestionnaireTocDto;
 import org.veritas.assessment.biz.dto.questionnaire.SimpleQuestionDto;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionNode;
 import org.veritas.assessment.biz.entity.questionnaire.QuestionnaireVersion;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +44,21 @@ class ProjectQuestionnaireControllerTest {
     @Autowired
     private ProjectControllerTestUtils projectControllerTestUtils;
     ObjectMapper objectMapper = new ObjectMapper();
+
+    @Test
+    void testToc_success() throws Exception {
+        ProjectDto projectDto = projectControllerTestUtils.createProject();
+        MvcResult mvcResult = mockMvc
+                .perform(get("/api/project/{projectId}/questionnaire/toc", projectDto.getId())
+                        .with(user("1").roles("USER")))
+                .andDo(print()).andExpect(status().is2xxSuccessful())
+                .andReturn();
+        assertNotNull(mvcResult.getResponse().getContentAsString());
+        QuestionnaireTocDto returnObj = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                new TypeReference<QuestionnaireTocDto>() { });
+        assertNotNull(returnObj);
+        log.info("toc: {}", returnObj);
+    }
 
     @Test
     void testEditAnswer_success() throws Exception {

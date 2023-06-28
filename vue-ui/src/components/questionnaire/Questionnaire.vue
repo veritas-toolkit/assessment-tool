@@ -69,12 +69,18 @@
                                v-show="!compareFlag"
                                :projectId="projectId"
                                :questionId="questionId"
+                               @updateAnswer="getQuestionnaireMenu()"
                                style="overflow-y: auto"></QuestionnaireAnswer>
-          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"
+<!--          <QuestionnaireCompareAnswer v-show="compareFlag" :isCollapse="isCollapse"-->
+<!--                                      :compareVersionTime="compareVersionTime" :creator="creator"-->
+<!--                                      :permissionList="permissionList" :compareFlag="compareFlag"-->
+<!--                                      :questionnaireVid="questionnaireVid" :projectId="projectId"-->
+<!--                                      :questionId="questionId"></QuestionnaireCompareAnswer>-->
+          <QuestionnaireCompareAnswer2 v-show="compareFlag" :isCollapse="isCollapse"
                                       :compareVersionTime="compareVersionTime" :creator="creator"
                                       :permissionList="permissionList" :compareFlag="compareFlag"
                                       :questionnaireVid="questionnaireVid" :projectId="projectId"
-                                      :questionId="questionId"></QuestionnaireCompareAnswer>
+                                      :questionId="questionId"></QuestionnaireCompareAnswer2>
         </el-main>
       </el-container>
       <el-footer style="height: 64px;">
@@ -95,7 +101,7 @@
                 ref="compare-popover"
                 placement="top-start"
                 width="480"
-                height="500"
+                height="800"
                 trigger="click">
               <div style="height: 100%;width: 100%">
                 <el-tabs v-model="compareTab" @tab-click="handleCompareClick">
@@ -103,7 +109,7 @@
                     <el-table height="300" width="800" :data="exportedHistoryList"
                               @row-click="table_compare"
                               @cell-mouse-enter="loadExportedHistory">
-                      <el-table-column width="auto" label="Name">
+                      <el-table-column width="100" label="Name">
                         <template slot-scope="scope">
                           <div class="draft-left">
                             <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
@@ -111,20 +117,20 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column min-width="100" label="Created">
+                      <el-table-column width="100" label="Created">
                         <template slot-scope="scope">
                           <div class="draft-right">
                             <div>{{ scope.row.createdTime | changeTime }}</div>
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column width="auto" property="message" label="Message"/>
+                      <el-table-column min-width="250" property="message" label="Message"/>
                     </el-table>
                   </el-tab-pane>
                   <el-tab-pane label="Recent Draft" name="draftOnly">
                     <el-table height="300" width="800" :data="draftHistoryList" @row-click="table_compare"
                               @cell-mouse-enter="loadDraftHistory">
-                      <el-table-column width="auto" label="Name">
+                      <el-table-column width="100" label="Name">
                         <template slot-scope="scope">
                           <div class="draft-left">
                             <!--                            <img src="../../assets/groupPic/Avatar.png" alt="">-->
@@ -132,19 +138,19 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column min-width="100" label="Created">
+                      <el-table-column width="100" label="Created">
                         <template slot-scope="scope">
                           <div class="draft-right">
                             <div>{{ scope.row.createdTime | changeTime }}</div>
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column width="auto" property="message" label="Message"/>
+                      <el-table-column min-width="250" property="message" label="Message" show-overflow-tooltip/>
                     </el-table>
                   </el-tab-pane>
                 </el-tabs>
               </div>
-              <div class="footer-text" style="margin-left: 24px" @click="getDiffVersion(compareTab)" slot="reference">
+              <div class="footer-text" style="margin-left: 24px" @click="handleCompareClick" slot="reference">
                 Compare
               </div>
             </el-popover>
@@ -161,6 +167,7 @@
 import QuestionnaireMenu from "@/components/questionnaire/QuestionnaireMenu";
 import QuestionnaireAnswer from "@/components/questionnaire/QuestionnaireAnswer";
 import QuestionnaireCompareAnswer from "@/components/questionnaire/QuestionnaireCompareAnswer";
+import QuestionnaireCompareAnswer2 from "@/components/questionnaire/QuestionnaireCompareAnswer2";
 import ExportReportDialog from "@/components/projects/ExportReportDialog";
 import projectApi from "@/api/projectApi";
 import Vue from "vue";
@@ -175,6 +182,7 @@ export default {
     QuestionnaireMenu,
     QuestionnaireAnswer,
     QuestionnaireCompareAnswer,
+    QuestionnaireCompareAnswer2,
     ExportReportDialog,
   },
   mounted() {
@@ -328,6 +336,12 @@ export default {
       this.projNotLen = item
     },
     handleCompareClick() {
+      this.exportedHistoryPage.page = 0;
+      this.exportedHistoryPage.pageCount = 1;
+      this.exportedHistoryList = [];
+      this.draftHistoryPage.page = 0;
+      this.draftHistoryPage.pageCount = 1;
+      this.draftHistoryList = [];
       this.getDiffVersion(this.compareTab)
     },
     showQuestionComment(comment) {
@@ -407,6 +421,9 @@ export default {
               }
             })
             .then(res => {
+              if (res.data.page !== this.exportedHistoryPage.page + 1) {
+                return;
+              }
               let index = this.exportedHistoryList.length;
               for (let record of res.data.records) {
                 record.index = index;
@@ -431,6 +448,9 @@ export default {
               }
             })
             .then(res => {
+              if (res.data.page !== this.draftHistoryPage.page + 1) {
+                return;
+              }
               let index = this.draftHistoryList.length;
               for (let record of res.data.records) {
                 record.index = index;
@@ -475,13 +495,13 @@ export default {
     },
     loadExportedHistory(row, column, cell, event) {
       let left = this.exportedHistoryList.length - row.index;
-      if (left < 5) {
-        this.getDiffVersion("draftOnly");
+      if (left < 15) {
+        this.getDiffVersion("exportedOnly");
       }
     },
     loadDraftHistory(row, column, cell, event) {
       let left = this.draftHistoryList.length - row.index;
-      if (left < 5) {
+      if (left < 15) {
         this.getDiffVersion("draftOnly");
       }
     },

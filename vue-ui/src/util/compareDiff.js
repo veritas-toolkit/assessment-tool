@@ -2,7 +2,7 @@ import {diff_match_patch} from "diff-match-patch";
 import 'diff-match-patch-line-and-word';
 
 function compareDiff(string1,string2) {
-    var dmp = new diff_match_patch();
+    const dmp = new diff_match_patch();
     const diffs = dmp.diff_wordMode(string1, string2);
     return diffs;
 }

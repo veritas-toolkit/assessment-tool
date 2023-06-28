@@ -42,6 +42,7 @@ import org.veritas.assessment.system.entity.User;
 import org.veritas.assessment.system.service.GroupService;
 import org.veritas.assessment.system.service.UserService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -115,7 +116,7 @@ public class AdminGroupController {
 
     @PutMapping("/{groupId}/member")
     public List<Member> addMemberList(@PathVariable("groupId") Integer groupId,
-                                      @RequestBody List<MembershipDto> dtoList) {
+                                      @Valid @RequestBody List<MembershipDto> dtoList) {
         dtoList.forEach(dto -> {
             if (!dto.valid()) {
                 throw new ErrorParamException("Params [userId, type] can't be null");

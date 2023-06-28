@@ -42,6 +42,7 @@ def plot_piechart(data1, label, zf_name, key):
             textprops={'fontsize': 14, 'color': 'black'},
             # explode=[0.02, 0.02],
             explode=None,
+            normalize=True,
             labels=label,
             # colors=['#437694', '#D7E5ED'],
             colors=cmap(np.linspace(0, 1, len(data1))),

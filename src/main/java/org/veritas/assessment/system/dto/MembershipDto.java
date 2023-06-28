@@ -19,16 +19,15 @@ package org.veritas.assessment.system.dto;
 import lombok.Data;
 import org.veritas.assessment.system.constant.RoleType;
 
-import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class MembershipDto {
+    @NotNull(message = "The user id should not be null")
     private Integer userId;
 
+    @NotNull(message = "The role type should not be null")
     private RoleType type;
-
-    @Deprecated
-    private Date expirationDate;
 
     public boolean valid() {
         return userId != null && type != null;

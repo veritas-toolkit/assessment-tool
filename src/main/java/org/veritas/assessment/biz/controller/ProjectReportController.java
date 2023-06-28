@@ -135,35 +135,10 @@ public class ProjectReportController {
         return dto;
     }
 
-    @Operation(summary = "Export report through projectId.")
+    @Operation(summary = "Export report")
     @PostMapping("/export")
     @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public HttpEntity<byte[]> exportPdf(
-            @Parameter(hidden = true) User operator,
-            @PathVariable("projectId") Integer projectId,
-            @RequestBody @Valid ExportReportDto exportReportDto,
-            HttpServletResponse response) throws IOException {
-        String fileName = "out.pdf";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type");
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "filename=" + fileName);
-        headers.add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
-        headers.add(HttpHeaders.PRAGMA, "no-cache");
-
-        Project project = projectService.findProjectById(projectId);
-        ProjectReport report = reportService.createReport(operator, project, exportReportDto.getVersion(),
-                exportReportDto.getMessage());
-        byte[] content = reportService.loadReportPdf(report);
-        return new HttpEntity<>(content, headers);
-    }
-
-
-    @Operation(summary = "Export report through projectId.")
-    @PostMapping("/export2")
-    @PreAuthorize("hasPermission(#projectId, 'project', 'read')")
-    public ReportHistoryDto exportPdf2(
+    public ReportHistoryDto exportPdf(
             @Parameter(hidden = true) User operator,
             @PathVariable("projectId") Integer projectId,
             @RequestBody @Valid ExportReportDto exportReportDto)
